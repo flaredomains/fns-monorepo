@@ -1,7 +1,7 @@
 {
     "name": "@fns/forge-app",
-    "private": true,
     "version": "0.0.0",
+    "private": true,
     "scripts": {
       "build": "forge build",
       "clean": "forge clean",

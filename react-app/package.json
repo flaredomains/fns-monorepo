@@ -1,12 +1,13 @@
 {
-  "name": "react-app",
-  "private": true,
+  "name": "@fns/react-app",
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "clean": "rm -rf ./dist",
+    "lint": "tsc",
     "preview": "vite preview"
   },
   "dependencies": {

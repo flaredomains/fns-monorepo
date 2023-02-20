@@ -1,0 +1,21 @@
+{
+    "name": "@fns/turborepo",
+    "version": "0.0.0",
+    "private": true,
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+    "scripts": {
+        "build": "turbo run build",
+        "dev": "turbo run dev",
+        "lint": "turbo run lint",
+        "format": "prettier --write \"**/*.{js,jsx,ts,tsx,md}\""
+    },
+    "devDependencies": {
+        "eslint-config-custom": "workspace:*",
+        "prettier": "latest",
+        "turbo": "latest"
+    },
+    "packageManager": "pnpm@7.27.1"
+  }
