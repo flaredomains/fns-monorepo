@@ -1,0 +1,11 @@
+{
+    "name": "@fns/forge-app",
+    "private": true,
+    "version": "0.0.0",
+    "scripts": {
+      "build": "forge build",
+      "clean": "forge clean",
+      "coverage": "forge coverage",
+      "format": "forge fmt"
+    }
+  }
