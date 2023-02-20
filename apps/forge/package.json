@@ -1,5 +1,5 @@
 {
-    "name": "@fns/forge-app",
+    "name": "@fns/forge",
     "version": "0.0.0",
     "private": true,
     "scripts": {
