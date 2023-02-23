@@ -1,6 +1,6 @@
 pragma solidity ^0.8.6;
 
-import "./ENS.sol";
+import "./interfaces/ENS.sol";
 
 /**
  * A registrar that allocates subdomains to the first person to claim them, but
