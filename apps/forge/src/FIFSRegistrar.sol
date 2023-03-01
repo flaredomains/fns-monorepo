@@ -20,7 +20,7 @@ contract FIFSRegistrar {
      * @param ensAddr The address of the ENS registry.
      * @param node The node that this registrar administers.
      */
-    constructor(ENS ensAddr, bytes32 node) public {
+    constructor(ENS ensAddr, bytes32 node) {
         ens = ensAddr;
         rootNode = node;
     }

@@ -13,7 +13,7 @@ contract ENSRegistryWithFallback is ENSRegistry {
     /**
      * @dev Constructs a new ENS registrar.
      */
-    constructor(ENS _old) public ENSRegistry() {
+    constructor(ENS _old) ENSRegistry() {
         old = _old;
     }
 
@@ -56,8 +56,8 @@ contract ENSRegistryWithFallback is ENSRegistry {
         return super.ttl(node);
     }
 
-    function _setOwner(bytes32 node, address owner) internal override {
-        address addr = owner;
+    function _setOwner(bytes32 node, address _owner) internal override {
+        address addr = _owner;
         if (addr == address(0x0)) {
             addr = address(this);
         }
