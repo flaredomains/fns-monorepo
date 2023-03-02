@@ -5,8 +5,7 @@ pragma solidity ^0.8.6;
 
 
 import "../src/users/Actor.sol";
-import "../lib/forge-std/src/Test.sol";
-
+import "forge-std/Test.sol";
 import "../src/interfaces/IERC20.sol";
 
 interface Hevm {
