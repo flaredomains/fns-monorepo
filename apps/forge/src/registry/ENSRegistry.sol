@@ -1,13 +1,11 @@
 pragma solidity ^0.8.6;
 
-import "./interfaces/ENS.sol";
-import "../lib/forge-std/src/console.sol";
-
+import "./IENS.sol";
 
 /**
  * The ENS registry contract.
  */
-contract ENSRegistry is ENS {
+contract ENSRegistry is IENS {
 
     struct Record {
         address owner;
@@ -20,7 +18,6 @@ contract ENSRegistry is ENS {
 
     // Permits modifications only by the owner of the specified node.
     modifier authorised(bytes32 node) {
-        console.log("Calling Address: %s", msg.sender);
         address _owner = records[node].owner;
         require(_owner == msg.sender || operators[_owner][msg.sender]);
         _;

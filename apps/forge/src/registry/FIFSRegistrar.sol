@@ -1,12 +1,12 @@
 pragma solidity ^0.8.6;
 
-import "./interfaces/ENS.sol";
+import "./IENS.sol";
 
 /**
  * A registrar that allocates subdomains to the first person to claim them.
  */
 contract FIFSRegistrar {
-    ENS ens;
+    IENS ens;
     bytes32 rootNode;
 
     modifier only_owner(bytes32 label) {
