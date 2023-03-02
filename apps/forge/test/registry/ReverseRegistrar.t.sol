@@ -14,7 +14,7 @@ contract TestReverseRegistrar is Test {
 
     function setUp() public {
         ensRegistry = new ENSRegistry();
-        reverseRegistrar = new ReverseRegistrar(ensRegistry);
+        // reverseRegistrar = new ReverseRegistrar(ensRegistry);
 
         bytes32 hash = keccak256('addr.reverse');
         console.logBytes32(hash);

@@ -1,36 +1,38 @@
 //SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17 <0.9.0;
 
-import "../registry/ENS.sol";
+import "fns/registry/IENS.sol";
 import "./profiles/ABIResolver.sol";
 import "./profiles/AddrResolver.sol";
 import "./profiles/ContentHashResolver.sol";
-import "./profiles/DNSResolver.sol";
+// TODO: Re-enable DNSResolver after DNS is integrated
+// import "./profiles/DNSResolver.sol";
 import "./profiles/InterfaceResolver.sol";
 import "./profiles/NameResolver.sol";
 import "./profiles/PubkeyResolver.sol";
 import "./profiles/TextResolver.sol";
 import "./profiles/ExtendedResolver.sol";
 import "./Multicallable.sol";
-import "../wrapper/INameWrapper.sol";
+import "fns/wrapper/INameWrapper.sol";
 
 /**
  * A simple resolver anyone can use; only allows the owner of a node to set its
  * address.
  */
+    // TODO: Re-enable DNSResolver after DNS is integrated
+    // DNSResolver,
 contract PublicResolver is
     Multicallable,
     ABIResolver,
     AddrResolver,
     ContentHashResolver,
-    DNSResolver,
     InterfaceResolver,
     NameResolver,
     PubkeyResolver,
     TextResolver,
     ExtendedResolver
 {
-    ENS immutable ens;
+    IENS immutable ens;
     INameWrapper immutable nameWrapper;
     address immutable trustedETHController;
     address immutable trustedReverseRegistrar;
@@ -68,7 +70,7 @@ contract PublicResolver is
     );
 
     constructor(
-        ENS _ens,
+        IENS _ens,
         INameWrapper wrapperAddress,
         address _trustedETHController,
         address _trustedReverseRegistrar
@@ -150,7 +152,6 @@ contract PublicResolver is
             ABIResolver,
             AddrResolver,
             ContentHashResolver,
-            DNSResolver,
             InterfaceResolver,
             NameResolver,
             PubkeyResolver,
