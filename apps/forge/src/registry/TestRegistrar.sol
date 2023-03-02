@@ -1,6 +1,6 @@
 pragma solidity ^0.8.6;
 
-import "./interfaces/ENS.sol";
+import "./IENS.sol";
 
 /**
  * A registrar that allocates subdomains to the first person to claim them, but
@@ -9,7 +9,7 @@ import "./interfaces/ENS.sol";
 contract TestRegistrar {
     uint constant registrationPeriod = 4 weeks;
 
-    ENS public ens;
+    IENS public ens;
     bytes32 public rootNode;
     mapping (bytes32 => uint) public expiryTimes;
 
@@ -18,7 +18,7 @@ contract TestRegistrar {
      * @param ensAddr The address of the ENS registry.
      * @param node The node that this registrar administers.
      */
-    constructor(ENS ensAddr, bytes32 node) public {
+    constructor(IENS ensAddr, bytes32 node) {
         ens = ensAddr;
         rootNode = node;
     }

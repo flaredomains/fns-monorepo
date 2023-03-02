@@ -2,8 +2,8 @@
 pragma solidity ^0.8.6;
 pragma abicoder v2;
 
-import "../lib/forge-std/src/Test.sol";
-import "../src/ReverseRegistrar.sol";
+import "../../lib/forge-std/src/Test.sol";
+import "../../src/registry/ReverseRegistrar.sol";
 
 contract TestReverseRegistrar is Test {
     

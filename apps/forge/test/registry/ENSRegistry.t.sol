@@ -2,9 +2,9 @@
 pragma solidity ^0.8.6;
 pragma abicoder v2;
 
-import "../lib/forge-std/src/Test.sol";
-import "../src/ENSRegistry.sol";
-import "../lib/forge-std/src/console.sol";
+import "../../lib/forge-std/src/Test.sol";
+import "../../src/registry/ENSRegistry.sol";
+import "../../lib/forge-std/src/console.sol";
 
 contract TestENSRegistry is Test {
     ENSRegistry public ensRegistry;
@@ -104,7 +104,7 @@ contract TestENSRegistry is Test {
     //       the owner of an ENS record they don't own (one that has been delegated to them with
     //       3rd party rights)
     // TODO: Make a negative test for this same pattern
-    function testSetApprovalForAll() public {
+    function testAllowSetApprovalForAll() public {
         ensRegistry.setApprovalForAll(addr, true);
 
         vm.prank(addr);

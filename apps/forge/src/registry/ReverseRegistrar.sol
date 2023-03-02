@@ -1,6 +1,6 @@
 pragma solidity ^0.8.6;
 
-import "./interfaces/ENS.sol";
+import "./IENS.sol";
 
 abstract contract NameResolver {
     function setName(bytes32 node, string memory name) public virtual;
@@ -10,7 +10,7 @@ contract ReverseRegistrar {
     // namehash('addr.reverse')
     bytes32 public constant ADDR_REVERSE_NODE = 0x91d1777781884d03a6757a803996e38de2a42967fb37eeaca72729271025a9e2;
 
-    ENS public ens;
+    IENS public ens;
     NameResolver public defaultResolver;
 
     /**
@@ -18,7 +18,7 @@ contract ReverseRegistrar {
      * @param ensAddr The address of the ENS registry.
      * @param resolverAddr The address of the default reverse resolver.
      */
-    constructor(ENS ensAddr, NameResolver resolverAddr) public {
+    constructor(IENS ensAddr, NameResolver resolverAddr) {
         ens = ensAddr;
         defaultResolver = resolverAddr;
 
@@ -48,17 +48,17 @@ contract ReverseRegistrar {
      */
     function claimWithResolver(address owner, address resolver) public returns (bytes32) {
         bytes32 label = sha3HexAddress(msg.sender);
-        bytes32 node = keccak256(abi.encodePacked(ADDR_REVERSE_NODE, label));
-        address currentOwner = ens.owner(node);
+        bytes32 _node = keccak256(abi.encodePacked(ADDR_REVERSE_NODE, label));
+        address currentOwner = ens.owner(_node);
 
         // Update the resolver if required
-        if (resolver != address(0x0) && resolver != ens.resolver(node)) {
+        if (resolver != address(0x0) && resolver != ens.resolver(_node)) {
             // Transfer the name to us first if it's not already
             if (currentOwner != address(this)) {
                 ens.setSubnodeOwner(ADDR_REVERSE_NODE, label, address(this));
                 currentOwner = address(this);
             }
-            ens.setResolver(node, resolver);
+            ens.setResolver(_node, resolver);
         }
 
         // Update the owner if required
@@ -66,7 +66,7 @@ contract ReverseRegistrar {
             ens.setSubnodeOwner(ADDR_REVERSE_NODE, label, owner);
         }
 
-        return node;
+        return _node;
     }
 
     /**
@@ -77,9 +77,9 @@ contract ReverseRegistrar {
      * @return The ENS node hash of the reverse record.
      */
     function setName(string memory name) public returns (bytes32) {
-        bytes32 node = claimWithResolver(address(this), address(defaultResolver));
-        defaultResolver.setName(node, name);
-        return node;
+        bytes32 _node = claimWithResolver(address(this), address(defaultResolver));
+        defaultResolver.setName(_node, name);
+        return _node;
     }
 
     /**
