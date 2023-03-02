@@ -1,7 +1,7 @@
 pragma solidity ^0.8.4;
 
-import "../registry/IENS.sol";
 import "@openzeppelin/access/Ownable.sol";
+import "fns/registry/IENS.sol";
 import "./Controllable.sol";
 
 contract Root is Ownable, Controllable {

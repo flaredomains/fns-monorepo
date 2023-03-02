@@ -2,8 +2,8 @@
 pragma solidity ^0.8.6;
 pragma abicoder v2;
 
-import "../../lib/forge-std/src/Test.sol";
-import "../../src/registry/FIFSRegistrar.sol";
+import "forge-std/Test.sol";
+import "fns/registry/FIFSRegistrar.sol";
 
 contract TestFIFSRegistrar is Test {
     

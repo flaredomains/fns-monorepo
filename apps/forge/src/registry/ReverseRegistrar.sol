@@ -1,15 +1,15 @@
 pragma solidity ^0.8.6;
 
+import "@openzeppelin/access/Ownable.sol";
+import "fns/root/Controllable.sol";
 import "./IENS.sol";
 import "./IReverseRegistrar.sol";
-import "@openzeppelin/access/Ownable.sol";
-import "../root/Controllable.sol";
 
 abstract contract NameResolver {
     function setName(bytes32 node, string memory name) public virtual;
 }
-bytes32 constant lookup = 0x3031323334353637383961626364656600000000000000000000000000000000;
 
+bytes32 constant lookup = 0x3031323334353637383961626364656600000000000000000000000000000000;
 bytes32 constant ADDR_REVERSE_NODE = 0x91d1777781884d03a6757a803996e38de2a42967fb37eeaca72729271025a9e2;
 
 // namehash('addr.reverse')
@@ -23,21 +23,23 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
 
     /**
      * @dev Constructor
-     * @param ensAddr The address of the ENS registry.
+     * @param ensAddr               The address of the ENS registry.
+     * @param defaultResolverAddr   The address of the NameResolver to use as default.
      */
-    constructor(IENS ensAddr) {
+    constructor(IENS ensAddr, NameResolver defaultResolverAddr) {
         ens = ensAddr;
+        defaultResolver = defaultResolverAddr;
 
         // NOTE: This has been disabled because it pertains to migration. We will not have an owner
         //       of the ADDR_REVERSE_NODE by default, and thus no existing ReverseRegistrar to
         //       lookup
         // Assign ownership of the reverse record to our deployer
-        // ReverseRegistrar oldRegistrar = ReverseRegistrar(
-        //     ensAddr.owner(ADDR_REVERSE_NODE)
-        // );
-        // if (address(oldRegistrar) != address(0x0)) {
-        //     oldRegistrar.claim(msg.sender);
-        // }
+        ReverseRegistrar oldRegistrar = ReverseRegistrar(
+            ensAddr.owner(ADDR_REVERSE_NODE)
+        );
+        if (address(oldRegistrar) != address(0x0)) {
+            oldRegistrar.claim(msg.sender);
+        }
     }
 
     modifier authorised(address addr) {
