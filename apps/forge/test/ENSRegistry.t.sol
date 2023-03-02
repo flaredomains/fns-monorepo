@@ -69,4 +69,47 @@ contract TestENSRegistry is Test {
         vm.prank(address(0));
         ensRegistry.setSubnodeOwner(rootNode, label, addr);
     }
+
+    // Original ENS test: 'should allow setting the record' in ENSRegistryWithFallback
+    function testAllowSettingRecord() public {
+        address newOwner = address(1);
+        address newResolver = address(2);
+        uint64 newTTL = 3600;
+
+        ensRegistry.setRecord(rootNode, newOwner, newResolver, newTTL);
+        assertEq(ensRegistry.owner(rootNode), newOwner);
+        assertEq(ensRegistry.resolver(rootNode), newResolver);
+        assertEq(ensRegistry.ttl(rootNode), newTTL);
+    }
+
+    // Original ENS test: 'should allow setting subnode records' in ENSRegistryWithFallback
+    function testAllowSettingSubnodeRecords() public {
+        bytes32 subnodeLabel = sha256('label');
+        address newOwner = address(1);
+        address newResolver = address(2);
+        uint64 newTTL = 3600;
+
+        ensRegistry.setSubnodeRecord(rootNode, subnodeLabel, newOwner, newResolver, newTTL);
+
+        // Manually perform the same hashing alg that setSubnodeOwner performs (namehash?)
+        bytes32 subnode = keccak256(abi.encodePacked(rootNode, sha256('label')));
+
+        assertEq(ensRegistry.owner(subnode), newOwner);
+        assertEq(ensRegistry.resolver(subnode), newResolver);
+        assertEq(ensRegistry.ttl(subnode), newTTL);
+    }
+
+    // Original ENS test: 'should implement authorisations/operators' in ENSRegistryWithFallback
+    // NOTE: This has been rewritten to actually test that the new operator can succesfully update
+    //       the owner of an ENS record they don't own (one that has been delegated to them with
+    //       3rd party rights)
+    // TODO: Make a negative test for this same pattern
+    function testSetApprovalForAll() public {
+        ensRegistry.setApprovalForAll(addr, true);
+
+        vm.prank(addr);
+        ensRegistry.setOwner(rootNode, address(2));
+
+        assertEq(ensRegistry.owner(rootNode), address(2));
+    }
 }
