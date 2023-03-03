@@ -4,15 +4,14 @@ import "@openzeppelin/access/Ownable.sol";
 import "fns/root/Controllable.sol";
 import "./IENS.sol";
 import "./IReverseRegistrar.sol";
+import "fns/resolvers/profiles/NameResolver.sol";
 
-abstract contract NameResolver {
-    function setName(bytes32 node, string memory name) public virtual;
-}
 
-bytes32 constant lookup = 0x3031323334353637383961626364656600000000000000000000000000000000;
+/**
+* @dev The result of namehash('addr.reverse')
+*/
 bytes32 constant ADDR_REVERSE_NODE = 0x91d1777781884d03a6757a803996e38de2a42967fb37eeaca72729271025a9e2;
-
-// namehash('addr.reverse')
+bytes32 constant lookup = 0x3031323334353637383961626364656600000000000000000000000000000000;
 
 contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
     IENS public immutable ens;
@@ -23,12 +22,10 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
 
     /**
      * @dev Constructor
-     * @param ensAddr               The address of the ENS registry.
-     * @param defaultResolverAddr   The address of the NameResolver to use as default.
+     * @param ensAddr The address of the ENS registry.
      */
-    constructor(IENS ensAddr, NameResolver defaultResolverAddr) {
+    constructor(IENS ensAddr) {
         ens = ensAddr;
-        defaultResolver = defaultResolverAddr;
 
         // NOTE: This has been disabled because it pertains to migration. We will not have an owner
         //       of the ADDR_REVERSE_NODE by default, and thus no existing ReverseRegistrar to

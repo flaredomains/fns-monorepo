@@ -28,6 +28,11 @@ contract ENSRegistry is IENS {
      */
     constructor() {
         records[0x0].owner = msg.sender;
+
+        // TODO: Reconsider this approach. For now, it gives ownership to the creator
+        //       of the reverse node
+        // NOTE: namehash('reverse') => 0xa097f6721ce401e757d1223a763fef49b8b5f90bb18567ddb86fd205dff71d34
+        records[0xa097f6721ce401e757d1223a763fef49b8b5f90bb18567ddb86fd205dff71d34].owner = msg.sender;
     }
 
     /**
