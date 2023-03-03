@@ -146,6 +146,15 @@ contract TestReverseRegistrar is Test {
         assertEq(ensRegistry.owner(dummyOwnableReverseNode), address(this));
     }
 
+    // Original ENS test: 'setName'::'sets name records'
+    // Original ENS test: 'setName'::'event ReverseClaimed is emitted'
 
+    // Original ENS test: 'setNameForAddr'::'allows controller to set name records for other accounts'
+    // Original ENS test: 'setNameForAddr'::'event ReverseClaimed is emitted'
+    // Original ENS test: 'setNameForAddr'::'forbids non-controller if address is different from sender and not authorised'
+    // Original ENS test: 'setNameForAddr'::'allows name to be set for an address if the sender is the address'
+    // Original ENS test: 'setNameForAddr'::'allows name to be set for an address if the sender is authorised'
+    // Original ENS test: 'setNameForAddr'::'allows an owner() of a contract to claimWithResolverForAddr on behalf of the contract'
 
+    // Original ENS test: 'setController'::'forbid non-owner from setting a controller'
 }
