@@ -6,6 +6,7 @@ import "./IENS.sol";
 import "./IReverseRegistrar.sol";
 import "fns/resolvers/profiles/NameResolver.sol";
 
+import "forge-std/console.sol";
 
 /**
 * @dev The result of namehash('addr.reverse')
@@ -86,6 +87,12 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
         bytes32 reverseNode = keccak256(
             abi.encodePacked(ADDR_REVERSE_NODE, labelHash)
         );
+
+        console.log("claimForAddr::reverseNode");
+        console.logBytes32(reverseNode);
+        console.log("claimForAddr::labelHash");
+        console.logBytes32(labelHash);
+        
         emit ReverseClaimed(addr, reverseNode);
         ens.setSubnodeRecord(ADDR_REVERSE_NODE, labelHash, owner, resolver, 0);
         return reverseNode;
