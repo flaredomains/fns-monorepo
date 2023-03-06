@@ -11,25 +11,30 @@ import Subdomain from '../../../public/buttons_main_page/Subdomain.png'
 import Info from '../../../public/Info.svg'
 import Plus from '../../../public/Plus.svg'
 import Minus from '../../../public/Minus.svg'
+import Like from '../../../public/Like.svg'
+import Dislike from '../../../public/Dislike.svg'
+import X from '../../../public/X.svg'
+import Network from '../../../public/Network.svg'
 import Image from "next/image";
 
 export default function Result() {
 
-  const [available, setAvailable] = useState(true)
+  const [available, setAvailable] = useState(true);
+  const [isConnect, setIsConnect] = useState(false);
 
   
   return (
     <>
       <div className='min-h-screen w-screen'>
-        <div className='flex-col bg-[#0F172A] md:flex md:flex-row'>
+        <div className='flex-col bg-[#0F172A] lg:flex lg:flex-row'>
           {/* Left Side / Navbar */}
-          <div className='flex justify-between items-center py-3 px-4 w-full bg-gray-800 md:flex-col md:w-1/4 md:min-h-screen'>
+          <div className='flex justify-between items-center py-3 px-4 w-full bg-gray-800 lg:flex-col lg:w-1/4 lg:min-h-screen'>
             {/* Logo */}
-            <div className='md:border-b md:border-white/[.23] md:pl-16 md:pr-20 md:py-8'>
-              <Image className='h-8 w-32 md:h-14 md:w-56' src={Logo} alt="FNS" />
+            <div className='lg:border-b lg:border-white/[.23] lg:px-auto lg:py-8'>
+              <Image className='h-8 w-32 lg:h-14 lg:w-56' src={Logo} alt="FNS" />
             </div>
-            {/* Middle md:visible */}
-            <div className='hidden mt-8 mx-4 w-full md:flex md:flex-col md:mb-auto'>
+            {/* Middle lg:visible */}
+            <div className='hidden mt-8 mx-4 w-full lg:flex lg:flex-col lg:mb-auto'>
               <div className='flex items-center w-full h-12 px-3 py-2 rounded-md bg-gray-700 active:bg-gray-700'>
                 <Image className='h-6 w-6 mr-2' src={Search} alt="FNS" />
                 <p className='w-full bg-transparent font-semibold text-normal text-white focus:outline-none'>Search For Domain</p>
@@ -43,49 +48,49 @@ export default function Result() {
                 <p className='w-full bg-transparent font-semibold text-normal text-gray-500 focus:outline-none'>FAQ</p>
               </div>
             </div>
-            {/* Flare Image md:visible */}
-            <div className='hidden md:flex md:mb-10'>
+            {/* Flare Image lg:visible */}
+            <div className='hidden lg:flex lg:mb-10'>
               <div className='flex items-center w-full mt-auto h-12 px-3 py-2 bg-trasparent'>
                 <p className='w-full bg-transparent font-semibold text-lg text-white focus:outline-none'>Built on </p>
                 <Image className='h-7 w-20 ml-4' src={Flare} alt="FNS" />
               </div>
             </div>
-            {/* Hamburger md:hidden */}
-            <Image className='h-6 w-6 md:hidden' src={Hamburger_Icon} alt="FNS" /> 
+            {/* Hamburger lg:hidden */}
+            <Image className='h-6 w-6 lg:hidden' src={Hamburger_Icon} alt="FNS" /> 
           </div>
 
           {/* Main */}
-          <div className='flex-col mt-9 pb-8 md:mx-8 w-full min-h-screen'>
+          <div className='flex-col mt-9 pb-8 lg:mx-8 w-full min-h-screen'>
             {/* Three button Register, Details, Subdomain (TODO put Link) / Search Input (hidden mobile) */}
             <div className='flex justify-between items-center'>
               {/* Buttons div */}
-              <div className='flex justify-center items-center mx-auto md:mx-2'>
+              <div className='flex justify-center items-center mx-auto lg:mx-2'>
                 <div className='flex items-center h-12 px-4 py-3 mr-4 rounded-md bg-gray-700 active:bg-gray-700'>
-                  <Image className='h-3 w-3 md:h-5 md:w-5 mr-2' src={Account_Plus} alt="FNS" />
-                  <p className='w-full bg-transparent font-semibold text-sm md:text-normal text-white focus:outline-none'>Register</p>
+                  <Image className='h-3 w-3 lg:h-5 lg:w-5 mr-2' src={Account_Plus} alt="FNS" />
+                  <p className='w-full bg-transparent font-semibold text-sm lg:text-normal text-white focus:outline-none'>Register</p>
                 </div>
                 <div className='flex items-center h-12 px-5 py-3 mr-4 rounded-md bg-transparent active:bg-gray-700'>
                   <Image className='h-3 w-4 mr-2' src={Details} alt="FNS" />
-                  <p className='w-full bg-transparent font-semibold text-sm md:text-normal text-gray-500 focus:outline-none'>Details</p>
+                  <p className='w-full bg-transparent font-semibold text-sm lg:text-normal text-gray-500 focus:outline-none'>Details</p>
                 </div>
                 <div className='flex items-center h-12 px-2 py-3 rounded-md bg-transparent active:bg-gray-700'>
                   <Image className='h-4 w-4 mr-2' src={Subdomain} alt="FNS" />
-                  <p className='w-full bg-transparent font-semibold text-sm md:text-normal text-gray-500 focus:outline-none'>Subdomain</p>
+                  <p className='w-full bg-transparent font-semibold text-sm lg:text-normal text-gray-500 focus:outline-none'>Subdomain</p>
                 </div>
               </div>
               {/* Search */}
-              <div className='hidden md:flex items-center w-2/5 py-2 px-4 h-12 rounded-md bg-gray-700 border-2 border-gray-500'>
+              <div className='hidden lg:flex items-center w-2/5 py-2 px-4 h-12 rounded-md bg-gray-700 border-2 border-gray-500'>
                 <Image className='z-10 h-6 w-6 mr-2' src={Search} alt="FNS" />
                 <input type="text" className='w-full bg-transparent font-normal text-base text-white focus:outline-none placeholder:text-gray-300 placeholder:font-normal' placeholder='Search New Names or Addresses'/>
               </div>
             </div>
 
             {/* Main Content / Wallet connect (hidden mobile) */}
-            <div className='flex-col w-11/12 mx-auto md:flex-row md:w-full'>
+            <div className='flex-col w-11/12 mt-6 mx-auto lg:flex lg:flex-row lg:w-full'>
               {/* Domain Result */}
-              <div className='flex-col w-full mt-6 md:w-2/3'>
+              <div className='flex-col w-full lg:w-3/4 lg:mr-2'>
                 {/* Domain Container */}
-                <div className='flex justify-between items-center w-full rounded-t-lg h-28 bg-[#334155] px-9'>
+                <div className='flex justify-between items-center w-full rounded-t-lg h-28 bg-[#334155] px-9 mr-4'>
                   {/* Domain */}
                   <p className='text-white font-bold text-4xl'>neel.eth</p>
                   {/* Search Icon */}
@@ -102,12 +107,7 @@ export default function Result() {
                     <div className='flex-col bg-gray-800 px-8 pt-12'>
                       {/* Alert */}
                       <div className='flex w-full bg-[#F97316] py-3 px-5 rounded-lg'>
-                        <div className='h-4 w-4 mr-2'>
-                          {/* Like */}
-                          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9.64638 6.44444H13.3517C14.508 6.44444 15.2601 7.66138 14.743 8.69567L12.0208 14.1401C11.7573 14.6671 11.2186 15 10.6294 15H7.50454C7.37736 15 7.25065 14.9844 7.12726 14.9536L4.20193 14.2222M9.64638 6.44444V2.55556C9.64638 1.69645 8.94993 1 8.09082 1H8.01656C7.62802 1 7.31304 1.31498 7.31304 1.70352C7.31304 2.25909 7.14859 2.80223 6.84042 3.26449L4.20193 7.22222V14.2222M9.64638 6.44444H8.09082M4.20193 14.2222H2.64638C1.78727 14.2222 1.09082 13.5258 1.09082 12.6667V8C1.09082 7.14089 1.78727 6.44444 2.64638 6.44444H4.59082" stroke="#FFF7ED" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
-                          </svg>
-                        </div>
+                        <Image className='h-4 w-4 mr-2' src={Like} alt="FNS" />
                         <div className='flex-col'>
                           <p className='text-white font-semibold text-sm'>This name is available!</p>
                           <p className='text-white font-normal text-sm mt-2'>Please complete the form below to secure this domain for yourself.</p>
@@ -115,64 +115,62 @@ export default function Result() {
                       </div>
 
                       {/* Increment Selector */}
-                      <div className='flex flex-col md:flex-row justify-between items-center mt-9'>
+                      <div className='flex flex-col lg:flex-row justify-between items-center mt-9'>
 
                         {/* Registration Period */}
                         <div className='flex items-center'>
                           {/* - */}
                           <div className='bg-[#F97316] h-6 w-6 rounded-full text-white text-center mr-5 flex items-center justify-center'>
-                            {/* <p className='text-lg'>-</p> */}
                             <Image className='h-3 w-3' src={Minus} alt="FNS" />
                           </div>
                           {/* Text */}
                           <div className='flex-col'>
-                            <p className='text-white font-semibold text-3xl'>1 year</p>
-                            <p className='text-[#91A3B8] font-medium text-sm'>Registration Period</p>
+                            <p className='text-white font-semibold text-3xl lg:text-xl xl:text-3xl'>1 year</p>
+                            <p className='text-[#91A3B8] font-medium text-sm lg:text-xs xl:text-sm'>Registration Period</p>
                           </div>
                           {/* + */}
-                          <div className='bg-[#F97316] h-6 w-6 rounded-full text-white text-center ml-5 flex items-center justify-center'>
-                            {/* <p className='text-lg'>+</p> */}
+                          <div className='bg-[#F97316] h-6 w-6 rounded-full text-white text-center ml-5 lg:ml-1 flex items-center justify-center'>
                             <Image className='h-3 w-3' src={Plus} alt="FNS" />
                           </div>
                         </div>
 
                         {/* Registration price to pay */}
-                        <div className='flex-col mt-6 md:mt-0'>
-                          <p className='text-white font-semibold text-3xl'>0.003 ETH</p>
-                          <p className='text-[#91A3B8] font-medium text-sm'>Registration price to pay </p>
+                        <div className='flex-col mt-6 lg:mt-0'>
+                          <p className='text-white font-semibold text-3xl lg:text-xl xl:text-3xl'>0.003 ETH</p>
+                          <p className='text-[#91A3B8] font-medium text-sm lg:text-xs xl:text-sm'>Registration price to pay </p>
                         </div>
 
                         {/* Note */}
-                        <div className='flex justify-center items-center mt-6 md:mt-0 bg-[#334155] h-12 text-[#9cacc0] rounded-lg px-5 w-3/4 md:w-1/3'>
+                        <div className='flex justify-center items-center mt-6 lg:mt-0 bg-[#334155] h-12 text-[#9cacc0] rounded-lg px-5 w-3/4 lg:w-1/3'>
                           <Image className='h-5 w-5 mr-2' src={Info} alt="FNS" />
                           <p className='text-xs font-medium'>Increase period to avoid paying gas every year</p>
                         </div>
                       </div>
 
                       {/* Final price block */}
-                      <div className='flex flex-col items-center mt-9 h-96 w-full bg-[#334155] rounded-t-lg md:flex-row md:rounded-l-lg md:h-32'>
-                        <div className='bg-[#334155] flex flex-col items-center w-full md:w-2/3 md:flex-row'>
+                      <div className='flex flex-col items-center mt-9 h-96 w-full bg-[#334155] rounded-t-lg lg:flex-row lg:rounded-l-lg lg:h-32'>
+                        <div className='bg-[#334155] flex flex-col items-center w-full lg:w-2/3 lg:flex-row'>
                           {/* Estimated Total Price */}
-                          <div className='px-12 py-8 bg-[#334155] md:py-0'>
-                            <p className='text-[#91A3B8] font-medium text-sm'>Estimated Total Price</p>
-                            <p className='text-white font-semibold text-2xl'>0.003 ETH</p>
+                          <div className='px-12 py-8 bg-[#334155] lg:py-0'>
+                            <p className='text-[#91A3B8] font-medium text-sm lg:text-xs xl:text-sm'>Estimated Total Price</p>
+                            <p className='text-white font-semibold text-2xl lg:text-lg xl:text-2xl'>0.003 ETH</p>
                           </div>
                           {/* + */}
                           <div className='text-white text-xl'>
                             +
                           </div>
                           {/* Gas Fee (at most) */}
-                          <div className='px-12 py-8 bg-[#334155] md:py-0'>
-                            <p className='text-[#91A3B8] font-medium text-sm'>Gas Fee (at most)</p>
-                            <p className='text-white font-semibold text-2xl'>0.011 ETH</p>
+                          <div className='px-12 py-8 bg-[#334155] lg:py-0'>
+                            <p className='text-[#91A3B8] font-medium text-sm lg:text-xs xl:text-sm'>Gas Fee (at most)</p>
+                            <p className='text-white font-semibold text-2xl lg:text-lg xl:text-2xl'>0.011 ETH</p>
                           </div>
                         </div>
 
                         {/* Final Price */}
-                        <div className='flex flex-col text-center items-center w-full bg-[#F97316] h-32 py-6 rounded-b-lg md:rounded-bl-none md:rounded-r-lg md:w-1/3'>
-                          <div className='px-20 bg-[#F97316] flex flex-col justify-center items-center text-center md:px-10'>
+                        <div className='flex flex-col text-center items-center w-full bg-[#F97316] h-32 py-6 rounded-b-lg lg:rounded-bl-none lg:rounded-r-lg lg:w-1/3'>
+                          <div className='px-20 bg-[#F97316] flex flex-col justify-center items-center text-center lg:px-10'>
                             <p className='text-[#FED7AA] text-xs'>At most</p>
-                            <p className='text-white font-semibold text-2xl'>0.014 ETH</p>
+                            <p className='text-white font-semibold text-2xl lg:text-lg xl:text-2xl'>0.014 ETH</p>
                             <p className='text-[#FED7AA] text-xs'>Calculated to <span className='font-semibold text-white'>$21.65 USD</span></p>
                           </div>
                         </div>
@@ -180,15 +178,15 @@ export default function Result() {
                       </div>
 
                       {/* Steps title mobile hidden */}
-                      <div className='hidden md:flex items-center mt-12'>
+                      <div className='hidden lg:flex items-center mt-12'>
                         <div className='bg-[#F97316] h-8 w-8 rounded-full mr-4'/>
                         <p className='text-white font-semibold text-lg'>Registering requires 3 steps</p>
                       </div>
 
                       {/* Steps */}
-                      <div className='flex flex-col mt-10 md:flex-row w-full'>
+                      <div className='flex flex-col mt-10 lg:flex-row w-full'>
                         {/* 1 */}
-                        <div className='w-full flex-col justify-center items-center md:w-1/3'>
+                        <div className='w-full flex-col justify-center items-center lg:w-1/3'>
                           {/* Line and number */}
                           <div className='flex justify-center items-center w-full'>
                             {/* First half line */}
@@ -204,7 +202,7 @@ export default function Result() {
                           <p className='text-[#94A3B8] text-[0.625rem] mx-2 mt-4 text-center'>Your wallet will open and you will be asked to confirm the first of two transactions required for registration. If the second transaction is not processed within 7 days of the first, you will need to start again from step 1.</p>
                         </div>
                         {/* 2 */}
-                        <div className='w-full flex-col justify-center items-center mt-4 md:mt-0 md:w-1/3'>
+                        <div className='w-full flex-col justify-center items-center mt-4 lg:mt-0 lg:w-1/3'>
                           {/* Line and number */}
                           <div className='flex justify-center items-center w-full'>
                             {/* First half line */}
@@ -220,7 +218,7 @@ export default function Result() {
                           <p className='text-[#94A3B8] text-[0.625rem] mx-2 mt-4 text-center'>The waiting period is required to ensure another person hasn’t tried to register the same name and protect you after your request.</p>
                         </div>
                         {/* 3 */}
-                        <div className='w-full flex-col justify-center items-center mt-4 md:mt-0 md:w-1/3'>
+                        <div className='w-full flex-col justify-center items-center mt-4 lg:mt-0 lg:w-1/3'>
                           {/* Line and number */}
                           <div className='flex justify-center items-center w-full'>
                             {/* First half line */}
@@ -238,11 +236,13 @@ export default function Result() {
                       </div>
 
                       {/* Connect Wallet */}
-                      <div className='hidden mt-10 md:flex items-center w-full pb-12'>
+                      <div className='hidden mt-10 lg:flex items-center w-full pb-12'>
+                        {/* Info icon + Message */}
                         <div className='w-2/3 flex items-center bg-[#334155] h-12 rounded-lg text-[#9cacc0] px-5 mr-4'>
                           <Image className='h-4 w-4 mr-2' src={Info} alt="FNS" />
                           <p className='text-xs font-medium'>No wallet connected. Please connect to continue.</p>
                         </div>
+                        {/* Connect + */}
                         <div className='w-1/3 flex justify-center items-center bg-[#F97316] h-12 rounded-lg text-white px-auto'>
                           <p className='text-base font-semibold mr-2'>Connect</p>
                           <Image className='h-4 w-4' src={Plus} alt="FNS" />
@@ -250,7 +250,7 @@ export default function Result() {
                       </div>
 
                       {/* Mobile -- Request to Register */}
-                      <div className='md:hidden mt-10 flex items-center w-full pb-12'>
+                      <div className='lg:hidden mt-10 flex items-center w-full pb-12'>
                         <div className='w-full flex justify-center items-center bg-[#F97316] h-12 rounded-lg text-white px-auto'>
                           <p className='text-base font-semibold mr-2'>Request to Register</p>
                           <Image className='h-4 w-4' src={Plus} alt="FNS" />
@@ -260,6 +260,16 @@ export default function Result() {
                   </>
                   :
                   <>
+                    <div className='flex-col bg-gray-800 px-8 py-12'>
+                        {/* Alert */}
+                        <div className='flex w-full bg-[#F97316] py-3 px-5 rounded-lg'>
+                          <Image className='h-4 w-4 mr-2 mt-1' src={Dislike} alt="FNS" />
+                          <div className='flex-col'>
+                            <p className='text-white font-semibold text-sm'>This name is already registered.</p>
+                            <p className='text-white font-normal text-sm mt-2'>Please check the Details tab to see when this domain will free up.</p>
+                          </div>
+                        </div>
+                    </div>
                   </>
                 }
                 
@@ -268,7 +278,39 @@ export default function Result() {
               </div>
 
               {/* Wallet connect */}
-              <div className='hidden md:flex md:w-1/3'>
+              <div className='hidden lg:flex lg:w-1/4'>
+                <div className='flex-col justify-center items-center w-full h-80 bg-gray-800 rounded-lg px-1 xl:px-7'>
+                  {
+                    isConnect ? 
+                    <>
+                      {/* Badge -- Icon wallet connected */}
+                      <div className='mt-20 flex justify-center items-center bg-[#334155] h-6 text-white px-auto rounded-full mx-auto'>
+                        <Image className='h-4 w-4 mr-2' src={Network} alt="FNS" />
+                        <p className='text-xs font-medium'>Main Network</p>
+                      </div>
+                      {/* Messages */}
+                      <p className='text-white font-bold text-xl mt-2 text-center'>Your wallet is connected</p>
+                      <p className='text-[#94A3B8] text-[0.625rem] mt-2 text-center'>Address</p>
+                    </>
+                    :
+                    <>
+                      {/* Badge -- Icon wallet not connected */}
+                      <div className='mt-20 flex justify-center items-center bg-[#334155] h-6 text-white px-auto rounded-full mx-auto'>
+                        <Image className='h-4 w-4 mr-2' src={X} alt="FNS" />
+                        <p className='text-xs font-medium'>Wallet Not Connected</p>
+                      </div>
+                      {/* Messages */}
+                      <p className='text-white font-bold text-xl mt-2 text-center'>Your wallet is not connected</p>
+                      <p className='text-[#94A3B8] text-[0.625rem] mt-2 text-center'>Please connect your wallet to register your FNS domain.</p>
+                      {/* Connect Wallet */}
+                      <div className='mt-4 mb-12 flex justify-center items-center text-center bg-[#F97316] h-8 rounded-lg text-white px-auto mx-auto'>
+                        <p className='text-base font-semibold mr-2'>Connect Your Wallet</p>
+                        <Image className='h-4 w-4' src={Plus} alt="FNS" />
+                      </div>
+                    </>
+                  }
+                  
+                </div>
               </div>
             </div>
           </div>
