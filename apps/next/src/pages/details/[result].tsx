@@ -3,7 +3,7 @@ import Register from '../../../components/Register'
 import Side_Navbar from '../../../components/Side_Navbar'
 import { useRouter } from 'next/router'
 import Pages_buttons from '../../../components/Pages_buttons'
-import Details from '../../../components/Details'
+import Details from '../../../components/Details/Details'
 
 export default function Result() {
   const [available, setAvailable] = useState(true)
