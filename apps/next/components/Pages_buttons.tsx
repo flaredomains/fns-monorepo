@@ -100,7 +100,7 @@ function Pages_buttons({ result, path }: any) {
           <Image className='z-10 h-6 w-6 mr-2' src={Search} alt='FNS' />
           <input
             type='text'
-            className='w-full bg-transparent font-normal text-base text-white focus:outline-none placeholder:text-gray-300 placeholder:font-normal'
+            className='w-full bg-transparent font-normal text-base text-white border-0 focus:outline-none placeholder:text-gray-300 placeholder:font-normal'
             placeholder='Search New Names or Addresses'
           />
         </div>

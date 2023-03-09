@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import Register from '../../../components/Register'
 import Side_Navbar from '../../../components/Side_Navbar'
 import { useRouter } from 'next/router'
 import Pages_buttons from '../../../components/Pages_buttons'
+import Subdomains from '../../../components/Subdomains'
 
 export default function Result() {
   const [available, setAvailable] = useState(true)
   const [isConnect, setIsConnect] = useState(false)
+  const [arrSubdomains, setArrSubdomains] = useState([[1], [2], [3]])
 
   const [result, setResult] = useState<String>('')
 
@@ -35,10 +36,10 @@ export default function Result() {
             {/* Three button Register, Details, Subdomain / Search Input (hidden mobile) */}
             <Pages_buttons result={result} path={path} />
 
-            <Register
-              available={available}
+            <Subdomains
               isConnect={isConnect}
               result={result}
+              arrSubdomains={arrSubdomains}
             />
           </div>
         </div>

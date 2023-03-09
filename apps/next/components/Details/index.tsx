@@ -13,7 +13,7 @@ export default function Details({
   isConnect: any
   result: String
 }) {
-  const date = new Date()
+  const date = new Date(1678273065000)
 
   return (
     <>
