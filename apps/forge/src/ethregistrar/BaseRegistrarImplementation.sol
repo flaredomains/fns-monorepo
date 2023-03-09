@@ -186,7 +186,7 @@ contract BaseRegistrarImplementation is ERC721, IBaseRegistrar, Ownable {
 
     function supportsInterface(
         bytes4 interfaceID
-    ) public view override(ERC721, IERC165) returns (bool) {
+    ) public pure override(ERC721, IERC165) returns (bool) {
         return
             interfaceID == INTERFACE_META_ID ||
             interfaceID == ERC721_ID ||
