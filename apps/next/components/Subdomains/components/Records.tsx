@@ -4,13 +4,13 @@ import Plus from '../../../public/Plus.svg'
 import Delete from '../../../public/Delete.svg'
 import Image from 'next/image'
 
-const listAddresses = [
+const listAddresses: Array<{ leftText: String; rightText: String }> = [
   { leftText: 'BTC', rightText: '' },
   { leftText: 'LTC', rightText: '' },
   { leftText: 'DOGE', rightText: '' },
 ]
 
-const listTextRecords = [
+const listTextRecords: Array<{ leftText: String; rightText: String }> = [
   { leftText: 'URL', rightText: '' },
   { leftText: 'Avatar', rightText: '' },
   { leftText: 'Description', rightText: '' },
@@ -25,11 +25,60 @@ const listTextRecords = [
   { leftText: 'eth.ens.delegate', rightText: '' },
 ]
 
+const Info = ({
+  leftText,
+  rightText,
+  index,
+  recordsEditMode,
+  isAddressList,
+  deleteButton,
+}: {
+  leftText: String
+  rightText: String
+  index: number
+  recordsEditMode: boolean
+  isAddressList: boolean
+  deleteButton: (isAddressList: boolean, index: number) => void
+}) => {
+  return (
+    <>
+      <div className='flex flex-col mb-3 lg:flex-row lg:items-center'>
+        <p className='w-32 text-white font-medium text-xs mr-6'>{leftText}</p>
+        {!recordsEditMode && (
+          <p className='text-gray-400 font-medium text-xs mt-2 lg:mt-0'>
+            {rightText ? rightText : 'Not Set'}
+          </p>
+        )}
+        {recordsEditMode && (
+          <div className='flex items-center mt-2 lg:mt-0'>
+            <div className='h-5 w-72 bg-gray-700 border border-gray-500 rounded-md mr-4 lg:w-48 xl:w-72' />
+            <Image
+              onClick={() => deleteButton(isAddressList, index)}
+              className='h-5 w-5 cursor-pointer'
+              src={Delete}
+              alt='FNS'
+            />
+          </div>
+        )}
+      </div>
+    </>
+  )
+}
+
 export default function Records({ address }: { address: String }) {
-  const [recordsEditMode, setRecordsEditMode] = useState(false)
+  const [recordsEditMode, setRecordsEditMode] = useState<boolean>(false)
+  const [arrAddresses, setArrAddresses] =
+    useState<Array<{ leftText: String; rightText: String }>>(listAddresses)
+  const [arrTextRecords, setArrTextRecords] =
+    useState<Array<{ leftText: String; rightText: String }>>(listTextRecords)
+  const [copyArrAddr, setCopyArrAddr] =
+    useState<Array<{ leftText: String; rightText: String }>>(listAddresses)
+  const [copyArrTextRecords, setCopyArrTextRecords] =
+    useState<Array<{ leftText: String; rightText: String }>>(listTextRecords)
 
   const [isLarge, setisLarge] = useState(false)
 
+  // UseEffect for resize the address when viewport become to small
   useEffect(() => {
     const handleResize = () => {
       setisLarge(window.innerWidth >= 1280)
@@ -42,6 +91,36 @@ export default function Records({ address }: { address: String }) {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  // Save the REAL array in a copy
+  function editMode() {
+    setCopyArrAddr(arrAddresses)
+    setCopyArrTextRecords(arrTextRecords)
+    setRecordsEditMode(true)
+  }
+
+  // Change the REAL array with the copy one
+  function save() {
+    setArrAddresses(copyArrAddr)
+    setArrTextRecords(copyArrTextRecords)
+    setRecordsEditMode(false)
+  }
+
+  // Return to normal mode without save
+  function cancel() {
+    setCopyArrAddr(arrAddresses)
+    setCopyArrTextRecords(arrTextRecords)
+    setRecordsEditMode(false)
+  }
+
+  // Delete the element from list
+  function deleteButton(isAddressList: boolean, index: number) {
+    if (isAddressList) {
+      setCopyArrAddr(copyArrAddr.filter((_, i) => i !== index))
+    } else {
+      setCopyArrTextRecords(copyArrTextRecords.filter((_, i) => i !== index))
+    }
+  }
+
   return (
     <>
       {/* Records / Addresses */}
@@ -50,11 +129,11 @@ export default function Records({ address }: { address: String }) {
           <div className='flex-col justify-between mb-10 md:flex md:flex-row'>
             {/* Records */}
             <h1 className='text-white text-2xl font-semibold'>Records</h1>
-            {/* Add/Edit Record */}
+            {/* Add/Edit Record Desktop */}
             {!recordsEditMode && (
               <button
-                onClick={() => setRecordsEditMode(true)}
-                className='flex justify-center items-center text-center bg-[#F97316] h-8 w-1/2 rounded-lg text-white px-auto mt-5 md:w-1/4 lg:mt-0 lg:ml-auto'
+                onClick={() => editMode()}
+                className='justify-center items-center hidden text-center bg-[#F97316] h-8 w-1/2 rounded-lg text-white px-auto mt-5 md:w-1/4 lg:flex lg:mt-0 lg:ml-auto'
               >
                 <p className='text-xs font-medium mr-2'>Add/Edit Record</p>
                 <Image className='h-4 w-4' src={Plus} alt='FNS' />
@@ -62,15 +141,16 @@ export default function Records({ address }: { address: String }) {
             )}
             {recordsEditMode && (
               <>
-                <div className='flex items-center mt-5 lg:mt-0 lg:ml-auto'>
+                <div className='items-center mt-5 hidden lg:flex lg:mt-0 lg:ml-auto'>
+                  {/* Cancel */}
                   <button
-                    onClick={() => setRecordsEditMode(false)}
+                    onClick={() => cancel()}
                     className='flex items-center justify-center px-3 py-2 border border-gray-400 rounded-lg mr-2'
                   >
                     <p className='text-gray-400 text-medium text-xs'>Cancel</p>
                   </button>
                   <button
-                    onClick={() => setRecordsEditMode(false)}
+                    onClick={() => save()}
                     className='flex justify-center items-center text-center bg-[#F97316] px-3 py-2 rounded-lg text-white border border-[#F97316] lg:ml-auto'
                   >
                     <p className='text-xs font-medium'>Save</p>
@@ -107,30 +187,16 @@ export default function Records({ address }: { address: String }) {
                 )} */}
                 </div>
               </div>
-              {listAddresses.map((item, index) => (
-                <>
-                  <div className='flex flex-col mb-3 lg:flex-row lg:items-center'>
-                    <p className='w-32 text-white font-medium text-xs mr-6'>
-                      {item.leftText}
-                    </p>
-                    {!recordsEditMode && (
-                      <p className='text-gray-400 font-medium text-xs mt-2 lg:mt-0'>
-                        {item.rightText ? item.rightText : 'Not Set'}
-                      </p>
-                    )}
-                    {recordsEditMode && (
-                      <div className='flex items-center mt-2 lg:mt-0'>
-                        <div className='h-5 w-72 bg-gray-700 border border-gray-500 rounded-md mr-4 lg:w-48 xl:w-72' />
-                        <Image
-                          onClick={() => listAddresses.splice(index, 1)}
-                          className='h-5 w-5 cursor-pointer'
-                          src={Delete}
-                          alt='FNS'
-                        />
-                      </div>
-                    )}
-                  </div>
-                </>
+              {copyArrAddr.map((item, index) => (
+                <Info
+                  key={index}
+                  leftText={item.leftText}
+                  rightText={item.rightText}
+                  index={index}
+                  recordsEditMode={recordsEditMode}
+                  isAddressList={true}
+                  deleteButton={deleteButton}
+                />
               ))}
             </div>
           </div>
@@ -160,35 +226,48 @@ export default function Records({ address }: { address: String }) {
                   />
                 </div>
               </div>
-              {listTextRecords.map((item, index) => (
-                <>
-                  <div className='flex flex-col mb-3 lg:flex-row lg:items-center'>
-                    <p className='w-32 text-white font-medium text-xs mr-6'>
-                      {item.leftText}
-                    </p>
-
-                    {!recordsEditMode && (
-                      <p className='text-gray-400 font-medium text-xs mt-2 lg:mt-0'>
-                        {item.rightText ? item.rightText : 'Not Set'}
-                      </p>
-                    )}
-
-                    {recordsEditMode && (
-                      <div className='flex items-center mt-2 lg:mt-0'>
-                        <div className='h-5 w-72 bg-gray-700 border border-gray-500 rounded-md mr-4 lg:w-48 xl:w-72' />
-                        <Image
-                          onClick={() => listTextRecords.splice(index, 1)}
-                          className='h-5 w-5 cursor-pointer'
-                          src={Delete}
-                          alt='FNS'
-                        />
-                      </div>
-                    )}
-                  </div>
-                </>
+              {copyArrTextRecords.map((item, index) => (
+                <Info
+                  key={index}
+                  leftText={item.leftText}
+                  rightText={item.rightText}
+                  index={index}
+                  recordsEditMode={recordsEditMode}
+                  isAddressList={false}
+                  deleteButton={deleteButton}
+                />
               ))}
             </div>
           </div>
+          {/* Add/Edit Record Mobile */}
+          {!recordsEditMode && (
+            <button
+              onClick={() => editMode()}
+              className='flex justify-center items-center text-center bg-[#F97316] h-8 w-1/2 rounded-lg text-white px-auto mt-5 md:w-1/4 lg:hidden lg:mt-0 lg:ml-auto'
+            >
+              <p className='text-xs font-medium mr-2'>Add/Edit Record</p>
+              <Image className='h-4 w-4' src={Plus} alt='FNS' />
+            </button>
+          )}
+          {recordsEditMode && (
+            <>
+              <div className='flex items-center mt-5 lg:mt-0 lg:ml-auto lg:hidden'>
+                {/* Cancel */}
+                <button
+                  onClick={() => cancel()}
+                  className='flex items-center justify-center px-3 py-2 border border-gray-400 rounded-lg mr-2'
+                >
+                  <p className='text-gray-400 text-medium text-xs'>Cancel</p>
+                </button>
+                <button
+                  onClick={() => save()}
+                  className='flex justify-center items-center text-center bg-[#F97316] px-3 py-2 rounded-lg text-white border border-[#F97316] lg:ml-auto'
+                >
+                  <p className='text-xs font-medium'>Save</p>
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </>
     </>
