@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 
-function Domain_Select() {
+function Domain_Select({ result }: { result: String }) {
   return (
     <>
       {/* Domain Container */}
       <div className='flex justify-between items-center w-full rounded-t-lg h-28 bg-[#334155] px-9 mr-4'>
         {/* Domain */}
-        <p className='text-white font-bold text-4xl'>neel.eth</p>
+        <p className='text-white font-bold text-4xl'>{result}</p>
         {/* Search Icon */}
         <div className='h-7 w-7 mr-1'>
           <svg

@@ -22,7 +22,7 @@ export default function Details({
         {/* Domain Result */}
         <div className='flex-col w-full lg:w-3/4 lg:mr-2'>
           {/* Domain Container */}
-          <Domain_Select />
+          <Domain_Select result={result} />
 
           <Info
             available={available}

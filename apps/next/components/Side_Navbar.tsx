@@ -6,6 +6,7 @@ import Account from '../public/Account.png'
 import FAQ from '../public/FAQ.png'
 import Hamburger_Icon from '../public/Hamburger_Icon.png'
 import Image from 'next/image'
+import Link from 'next/link'
 
 function Side_Navbar() {
   return (
@@ -13,9 +14,15 @@ function Side_Navbar() {
       {/* Left Side / Navbar */}
       <div className='flex justify-between items-center py-3 px-4 w-full bg-gray-800 lg:flex-col lg:w-1/4 lg:min-h-screen'>
         {/* Logo */}
-        <div className='lg:border-b lg:border-white/[.23] lg:px-auto lg:py-8'>
-          <Image className='h-8 w-32 lg:h-14 lg:w-56' src={Logo} alt='FNS' />
-        </div>
+        <Link
+          href={{
+            pathname: '/',
+          }}
+        >
+          <div className='lg:border-b lg:border-white/[.23] lg:px-auto lg:py-8'>
+            <Image className='h-8 w-32 lg:h-14 lg:w-56' src={Logo} alt='FNS' />
+          </div>
+        </Link>
         {/* Middle lg:visible */}
         <div className='hidden mt-8 mx-4 w-full lg:flex lg:flex-col lg:mb-auto'>
           {/* Search For Domain -- TODO Link */}

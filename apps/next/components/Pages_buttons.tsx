@@ -51,7 +51,7 @@ const Button = (props: {
       }}
     >
       <button
-        className={`flex items-center ${props.button_style} hover:bg-gray-600 [&>p]:hover:text-white rounded-md`}
+        className={`flex items-center ${props.button_style} hover:bg-gray-600 [&>p]:hover:text-white rounded-md hover:scale-110 transform transition duration-300 ease-out`}
       >
         <Image className={props.image_style} src={props.src} alt='FNS' />
         <p

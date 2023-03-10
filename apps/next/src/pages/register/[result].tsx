@@ -5,8 +5,8 @@ import { useRouter } from 'next/router'
 import Pages_buttons from '../../../components/Pages_buttons'
 
 export default function Result() {
-  const [available, setAvailable] = useState(true)
-  const [isConnect, setIsConnect] = useState(false)
+  const [available, setAvailable] = useState<boolean>(true)
+  const [isConnect, setIsConnect] = useState<boolean>(false)
 
   const [result, setResult] = useState<String>('')
   const [path, setPath] = useState<String>('')
