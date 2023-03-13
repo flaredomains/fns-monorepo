@@ -21,9 +21,9 @@ export default function Subdomains({
   return (
     <>
       {/* Main Content / Wallet connect (hidden mobile) */}
-      <div className='flex-col w-11/12 mt-6 mx-auto lg:flex lg:flex-row lg:w-full'>
+      <div className="flex-col w-11/12 mt-6 mx-auto lg:flex lg:flex-row lg:w-full">
         {/* Domain Result */}
-        <div className='flex-col w-full lg:w-3/4 lg:mr-2'>
+        <div className="flex-col w-full lg:w-3/4 lg:mr-2">
           {/* Domain Container */}
           <Domain_Select result={result} />
 

@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import Register from '../../../components/Register'
 import Side_Navbar from '../../../components/Side_Navbar'
 import { useRouter } from 'next/router'
-import Pages_buttons from '../../../components/Pages_buttons'
+import MyAccount from '../../../components/MyAccount'
 
-export default function Result() {
-  const [available, setAvailable] = useState<boolean>(true)
-  const [isConnect, setIsConnect] = useState<boolean>(false)
+export default function My_Account() {
+  const [isConnect, setIsConnect] = useState(false)
+  const [arrSubdomains, setArrSubdomains] = useState([[1], [2], [3]])
 
   const [result, setResult] = useState<String>('')
+
   const [path, setPath] = useState<String>('')
 
   const router = useRouter()
@@ -20,7 +20,7 @@ export default function Result() {
     const path = router.pathname as String
     setPath(path)
     setResult(result)
-  }, [router.isReady, router.query])
+  }, [router.isReady])
 
   return (
     <>
@@ -31,14 +31,7 @@ export default function Result() {
 
           {/* Register */}
           <div className="flex-col mt-9 pb-8 lg:mx-8 w-full min-h-screen">
-            {/* Three button Register, Details, Subdomain / Search Input (hidden mobile) */}
-            <Pages_buttons result={result} path={path} />
-
-            <Register
-              available={available}
-              isConnect={isConnect}
-              result={result}
-            />
+            <MyAccount isConnect={isConnect} arrSubdomains={arrSubdomains} />
           </div>
         </div>
       </div>

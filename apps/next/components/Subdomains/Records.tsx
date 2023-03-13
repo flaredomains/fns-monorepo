@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import Clipboard_copy from '../../../public/Clipboard_copy.svg'
-import Plus from '../../../public/Plus.svg'
-import Delete from '../../../public/Delete.svg'
+import Clipboard_copy from '../../public/Clipboard_copy.svg'
+import Plus from '../../public/Plus.svg'
+import Delete from '../../public/Delete.svg'
 import Image from 'next/image'
 
 const listAddresses: Array<{ leftText: String; rightText: String }> = [
@@ -42,21 +42,21 @@ const Info = ({
 }) => {
   return (
     <>
-      <div className='flex flex-col mb-3 lg:flex-row lg:items-center'>
-        <p className='w-32 text-white font-medium text-xs mr-6'>{leftText}</p>
+      <div className="flex flex-col mb-3 lg:flex-row lg:items-center">
+        <p className="w-32 text-white font-medium text-xs mr-6">{leftText}</p>
         {!recordsEditMode && (
-          <p className='text-gray-400 font-medium text-xs mt-2 lg:mt-0'>
+          <p className="text-gray-400 font-medium text-xs mt-2 lg:mt-0">
             {rightText ? rightText : 'Not Set'}
           </p>
         )}
         {recordsEditMode && (
-          <div className='flex items-center mt-2 lg:mt-0'>
-            <div className='h-5 w-72 bg-gray-700 border border-gray-500 rounded-md mr-4 lg:w-48 xl:w-72' />
+          <div className="flex items-center mt-2 lg:mt-0">
+            <div className="h-5 w-72 bg-gray-700 border border-gray-500 rounded-md mr-4 lg:w-48 xl:w-72" />
             <Image
               onClick={() => deleteButton(isAddressList, index)}
-              className='h-5 w-5 cursor-pointer'
+              className="h-5 w-5 cursor-pointer"
               src={Delete}
-              alt='FNS'
+              alt="FNS"
             />
           </div>
         )}
@@ -125,60 +125,60 @@ export default function Records({ address }: { address: String }) {
     <>
       {/* Records / Addresses */}
       <>
-        <div className='flex-col bg-gray-800 px-8 pb-14'>
-          <div className='flex-col justify-between mb-10 md:flex md:flex-row'>
+        <div className="flex-col bg-gray-800 px-8 pb-14">
+          <div className="flex-col justify-between mb-10 md:flex md:flex-row">
             {/* Records */}
-            <h1 className='text-white text-2xl font-semibold'>Records</h1>
+            <h1 className="text-white text-2xl font-semibold">Records</h1>
             {/* Add/Edit Record Desktop */}
             {!recordsEditMode && (
               <button
                 onClick={() => editMode()}
-                className='justify-center items-center hidden text-center bg-[#F97316] h-8 w-1/2 rounded-lg text-white px-auto mt-5 md:w-1/4 lg:flex lg:mt-0 lg:ml-auto'
+                className="justify-center items-center hidden text-center bg-[#F97316] h-8 w-1/2 rounded-lg text-white px-auto mt-5 hover:scale-105 transform transition duration-300 ease-out md:w-1/4 lg:flex lg:mt-0 lg:ml-auto"
               >
-                <p className='text-xs font-medium mr-2'>Add/Edit Record</p>
-                <Image className='h-4 w-4' src={Plus} alt='FNS' />
+                <p className="text-xs font-medium mr-2">Add/Edit Record</p>
+                <Image className="h-4 w-4" src={Plus} alt="FNS" />
               </button>
             )}
             {recordsEditMode && (
               <>
-                <div className='items-center mt-5 hidden lg:flex lg:mt-0 lg:ml-auto'>
+                <div className="items-center mt-5 hidden lg:flex lg:mt-0 lg:ml-auto">
                   {/* Cancel */}
                   <button
                     onClick={() => cancel()}
-                    className='flex items-center justify-center px-3 py-2 border border-gray-400 rounded-lg mr-2'
+                    className="flex items-center justify-center px-3 py-2 border border-gray-400 rounded-lg mr-2 hover:scale-105 transform transition duration-300 ease-out"
                   >
-                    <p className='text-gray-400 text-medium text-xs'>Cancel</p>
+                    <p className="text-gray-400 text-medium text-xs">Cancel</p>
                   </button>
                   <button
                     onClick={() => save()}
-                    className='flex justify-center items-center text-center bg-[#F97316] px-3 py-2 rounded-lg text-white border border-[#F97316] lg:ml-auto'
+                    className="flex justify-center items-center text-center bg-[#F97316] px-3 py-2 rounded-lg text-white border border-[#F97316] hover:scale-105 transform transition duration-300 ease-out lg:ml-auto"
                   >
-                    <p className='text-xs font-medium'>Save</p>
+                    <p className="text-xs font-medium">Save</p>
                   </button>
                 </div>
               </>
             )}
           </div>
-          <div className='flex flex-col lg:flex-row'>
+          <div className="flex flex-col lg:flex-row">
             {/* Addresses */}
-            <h2 className='text-white text-xl font-semibold w-32 mr-10 mb-4 lg:mb-0'>
+            <h2 className="text-white text-xl font-semibold w-32 mr-10 mb-4 lg:mb-0">
               Addresses
             </h2>
-            <div className='flex-col items-center'>
+            <div className="flex-col items-center">
               {/* XRP */}
-              <div className='flex flex-col mb-3 lg:flex-row'>
-                <p className='w-32 text-white font-medium text-xs mr-6'>XRP</p>
-                <div className='flex items-center mt-2 lg:mt-0'>
-                  <p className='text-[#F97316] font-medium text-xs mr-3'>
+              <div className="flex flex-col mb-3 lg:flex-row">
+                <p className="w-32 text-white font-medium text-xs mr-6">XRP</p>
+                <div className="flex items-center mt-2 lg:mt-0">
+                  <p className="text-[#F97316] font-medium text-xs mr-3">
                     {isLarge
                       ? address
                       : `${address.slice(0, 6)}...${address.slice(-4)}`}
                   </p>
                   <Image
-                    className='h-4 w-4 cursor-pointer'
+                    className="h-4 w-4 cursor-pointer"
                     // onClick={handleCopy}
                     src={Clipboard_copy}
-                    alt='FNS'
+                    alt="FNS"
                   />
                   {/* {copied && (
                   <div className='bg-gray-400 text-white text-xs py-1 px-2 rounded bottom-full left-1/2 transform -translate-x-1/2 -translate-y-1'>
@@ -201,28 +201,28 @@ export default function Records({ address }: { address: String }) {
             </div>
           </div>
         </div>
-        <div className='flex-col bg-gray-800 px-8 pb-14'>
-          <div className='flex flex-col lg:flex-row'>
+        <div className="flex-col bg-gray-800 px-8 pb-14">
+          <div className="flex flex-col lg:flex-row">
             {/* Text Records */}
-            <h2 className='text-white text-xl font-semibold w-32 mr-10 mb-4 lg:mb-0'>
+            <h2 className="text-white text-xl font-semibold w-32 mr-10 mb-4 lg:mb-0">
               Text Records
             </h2>
-            <div className='flex-col items-center'>
-              <div className='flex flex-col mb-3 lg:flex-row'>
+            <div className="flex-col items-center">
+              <div className="flex flex-col mb-3 lg:flex-row">
                 {/* Email */}
-                <p className='w-32 text-white font-medium text-xs mr-6'>
+                <p className="w-32 text-white font-medium text-xs mr-6">
                   Email
                 </p>
-                <div className='flex items-center mt-2 lg:mt-0'>
-                  <p className='text-[#F97316] font-medium text-xs mr-3'>
+                <div className="flex items-center mt-2 lg:mt-0">
+                  <p className="text-[#F97316] font-medium text-xs mr-3">
                     {isLarge
                       ? address
                       : `${address.slice(0, 6)}...${address.slice(-4)}`}
                   </p>
                   <Image
-                    className='h-4 w-4 cursor-pointer'
+                    className="h-4 w-4 cursor-pointer"
                     src={Clipboard_copy}
-                    alt='FNS'
+                    alt="FNS"
                   />
                 </div>
               </div>
@@ -243,27 +243,27 @@ export default function Records({ address }: { address: String }) {
           {!recordsEditMode && (
             <button
               onClick={() => editMode()}
-              className='flex justify-center items-center text-center bg-[#F97316] h-8 w-1/2 rounded-lg text-white px-auto mt-5 md:w-1/4 lg:hidden lg:mt-0 lg:ml-auto'
+              className="flex justify-center items-center text-center bg-[#F97316] h-8 w-1/2 rounded-lg text-white px-auto mt-5 md:w-1/4 lg:hidden lg:mt-0 lg:ml-auto"
             >
-              <p className='text-xs font-medium mr-2'>Add/Edit Record</p>
-              <Image className='h-4 w-4' src={Plus} alt='FNS' />
+              <p className="text-xs font-medium mr-2">Add/Edit Record</p>
+              <Image className="h-4 w-4" src={Plus} alt="FNS" />
             </button>
           )}
           {recordsEditMode && (
             <>
-              <div className='flex items-center mt-5 lg:mt-0 lg:ml-auto lg:hidden'>
+              <div className="flex items-center mt-5 lg:mt-0 lg:ml-auto lg:hidden">
                 {/* Cancel */}
                 <button
                   onClick={() => cancel()}
-                  className='flex items-center justify-center px-3 py-2 border border-gray-400 rounded-lg mr-2'
+                  className="flex items-center justify-center px-3 py-2 border border-gray-400 rounded-lg mr-2"
                 >
-                  <p className='text-gray-400 text-medium text-xs'>Cancel</p>
+                  <p className="text-gray-400 text-medium text-xs">Cancel</p>
                 </button>
                 <button
                   onClick={() => save()}
-                  className='flex justify-center items-center text-center bg-[#F97316] px-3 py-2 rounded-lg text-white border border-[#F97316] lg:ml-auto'
+                  className="flex justify-center items-center text-center bg-[#F97316] px-3 py-2 rounded-lg text-white border border-[#F97316] lg:ml-auto"
                 >
-                  <p className='text-xs font-medium'>Save</p>
+                  <p className="text-xs font-medium">Save</p>
                 </button>
               </div>
             </>

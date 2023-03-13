@@ -7,22 +7,22 @@ import SubdomainLine from './SubdomainLine'
 const AddSubdomain = ({ arrSubdomains }: { arrSubdomains: Array<any> }) => {
   return (
     <>
-      <div className='flex-col lg:flex lg:flex-row items-center bg-gray-800 px-8 py-12'>
+      <div className="flex-col lg:flex lg:flex-row items-center bg-gray-800 px-8 py-12">
         {/* No subdomains have been added yet */}
         {typeof arrSubdomains !== 'undefined' && arrSubdomains.length === 0 && (
-          <div className='flex w-full lg:w-3/4 bg-gray-500 py-3 px-5 rounded-lg mr-4'>
-            <Image className='h-4 w-4 mr-2' src={Question} alt='FNS' />
-            <div className='flex-col'>
-              <p className='text-gray-200 font-semibold text-sm'>
+          <div className="flex w-full lg:w-3/4 bg-gray-500 py-3 px-5 rounded-lg mr-4">
+            <Image className="h-4 w-4 mr-2" src={Question} alt="FNS" />
+            <div className="flex-col">
+              <p className="text-gray-200 font-semibold text-sm">
                 No subdomains have been added yet
               </p>
             </div>
           </div>
         )}
         {/* Button */}
-        <button className='flex justify-center items-center text-center bg-[#F97316] h-11 w-1/2 rounded-lg text-white px-auto mt-5 md:w-1/4 lg:mt-0 lg:ml-auto'>
-          <p className='text-xs font-medium mr-2'>Add Subdomain</p>
-          <Image className='h-4 w-4' src={Plus} alt='FNS' />
+        <button className="flex justify-center items-center text-center bg-[#F97316] h-11 w-1/2 rounded-lg text-white px-auto mt-5 hover:scale-105 transform transition duration-100 ease-out md:w-1/4 lg:mt-0 lg:ml-auto">
+          <p className="text-xs font-medium mr-2">Add Subdomain</p>
+          <Image className="h-4 w-4" src={Plus} alt="FNS" />
         </button>
       </div>
     </>
@@ -47,10 +47,11 @@ export default function SubdomainContent({
       <AddSubdomain arrSubdomains={arrSubdomains} />
 
       {arrSubdomains.length > 0 && (
-        <div className='flex-col bg-gray-800 px-8 py-5'>
-          {arrSubdomains.map((item) => (
+        <div className="flex-col bg-gray-800 px-8 py-5 rounded-b-md">
+          {arrSubdomains.map((item, index) => (
             <>
               <SubdomainLine
+                key={index}
                 data={item}
                 date={date}
                 setEditMode={setEditMode}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import SubdomainLine from './SubdomainLine'
-import SubDetails from './components/SubDetails'
-import Records from './components/Records'
+import SubDetails from './SubDetails'
+import Records from './Records'
 
 export default function SubdomainEdit({
   data,
@@ -21,7 +21,7 @@ export default function SubdomainEdit({
   return (
     <>
       {/* Subdomain Line */}
-      <div className='flex-col bg-gray-800 px-8 pb-5 pt-11'>
+      <div className="flex-col bg-gray-800 px-8 pb-5 pt-11">
         <SubdomainLine
           data={data}
           date={date}

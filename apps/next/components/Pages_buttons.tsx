@@ -5,6 +5,7 @@ import Details from '../public/buttons_main_page/Details.png'
 import Subdomain from '../public/buttons_main_page/Subdomain.png'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 const buttonData = [
   {
@@ -33,8 +34,15 @@ const buttonData = [
   },
 ]
 
-const Button = (props: {
-  key: string
+const Button = ({
+  text,
+  result,
+  page,
+  button_style,
+  image_style,
+  text_style,
+  src,
+}: {
   text: string
   result: any
   page: string
@@ -46,18 +54,18 @@ const Button = (props: {
   return (
     <Link
       href={{
-        pathname: `${props.page}/[result]`,
-        query: { result: props.result },
+        pathname: `${page}/[result]`,
+        query: { result: result },
       }}
     >
       <button
-        className={`flex items-center ${props.button_style} hover:bg-gray-600 [&>p]:hover:text-white rounded-md hover:scale-110 transform transition duration-300 ease-out`}
+        className={`flex items-center rounded-md ${button_style} hover:bg-gray-600 [&>p]:hover:text-white hover:scale-110 transform transition duration-300 ease-out`}
       >
-        <Image className={props.image_style} src={props.src} alt='FNS' />
+        <Image className={image_style} src={src} alt="FNS" />
         <p
-          className={`w-full bg-transparent font-semibold text-sm ${props.text_style} focus:outline-none lg:text-normal`}
+          className={`w-full bg-transparent font-semibold text-sm ${text_style} focus:outline-none lg:text-normal`}
         >
-          {props.text}
+          {text}
         </p>
       </button>
     </Link>
@@ -65,14 +73,22 @@ const Button = (props: {
 }
 
 function Pages_buttons({ result, path }: any) {
-  console.log(path)
+  const router = useRouter()
+  const [route, setRoute] = useState('')
+  const handleSubmit = (e: any) => {
+    e.preventDefault()
+    router.push(path.split('/')[0] + route)
+  }
+
+  // console.log(path)
+
   return (
     <>
       {/* Three button Register, Details, Subdomain / Search Input (hidden mobile) */}
-      <div className='flex justify-between items-center'>
+      <div className="flex-col flex justify-between items-center lg:flex-row">
         {/* Buttons div */}
 
-        <div className='flex justify-center items-center mx-auto lg:mx-2'>
+        <div className="flex justify-center items-center mx-auto lg:mx-2">
           {buttonData.map((item) => (
             <Button
               key={item.text}
@@ -96,14 +112,20 @@ function Pages_buttons({ result, path }: any) {
         </div>
 
         {/* Search */}
-        <div className='hidden items-center w-2/5 py-2 px-4 h-12 rounded-md bg-gray-700 border-2 border-gray-500 lg:flex'>
-          <Image className='z-10 h-6 w-6 mr-2' src={Search} alt='FNS' />
+        <form
+          onSubmit={handleSubmit}
+          className="flex items-center w-4/5 py-2 px-4 h-12 rounded-md bg-gray-700 border-2 border-gray-500 mt-5 lg:flex lg:w-2/5 lg:mt-0"
+        >
+          <Image className="z-10 h-6 w-6 mr-2" src={Search} alt="FNS" />
           <input
-            type='text'
-            className='w-full bg-transparent font-normal text-base text-white border-0 focus:outline-none placeholder:text-gray-300 placeholder:font-normal'
-            placeholder='Search New Names or Addresses'
+            type="text"
+            onChange={(e) => {
+              setRoute(e.target.value)
+            }}
+            className="w-full bg-transparent font-normal text-base text-white border-0 focus:outline-none placeholder:text-gray-300 placeholder:font-normal"
+            placeholder="Search New Names or Addresses"
           />
-        </div>
+        </form>
       </div>
     </>
   )

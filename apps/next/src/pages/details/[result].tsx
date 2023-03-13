@@ -21,17 +21,17 @@ export default function Result() {
     const path = router.pathname as String
     setPath(path)
     setResult(result)
-  }, [router.isReady])
+  }, [router.isReady, router.query])
 
   return (
     <>
-      <div className='min-h-screen w-screen'>
-        <div className='flex-col bg-[#0F172A] lg:flex lg:flex-row'>
+      <div className="min-h-screen w-screen">
+        <div className="flex-col bg-[#0F172A] lg:flex lg:flex-row">
           {/* Left Side / Navbar */}
           <Side_Navbar />
 
           {/* Register */}
-          <div className='flex-col mt-9 pb-8 lg:mx-8 w-full min-h-screen'>
+          <div className="flex-col mt-9 pb-8 lg:mx-8 w-full min-h-screen">
             {/* Three button Register, Details, Subdomain / Search Input (hidden mobile) */}
             <Pages_buttons result={result} path={path} />
 
