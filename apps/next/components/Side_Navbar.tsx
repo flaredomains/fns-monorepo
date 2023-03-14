@@ -34,7 +34,7 @@ const BottomFlare = () => {
           <p className="w-full bg-transparent font-semibold text-lg text-white focus:outline-none">
             Built on{' '}
           </p>
-          <Image className="h-7 w-20 ml-4" src={Flare} alt="FNS" />
+          <Image className="h-8 w-8 ml-4" src={Flare} alt="FNS" />
         </div>
       </div>
     </>
