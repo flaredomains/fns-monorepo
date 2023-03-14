@@ -5,7 +5,7 @@ import "fns/registry/IENS.sol";
 import "@openzeppelin/token/ERC721/ERC721.sol";
 import "@openzeppelin/access/Ownable.sol";
 
-contract BaseRegistrarImplementation is ERC721, IBaseRegistrar, Ownable {
+contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     // A map of expiry times
     mapping(uint256 => uint256) expiries;
     // The IENS registry
