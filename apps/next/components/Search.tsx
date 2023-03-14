@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
-import Logo from '../public/Logo.svg'
+import Logo from '../public/Logo.png'
 import Search from '../public/Search.svg'
 import Image from 'next/image'
 import styles from '../src/styles/Main.module.css'
+import Link from 'next/link'
 
 function Main() {
   const router = useRouter()
@@ -22,12 +23,24 @@ function Main() {
       <div className="flex justify-between items-center py-6 px-10 z-10 md:py-14 md:px-28">
         <Image className="z-10 h-8 w-32 md:h-14 md:w-56" src={Logo} alt="FNS" />
         <div className="flex justify-center items-center px-4 z-10">
-          <p className="text-white font-semibold pr-6 text-sm cursor-pointer md:text-lg md:pr-16">
-            My Account
-          </p>
-          <p className="text-white font-semibold text-sm cursor-pointer md:text-lg">
-            FAQ
-          </p>
+          <Link
+            href={{
+              pathname: `/my_account`,
+            }}
+          >
+            <p className="text-white font-semibold pr-6 text-sm cursor-pointer md:text-lg md:pr-16">
+              My Account
+            </p>
+          </Link>
+          <Link
+            href={{
+              pathname: `/faq`,
+            }}
+          >
+            <p className="text-white font-semibold text-sm cursor-pointer md:text-lg">
+              FAQ
+            </p>
+          </Link>
         </div>
       </div>
       {/* Search */}
