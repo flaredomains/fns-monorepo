@@ -6,7 +6,7 @@ import Subdomains from '../../../components/Subdomains'
 
 export default function Result() {
   const [available, setAvailable] = useState(true)
-  const [isConnect, setIsConnect] = useState(false)
+  const [setIsConnect] = useState(false)
   const [arrSubdomains, setArrSubdomains] = useState([[1], [2], [3]])
 
   const [result, setResult] = useState<String>('')
@@ -36,11 +36,7 @@ export default function Result() {
             {/* Three button Register, Details, Subdomain / Search Input (hidden mobile) */}
             <Pages_buttons result={result} path={path} />
 
-            <Subdomains
-              isConnect={isConnect}
-              result={result}
-              arrSubdomains={arrSubdomains}
-            />
+            <Subdomains result={result} arrSubdomains={arrSubdomains} />
           </div>
         </div>
       </div>

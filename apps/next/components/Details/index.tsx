@@ -6,11 +6,9 @@ import Content from './Content'
 
 export default function Details({
   available,
-  isConnect,
   result,
 }: {
   available: any
-  isConnect: any
   result: String
 }) {
   const date = new Date(1678273065000)
@@ -18,9 +16,9 @@ export default function Details({
   return (
     <>
       {/* Main Content / Wallet connect (hidden mobile) */}
-      <div className='flex-col w-11/12 mt-6 mx-auto lg:flex lg:flex-row lg:w-full'>
+      <div className="flex-col w-11/12 mt-6 mx-auto lg:flex lg:flex-row lg:w-full">
         {/* Domain Result */}
-        <div className='flex-col w-full lg:w-3/4 lg:mr-2'>
+        <div className="flex-col w-full lg:w-3/4 lg:mr-2">
           {/* Domain Container */}
           <Domain_Select result={result} />
 
@@ -36,7 +34,7 @@ export default function Details({
         </div>
 
         {/* Wallet connect */}
-        <WalletConnect isConnect={isConnect} />
+        <WalletConnect />
       </div>
     </>
   )

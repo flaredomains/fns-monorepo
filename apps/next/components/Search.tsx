@@ -60,6 +60,7 @@ function Main() {
             }}
             className="w-full bg-transparent font-normal text-base text-white border-0 focus:outline-none placeholder:text-gray-300 placeholder:font-normal"
             placeholder="Search New Names or Addresses"
+            required
           />
         </form>
       </div>

@@ -6,7 +6,7 @@ import Details from '../../../components/Details'
 
 export default function Result() {
   const [available, setAvailable] = useState(true)
-  const [isConnect, setIsConnect] = useState(false)
+  const [setIsConnect] = useState(false)
 
   const [result, setResult] = useState<String>('')
 
@@ -35,11 +35,7 @@ export default function Result() {
             {/* Three button Register, Details, Subdomain / Search Input (hidden mobile) */}
             <Pages_buttons result={result} path={path} />
 
-            <Details
-              available={available}
-              isConnect={isConnect}
-              result={result}
-            />
+            <Details available={available} result={result} />
           </div>
         </div>
       </div>

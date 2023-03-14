@@ -5,8 +5,11 @@ import Search from '../../public/Search.svg'
 import Avatar from '../../public/Avatar.svg'
 import WalletConnect from '../WalletConnect'
 import { useRouter } from 'next/router'
+import { useAccount } from 'wagmi'
 
 const AccountLine = () => {
+  const { address, isConnected } = useAccount() as any
+
   const router = useRouter()
   const [route, setRoute] = useState('')
   const handleSubmit = (e: any) => {
@@ -24,7 +27,9 @@ const AccountLine = () => {
           />
           <div className="flex-col mr-7">
             <p className="text-gray-400 font-normal text-sm">
-              0x34dt33 . . . 3g53x
+              {isConnected
+                ? `${address.slice(0, 6)}...${address.slice(-4)}`
+                : 'Not Connected'}
             </p>
             <p className="text-white font-bold text-3xl py-2">My Account</p>
             <p className="text-gray-400 font-normal text-sm">
@@ -44,6 +49,7 @@ const AccountLine = () => {
             }}
             className="w-full bg-transparent font-normal text-base text-white border-0 focus:outline-none placeholder:text-gray-500 placeholder:font-normal"
             placeholder="Search New Names or Addresses"
+            required
           />
         </form>
       </div>
@@ -84,10 +90,8 @@ const OwnedDomains = ({ date }: { date: Date }) => {
 }
 
 export default function index({
-  isConnect,
   arrSubdomains,
 }: {
-  isConnect: any
   arrSubdomains: Array<any>
 }) {
   const date = new Date(1678273065000)
@@ -111,7 +115,7 @@ export default function index({
       </div>
 
       {/* Wallet connect */}
-      <WalletConnect isConnect={isConnect} />
+      <WalletConnect />
     </div>
   )
 }

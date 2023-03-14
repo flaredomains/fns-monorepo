@@ -6,7 +6,7 @@ import Pages_buttons from '../../../components/Pages_buttons'
 
 export default function Result() {
   const [available, setAvailable] = useState<boolean>(true)
-  const [isConnect, setIsConnect] = useState<boolean>(false)
+  const [setIsConnect] = useState<boolean>(false)
 
   const [result, setResult] = useState<String>('')
   const [path, setPath] = useState<String>('')
@@ -34,11 +34,7 @@ export default function Result() {
             {/* Three button Register, Details, Subdomain / Search Input (hidden mobile) */}
             <Pages_buttons result={result} path={path} />
 
-            <Register
-              available={available}
-              isConnect={isConnect}
-              result={result}
-            />
+            <Register available={available} result={result} />
           </div>
         </div>
       </div>

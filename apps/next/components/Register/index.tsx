@@ -50,11 +50,9 @@ const StepTitle = () => {
 
 export default function Register({
   available,
-  isConnect,
   result,
 }: {
   available: boolean
-  isConnect: any
   result: String
 }) {
   const [regPeriod, setRegPeriod] = useState(1)
@@ -110,7 +108,7 @@ export default function Register({
         </div>
 
         {/* Wallet connect */}
-        <WalletConnect isConnect={isConnect} />
+        <WalletConnect />
       </div>
     </>
   )

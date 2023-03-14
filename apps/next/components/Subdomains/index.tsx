@@ -5,11 +5,9 @@ import SubdomainContent from './SubdomainContent'
 import SubdomainEdit from './SubdomainEdit'
 
 export default function Subdomains({
-  isConnect,
   result,
   arrSubdomains,
 }: {
-  isConnect: any
   result: String
   arrSubdomains: Array<any>
 }) {
@@ -49,7 +47,7 @@ export default function Subdomains({
         </div>
 
         {/* Wallet connect */}
-        <WalletConnect isConnect={isConnect} />
+        <WalletConnect />
       </div>
     </>
   )

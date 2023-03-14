@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import FAQComp from '../../../components/FAQ'
 
 function FAQ() {
-  const [isConnect, setIsConnect] = useState(false)
+  const [setIsConnect] = useState(false)
   const [arrSubdomains, setArrSubdomains] = useState([[1], [2], [3]])
 
   const [result, setResult] = useState<String>('')

@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import MyAccount from '../../../components/MyAccount'
 
 export default function My_Account() {
-  const [isConnect, setIsConnect] = useState(false)
+  const [setIsConnect] = useState(false)
   const [arrSubdomains, setArrSubdomains] = useState([[1], [2], [3]])
 
   const [result, setResult] = useState<String>('')
@@ -31,7 +31,7 @@ export default function My_Account() {
 
           {/* Register */}
           <div className="flex-col mt-9 pb-8 lg:mx-8 w-full min-h-screen">
-            <MyAccount isConnect={isConnect} arrSubdomains={arrSubdomains} />
+            <MyAccount arrSubdomains={arrSubdomains} />
           </div>
         </div>
       </div>
