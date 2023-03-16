@@ -49,16 +49,14 @@ export default function SubdomainContent({
       {arrSubdomains.length > 0 && (
         <div className="flex-col bg-gray-800 px-8 py-5 rounded-b-md">
           {arrSubdomains.map((item, index) => (
-            <>
-              <SubdomainLine
-                key={index}
-                data={item}
-                date={date}
-                setEditMode={setEditMode}
-                editMode={editMode}
-                setDataEdit={setDataEdit}
-              />
-            </>
+            <SubdomainLine
+              key={index}
+              data={item}
+              date={date}
+              setEditMode={setEditMode}
+              editMode={editMode}
+              setDataEdit={setDataEdit}
+            />
           ))}
         </div>
       )}
