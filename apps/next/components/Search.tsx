@@ -19,9 +19,13 @@ function Main() {
       {/* Gradient */}
       <div className={`${styles.gradient_top}`} />
       <div className={`${styles.gradient_bottom}`} />
+
       {/* NavBar */}
       <div className="flex justify-between items-center py-6 px-10 z-10 md:py-14 md:px-28">
+        {/* Logo */}
         <Image className="z-10 h-8 w-32 md:h-14 md:w-56" src={Logo} alt="FNS" />
+
+        {/* My account / FAQ */}
         <div className="flex justify-center items-center px-4 z-10">
           <Link
             href={{
@@ -43,11 +47,12 @@ function Main() {
           </Link>
         </div>
       </div>
-      {/* Search */}
+      {/* Search -- Middle page */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <p className="font-bold text-5xl text-white text-center">
           Find Your Next .flare Domain
         </p>
+        {/* Search Form */}
         <form
           onSubmit={handleSubmit}
           className="flex items-center w-full mt-10 py-2 px-4 h-12 bg-gray-700 border-2 border-gray-500"

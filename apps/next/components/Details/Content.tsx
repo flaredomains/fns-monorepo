@@ -57,7 +57,11 @@ const RecordSection = ({
             } font-medium text-xs mr-3`}
           >
             {rightText
-              ? `${rightText.slice(0, 6)}...${rightText.slice(-4)}`
+              ? `${
+                  /^0x/.test(rightText) // Check if is an address or normal test
+                    ? `${rightText.slice(0, 6)}...${rightText.slice(-4)}`
+                    : rightText
+                }`
               : 'Not Set'}
           </p>
           {copied ? (
@@ -85,8 +89,9 @@ export default function Content() {
     <>
       <div className="flex-col bg-gray-800 px-8 pb-14">
         <h1 className="text-white text-2xl font-semibold mb-10">Records</h1>
+
+        {/* Addresses */}
         <div className="flex flex-col lg:flex-row">
-          {/* Addresses */}
           <h2 className="text-white text-xl font-semibold w-32 mr-10 mb-4 lg:mb-0">
             Addresses
           </h2>
@@ -101,9 +106,10 @@ export default function Content() {
           </div>
         </div>
       </div>
+
+      {/* Text Records */}
       <div className="flex-col bg-gray-800 px-8 pb-14 rounded-b-md">
         <div className="flex flex-col lg:flex-row">
-          {/* Text Records */}
           <h2 className="text-white text-xl font-semibold w-32 mr-10 mb-4 lg:mb-0">
             Text Records
           </h2>

@@ -80,14 +80,11 @@ function Pages_buttons({ result, path }: any) {
     router.push(path.split('/')[0] + route)
   }
 
-  // console.log(path)
-
   return (
     <>
       {/* Three button Register, Details, Subdomain / Search Input (hidden mobile) */}
       <div className="flex-col flex justify-between items-center lg:flex-row">
         {/* Buttons div */}
-
         <div className="flex justify-center items-center mx-auto lg:mx-2">
           {buttonData.map((item) => (
             <Button

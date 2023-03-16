@@ -5,12 +5,17 @@ import Delete from '../../public/Delete.svg'
 import Image from 'next/image'
 
 const listAddresses: Array<{ leftText: String; rightText: String }> = [
-  { leftText: 'BTC', rightText: '' },
+  { leftText: 'XTP', rightText: '0x880426bb362Bf481d6891839f1B0dAEB57900591' },
+  { leftText: 'BTC', rightText: 'aaaa' },
   { leftText: 'LTC', rightText: '' },
   { leftText: 'DOGE', rightText: '' },
 ]
 
 const listTextRecords: Array<{ leftText: String; rightText: String }> = [
+  {
+    leftText: 'Email',
+    rightText: '0x880426bb362Bf481d6891839f1B0dAEB57900591',
+  },
   { leftText: 'URL', rightText: '' },
   { leftText: 'Avatar', rightText: '' },
   { leftText: 'Description', rightText: '' },
@@ -40,14 +45,50 @@ const Info = ({
   isAddressList: boolean
   deleteButton: (isAddressList: boolean, index: number) => void
 }) => {
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(rightText.toString())
+    setCopied(true)
+
+    setTimeout(() => {
+      setCopied(false)
+    }, 1000)
+  }
   return (
     <>
       <div className="flex flex-col mb-3 lg:flex-row lg:items-center">
         <p className="w-32 text-white font-medium text-xs mr-6">{leftText}</p>
         {!recordsEditMode && (
-          <p className="text-gray-400 font-medium text-xs mt-2 lg:mt-0">
-            {rightText ? rightText : 'Not Set'}
-          </p>
+          <>
+            <p
+              className={`${
+                rightText ? 'text-[#F97316]' : 'text-gray-400'
+              } font-medium text-xs mr-3`}
+            >
+              {rightText
+                ? `${
+                    /^0x/.test(rightText.toString())
+                      ? `${rightText.slice(0, 6)}...${rightText.slice(-4)}`
+                      : rightText
+                  }`
+                : 'Not Set'}
+            </p>
+            {copied ? (
+              <>
+                <p className="text-[#F97316] font-medium text-sm">Copied</p>
+              </>
+            ) : (
+              rightText && (
+                <Image
+                  onClick={handleCopy}
+                  className="h-4 w-4 cursor-pointer"
+                  src={Clipboard_copy}
+                  alt="FNS"
+                />
+              )
+            )}
+          </>
         )}
         {recordsEditMode && (
           <div className="flex items-center mt-2 lg:mt-0">
@@ -129,7 +170,7 @@ export default function Records({ address }: { address: String }) {
           <div className="flex-col justify-between mb-10 md:flex md:flex-row">
             {/* Records */}
             <h1 className="text-white text-2xl font-semibold">Records</h1>
-            {/* Add/Edit Record Desktop */}
+            {/* Add/Edit Record buttons Desktop */}
             {!recordsEditMode && (
               <button
                 onClick={() => editMode()}
@@ -149,6 +190,8 @@ export default function Records({ address }: { address: String }) {
                   >
                     <p className="text-gray-400 text-medium text-xs">Cancel</p>
                   </button>
+
+                  {/* Save */}
                   <button
                     onClick={() => save()}
                     className="flex justify-center items-center text-center bg-[#F97316] px-3 py-2 rounded-lg text-white border border-[#F97316] hover:scale-105 transform transition duration-300 ease-out lg:ml-auto"
@@ -165,28 +208,6 @@ export default function Records({ address }: { address: String }) {
               Addresses
             </h2>
             <div className="flex-col items-center">
-              {/* XRP */}
-              <div className="flex flex-col mb-3 lg:flex-row">
-                <p className="w-32 text-white font-medium text-xs mr-6">XRP</p>
-                <div className="flex items-center mt-2 lg:mt-0">
-                  <p className="text-[#F97316] font-medium text-xs mr-3">
-                    {isLarge
-                      ? address
-                      : `${address.slice(0, 6)}...${address.slice(-4)}`}
-                  </p>
-                  <Image
-                    className="h-4 w-4 cursor-pointer"
-                    // onClick={handleCopy}
-                    src={Clipboard_copy}
-                    alt="FNS"
-                  />
-                  {/* {copied && (
-                  <div className='bg-gray-400 text-white text-xs py-1 px-2 rounded bottom-full left-1/2 transform -translate-x-1/2 -translate-y-1'>
-                    Copied
-                  </div>
-                )} */}
-                </div>
-              </div>
               {copyArrAddr.map((item, index) => (
                 <Info
                   key={index}
@@ -208,24 +229,6 @@ export default function Records({ address }: { address: String }) {
               Text Records
             </h2>
             <div className="flex-col items-center">
-              <div className="flex flex-col mb-3 lg:flex-row">
-                {/* Email */}
-                <p className="w-32 text-white font-medium text-xs mr-6">
-                  Email
-                </p>
-                <div className="flex items-center mt-2 lg:mt-0">
-                  <p className="text-[#F97316] font-medium text-xs mr-3">
-                    {isLarge
-                      ? address
-                      : `${address.slice(0, 6)}...${address.slice(-4)}`}
-                  </p>
-                  <Image
-                    className="h-4 w-4 cursor-pointer"
-                    src={Clipboard_copy}
-                    alt="FNS"
-                  />
-                </div>
-              </div>
               {copyArrTextRecords.map((item, index) => (
                 <Info
                   key={index}
@@ -239,7 +242,7 @@ export default function Records({ address }: { address: String }) {
               ))}
             </div>
           </div>
-          {/* Add/Edit Record Mobile */}
+          {/* Add/Edit Record buttons Mobile */}
           {!recordsEditMode && (
             <button
               onClick={() => editMode()}
@@ -259,6 +262,8 @@ export default function Records({ address }: { address: String }) {
                 >
                   <p className="text-gray-400 text-medium text-xs">Cancel</p>
                 </button>
+
+                {/* Save */}
                 <button
                   onClick={() => save()}
                   className="flex justify-center items-center text-center bg-[#F97316] px-3 py-2 rounded-lg text-white border border-[#F97316] lg:ml-auto"

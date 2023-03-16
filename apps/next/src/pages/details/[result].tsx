@@ -6,7 +6,6 @@ import Details from '../../../components/Details'
 
 export default function Result() {
   const [available, setAvailable] = useState(true)
-  const [setIsConnect] = useState(false)
 
   const [result, setResult] = useState<String>('')
 
@@ -16,7 +15,6 @@ export default function Result() {
   useEffect(() => {
     if (!router.isReady) return
 
-    // Get the poll from the query --> http://localhost:3000/viewPoll/[id] <--
     const result = router.query.result as String
     const path = router.pathname as String
     setPath(path)

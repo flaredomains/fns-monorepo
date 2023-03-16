@@ -5,8 +5,7 @@ import Pages_buttons from '../../../components/Pages_buttons'
 import Subdomains from '../../../components/Subdomains'
 
 export default function Result() {
-  const [available, setAvailable] = useState(true)
-  const [setIsConnect] = useState(false)
+  // Change to Wagmi data about user subdomain
   const [arrSubdomains, setArrSubdomains] = useState([[1], [2], [3]])
 
   const [result, setResult] = useState<String>('')

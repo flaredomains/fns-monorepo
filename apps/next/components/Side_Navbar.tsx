@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Logo from '../public/Logo.png'
-import Search from '../public/Search.svg'
 import Flare from '../public/Flare.png'
-import Account from '../public/Account.png'
-import FAQ from '../public/FAQ.png'
 import Hamburger_Icon from '../public/Hamburger_Icon.png'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -84,7 +81,6 @@ function Side_Navbar() {
         <LogoZone />
 
         {/* Middle lg:visible */}
-        {/* <ButtonChoise /> */}
         {isLarge && (
           <Side_Navbar_Choise path={path} isOpen={isOpen} isLarge={isLarge} />
         )}
@@ -92,7 +88,7 @@ function Side_Navbar() {
         {/* Flare Image lg:visible */}
         <BottomFlare />
 
-        {/* Hamburger lg:hidden */}
+        {/* Hamburger Icon lg:hidden */}
         {isOpen ? (
           <svg
             className="h-5 w-5 cursor-pointer"
@@ -120,6 +116,8 @@ function Side_Navbar() {
           />
         )}
       </div>
+
+      {/* Menu Choise after the user click the Hamburger Icon */}
       {isOpen && !isLarge && (
         <Side_Navbar_Choise path={path} isOpen={isOpen} isLarge={isLarge} />
       )}

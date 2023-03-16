@@ -56,7 +56,11 @@ export default function Register({
   result: String
 }) {
   const [regPeriod, setRegPeriod] = useState(1)
+
+  // Change with smart contract price
   const [priceToPay, setPriceToPay] = useState(0.0033626233262)
+
+  // TODO Add useFeeData from wagmi
 
   const incrementYears = () => {
     if (regPeriod >= 999) return

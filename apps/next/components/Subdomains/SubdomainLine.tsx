@@ -35,14 +35,16 @@ const Left = ({
             alt="FNS"
           />
         )}
-        {/* Avatar */}
+        {/* Avatar -- TODO Change with Avatar user (probably with useEnsAvatar) */}
         <Image className="h-8 w-8 mr-2" src={Avatar} alt="FNS" />
+
         {/* Domain */}
         <p
           onClick={() => enabledEditMode()}
           className={`text-white font-semibold text-base ${
-            !editMode && 'cursor-pointer'
-          } hover:underline hover:underline-offset-2`}
+            !editMode &&
+            'cursor-pointer hover:underline hover:underline-offset-2'
+          }`}
         >
           neel.flr
         </p>
