@@ -1,4 +1,7 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+
+const ETH_TO_USD_API_URL = 'https://min-api.cryptocompare.com/data/price'
 
 const TotalPrice = ({
   regPeriod,
@@ -43,6 +46,33 @@ const FinalPrice = ({
   regPeriod: number
   priceToPay: number
 }) => {
+  const [ethPrice, setEthPrice] = useState<number>(0)
+
+  useEffect(() => {
+    axios
+      .get(ETH_TO_USD_API_URL, {
+        params: {
+          fsym: 'ETH',
+          tsyms: 'USD',
+        },
+      })
+      .then((response) => {
+        const priceData = response.data
+        const price = priceData['USD']
+        setEthPrice(price)
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }, [])
+
+  // console.log(ethPrice)
+  // console.log(
+  //   `(priceToPay * regPeriod + 0.011) * ethPrice == ${
+  //     (priceToPay * regPeriod + 0.011) * ethPrice
+  //   }`
+  // )
+
   return (
     <>
       {/* Final Price -- TODO change 0.011 with gas fee */}
@@ -54,7 +84,9 @@ const FinalPrice = ({
           </p>
           <p className="text-[#FED7AA] text-xs">
             Calculated to{' '}
-            <span className="font-semibold text-white">$21.65 USD</span>
+            <span className="font-semibold text-white">
+              ${((priceToPay * regPeriod + 0.011) * ethPrice).toFixed(2)} USD
+            </span>
           </p>
         </div>
       </div>
