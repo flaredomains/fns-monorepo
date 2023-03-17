@@ -4,6 +4,7 @@ import MyAccount from '../../public/MyAccount.svg'
 import Search from '../../public/Search.svg'
 import Avatar from '../../public/Avatar.svg'
 import WalletConnect from '../WalletConnect'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'
 
@@ -57,7 +58,7 @@ const AccountLine = () => {
   )
 }
 
-const OwnedDomains = ({ date }: { date: Date }) => {
+const OwnedDomains = ({ date, domain }: { date: Date; domain: string }) => {
   const day = date.getDate()
   const month = date.getMonth()
   const year = date.getFullYear()
@@ -67,10 +68,20 @@ const OwnedDomains = ({ date }: { date: Date }) => {
         <div className="flex items-center">
           {/* Avatar */}
           <Image className="h-8 w-8 mr-2" src={Avatar} alt="FNS" />
+
           {/* Domain */}
-          <p className={`text-white font-semibold text-base cursor-pointer`}>
-            neel.flr
-          </p>
+          <Link
+            href={{
+              pathname: `details/[result]`,
+              query: { result: domain },
+            }}
+          >
+            <p
+              className={`text-white font-semibold text-base cursor-pointer hover:underline hover:underline-offset-2`}
+            >
+              {domain}
+            </p>
+          </Link>
         </div>
         <div className="flex items-center">
           {/* Date exp */}
@@ -79,10 +90,6 @@ const OwnedDomains = ({ date }: { date: Date }) => {
               Expires {`${month}/${day}/${year}`}
             </p>
           </div>
-          {/* Action Button */}
-          <button className="hidden items-center justify-center cursor-pointer border border-white px-3 py-2 rounded-lg lg:flex">
-            <p className="text-white font-medium text-xs">Action</p>
-          </button>
         </div>
       </div>
     </>
@@ -109,7 +116,7 @@ export default function index({
 
         <div className="flex-col bg-gray-800">
           {arrSubdomains.map((item, index) => (
-            <OwnedDomains key={index} date={date} />
+            <OwnedDomains key={index} date={date} domain={item.domain} />
           ))}
         </div>
       </div>

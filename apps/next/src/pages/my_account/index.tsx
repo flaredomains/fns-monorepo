@@ -5,7 +5,11 @@ import MyAccount from '../../../components/MyAccount'
 
 export default function My_Account() {
   const [setIsConnect] = useState(false)
-  const [arrSubdomains, setArrSubdomains] = useState([[1], [2], [3]])
+  const [arrSubdomains, setArrSubdomains] = useState([
+    { domain: 'neel.flr' },
+    { domain: 'chase.flr' },
+    { domain: 'ben.flr' },
+  ])
 
   const [result, setResult] = useState<String>('')
 

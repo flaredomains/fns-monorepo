@@ -46,7 +46,7 @@ const Left = ({
             'cursor-pointer hover:underline hover:underline-offset-2'
           }`}
         >
-          neel.flr
+          {data.domain}
         </p>
       </div>
     </>

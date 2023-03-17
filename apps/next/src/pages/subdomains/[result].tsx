@@ -6,7 +6,11 @@ import Subdomains from '../../../components/Subdomains'
 
 export default function Result() {
   // Change to Wagmi data about user subdomain
-  const [arrSubdomains, setArrSubdomains] = useState([[1], [2], [3]])
+  const [arrSubdomains, setArrSubdomains] = useState([
+    { domain: 'neel.flr' },
+    { domain: 'chase.flr' },
+    { domain: 'ben.flr' },
+  ])
 
   const [result, setResult] = useState<String>('')
 
