@@ -2,7 +2,7 @@
 pragma solidity ~0.8.17;
 
 import {ERC1155Fuse, IERC165, IERC1155MetadataURI} from "./ERC1155Fuse.sol";
-import {Controllable} from "./Controllable.sol";
+import {Controllable} from "fns/root/Controllable.sol";
 import {INameWrapper, CANNOT_UNWRAP, CANNOT_BURN_FUSES, CANNOT_TRANSFER, CANNOT_SET_RESOLVER, CANNOT_SET_TTL, CANNOT_CREATE_SUBDOMAIN, PARENT_CANNOT_CONTROL, CAN_DO_EVERYTHING, IS_DOT_ETH, CAN_EXTEND_EXPIRY, PARENT_CONTROLLED_FUSES, USER_SETTABLE_FUSES} from "./INameWrapper.sol";
 import {INameWrapperUpgrade} from "./INameWrapperUpgrade.sol";
 import {IMetadataService} from "./IMetadataService.sol";
@@ -13,7 +13,7 @@ import {Ownable} from "@openzeppelin/access/Ownable.sol";
 import {BytesUtils} from "./BytesUtils.sol";
 import {ERC20Recoverable} from "fns/utils/ERC20Recoverable.sol";
 
-error Unauthorised(bytes32 node, address addr);
+error UnauthorisedAddr(bytes32 node, address addr);
 error IncompatibleParent();
 error IncorrectTokenType();
 error LabelMismatch(bytes32 labelHash, bytes32 expectedLabelhash);
@@ -183,7 +183,7 @@ contract NameWrapper is
 
     modifier onlyTokenOwner(bytes32 node) {
         if (!canModifyName(node, msg.sender)) {
-            revert Unauthorised(node, msg.sender);
+            revert UnauthorisedAddr(node, msg.sender);
         }
 
         _;
@@ -228,7 +228,7 @@ contract NameWrapper is
             registrant != msg.sender &&
             !registrar.isApprovedForAll(registrant, msg.sender)
         ) {
-            revert Unauthorised(
+            revert UnauthorisedAddr(
                 _makeNode(ETH_NODE, bytes32(tokenId)),
                 msg.sender
             );
@@ -344,7 +344,7 @@ contract NameWrapper is
         address owner = ens.owner(node);
 
         if (owner != msg.sender && !ens.isApprovedForAll(owner, msg.sender)) {
-            revert Unauthorised(node, msg.sender);
+            revert UnauthorisedAddr(node, msg.sender);
         }
 
         if (resolver != address(0)) {
@@ -445,7 +445,7 @@ contract NameWrapper is
         bool canModifyParentName = canModifyName(parentNode, msg.sender);
         // only allow the owner of the name or owner of the parent name
         if (!canModifyParentName && !canModifyName(node, msg.sender)) {
-            revert Unauthorised(node, msg.sender);
+            revert UnauthorisedAddr(node, msg.sender);
         }
 
         (address owner, uint32 fuses, uint64 oldExpiry) = getData(
@@ -481,7 +481,7 @@ contract NameWrapper is
         }
 
         if (!canModifyName(node, msg.sender)) {
-            revert Unauthorised(node, msg.sender);
+            revert UnauthorisedAddr(node, msg.sender);
         }
 
         (address currentOwner, uint32 fuses, uint64 expiry) = getData(
@@ -525,11 +525,11 @@ contract NameWrapper is
         (, uint32 parentFuses, uint64 maxExpiry) = getData(uint256(parentNode));
         if (parentNode == ROOT_NODE) {
             if (!canModifyName(node, msg.sender)) {
-                revert Unauthorised(node, msg.sender);
+                revert UnauthorisedAddr(node, msg.sender);
             }
         } else {
             if (!canModifyName(parentNode, msg.sender)) {
-                revert Unauthorised(node, msg.sender);
+                revert UnauthorisedAddr(node, msg.sender);
             }
         }
 
