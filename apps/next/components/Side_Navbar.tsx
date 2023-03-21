@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Logo from '../public/Logo.png'
-import Flare from '../public/Flare.png'
+import Flare from '../public/FlareBottom.png'
 import Hamburger_Icon from '../public/Hamburger_Icon.png'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -31,7 +31,7 @@ const BottomFlare = () => {
           <p className="w-full bg-transparent font-semibold text-lg text-white focus:outline-none">
             Built on{' '}
           </p>
-          <Image className="h-8 w-8 ml-4" src={Flare} alt="FNS" />
+          <Image className="h-7 w-20 ml-4" src={Flare} alt="FNS" />
         </div>
       </div>
     </>

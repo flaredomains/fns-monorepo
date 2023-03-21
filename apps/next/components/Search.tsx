@@ -15,7 +15,7 @@ function Main() {
   }
 
   return (
-    <div className="bg-[#0F172A] min-h-screen w-screen relative overflow-hidden">
+    <div className="bg-[#0F172A] min-h-screen  relative overflow-hidden">
       {/* Gradient */}
       <div className={`${styles.gradient_top}`} />
       <div className={`${styles.gradient_bottom}`} />

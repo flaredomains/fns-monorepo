@@ -28,7 +28,7 @@ export default function My_Account() {
 
   return (
     <>
-      <div className="min-h-screen w-screen">
+      <div className="min-h-screen">
         <div className="flex-col bg-[#0F172A] lg:flex lg:flex-row">
           {/* Left Side / Navbar */}
           <Side_Navbar />

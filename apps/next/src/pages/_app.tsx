@@ -1,5 +1,6 @@
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
+import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { Web3Modal } from '@web3modal/react'
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
@@ -34,6 +35,10 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <>
+      <Head>
+        <title>FNS</title>
+        <link rel="icon" href="/flare_favicon.ico" />
+      </Head>
       {ready ? (
         <WagmiConfig client={wagmiClient}>
           <Component {...pageProps} />
