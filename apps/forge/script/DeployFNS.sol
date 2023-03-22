@@ -6,7 +6,10 @@ import "fns/resolvers/PublicResolver.sol";
 import "fns/ethregistrar/BaseRegistrar.sol";
 import "fns/registry/ReverseRegistrar.sol";
 import "fns/wrapper/NameWrapper.sol";
+import "fns/wrapper/StaticMetadataService.sol";
 import "fns/ethregistrar/ETHRegistrarController.sol";
+import "fns/ethregistrar/StablePriceOracle.sol";
+import "fns/ethregistrar/DummyOracle.sol";
 
 import "fns-test/utils/ENSNamehash.sol";
 
@@ -19,26 +22,30 @@ contract DeployFNS is Script {
         ENSRegistry ensRegistry = new ENSRegistry();
         BaseRegistrar baseRegistrar = new BaseRegistrar(ensRegistry, ENSNamehash.namehash('eth'));
 
-        // TODO: Determine IMetadataService for NameWrapper
-        NameWrapper nameWrapper = new NameWrapper(ensRegistry, baseRegistrar, null);
+        // TODO: Update this to our own website
+        StaticMetadataService metadataService = new StaticMetadataService("https://ens.domains/");
+        NameWrapper nameWrapper = new NameWrapper(ensRegistry, baseRegistrar, metadataService);
 
         // TODO: Set the default resolver
         ReverseRegistrar reverseRegistrar = new ReverseRegistrar(ensRegistry);
 
-        PublicResolver publicResolver = new PublicResolver(ensRegistry, );
+        // TODO: Update to real oracle
+        DummyOracle dummyOracle = new DummyOracle(100000000);
 
-        address pubResolverAddr = deployPublicResolver();
-        address reverseRegistrarAddr = deployReverseRegistrar();
-        address nameWrapperAddr = deployNameWrapper();
-        address ethRegControllerAddr = deployETHRegistrarController();
+        // TODO: Update pricing on 1 & 2 character names as well
+        StablePriceOracle stablePriceOracle = new StablePriceOracle(
+            dummyOracle, [uint256(0), 0, 300, 100, 5]);
+        ETHRegistrarController ethRegistrarController = new ETHRegistrarController(
+            baseRegistrar,
+            stablePriceOracle,
+            600,
+            86400,
+            reverseRegistrar,
+            nameWrapper);
+
+        PublicResolver publicResolver = new PublicResolver(
+            ensRegistry, nameWrapper, address(ethRegistrarController), address(reverseRegistrar));
 
         vm.stopBroadcast();
     }
-
-    function deployPublicResolver() private returns(address) {}
-    function deployReverseRegistrar() private returns(address){}
-    // TODO: Figure out price oracle to use
-    // function deployPriceOracle() private {}
-    function deployNameWrapper() private returns(address){}
-    function deployETHRegistrarController() private returns(address){}
 }
