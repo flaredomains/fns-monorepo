@@ -12,7 +12,19 @@ export default function AccountLine() {
   const [route, setRoute] = useState('')
   const handleSubmit = (e: any) => {
     e.preventDefault()
-    router.push('register/' + route)
+
+    // Regular expression to validate input
+    const pattern = /\.flr$/
+
+    if (pattern.test(route)) {
+      console.log('Input is valid!')
+      router.push('register/' + route)
+    } else {
+      console.log('Input is invalid!')
+      const inputElement = e.target.elements['input-field'] as HTMLInputElement
+      inputElement.setCustomValidity('Should end with .flr')
+      inputElement.reportValidity()
+    }
   }
   return (
     <>
@@ -42,10 +54,16 @@ export default function AccountLine() {
           <Image className="z-10 h-6 w-6 mr-2" src={Search} alt="FNS" />
           <input
             type="text"
+            name="input-field"
+            value={route}
             onChange={(e) => {
               setRoute(e.target.value)
             }}
-            className="w-full bg-transparent font-normal text-base text-white border-0 focus:outline-none placeholder:text-gray-500 placeholder:font-normal"
+            onInput={(event) => {
+              const inputElement = event.target as HTMLInputElement
+              inputElement.setCustomValidity('')
+            }}
+            className="w-full bg-transparent font-normal text-base text-white border-0 focus:outline-none placeholder:text-gray-300 placeholder:font-normal"
             placeholder="Search New Names or Addresses"
             required
           />
