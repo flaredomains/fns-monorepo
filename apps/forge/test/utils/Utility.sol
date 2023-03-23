@@ -3,10 +3,9 @@ pragma solidity ^0.8.6;
 
 /// @notice: Helper contract for foundry testing.
 
-
-import "../src/users/Actor.sol";
 import "forge-std/Test.sol";
-import "../src/interfaces/IERC20.sol";
+import "fns/users/Actor.sol";
+import "fns/interfaces/IERC20.sol";
 
 interface Hevm {
     function warp(uint256) external;
