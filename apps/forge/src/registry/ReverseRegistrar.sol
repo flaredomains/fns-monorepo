@@ -1,18 +1,18 @@
 pragma solidity ^0.8.6;
 
+import "@openzeppelin/access/Ownable.sol";
+import "fns/root/Controllable.sol";
 import "./IENS.sol";
 import "./IReverseRegistrar.sol";
-import "@openzeppelin/access/Ownable.sol";
-import "../root/Controllable.sol";
+import "fns/resolvers/profiles/NameResolver.sol";
 
-abstract contract NameResolver {
-    function setName(bytes32 node, string memory name) public virtual;
-}
-bytes32 constant lookup = 0x3031323334353637383961626364656600000000000000000000000000000000;
+import "forge-std/console.sol";
 
+/**
+* @dev The result of namehash('addr.reverse')
+*/
 bytes32 constant ADDR_REVERSE_NODE = 0x91d1777781884d03a6757a803996e38de2a42967fb37eeaca72729271025a9e2;
-
-// namehash('addr.reverse')
+bytes32 constant lookup = 0x3031323334353637383961626364656600000000000000000000000000000000;
 
 contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
     IENS public immutable ens;
@@ -32,12 +32,12 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
         //       of the ADDR_REVERSE_NODE by default, and thus no existing ReverseRegistrar to
         //       lookup
         // Assign ownership of the reverse record to our deployer
-        // ReverseRegistrar oldRegistrar = ReverseRegistrar(
-        //     ensAddr.owner(ADDR_REVERSE_NODE)
-        // );
-        // if (address(oldRegistrar) != address(0x0)) {
-        //     oldRegistrar.claim(msg.sender);
-        // }
+        ReverseRegistrar oldRegistrar = ReverseRegistrar(
+            ensAddr.owner(ADDR_REVERSE_NODE)
+        );
+        if (address(oldRegistrar) != address(0x0)) {
+            oldRegistrar.claim(msg.sender);
+        }
     }
 
     modifier authorised(address addr) {
@@ -87,6 +87,12 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
         bytes32 reverseNode = keccak256(
             abi.encodePacked(ADDR_REVERSE_NODE, labelHash)
         );
+
+        console.log("claimForAddr::reverseNode");
+        console.logBytes32(reverseNode);
+        console.log("claimForAddr::labelHash");
+        console.logBytes32(labelHash);
+        
         emit ReverseClaimed(addr, reverseNode);
         ens.setSubnodeRecord(ADDR_REVERSE_NODE, labelHash, owner, resolver, 0);
         return reverseNode;

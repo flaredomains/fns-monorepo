@@ -2,9 +2,9 @@
 pragma solidity ^0.8.6;
 pragma abicoder v2;
 
-import "../../lib/forge-std/src/Test.sol";
-import "../../src/registry/ENSRegistry.sol";
-import "../../lib/forge-std/src/console.sol";
+import "forge-std/Test.sol";
+import "forge-std/console.sol";
+import "fns/registry/ENSRegistry.sol";
 
 contract TestENSRegistry is Test {
     ENSRegistry public ensRegistry;

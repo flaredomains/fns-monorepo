@@ -1,11 +1,17 @@
-pragma solidity ^0.8.4;
+//SPDX-License-Identifier: MIT
+pragma solidity ~0.8.17;
 
 import "@openzeppelin/access/Ownable.sol";
 
 contract Controllable is Ownable {
     mapping(address => bool) public controllers;
 
-    event ControllerChanged(address indexed controller, bool enabled);
+    event ControllerChanged(address indexed controller, bool active);
+
+    function setController(address controller, bool active) public onlyOwner {
+        controllers[controller] = active;
+        emit ControllerChanged(controller, active);
+    }
 
     modifier onlyController() {
         require(
@@ -13,10 +19,5 @@ contract Controllable is Ownable {
             "Controllable: Caller is not a controller"
         );
         _;
-    }
-
-    function setController(address controller, bool enabled) public onlyOwner {
-        controllers[controller] = enabled;
-        emit ControllerChanged(controller, enabled);
     }
 }
