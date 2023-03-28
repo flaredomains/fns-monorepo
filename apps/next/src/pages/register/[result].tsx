@@ -5,9 +5,7 @@ import { useRouter } from 'next/router'
 import Pages_buttons from '../../../components/Pages_buttons'
 
 export default function Result() {
-  const [available, setAvailable] = useState<boolean>(true)
-
-  const [result, setResult] = useState<String>('')
+  const [result, setResult] = useState<string>('')
   const [path, setPath] = useState<String>('')
 
   const router = useRouter()
@@ -15,7 +13,7 @@ export default function Result() {
   useEffect(() => {
     if (!router.isReady) return
 
-    const result = router.query.result as String
+    const result = router.query.result as string
     const path = router.pathname as String
     setPath(path)
     setResult(result)
@@ -33,7 +31,7 @@ export default function Result() {
             {/* Three button Register, Details, Subdomain / Search Input (hidden mobile) */}
             <Pages_buttons result={result} path={path} />
 
-            <Register available={available} result={result} />
+            <Register result={result} />
           </div>
         </div>
       </div>

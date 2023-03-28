@@ -14,15 +14,17 @@ function Main() {
     e.preventDefault()
 
     // Regular expression to validate input
-    const pattern = /\.flr$/
+    const pattern = /^[a-zA-Z0-9\s]+\.flr$/
 
     if (pattern.test(route)) {
       console.log('Input is valid!')
-      router.push('register/' + route)
+      router.push('register/' + route.toLowerCase())
     } else {
       console.log('Input is invalid!')
       const inputElement = e.target.elements['input-field'] as HTMLInputElement
-      inputElement.setCustomValidity('Should end with .flr')
+      inputElement.setCustomValidity(
+        'Should end with .flr and not contain special characters.'
+      )
       inputElement.reportValidity()
     }
   }

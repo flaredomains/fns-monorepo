@@ -6,6 +6,8 @@ import Link from 'next/link'
 import AccountLine from './AccountLine'
 import Reverse_Record from './Reverse_Record'
 
+import { useContractRead, useContractEvent } from 'wagmi'
+
 const OwnedDomains = ({ date, domain }: { date: Date; domain: string }) => {
   const day = date.getDate()
   const month = date.getMonth()

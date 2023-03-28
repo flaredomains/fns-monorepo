@@ -10,7 +10,7 @@ const ReqToRegister = () => {
     <>
       <div className="mt-10 flex justify-center items-center w-full">
         <button className="flex justify-center items-center px-6 py-3 bg-[#F97316] h-12 rounded-lg text-white px-auto hover:scale-105 transform transition duration-300 ease-out">
-          <p className="text-base font-semibold mr-2">Request to Register</p>
+          <p className="text-base font-semibold mr-2">Commit</p>
           <Image className="h-4 w-4" src={Plus} alt="FNS" />
         </button>
       </div>

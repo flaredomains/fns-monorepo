@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Like from '../../public/Like.svg'
 import Dislike from '../../public/Dislike.svg'
 import WalletConnect from '../WalletConnect'
@@ -8,6 +8,16 @@ import Selector from './Selector'
 import Final_price from './Final_price'
 import Steps from './Steps'
 import Bottom from './Bottom'
+import web3 from 'web3-utils'
+
+import ETHRegistarController from '../../src/pages/abi/ETHRegistrarController.json'
+
+import {
+  useFeeData,
+  useContractRead,
+  useContractWrite,
+  usePrepareContractWrite,
+} from 'wagmi'
 
 const Alert = ({ available }: { available: boolean }) => {
   return (
@@ -48,19 +58,54 @@ const StepTitle = () => {
   )
 }
 
-export default function Register({
-  available,
-  result,
-}: {
-  available: boolean
-  result: String
-}) {
+export default function Register({ result }: { result: string }) {
   const [regPeriod, setRegPeriod] = useState(1)
+  const [preparedHash, setPreparedHash] = useState<boolean>(false)
+  const [hashHex, setHashHex] = useState<string>('')
 
-  // Change with smart contract price
-  const [priceToPay, setPriceToPay] = useState(0.0033626233262)
+  useEffect(() => {
+    if (result) {
+      const filterResult = result.endsWith('.flr')
+        ? result.slice(0, -4)
+        : result
+      const hash = web3.sha3(filterResult) as string
+      setHashHex(hash)
+      setPreparedHash(true)
+    }
+  }, [result])
 
-  // TODO Add useFeeData from wagmi
+  const { data: available } = useContractRead({
+    address: ETHRegistarController.address as `0x${string}`,
+    abi: ETHRegistarController.abi,
+    functionName: 'available',
+    enabled: preparedHash,
+    args: [hashHex],
+    onSuccess(data: any) {
+      console.log('Success available', data)
+    },
+    onError(error) {
+      console.log('Error available', error)
+    },
+  })
+
+  const { data: price } = useContractRead({
+    address: ETHRegistarController.address as `0x${string}`,
+    abi: ETHRegistarController.abi,
+    functionName: 'rentPrice',
+    args: [result as string, regPeriod],
+    onSuccess(data: any) {
+      console.log('Success rentPrice', data)
+      console.log('Base', Number(data.base))
+    },
+    onError(error) {
+      console.log('Error rentPrice', error)
+    },
+  })
+
+  const { data: fee } = useFeeData()
+
+  // console.log('ETHRegistarController.address', ETHRegistarController.address)
+  // console.log('ETHRegistarController.abi', ETHRegistarController.abi)
 
   const incrementYears = () => {
     if (regPeriod >= 999) return
@@ -91,13 +136,17 @@ export default function Register({
                 {/* Increment Selector */}
                 <Selector
                   regPeriod={regPeriod}
-                  priceToPay={priceToPay}
+                  priceToPay={Number(price?.base)}
                   incrementYears={incrementYears}
                   decreaseYears={decreaseYears}
                 />
 
                 {/* Final price block */}
-                <Final_price regPeriod={regPeriod} priceToPay={priceToPay} />
+                <Final_price
+                  regPeriod={regPeriod}
+                  fee={Number(fee?.gasPrice)}
+                  priceToPay={Number(price?.base)}
+                />
 
                 {/* Steps title mobile hidden */}
                 <StepTitle />

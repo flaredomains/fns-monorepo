@@ -79,15 +79,17 @@ function Pages_buttons({ result, path }: any) {
     e.preventDefault()
 
     // Regular expression to validate input
-    const pattern = /\.flr$/
+    const pattern = /^[a-zA-Z0-9\s]+\.flr$/
 
     if (pattern.test(route)) {
       console.log('Input is valid!')
-      router.push(path.split('/')[0] + route)
+      router.push(path.split('/')[0] + route.toLowerCase())
     } else {
       console.log('Input is invalid!')
       const inputElement = e.target.elements['input-field'] as HTMLInputElement
-      inputElement.setCustomValidity('Should end with .flr')
+      inputElement.setCustomValidity(
+        'Should end with .flr and not contain special characters.'
+      )
       inputElement.reportValidity()
     }
   }
@@ -137,7 +139,7 @@ function Pages_buttons({ result, path }: any) {
               const inputElement = event.target as HTMLInputElement
               inputElement.setCustomValidity('')
             }}
-            className="w-full bg-transparent font-normal text-base text-white border-0 focus:outline-none placeholder:text-gray-300 placeholder:font-normal"
+            className="w-full bg-transparent font-normal text-base text-white border-0 focus:outline-none placeholder:text-gray-300 placeholder:font-normal focus:bg-transparent"
             placeholder="Search New Names or Addresses"
             required
           />

@@ -5,18 +5,16 @@ import Pages_buttons from '../../../components/Pages_buttons'
 import Details from '../../../components/Details'
 
 export default function Result() {
-  const [available, setAvailable] = useState(true)
-
-  const [result, setResult] = useState<String>('')
+  const [result, setResult] = useState<string>('')
 
   const router = useRouter()
-  const [path, setPath] = useState<String>('')
+  const [path, setPath] = useState<string>('')
 
   useEffect(() => {
     if (!router.isReady) return
 
-    const result = router.query.result as String
-    const path = router.pathname as String
+    const result = router.query.result as string
+    const path = router.pathname as string
     setPath(path)
     setResult(result)
   }, [router.isReady, router.query])
@@ -33,7 +31,7 @@ export default function Result() {
             {/* Three button Register, Details, Subdomain / Search Input (hidden mobile) */}
             <Pages_buttons result={result} path={path} />
 
-            <Details available={available} result={result} />
+            <Details result={result} />
           </div>
         </div>
       </div>

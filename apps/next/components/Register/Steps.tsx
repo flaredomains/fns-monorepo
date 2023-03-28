@@ -35,9 +35,9 @@ const Step = ({
   stepText: string
   descriptionText: string
 }) => {
-  console.log(`Number:${number} -- number - 1 ${number - 1} <= count ${count}`)
-  console.log(`Number:${number} -- number - 1 ${number - 1} === count ${count}`)
-  console.log(`Number:${number} -- number ${number} <= count ${count}`)
+  // console.log(`Number:${number} -- number - 1 ${number - 1} <= count ${count}`)
+  // console.log(`Number:${number} -- number - 1 ${number - 1} === count ${count}`)
+  // console.log(`Number:${number} -- number ${number} <= count ${count}`)
   return (
     <>
       <div className="w-full flex-col justify-center items-center mt-4 lg:mt-0 lg:w-1/3">
