@@ -15,30 +15,30 @@ import "fns/ethregistrar/DummyOracle.sol";
 
 import "fns-test/utils/ENSNamehash.sol";
 
-bytes32 constant ZERO_HASH = 0x0000000000000000000000000000000000000000000000000000000000000000;
-
-contract DeployFNS is Script {
+contract ConfigureFNS is Script {
+    bytes32 constant rootNode = 0x0;
     address owner = 0x09Ec74F54dc4b316D8cd6DFBeB91263fB20E19d2;
+    // address owner = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
 
-    // Entrypoint to deploy script
+    ENSRegistry public ensRegistry;// = ENSRegistry(0x01Ea6d29d8DB586AA2884A3eeb47F4301f8Ac5D4);
+    BaseRegistrar public baseRegistrar;// = BaseRegistrar(0x73e263e83741f797Deb8aB8C8742fe6c815cbABf);
+
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        ENSRegistry ensRegistry = new ENSRegistry();
-        BaseRegistrar baseRegistrar = new BaseRegistrar(ensRegistry, ENSNamehash.namehash('eth'));
+        ensRegistry = new ENSRegistry();
+        baseRegistrar = new BaseRegistrar(ensRegistry, ENSNamehash.namehash('flr'));
 
-        // TODO: Update this to our own website
+        baseRegistrar.addController(owner);
+        ensRegistry.setSubnodeOwner(rootNode, keccak256('flr'), address(baseRegistrar));
+        baseRegistrar.register(uint256(keccak256('deployer')), owner, 86400);
+        require(ensRegistry.owner(ENSNamehash.namehash('deployer.flr')) == owner, "Owner not expected");
+
         StaticMetadataService metadataService = new StaticMetadataService("https://ens.domains/");
         NameWrapper nameWrapper = new NameWrapper(ensRegistry, baseRegistrar, metadataService);
-
-        // TODO: Set the default resolver
         ReverseRegistrar reverseRegistrar = new ReverseRegistrar(ensRegistry);
-
-        // TODO: Update to real oracle
         DummyOracle dummyOracle = new DummyOracle(100000000);
-
-        // TODO: Update pricing on 1 & 2 character names as well
         StablePriceOracle stablePriceOracle = new StablePriceOracle(
             dummyOracle, [uint256(0), 0, 300, 100, 5]);
         ETHRegistrarController ethRegistrarController = new ETHRegistrarController(
@@ -48,23 +48,15 @@ contract DeployFNS is Script {
             86400,
             reverseRegistrar,
             nameWrapper);
-
-        // TODO: Is this setup enough? Shouldn't it be the subnode of 'eth'?
-        // setupRegistrar(ensRegistry, ethRegistrarController);
-        // setupReverseRegistrar(ensRegistry, ethRegistrarController, reverseRegistrar, account0);
-
         PublicResolver publicResolver = new PublicResolver(
             ensRegistry, nameWrapper, address(ethRegistrarController), address(reverseRegistrar));
-
-        // TODO: Who do we want the subnode owner to be? Should it all bet he same EOA?
-        // setupResolver(ensRegistry, publicResolver, account0);
-
-        // Configuration
-        nameWrapper.setController(address(ethRegistrarController), true);
+        
+        baseRegistrar.setResolver(address(publicResolver));
         baseRegistrar.addController(address(nameWrapper));
+        nameWrapper.setController(address(ethRegistrarController), true);
         reverseRegistrar.setController(address(ethRegistrarController), true);
 
-        ensRegistry.setSubnodeOwner(ZERO_HASH, keccak256('reverse'), owner);
+        ensRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), owner);
         ensRegistry.setSubnodeOwner(
             ENSNamehash.namehash('reverse'), keccak256('addr'), address(reverseRegistrar));
 
@@ -79,6 +71,5 @@ contract DeployFNS is Script {
         console.log("stablePriceOracle: %s", address(stablePriceOracle));
         console.log("ethRegistrarController: %s", address(ethRegistrarController));
         console.log("publicResolver: %s", address(publicResolver));
-        console.log("ensRegistry: %s", address(ensRegistry));
     }
 }
