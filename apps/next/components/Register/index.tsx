@@ -62,13 +62,21 @@ export default function Register({ result }: { result: string }) {
   const [regPeriod, setRegPeriod] = useState(1)
   const [preparedHash, setPreparedHash] = useState<boolean>(false)
   const [hashHex, setHashHex] = useState<string>('')
+  const [filterResult, setFilterResult] = useState<string>('')
 
   useEffect(() => {
-    if (result) {
-      const filterResult = result.endsWith('.flr')
+    // Check if ethereum address
+    if (/^0x[a-fA-F0-9]{40}$/.test(result)) {
+      console.log('Ethereum address')
+      setFilterResult(result)
+      // setHashHex(hash)
+      // setPreparedHash(true)
+    } else if (result) {
+      const resultFiltered = result.endsWith('.flr')
         ? result.slice(0, -4)
         : result
-      const hash = web3.sha3(filterResult) as string
+      const hash = web3.sha3(resultFiltered) as string
+      setFilterResult(resultFiltered)
       setHashHex(hash)
       setPreparedHash(true)
     }
@@ -79,7 +87,7 @@ export default function Register({ result }: { result: string }) {
     abi: ETHRegistarController.abi,
     functionName: 'available',
     enabled: preparedHash,
-    args: [hashHex],
+    args: [filterResult],
     onSuccess(data: any) {
       console.log('Success available', data)
     },

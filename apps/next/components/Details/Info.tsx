@@ -75,7 +75,11 @@ const Alert = ({ available }: { available: boolean }) => {
         />
         <div className="flex-col">
           <p className="text-gray-200 font-semibold text-sm">
-            This name {available ? 'is available!' : 'is already registered'}
+            {available
+              ? 'This name is available!'
+              : available !== undefined
+              ? 'This name is already registered'
+              : 'Error'}
           </p>
         </div>
       </div>

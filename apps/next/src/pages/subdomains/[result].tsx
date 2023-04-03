@@ -35,7 +35,7 @@ export default function Result() {
           <Side_Navbar />
 
           {/* Register */}
-          <div className="flex-col mt-9 pb-8 lg:mx-8 w-full min-h-screen">
+          <div className="flex-col mt-9 pb-8 lg:mx-8 w-full min-h-screen lg:w-3/4">
             {/* Three button Register, Details, Subdomain / Search Input (hidden mobile) */}
             <Pages_buttons result={result} path={path} />
 

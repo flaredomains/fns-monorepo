@@ -35,7 +35,7 @@ const listTextRecords: Array<{ leftText: string; rightText: string }> = [
   { leftText: 'eth.ens.delegate', rightText: '' },
 ]
 
-const keys: Array<string> = [
+const keysTexts: Array<string> = [
   'URL',
   'Avatar',
   'Description',
@@ -49,6 +49,8 @@ const keys: Array<string> = [
   'org.telegram',
   'eth.ens.delegate',
 ]
+
+const keysAddr: Array<string> = ['XTP', 'BTC', 'LTC', 'DOGE']
 
 const RecordSection = ({
   leftText,
@@ -113,6 +115,8 @@ export default function Content({
   result: String
   prepared: boolean
 }) {
+  const [recordPrepared, setRecordPrepared] = useState(false)
+
   const { data: records } = useContractRead({
     address: ENSRegistry.address as `0x${string}`,
     abi: ENSRegistry.abi,
@@ -121,6 +125,7 @@ export default function Content({
     args: [namehash.hash(result)],
     onSuccess(data: any) {
       console.log('Success resolver', data)
+      setRecordPrepared(true)
     },
     onError(error) {
       console.log('Error resolver', error)
@@ -131,17 +136,32 @@ export default function Content({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: 'addr',
-    enabled: prepared,
-    // args: [namehash.hash(result), coinType],  coinType ??
+    enabled: prepared && recordPrepared,
+    args: [namehash.hash(result)],
     onSuccess(data: any) {
-      console.log('Success resolver', data)
+      console.log('Success addr', data)
     },
     onError(error) {
-      console.log('Error resolver', error)
+      console.log('Error addr', error)
     },
   })
 
-  const textsPrepare = keys.map((item, index) => ({
+  // console.log('namehash.hash(result)', namehash.hash(result))
+  const { data: owner } = useContractRead({
+    address: ENSRegistry.address as `0x${string}`,
+    abi: ENSRegistry.abi,
+    functionName: 'owner',
+    enabled: prepared && recordPrepared,
+    args: [namehash.hash(result)],
+    onSuccess(data: any) {
+      console.log('Success owner', data)
+    },
+    onError(error) {
+      console.log('Error owner', error)
+    },
+  })
+
+  const textsPrepare = keysTexts.map((item, index) => ({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: 'text',
@@ -150,7 +170,7 @@ export default function Content({
 
   const { data: arrTextsField } = useContractReads({
     contracts: textsPrepare as any,
-    enabled: prepared,
+    enabled: prepared && recordPrepared,
     onSuccess(data: any) {
       console.log('Success texts', data)
     },
@@ -188,11 +208,11 @@ export default function Content({
             Text Records
           </h2>
           <div className="flex-col items-center">
-            {listTextRecords.map((item, index) => (
+            {arrTextsField?.map((item: any, index: any) => (
               <RecordSection
                 key={index}
-                leftText={item.leftText}
-                rightText={item.rightText}
+                leftText={keysTexts[index]}
+                rightText={item}
               />
             ))}
           </div>

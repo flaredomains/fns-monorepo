@@ -4,24 +4,37 @@ import WalletConnect from '../WalletConnect'
 import Info from './Info'
 import Content from './Content'
 
-import ETHRegistarController from '../../src/pages/abi/ETHRegistrarController.json'
-import BaseRegistar from '../../src/pages/abi/BaseRegistrar.json'
+import ETHRegistrarController from '../../src/pages/abi/ETHRegistrarController.json'
+import BaseRegistrar from '../../src/pages/abi/BaseRegistrar.json'
+import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
 
 import { sha3_256 } from 'js-sha3'
 import web3 from 'web3-utils'
 const namehash = require('eth-ens-namehash')
 
-import { useAccount, useContractRead, useContract } from 'wagmi'
+import {
+  useAccount,
+  useContractRead,
+  useContract,
+  useEnsName,
+  useProvider,
+} from 'wagmi'
 
 export default function Details({ result }: { result: string }) {
   const [prepared, setPrepared] = useState<boolean>(false)
   const [preparedHash, setPreparedHash] = useState<boolean>(false)
   const [hashHex, setHashHex] = useState<string>('')
-  const [filterResult, setFilterResult] = useState('')
+  const [filterResult, setFilterResult] = useState<string>('')
 
+  // Check if result end with .flr and we do an hash with the resultFiltered for registrant and date
   useEffect(() => {
-    // console.log('Enter in the useEffect')
-    if (result) {
+    // Check if ethereum address
+    if (/^0x[a-fA-F0-9]{40}$/.test(result)) {
+      console.log('Ethereum address')
+      setFilterResult(result)
+      // setHashHex(hash)
+      // setPreparedHash(true)
+    } else if (result) {
       const resultFiltered = result.endsWith('.flr')
         ? result.slice(0, -4)
         : result
@@ -32,24 +45,12 @@ export default function Details({ result }: { result: string }) {
     }
   }, [result])
 
-  // const filterResult = result.endsWith('.flr') ? result.slice(0, -4) : result
-  // const hashHex = web3.sha3(filterResult) as string
-  // const hashHex = web3.sha3(filterResult)
-
-  // console.log(result)
-  // console.log('hashHex full result:', sha3_256(result))
-  // console.log('hashHex filter result:', sha3_256(filterResult))
-  // console.log('web3 sha3 full result:', web3.sha3(result))
-  // console.log('web3 sha3 filter result:', hashHex)
-  // console.log('namehash full result:', namehash.hash(result))
-  // console.log('namehash filter result:', namehash.hash(filterResult))
-
   const { address } = useAccount()
 
-  const contract = useContract({
-    address: BaseRegistar.address as `0x${string}`,
-    abi: BaseRegistar.abi,
-  })
+  // const contract = useContract({
+  //   address: BaseRegistar.address as `0x${string}`,
+  //   abi: BaseRegistar.abi,
+  // })
 
   // console.log(contract)
   // console.log(
@@ -57,12 +58,41 @@ export default function Details({ result }: { result: string }) {
   //   contract?.filters.ControllerAdded().topics
   // )
 
+  // const { data: node } = useContractRead({
+  //   address: ReverseRegistrar.address as `0x${string}`,
+  //   abi: ReverseRegistrar.abi,
+  //   functionName: 'node',
+  //   // enabled: preparedHash,
+  //   args: ['0x09Ec74F54dc4b316D8cd6DFBeB91263fB20E19d2'],
+  //   onSuccess(data: any) {
+  //     console.log('Success node', data)
+  //     const test = web3.asciiToHex(filterResult)
+  //     console.log('test', test)
+  //     // setPrepared(true)
+  //   },
+  //   onError(error) {
+  //     console.log('Error node', error)
+  //   },
+  // })
+
+  // const provider = useProvider()
+  // console.log('provider', provider)
+  // const test = async () => {
+  //   const name = await provider.lookupAddress(
+  //     '0x09Ec74F54dc4b316D8cd6DFBeB91263fB20E19d2'
+  //   )
+  //   console.log('name', name)
+  // }
+
+  // test()
+
+  // Check if the name is available -- args: filterResult
   const { data: available } = useContractRead({
-    address: ETHRegistarController.address as `0x${string}`,
-    abi: ETHRegistarController.abi,
+    address: ETHRegistrarController.address as `0x${string}`,
+    abi: ETHRegistrarController.abi,
     functionName: 'available',
     enabled: preparedHash,
-    args: [hashHex],
+    args: [filterResult],
     onSuccess(data: any) {
       console.log('Success available', data)
       setPrepared(true)
@@ -72,9 +102,10 @@ export default function Details({ result }: { result: string }) {
     },
   })
 
+  // Check the registrant -- args: hashHex which is the hash of the filterResult
   const { data: registrant } = useContractRead({
-    address: BaseRegistar.address as `0x${string}`,
-    abi: BaseRegistar.abi,
+    address: BaseRegistrar.address as `0x${string}`,
+    abi: BaseRegistrar.abi,
     functionName: 'ownerOf',
     enabled: !available && prepared,
     args: [hashHex],
@@ -87,27 +118,27 @@ export default function Details({ result }: { result: string }) {
   })
 
   const { data: controller } = useContractRead({
-    address: ETHRegistarController.address as `0x${string}`,
-    abi: ETHRegistarController.abi,
+    address: ETHRegistrarController.address as `0x${string}`,
+    abi: ETHRegistrarController.abi,
     functionName: 'owner',
     enabled: !available && prepared,
     // args: [tokenId as string], TokenID ???
     onSuccess(data: any) {
-      console.log('Success owner', data)
+      console.log('Success controller', data)
     },
     onError(error) {
-      console.log('Error owner', error)
+      console.log('Error controller', error)
     },
   })
 
   const { data: date } = useContractRead({
-    address: BaseRegistar.address as `0x${string}`,
-    abi: BaseRegistar.abi,
+    address: BaseRegistrar.address as `0x${string}`,
+    abi: BaseRegistrar.abi,
     functionName: 'nameExpires',
     enabled: !available && prepared,
     args: [hashHex],
     onSuccess(data: any) {
-      console.log('Success nameExpires', data)
+      console.log('Success nameExpires', Number(data))
     },
     onError(error) {
       console.log('Error nameExpires', error)
@@ -125,12 +156,14 @@ export default function Details({ result }: { result: string }) {
 
           <Info
             available={available}
-            registrant_address={available ? '' : registrant}
-            controller={available ? '' : controller}
-            date={available ? new Date() : date}
+            registrant_address={available ? '' : registrant ? registrant : ''}
+            controller={available ? '' : controller ? controller : ''}
+            date={available ? new Date() : new Date(Number(date) * 1000)}
           />
 
-          {!available && <Content result={filterResult} prepared={prepared} />}
+          {!available && available !== undefined && (
+            <Content result={result} prepared={prepared} />
+          )}
         </div>
 
         {/* Wallet connect */}

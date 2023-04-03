@@ -6,7 +6,9 @@ import Link from 'next/link'
 import AccountLine from './AccountLine'
 import Reverse_Record from './Reverse_Record'
 
-import { useContractRead, useContractEvent } from 'wagmi'
+import { useAccount, useContract } from 'wagmi'
+
+import BaseRegistar from '../../src/pages/abi/BaseRegistrar.json'
 
 const OwnedDomains = ({ date, domain }: { date: Date; domain: string }) => {
   const day = date.getDate()
@@ -46,12 +48,23 @@ const OwnedDomains = ({ date, domain }: { date: Date; domain: string }) => {
   )
 }
 
-export default function index({
+export default function MyAccount({
   arrSubdomains,
 }: {
   arrSubdomains: Array<any>
 }) {
+  const { address } = useAccount()
+
   const date = new Date(1678273065000)
+
+  const contract = useContract({
+    address: BaseRegistar.address as `0x${string}`,
+    abi: BaseRegistar.abi,
+  })
+
+  // Owned Domain
+  console.log('contract', contract?.filters.NameRegistered(null, address, null))
+
   return (
     <div className="flex-col w-11/12 mt-6 mx-auto lg:flex lg:flex-row lg:w-full">
       <div className="flex-col bg-gray-800 px-8 py-5 w-full rounded-md lg:w-3/4 lg:mr-2">

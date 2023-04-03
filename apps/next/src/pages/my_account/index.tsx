@@ -34,7 +34,7 @@ export default function My_Account() {
           <Side_Navbar />
 
           {/* Register */}
-          <div className="flex-col mt-9 pb-8 lg:mx-8 w-full min-h-screen">
+          <div className="flex-col mt-9 pb-8 lg:mx-8 w-full min-h-screen lg:w-3/4">
             <MyAccount arrSubdomains={arrSubdomains} />
           </div>
         </div>

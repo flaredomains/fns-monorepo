@@ -81,7 +81,9 @@ function Pages_buttons({ result, path }: any) {
     // Regular expression to validate input
     const pattern = /^[a-zA-Z0-9\s]+\.flr$/
 
-    if (pattern.test(route)) {
+    const exception = /^0x[a-fA-F0-9]{40}$/
+
+    if (pattern.test(route) || exception.test(route)) {
       console.log('Input is valid!')
       router.push(path.split('/')[0] + route.toLowerCase())
     } else {

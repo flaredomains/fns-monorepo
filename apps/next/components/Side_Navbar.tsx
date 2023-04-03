@@ -77,7 +77,7 @@ function Side_Navbar() {
   return (
     <>
       {/* Left Side / Navbar */}
-      <div className="flex justify-between items-center py-3 px-4 w-full bg-gray-800 lg:flex-col lg:w-1/4 lg:min-h-screen">
+      <div className="flex justify-between items-center py-3 px-4 w-full bg-gray-800 lg:flex-col lg:w-1/5 lg:min-h-screen">
         <LogoZone />
 
         {/* Middle lg:visible */}

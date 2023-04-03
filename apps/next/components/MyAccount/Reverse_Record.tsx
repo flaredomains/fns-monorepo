@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import ArrowDown from '../../public/ArrowDown.svg'
 
+import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
+
+import { useContractWrite, usePrepareContractWrite } from 'wagmi'
+
 const arrTextTest = [
   {
     text: 'chase',
@@ -78,6 +82,7 @@ const Dropdown = () => {
 
 export default function Reverse_Record() {
   const [isLarge, setisLarge] = useState(false)
+
   useEffect(() => {
     // First render
     if (window.innerWidth >= 1024) {
@@ -94,6 +99,28 @@ export default function Reverse_Record() {
     // Remove event listener on component unmount
     return () => window.removeEventListener('resize', handleResize)
   }, [])
+
+  //  SetName
+
+  // const { config: prepareSetName } = usePrepareContractWrite({
+  //   address: ReverseRegistrar.address as `0x${string}`,
+  //   abi: ReverseRegistrar.abi,
+  //   functionName: 'setName',
+  //   onSuccess(data: any) {
+  //     console.log('Success prepareSetName', data)
+  //     // setPrepared(true)
+  //   },
+  //   onError(error) {
+  //     console.log('Error prepareSetName', error)
+  //   },
+  // })
+  // const { write: setName } = useContractWrite({
+  //   ...prepareSetName,
+  //   onSuccess(data) {
+  //     console.log('Success', data)
+  //   },
+  // })
+
   return (
     <>
       <div className="flex justify-between mt-16">
