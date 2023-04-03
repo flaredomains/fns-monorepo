@@ -7,3 +7,6 @@
 [submodule "apps/forge/lib/openzeppelin-contracts"]
 	path = apps/forge/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "apps/forge/lib/punk-contracts"]
+	path = apps/forge/lib/punk-contracts
+	url = https://github.com/punk-domains/punk-contracts
