@@ -33,7 +33,7 @@ contract DeployFNS is Script {
         // Make BaseRegistrar the owner of the base 'flr' node
         baseRegistrar.addController(owner);
         ensRegistry.setSubnodeOwner(rootNode, keccak256('flr'), address(baseRegistrar));
-        baseRegistrar.register(uint256(keccak256('deployer')), owner, 86400);
+        baseRegistrar.register(uint256(keccak256('deployer')), owner, 365 days);
         require(ensRegistry.owner(ENSNamehash.namehash('deployer.flr')) == owner, "Owner not expected");
 
         // TODO: Update this to our own website
