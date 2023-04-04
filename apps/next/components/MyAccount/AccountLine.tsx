@@ -14,7 +14,7 @@ export default function AccountLine() {
     e.preventDefault()
 
     // Regular expression to validate input
-    const pattern = /^[a-zA-Z0-9\s]+\.flr$/
+    const pattern = /^[a-zA-Z0-9\s\p{Emoji}]+\.flr$/u
 
     const exception = /^0x[a-fA-F0-9]{40}$/
 

@@ -82,6 +82,8 @@ export default function Register({ result }: { result: string }) {
     }
   }, [result])
 
+  // console.log('hashHex', hashHex)
+
   const { data: available } = useContractRead({
     address: ETHRegistarController.address as `0x${string}`,
     abi: ETHRegistarController.abi,

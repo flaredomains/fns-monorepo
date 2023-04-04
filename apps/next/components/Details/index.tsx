@@ -47,16 +47,13 @@ export default function Details({ result }: { result: string }) {
 
   const { address } = useAccount()
 
-  // const contract = useContract({
-  //   address: BaseRegistar.address as `0x${string}`,
-  //   abi: BaseRegistar.abi,
-  // })
+  const contract = useContract({
+    address: BaseRegistrar.address as `0x${string}`,
+    abi: BaseRegistrar.abi,
+  })
 
   // console.log(contract)
-  // console.log(
-  //   'Contract Controller Event',
-  //   contract?.filters.ControllerAdded().topics
-  // )
+  // console.log('Contract Controller Event', contract?.filters.ControllerAdded())
 
   // const { data: node } = useContractRead({
   //   address: ReverseRegistrar.address as `0x${string}`,
@@ -113,16 +110,17 @@ export default function Details({ result }: { result: string }) {
       console.log('Success ownerOf', data)
     },
     onError(error) {
-      console.log('Error ownerOf', error)
+      console.error('Error ownerOf', error)
     },
   })
+
+  // console.log(hashHex)
 
   const { data: controller } = useContractRead({
     address: ETHRegistrarController.address as `0x${string}`,
     abi: ETHRegistrarController.abi,
     functionName: 'owner',
     enabled: !available && prepared,
-    // args: [tokenId as string], TokenID ???
     onSuccess(data: any) {
       console.log('Success controller', data)
     },
