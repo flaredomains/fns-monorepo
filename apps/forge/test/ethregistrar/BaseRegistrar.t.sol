@@ -6,6 +6,10 @@ import "forge-std/Test.sol";
 import "forge-std/console.sol";
 import "fns/ethregistrar/BaseRegistrar.sol";
 import "fns/registry/ENSRegistry.sol";
+import "fns/no-collisions/NoNameCollisions.sol";
+import "fns/no-collisions/mocks/MockPunkTLD.sol";
+
+import "@punkdomains/interfaces/IBasePunkTLD.sol";
 
 import "fns-test/utils/ENSNamehash.sol";
 import "fns-test/utils/HardhatAddresses.sol";
@@ -18,6 +22,7 @@ uint256 constant TIME_STAMP = 1678393495;
 contract TestBaseRegistrar is Test {
     BaseRegistrar public registrar;
     ENSRegistry public ens;
+    NoNameCollisions public noNameCollisions;
 
     address immutable ownerAccount = address(this);
     address constant controllerAccount = address0;
@@ -26,7 +31,9 @@ contract TestBaseRegistrar is Test {
 
     function setUp() public {
         ens = new ENSRegistry();
-        registrar = new BaseRegistrar(ens, ENSNamehash.namehash('eth'));
+        MockPunkTLD mockPunkTLD = new MockPunkTLD();
+        noNameCollisions = new NoNameCollisions(address(mockPunkTLD));
+        registrar = new BaseRegistrar(ens, ENSNamehash.namehash('eth'), noNameCollisions);
 
         registrar.addController(controllerAccount);
         ens.setSubnodeOwner(0x0, keccak256('eth'), address(registrar));
@@ -37,7 +44,7 @@ contract TestBaseRegistrar is Test {
     // Original Test: 'should allow new registrations'
     function testAllowNewRegistrations() public {
         vm.prank(controllerAccount);
-        registrar.register(uint256(keccak256('newname')), registrantAccount, 86400);
+        registrar.register('newname', registrantAccount, 86400);
 
         assertEq(ens.owner(ENSNamehash.namehash('newname.eth')), registrantAccount);
         assertEq(registrar.ownerOf(uint256(keccak256('newname'))), registrantAccount);
@@ -47,7 +54,7 @@ contract TestBaseRegistrar is Test {
     // Original Test: 'should allow registrations without updating the registry'
     function testAllowRegistrationsWithoutUpdatingRegistry() public {
         vm.prank(controllerAccount);
-        registrar.registerOnly(uint256(keccak256('silentname')), registrantAccount, 86400);
+        registrar.registerOnly('silentname', registrantAccount, 86400);
         assertEq(ens.owner(ENSNamehash.namehash('silentname.eth')), ZERO_ADDRESS);
         assertEq(registrar.ownerOf(uint256(keccak256('silentname'))), registrantAccount);
         assertEq(registrar.nameExpires(uint256(keccak256('silentname'))), TIME_STAMP + 86400);
@@ -58,7 +65,7 @@ contract TestBaseRegistrar is Test {
         uint256 id = uint256(keccak256('newname'));
 
         vm.startPrank(controllerAccount);
-        registrar.register(uint256(keccak256('newname')), registrantAccount, 86400);
+        registrar.register('newname', registrantAccount, 86400);
 
         uint256 oldExpires = registrar.nameExpires(id);
         registrar.renew(id, 86400);
@@ -71,13 +78,13 @@ contract TestBaseRegistrar is Test {
     // Original Test: 'should only allow the controller to register'
     function testFail_OnlyAllowControllerToRegister() public {
         vm.prank(otherAccount);
-        registrar.register(uint256(keccak256('foo')), otherAccount, 86400);
+        registrar.register('foo', otherAccount, 86400);
     }
 
     // Original Test: 'should only allow the controller to renew'
     function testFail_OnlyAllowControllerToRenew() public {
         vm.prank(controllerAccount);
-        registrar.register(uint256(keccak256('newname')), registrantAccount, 86400);    
+        registrar.register('newname', registrantAccount, 86400);    
 
         vm.prank(otherAccount);
         registrar.renew(uint256(keccak256('newname')), 86400);
@@ -85,10 +92,9 @@ contract TestBaseRegistrar is Test {
 
     // Original Test: 'should not permit registration of already registered names'
     function testFail_ShouldNotPremitRegistrationOfAlreadyRegisteredNames() public {
-        uint256 id = uint256(keccak256('newname'));
         vm.startPrank(controllerAccount);
-        registrar.register(id, registrantAccount, 86400);
-        registrar.register(id, otherAccount, 86400);
+        registrar.register('newname', registrantAccount, 86400);
+        registrar.register('newname', otherAccount, 86400);
     }
 
     // Original Test: 'should not permit renewing a name that is not registered'
@@ -100,7 +106,7 @@ contract TestBaseRegistrar is Test {
     // Original Test: 'should permit the owner to reclaim a name'
     function testShouldPermitOwnerToReclaimName() public {
         vm.prank(controllerAccount);
-        registrar.register(uint256(keccak256('newname')), registrantAccount, 86400);
+        registrar.register('newname', registrantAccount, 86400);
 
         // Make ZERO_ADDRESS the owner of newname.eth
         ens.setSubnodeOwner(0x0, keccak256('eth'), address(this));
@@ -125,7 +131,7 @@ contract TestBaseRegistrar is Test {
     // TODO: Determine cause of failure
     function testShouldPermitOwnerToTransferRegistration() public {
         vm.prank(controllerAccount);
-        registrar.register(uint256(keccak256('newname')), registrantAccount, 86400);
+        registrar.register('newname', registrantAccount, 86400);
 
         vm.prank(registrantAccount);
         registrar.transferFrom(registrantAccount, otherAccount, uint256(keccak256('newname')));
@@ -146,7 +152,7 @@ contract TestBaseRegistrar is Test {
     // Original Test: 'should not permit transfer or reclaim during the grace period'
     function testFail_ShouldNotPermitTransferDuringGracePeriod() public {
         vm.prank(controllerAccount);
-        registrar.register(uint256(keccak256('newname')), registrantAccount, 86400);
+        registrar.register('newname', registrantAccount, 86400);
 
         skip(registrar.nameExpires(uint256(keccak256('newname'))) - block.timestamp + 3600);
 
@@ -156,7 +162,7 @@ contract TestBaseRegistrar is Test {
 
     function testFail_ShouldNotPermitReclaimDuringGracePeriod() public {
         vm.prank(controllerAccount);
-        registrar.register(uint256(keccak256('newname')), registrantAccount, 86400);
+        registrar.register('newname', registrantAccount, 86400);
 
         skip(registrar.nameExpires(uint256(keccak256('newname'))) - block.timestamp + 3600);
 
@@ -167,7 +173,7 @@ contract TestBaseRegistrar is Test {
     // Original Test: 'should allow renewal during the grace period'
     function testAllowRenewalDuringGracePeriod() public {
         vm.prank(controllerAccount);
-        registrar.register(uint256(keccak256('newname')), registrantAccount, 86400);
+        registrar.register('newname', registrantAccount, 86400);
 
         vm.prank(controllerAccount);
         registrar.renew(uint256(keccak256('newname')), 86400);
@@ -178,7 +184,7 @@ contract TestBaseRegistrar is Test {
         uint256 newnameId = uint256(keccak256('newname'));
 
         vm.prank(controllerAccount);
-        registrar.register(newnameId, registrantAccount, 86400);
+        registrar.register('newname', registrantAccount, 86400);
 
         uint256 expires = registrar.nameExpires(newnameId);
         uint256 grace = registrar.GRACE_PERIOD();
@@ -189,7 +195,7 @@ contract TestBaseRegistrar is Test {
         registrar.ownerOf(newnameId);
 
         vm.prank(controllerAccount);
-        registrar.register(newnameId, otherAccount, 86400);
+        registrar.register('newname', otherAccount, 86400);
         assertEq(registrar.ownerOf(newnameId), otherAccount);
     }
 

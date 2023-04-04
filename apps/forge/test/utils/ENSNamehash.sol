@@ -1,7 +1,7 @@
 pragma solidity ^0.8.6;
 
 import "@openzeppelin/utils/Strings.sol";
-import "fns-test/utils/strings.sol";
+import "fns-test/utils/fns_strings.sol";
 
 /*
  * @dev Solidity implementation of the ENS namehash algorithm.
@@ -9,7 +9,7 @@ import "fns-test/utils/strings.sol";
  * Warning! Does not normalize or validate names before hashing.
  */
 library ENSNamehash {
-  using strings for *;
+  using fns_strings for *;
 
   function namehash(bytes memory domain) internal pure returns (bytes32) {
     return namehash(domain, 0);

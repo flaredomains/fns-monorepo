@@ -269,8 +269,7 @@ contract NameWrapper is
         address resolver,
         uint16 ownerControlledFuses
     ) external onlyController returns (uint256 registrarExpiry) {
-        uint256 tokenId = uint256(keccak256(bytes(label)));
-        registrarExpiry = registrar.register(tokenId, address(this), duration);
+        registrarExpiry = registrar.register(label, address(this), duration);
         _wrapETH2LD(
             label,
             wrappedOwner,

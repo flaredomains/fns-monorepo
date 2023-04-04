@@ -12,6 +12,7 @@ import "fns/wrapper/StaticMetadataService.sol";
 import "fns/ethregistrar/ETHRegistrarController.sol";
 import "fns/ethregistrar/StablePriceOracle.sol";
 import "fns/ethregistrar/DummyOracle.sol";
+import "fns/no-collisions/NoNameCollisions.sol";
 
 import "fns-test/utils/ENSNamehash.sol";
 
@@ -26,14 +27,15 @@ contract DeployFNS is Script {
 
         // The root owner will be the msg.sender, which should be the private key owner
         ENSRegistry ensRegistry = new ENSRegistry();
+        NoNameCollisions noNameCollisions = new NoNameCollisions(0xBDACF94dDCAB51c39c2dD50BffEe60Bb8021949a);
 
         // This is Ownable, and owned by the msg.sender (private key)
-        BaseRegistrar baseRegistrar = new BaseRegistrar(ensRegistry, ENSNamehash.namehash('flr'));
+        BaseRegistrar baseRegistrar = new BaseRegistrar(ensRegistry, ENSNamehash.namehash('flr'), noNameCollisions);
 
         // Make BaseRegistrar the owner of the base 'flr' node
         baseRegistrar.addController(owner);
         ensRegistry.setSubnodeOwner(rootNode, keccak256('flr'), address(baseRegistrar));
-        baseRegistrar.register(uint256(keccak256('deployer')), owner, 365 days);
+        baseRegistrar.register('deployer', owner, 365 days);
         require(ensRegistry.owner(ENSNamehash.namehash('deployer.flr')) == owner, "Owner not expected");
 
         // TODO: Update this to our own website

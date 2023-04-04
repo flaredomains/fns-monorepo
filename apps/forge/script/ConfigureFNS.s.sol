@@ -12,6 +12,7 @@ import "fns/wrapper/StaticMetadataService.sol";
 import "fns/ethregistrar/ETHRegistrarController.sol";
 import "fns/ethregistrar/StablePriceOracle.sol";
 import "fns/ethregistrar/DummyOracle.sol";
+import "fns/no-collisions/NoNameCollisions.sol";
 
 import "fns-test/utils/ENSNamehash.sol";
 
@@ -22,17 +23,19 @@ contract ConfigureFNS is Script {
 
     ENSRegistry public ensRegistry;// = ENSRegistry(0x01Ea6d29d8DB586AA2884A3eeb47F4301f8Ac5D4);
     BaseRegistrar public baseRegistrar;// = BaseRegistrar(0x73e263e83741f797Deb8aB8C8742fe6c815cbABf);
+    NoNameCollisions public noNameCollisions;
 
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
         ensRegistry = new ENSRegistry();
-        baseRegistrar = new BaseRegistrar(ensRegistry, ENSNamehash.namehash('flr'));
+        noNameCollisions = new NoNameCollisions(0xBDACF94dDCAB51c39c2dD50BffEe60Bb8021949a);
+        baseRegistrar = new BaseRegistrar(ensRegistry, ENSNamehash.namehash('flr'), noNameCollisions);
 
         baseRegistrar.addController(owner);
         ensRegistry.setSubnodeOwner(rootNode, keccak256('flr'), address(baseRegistrar));
-        baseRegistrar.register(uint256(keccak256('deployer')), owner, 86400);
+        baseRegistrar.register('deployer', owner, 86400);
         require(ensRegistry.owner(ENSNamehash.namehash('deployer.flr')) == owner, "Owner not expected");
 
         StaticMetadataService metadataService = new StaticMetadataService("https://ens.domains/");

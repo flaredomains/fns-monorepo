@@ -2,8 +2,10 @@ pragma solidity >=0.8.4;
 
 import "./IBaseRegistrar.sol";
 import "fns/registry/IENS.sol";
+import "fns/no-collisions/INoNameCollisions.sol";
 import "@openzeppelin/token/ERC721/ERC721.sol";
 import "@openzeppelin/access/Ownable.sol";
+import "@punkdomains/interfaces/IBasePunkTLD.sol";
 
 contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     // A map of expiry times
@@ -31,6 +33,8 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
         );
     bytes4 private constant RECLAIM_ID =
         bytes4(keccak256("reclaim(uint256,address)"));
+    
+    INoNameCollisions public noNameCollisionsContract;
 
     /**
      * v2.1.3 version of _isApprovedOrOwner which calls ownerOf(tokenId) and takes grace period into consideration instead of ERC721.ownerOf(tokenId);
@@ -51,9 +55,10 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
             isApprovedForAll(owner, spender));
     }
 
-    constructor(IENS _ens, bytes32 _baseNode) ERC721("", "") {
+    constructor(IENS _ens, bytes32 _baseNode, INoNameCollisions _noNameCollisionsContract) ERC721("", "") {
         ens = _ens;
         baseNode = _baseNode;
+        noNameCollisionsContract = _noNameCollisionsContract;
     }
 
     modifier live() {
@@ -64,6 +69,27 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     modifier onlyController() {
         require(controllers[msg.sender]);
         _;
+    }
+
+    /**
+     * @dev Ensures that there is no name collision on the given collisionRegistry
+     * @param name the string of the base name for TLD ".flr". ex: 'based' for 'based.flr'
+     */
+    modifier noCollision(string calldata name) {
+        require(
+            !noNameCollisionsContract.isNameCollision(name),
+            "FLR Domain Already Exists In Collision Registry");
+        _;
+    }
+
+    /**
+     * @dev Allows the owner of the contract to update the Collision Registry, in case it
+     *      is ever altered in the future
+     * @dev This assumes that the interface to check
+     * @param newContract the new NoNameCollisions Contract address
+     */
+    function updateNoNameCollisionContract(INoNameCollisions newContract) public onlyOwner {
+        noNameCollisionsContract = newContract;
     }
 
     /**
@@ -109,38 +135,40 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
 
     /**
      * @dev Register a name.
-     * @param id The token ID (keccak256 of the label).
+     * @param label The label for the given TLD. If 'based.eth', label is 'based'
      * @param owner The address that should own the registration.
      * @param duration Duration in seconds for the registration.
      */
     function register(
-        uint256 id,
+        string calldata label,
         address owner,
         uint256 duration
     ) external override returns (uint256) {
-        return _register(id, owner, duration, true);
+        return _register(label, owner, duration, true);
     }
 
     /**
      * @dev Register a name, without modifying the registry.
-     * @param id The token ID (keccak256 of the label).
+     * @param label The label for the given TLD. If 'based.eth', label is 'based'
      * @param owner The address that should own the registration.
      * @param duration Duration in seconds for the registration.
      */
     function registerOnly(
-        uint256 id,
+        string calldata label,
         address owner,
         uint256 duration
     ) external returns (uint256) {
-        return _register(id, owner, duration, false);
+        return _register(label, owner, duration, false);
     }
 
     function _register(
-        uint256 id,
+        string calldata label,
         address owner,
         uint256 duration,
         bool updateRegistry
-    ) internal live onlyController returns (uint256) {
+    ) internal live onlyController noCollision(label) returns (uint256) {
+        uint256 id = uint256(keccak256(bytes(label)));
+
         require(available(id));
         require(
             block.timestamp + duration + GRACE_PERIOD >

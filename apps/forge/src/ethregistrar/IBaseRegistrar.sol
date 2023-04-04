@@ -38,7 +38,7 @@ interface IBaseRegistrar is IERC721 {
      * @dev Register a name.
      */
     function register(
-        uint256 id,
+        string calldata label,
         address owner,
         uint256 duration
     ) external returns (uint256);
