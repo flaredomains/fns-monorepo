@@ -10,3 +10,6 @@
 [submodule "apps/forge/lib/flare-smart-contracts"]
 	path = apps/forge/lib/flare-smart-contracts
 	url = https://gitlab.com/flarenetwork/flare-smart-contracts
+[submodule "apps/forge/lib/punk-contracts"]
+	path = apps/forge/lib/punk-contracts
+	url = https://github.com/punk-domains/punk-contracts
