@@ -41,7 +41,7 @@ contract ETHRegistrarController is
         0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae;
     uint64 private constant MAX_EXPIRY = type(uint64).max;
     BaseRegistrar immutable base;
-    IPriceOracle public prices;
+    IPriceOracle public priceOracle;
     uint256 public immutable minCommitmentAge;
     uint256 public immutable maxCommitmentAge;
     ReverseRegistrar public immutable reverseRegistrar;
@@ -67,7 +67,7 @@ contract ETHRegistrarController is
 
     constructor(
         BaseRegistrar _base,
-        IPriceOracle _prices,
+        IPriceOracle _priceOracle,
         uint256 _minCommitmentAge,
         uint256 _maxCommitmentAge,
         ReverseRegistrar _reverseRegistrar,
@@ -82,16 +82,16 @@ contract ETHRegistrarController is
         }
 
         base = _base;
-        prices = _prices;
+        priceOracle = _priceOracle;
         minCommitmentAge = _minCommitmentAge;
         maxCommitmentAge = _maxCommitmentAge;
         reverseRegistrar = _reverseRegistrar;
         nameWrapper = _nameWrapper;
     }
 
-    function setPriceOracle(IPriceOracle _prices) public onlyOwner {
-        prices = _prices;
-        emit NewPriceOracle(address(prices));
+    function setPriceOracle(IPriceOracle _priceOracle) public onlyOwner {
+        priceOracle = _priceOracle;
+        emit NewPriceOracle(address(priceOracle));
     }
 
     function rentPrice(
@@ -99,7 +99,7 @@ contract ETHRegistrarController is
         uint256 duration
     ) public view override returns (IPriceOracle.Price memory price) {
         bytes32 label = keccak256(bytes(name));
-        price = prices.price(name, base.nameExpires(uint256(label)), duration);
+        price = priceOracle.price(name, base.nameExpires(uint256(label)), duration);
     }
 
     function valid(string memory name) public pure returns (bool) {
