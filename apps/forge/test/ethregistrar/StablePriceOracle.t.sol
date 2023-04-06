@@ -15,7 +15,7 @@ contract TestStablePriceOracle is Test {
     MockFtsoRegistry public mockFtsoRegistry;
     MockFlareContractRegistry public mockFlareContractRegistry;
 
-    // Price: $0.05 as uint256 with 5 decimal places
+    // Price: $0.05 as uint256 with 5 decimal places (5000 / 1e5 == 0.05)
     uint256 public constant staticPricePerFLR = 5000;
     uint256 public constant staticDecimalsFLRPrice = 5;
 

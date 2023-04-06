@@ -1,7 +1,6 @@
 pragma solidity ^0.8.6;
 
 import "./IENS.sol";
-import "forge-std/console.sol";
 
 /**
  * The ENS registry contract.
@@ -79,9 +78,6 @@ contract ENSRegistry is IENS {
      */
     function setSubnodeOwner(bytes32 node, bytes32 label, address _owner) public authorised(node) returns(bytes32) {
         bytes32 subnode = keccak256(abi.encodePacked(node, label));
-
-        console.log("ENSRegistry::setSubnodeOwner::subnode");
-        console.logBytes32(subnode);
 
         _setOwner(subnode, _owner);
         emit NewOwner(node, label, _owner);
