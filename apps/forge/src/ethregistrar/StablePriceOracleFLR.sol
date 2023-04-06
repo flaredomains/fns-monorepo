@@ -16,7 +16,6 @@ contract StablePriceOracleFLR is IPriceOracle, Ownable {
     // which gives us a price oracle for FLR. This is the documented standard way to perform
     // a price oracle lookup. See: https://docs.flare.network/dev/reference/contracts/
     IFlareContractRegistry public constant flareContractRegistry = IFlareContractRegistry(0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019);
-    // IFtsoRegistry public ftsoRegistry;
 
     // Number of Seconds in a Gregorian Calendar Year
     uint256 public constant secondsPerYear = 31556952;
@@ -54,7 +53,7 @@ contract StablePriceOracleFLR is IPriceOracle, Ownable {
 
     function price(
         string calldata name,
-        uint256 expires,
+        uint256 /*expires*/,
         uint256 durationSeconds
     ) external view override returns (IPriceOracle.Price memory) {
         // First, grab the FtsoRegistry contract address
