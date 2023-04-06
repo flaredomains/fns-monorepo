@@ -10,7 +10,7 @@ import "fns/registry/ReverseRegistrar.sol";
 import "fns/wrapper/NameWrapper.sol";
 import "fns/wrapper/StaticMetadataService.sol";
 import "fns/ethregistrar/ETHRegistrarController.sol";
-import "fns/ethregistrar/StablePriceOracle.sol";
+import "fns/ethregistrar/StablePriceOracleFLR.sol";
 import "fns/ethregistrar/DummyOracle.sol";
 import "fns/no-collisions/NoNameCollisions.sol";
 
@@ -42,8 +42,7 @@ contract ConfigureFNS is Script {
         NameWrapper nameWrapper = new NameWrapper(ensRegistry, baseRegistrar, metadataService);
         ReverseRegistrar reverseRegistrar = new ReverseRegistrar(ensRegistry);
         DummyOracle dummyOracle = new DummyOracle(100000000);
-        StablePriceOracle stablePriceOracle = new StablePriceOracle(
-            dummyOracle, [uint256(0), 0, 300, 100, 5]);
+        StablePriceOracleFLR stablePriceOracle = new StablePriceOracleFLR([uint256(0), 0, 300, 100, 5]);
         ETHRegistrarController ethRegistrarController = new ETHRegistrarController(
             baseRegistrar,
             stablePriceOracle,

@@ -10,7 +10,7 @@ import "fns/registry/ReverseRegistrar.sol";
 import "fns/wrapper/NameWrapper.sol";
 import "fns/wrapper/StaticMetadataService.sol";
 import "fns/ethregistrar/ETHRegistrarController.sol";
-import "fns/ethregistrar/StablePriceOracle.sol";
+import "fns/ethregistrar/StablePriceOracleFLR.sol";
 import "fns/ethregistrar/DummyOracle.sol";
 import "fns/no-collisions/NoNameCollisions.sol";
 
@@ -49,8 +49,7 @@ contract DeployFNS is Script {
         DummyOracle dummyOracle = new DummyOracle(100000000);
 
         // TODO: Update pricing on 1 & 2 character names as well
-        StablePriceOracle stablePriceOracle = new StablePriceOracle(
-            dummyOracle, [uint256(0), 0, 300, 100, 5]);
+        StablePriceOracleFLR stablePriceOracle = new StablePriceOracleFLR([uint256(0), 0, 300, 100, 5]);
         ETHRegistrarController ethRegistrarController = new ETHRegistrarController(
             baseRegistrar,
             stablePriceOracle,

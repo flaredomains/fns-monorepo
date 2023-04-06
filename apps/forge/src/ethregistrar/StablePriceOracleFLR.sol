@@ -3,101 +3,85 @@ pragma solidity ~0.8.17;
 
 import "./IPriceOracle.sol";
 import "./StringUtils.sol";
-import "./IAggregator.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "@flare/userInterfaces/IFlareContractRegistry.sol";
 import "@flare/userInterfaces/IFtsoRegistry.sol";
 
-// StablePriceOracle sets a price in USD, based on an oracle.
-contract StablePriceOracle is IPriceOracle {
+// StablePriceOracleFLR sets a price in USD, and converts that price to FLR based on the standard on-chain oracle
+contract StablePriceOracleFLR is IPriceOracle, Ownable {
     using StringUtils for *;
 
     // This address is used to JIT (Just-In-Time) lookup the address of the FtsoRegistry,
     // which gives us a price oracle for FLR. This is the documented standard way to perform
     // a price oracle lookup. See: https://docs.flare.network/dev/reference/contracts/
     IFlareContractRegistry public constant flareContractRegistry = IFlareContractRegistry(0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019);
-    address public ftsoRegistry;
+    // IFtsoRegistry public ftsoRegistry;
 
-    // Rent in base price units by length
-    uint256 public immutable price1Letter;
-    uint256 public immutable price2Letter;
-    uint256 public immutable price3Letter;
-    uint256 public immutable price4Letter;
-    uint256 public immutable price5Letter;
+    // Number of Seconds in a Gregorian Calendar Year
+    uint256 public constant secondsPerYear = 31556952;
 
-    // Oracle address that prices 1 FLR in USD
-    IAggregator public immutable flrUSDOracle;
+    // Rent in base prices in attodollars (1e-18). This is done for easy math against wei
+    // This means that these prices are USD multiplied by 1e18 on the input
+    uint256 public price1LetterAttoUSDPerSec;
+    uint256 public price2LetterAttoUSDPerSec;
+    uint256 public price3LetterAttoUSDPerSec;
+    uint256 public price4LetterAttoUSDPerSec;
+    uint256 public price5LetterAttoUSDPerSec;
 
-    event RentPriceChanged(uint256[] prices);
+    event RentPriceChanged(uint256[5] prices);
 
-    constructor(IAggregator _usdOracle, uint256[5] memory _rentPrices) {
-        flrUSDOracle = _usdOracle;
-        price1Letter = _rentPrices[0];
-        price2Letter = _rentPrices[1];
-        price3Letter = _rentPrices[2];
-        price4Letter = _rentPrices[3];
-        price5Letter = _rentPrices[4];
-        ftsoRegistry = flareContractRegistry.getContractAddressByName("FtsoRegistry");
+    constructor(uint256[5] memory _rentPricesAttoUSDPerSec) {
+        setPrices(_rentPricesAttoUSDPerSec);
+    }
+
+    // Input prices are expected to be normal USD pricing multiplied by 1e18:
+    function setPrices(uint256[5] memory _rentPricesAttoUSDPerSec) public onlyOwner {
+        require((_rentPricesAttoUSDPerSec[0] * secondsPerYear) / 1e18 > 0, "Input 1 Letter Price is too small");
+        require((_rentPricesAttoUSDPerSec[1] * secondsPerYear) / 1e18 > 0, "Input 2 Letter Price is too small");
+        require((_rentPricesAttoUSDPerSec[2] * secondsPerYear) / 1e18 > 0, "Input 3 Letter Price is too small");
+        require((_rentPricesAttoUSDPerSec[3] * secondsPerYear) / 1e18 > 0, "Input 4 Letter Price is too small");
+        require((_rentPricesAttoUSDPerSec[4] * secondsPerYear) / 1e18 > 0, "Input 5+ Letter Price is too small");
+
+        price1LetterAttoUSDPerSec = _rentPricesAttoUSDPerSec[0];
+        price2LetterAttoUSDPerSec = _rentPricesAttoUSDPerSec[1];
+        price3LetterAttoUSDPerSec = _rentPricesAttoUSDPerSec[2];
+        price4LetterAttoUSDPerSec = _rentPricesAttoUSDPerSec[3];
+        price5LetterAttoUSDPerSec = _rentPricesAttoUSDPerSec[4];
+
+        emit RentPriceChanged(_rentPricesAttoUSDPerSec);
     }
 
     function price(
         string calldata name,
         uint256 expires,
-        uint256 duration
+        uint256 durationSeconds
     ) external view override returns (IPriceOracle.Price memory) {
+        // First, grab the FtsoRegistry contract address
+        IFtsoRegistry ftsoRegistry = IFtsoRegistry(flareContractRegistry.getContractAddressByName("FtsoRegistry"));
+        
+        // Now, grab the pricing data from the on-chain Oracle Contract
+        (uint256 flrPriceUSD, uint256 timestamp, uint256 decimals) = 
+            ftsoRegistry.getCurrentPriceWithDecimals("FLR");
+        
         uint256 len = name.strlen();
         uint256 basePrice;
 
         if (len >= 5) {
-            basePrice = price5Letter * duration;
+            basePrice = price5LetterAttoUSDPerSec * durationSeconds;
         } else if (len == 4) {
-            basePrice = price4Letter * duration;
+            basePrice = price4LetterAttoUSDPerSec * durationSeconds;
         } else if (len == 3) {
-            basePrice = price3Letter * duration;
+            basePrice = price3LetterAttoUSDPerSec * durationSeconds;
         } else if (len == 2) {
-            basePrice = price2Letter * duration;
+            basePrice = price2LetterAttoUSDPerSec * durationSeconds;
         } else {
-            basePrice = price1Letter * duration;
+            basePrice = price1LetterAttoUSDPerSec * durationSeconds;
         }
 
-        return
-            IPriceOracle.Price({
-                base: attoUSDToWei(basePrice),
-                premium: attoUSDToWei(_premium(name, expires, duration))
-            });
-    }
-
-    /**
-     * @dev Returns the pricing premium in wei.
-     */
-    function premium(
-        string calldata name,
-        uint256 expires,
-        uint256 duration
-    ) external view returns (uint256) {
-        return attoUSDToWei(_premium(name, expires, duration));
-    }
-
-    /**
-     * @dev Returns the pricing premium in internal base units.
-     */
-    function _premium(
-        string memory name,
-        uint256 expires,
-        uint256 duration
-    ) internal view virtual returns (uint256) {
-        return 0;
-    }
-
-    function attoUSDToWei(uint256 amount) internal view returns (uint256) {
-        uint256 flrPrice = uint256(flrUSDOracle.latestAnswer());
-        return (amount * 1e8) / flrPrice;
-    }
-
-    function weiToAttoUSD(uint256 amount) internal view returns (uint256) {
-        uint256 flrPrice = uint256(flrUSDOracle.latestAnswer());
-        return (amount * flrPrice) / 1e8;
+        // Because our price was originally in attodaollars like wei (1e18), we simply need to multiply by the number
+        // of decimals returned by the oracle, then divide by that price (as a uint256)
+        return IPriceOracle.Price({price: (basePrice * (1 * (10^decimals))) / flrPriceUSD, oracleTimestamp: timestamp});
     }
 
     function supportsInterface(
