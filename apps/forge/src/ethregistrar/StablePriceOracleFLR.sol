@@ -6,7 +6,7 @@ import "./StringUtils.sol";
 import "./IAggregator.sol";
 import "@openzeppelin/access/Ownable.sol";
 import "@openzeppelin/utils/introspection/IERC165.sol";
-import "../FlareNetwork/IFlareContractRegistry.sol";
+import "@flare/userInterfaces/IFlareContractRegistry.sol";
 
 // StablePriceOracle sets a price in USD, based on an oracle.
 contract StablePriceOracle is IPriceOracle {

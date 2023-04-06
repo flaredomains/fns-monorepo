@@ -4,6 +4,7 @@
         "forge-std/=apps/forge/lib/forge-std/src/",
         "@openzeppelin/=apps/forge/lib/openzeppelin-contracts/contracts/",
         "@punkdomains/=apps/forge/lib/punk-contracts/contracts",
+        "@flare/=apps/forge/lib/flare-smart-contracts/contracts",
         "fns/=apps/forge/src/",
         "fns-test/=apps/forge/test/"
     ],
