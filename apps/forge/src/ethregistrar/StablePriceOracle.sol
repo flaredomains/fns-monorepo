@@ -8,8 +8,6 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "@flare/userInterfaces/IFlareContractRegistry.sol";
 import "@flare/userInterfaces/IFtsoRegistry.sol";
 
-import "forge-std/console.sol";
-
 // StablePriceOracle sets a price in USD, based on an oracle.
 contract StablePriceOracle is IPriceOracle, Ownable {
     using StringUtils for *;
@@ -51,8 +49,6 @@ contract StablePriceOracle is IPriceOracle, Ownable {
         price4LetterAttoUSDPerSec = (_annualRentPricesUSD[3] * 1e18) / secondsPerYear;
         price5LetterAttoUSDPerSec = (_annualRentPricesUSD[4] * 1e18) / secondsPerYear;
 
-        console.log(price1LetterAttoUSDPerSec);
-
         emit RentPriceChanged(_annualRentPricesUSD);
     }
 
@@ -75,10 +71,6 @@ contract StablePriceOracle is IPriceOracle, Ownable {
         } else {
             basePrice = price1LetterAttoUSDPerSec * duration;
         }
-
-        console.log("Base Price %d", basePrice);
-        console.log("Duration %d", duration);
-        console.log("price1LetterAttoUSDPerSec %d", price1LetterAttoUSDPerSec);
 
         return
             IPriceOracle.Price({
@@ -118,12 +110,12 @@ contract StablePriceOracle is IPriceOracle, Ownable {
 
     function attoUSDToWei(uint256 amount) internal view returns (uint256) {
         (uint256 flrPriceUSD, /* unused */, uint256 decimals) = getLatestPriceDataFromOracle();
-        return (amount * (1 * (10^decimals))) / flrPriceUSD;
+        return (amount * (1 * (10 ** decimals))) / flrPriceUSD;
     }
 
     function weiToAttoUSD(uint256 amount) internal view returns (uint256) {
         (uint256 flrPriceUSD, /* unused */, uint256 decimals) = getLatestPriceDataFromOracle();
-        return (amount * flrPriceUSD) / (1 * (10^decimals));
+        return (amount * flrPriceUSD) / (1 * (10 ** decimals));
     }
 
     function supportsInterface(

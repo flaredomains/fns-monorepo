@@ -88,9 +88,9 @@ contract TestStablePriceOracle is Test {
     function test_1LetterPriceIsCorrect() public {
         uint256 oneLetterPriceAttoUSDAnnual = oneLetterAnnualPriceUSD * 1e18;
         uint256 oneLetterPriceAttoUSDPerSec = oneLetterPriceAttoUSDAnnual / stablePriceOracle.secondsPerYear();
-        uint256 numYearsToPrice = 5;
+        uint256 numYearsToPrice = 1;
         uint256 numSecondsToPrice = numYearsToPrice * stablePriceOracle.secondsPerYear();
-        uint256 expectedPrice = (oneLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ^ staticDecimalsFLRPrice))) / staticPricePerFLR;
+        uint256 expectedPrice = (oneLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ** staticDecimalsFLRPrice))) / staticPricePerFLR;
 
         assertEq(stablePriceOracle.price("a", 0, numSecondsToPrice).base, expectedPrice);
     }
@@ -98,9 +98,9 @@ contract TestStablePriceOracle is Test {
     function test_2LetterPriceIsCorrect() public {
         uint256 twoLetterPriceAttoUSDAnnual = twoLetterAnnualPriceUSD * 1e18;
         uint256 twoLetterPriceAttoUSDPerSec = twoLetterPriceAttoUSDAnnual / stablePriceOracle.secondsPerYear();
-        uint256 numYearsToPrice = 5;
+        uint256 numYearsToPrice = 1;
         uint256 numSecondsToPrice = numYearsToPrice * stablePriceOracle.secondsPerYear();
-        uint256 expectedPrice = (twoLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ^ staticDecimalsFLRPrice))) / staticPricePerFLR;
+        uint256 expectedPrice = (twoLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ** staticDecimalsFLRPrice))) / staticPricePerFLR;
 
         assertEq(stablePriceOracle.price("yo", 0, numSecondsToPrice).base, expectedPrice);
     }
@@ -108,9 +108,9 @@ contract TestStablePriceOracle is Test {
     function test_3LetterPriceIsCorrect() public {
         uint256 threeLetterPriceAttoUSDAnnual = threeLetterAnnualPriceUSD * 1e18;
         uint256 threeLetterPriceAttoUSDPerSec = threeLetterPriceAttoUSDAnnual / stablePriceOracle.secondsPerYear();
-        uint256 numYearsToPrice = 5;
+        uint256 numYearsToPrice = 1;
         uint256 numSecondsToPrice = numYearsToPrice * stablePriceOracle.secondsPerYear();
-        uint256 expectedPrice = (threeLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ^ staticDecimalsFLRPrice))) / staticPricePerFLR;
+        uint256 expectedPrice = (threeLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ** staticDecimalsFLRPrice))) / staticPricePerFLR;
 
         assertEq(stablePriceOracle.price("wee", 0, numSecondsToPrice).base, expectedPrice);
     }
@@ -118,9 +118,9 @@ contract TestStablePriceOracle is Test {
     function test_4LetterPriceIsCorrect() public {
         uint256 fourLetterPriceAttoUSDAnnual = fourLetterAnnualPriceUSD * 1e18;
         uint256 fourLetterPriceAttoUSDPerSec = fourLetterPriceAttoUSDAnnual / stablePriceOracle.secondsPerYear();
-        uint256 numYearsToPrice = 5;
+        uint256 numYearsToPrice = 1;
         uint256 numSecondsToPrice = numYearsToPrice * stablePriceOracle.secondsPerYear();
-        uint256 expectedPrice = (fourLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ^ staticDecimalsFLRPrice))) / staticPricePerFLR;
+        uint256 expectedPrice = (fourLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ** staticDecimalsFLRPrice))) / staticPricePerFLR;
 
         assertEq(stablePriceOracle.price("four", 0, numSecondsToPrice).base, expectedPrice);
     }
@@ -128,9 +128,9 @@ contract TestStablePriceOracle is Test {
     function test_5LetterPriceIsCorrect() public {
         uint256 fiveLetterPriceAttoUSDAnnual = fiveLetterAnnualPriceUSD * 1e18;
         uint256 fiveLetterPriceAttoUSDPerSec = fiveLetterPriceAttoUSDAnnual / stablePriceOracle.secondsPerYear();
-        uint256 numYearsToPrice = 5;
+        uint256 numYearsToPrice = 1;
         uint256 numSecondsToPrice = numYearsToPrice * stablePriceOracle.secondsPerYear();
-        uint256 expectedPrice = (fiveLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ^ staticDecimalsFLRPrice))) / staticPricePerFLR;
+        uint256 expectedPrice = (fiveLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ** staticDecimalsFLRPrice))) / staticPricePerFLR;
 
         assertEq(stablePriceOracle.price("ricky", 0, numSecondsToPrice).base, expectedPrice);
     }
@@ -138,9 +138,9 @@ contract TestStablePriceOracle is Test {
     function test_GT5LetterPriceIsCorrect() public {
         uint256 fiveLetterPriceAttoUSDAnnual = fiveLetterAnnualPriceUSD * 1e18;
         uint256 fiveLetterPriceAttoUSDPerSec = fiveLetterPriceAttoUSDAnnual / stablePriceOracle.secondsPerYear();
-        uint256 numYearsToPrice = 5;
+        uint256 numYearsToPrice = 1;
         uint256 numSecondsToPrice = numYearsToPrice * stablePriceOracle.secondsPerYear();
-        uint256 expectedPrice = (fiveLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ^ staticDecimalsFLRPrice))) / staticPricePerFLR;
+        uint256 expectedPrice = (fiveLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ** staticDecimalsFLRPrice))) / staticPricePerFLR;
 
         assertEq(stablePriceOracle.price("amuchlongernamethanfiveletters", 0, numSecondsToPrice).base, expectedPrice);
     }
