@@ -1,12 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ~0.8.17;
 
-import "./SafeMath.sol";
 import "./StablePriceOracle.sol";
 
 contract LinearPremiumPriceOracle is StablePriceOracle {
-    using SafeMath for *;
-
     uint256 immutable GRACE_PERIOD = 90 days;
 
     uint256 public immutable initialPremium;
@@ -37,9 +34,7 @@ contract LinearPremiumPriceOracle is StablePriceOracle {
         }
 
         // Calculate the discount off the maximum premium
-        uint256 discount = premiumDecreaseRate.mul(
-            block.timestamp.sub(expires)
-        );
+        uint256 discount = premiumDecreaseRate * (block.timestamp - expires);
 
         // If we've run out the premium period, return 0.
         if (discount > initialPremium) {
@@ -63,11 +58,11 @@ contract LinearPremiumPriceOracle is StablePriceOracle {
         amount = weiToAttoUSD(amount);
         require(amount <= initialPremium);
 
-        expires = expires.add(GRACE_PERIOD);
+        expires = expires + GRACE_PERIOD;
 
-        uint256 discount = initialPremium.sub(amount);
-        uint256 duration = discount.div(premiumDecreaseRate);
-        return expires.add(duration);
+        uint256 discount = initialPremium - amount;
+        uint256 duration = discount / premiumDecreaseRate;
+        return expires + duration;
     }
 
     function supportsInterface(
