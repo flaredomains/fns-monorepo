@@ -1,6 +1,6 @@
 pragma solidity ^0.8.6;
 
-import "@openzeppelin/access/Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "fns/root/Controllable.sol";
 import "./IENS.sol";
 import "./IReverseRegistrar.sol";

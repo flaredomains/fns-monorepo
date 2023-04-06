@@ -1,6 +1,6 @@
 pragma solidity ^0.8.6;
 
-import "@openzeppelin/utils/Strings.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "fns-test/utils/fns_strings.sol";
 
 /*

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.4;
 import "./INoNameCollisions.sol";
-import "@openzeppelin/access/Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@punkdomains/interfaces/IBasePunkTLD.sol";
 
 contract NoNameCollisions is INoNameCollisions, Ownable {

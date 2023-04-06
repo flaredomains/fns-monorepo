@@ -7,9 +7,9 @@ import {IResolver} from "fns/resolvers/IResolver.sol";
 import {ReverseRegistrar} from "fns/registry/ReverseRegistrar.sol";
 import {IETHRegistrarController, IPriceOracle} from "./IETHRegistrarController.sol";
 
-import {Ownable} from "@openzeppelin/access/Ownable.sol";
-import {IERC165} from "@openzeppelin/utils/introspection/IERC165.sol";
-import {Address} from "@openzeppelin/utils/Address.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {INameWrapper} from "../wrapper/INameWrapper.sol";
 import {ERC20Recoverable} from "fns/utils/ERC20Recoverable.sol";
 
@@ -89,7 +89,7 @@ contract ETHRegistrarController is
         nameWrapper = _nameWrapper;
     }
 
-    function setPriceOracle(PriceOracle _prices) public onlyOwner {
+    function setPriceOracle(IPriceOracle _prices) public onlyOwner {
         prices = _prices;
         emit NewPriceOracle(address(prices));
     }

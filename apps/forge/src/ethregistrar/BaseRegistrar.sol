@@ -3,8 +3,8 @@ pragma solidity >=0.8.4;
 import "./IBaseRegistrar.sol";
 import "fns/registry/IENS.sol";
 import "fns/no-collisions/INoNameCollisions.sol";
-import "@openzeppelin/token/ERC721/ERC721.sol";
-import "@openzeppelin/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@punkdomains/interfaces/IBasePunkTLD.sol";
 
 contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {

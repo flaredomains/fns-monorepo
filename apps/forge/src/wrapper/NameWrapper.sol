@@ -8,8 +8,8 @@ import {INameWrapperUpgrade} from "./INameWrapperUpgrade.sol";
 import {IMetadataService} from "./IMetadataService.sol";
 import {IENS} from "fns/registry/IENS.sol";
 import {IBaseRegistrar} from "fns/ethregistrar/IBaseRegistrar.sol";
-import {IERC721Receiver} from "@openzeppelin/token/ERC721/IERC721Receiver.sol";
-import {Ownable} from "@openzeppelin/access/Ownable.sol";
+import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {BytesUtils} from "./BytesUtils.sol";
 import {ERC20Recoverable} from "fns/utils/ERC20Recoverable.sol";
 

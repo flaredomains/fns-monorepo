@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.4;
 
-import "@openzeppelin/utils/introspection/ERC165.sol";
+import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "./profiles/IVersionableResolver.sol";
 
 abstract contract ResolverBase is ERC165, IVersionableResolver {

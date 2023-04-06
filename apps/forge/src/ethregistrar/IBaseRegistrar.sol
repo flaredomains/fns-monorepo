@@ -2,7 +2,7 @@ pragma solidity ^0.8.18;
 
 import "fns/registry/IENS.sol";
 import "./IBaseRegistrar.sol";
-import "@openzeppelin/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 interface IBaseRegistrar is IERC721 {
     event ControllerAdded(address indexed controller);

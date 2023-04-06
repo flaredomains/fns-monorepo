@@ -4,8 +4,8 @@ pragma solidity ~0.8.17;
 import "./IPriceOracle.sol";
 import "./StringUtils.sol";
 import "./IAggregator.sol";
-import "@openzeppelin/access/Ownable.sol";
-import "@openzeppelin/utils/introspection/IERC165.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "@flare/userInterfaces/IFlareContractRegistry.sol";
 import "@flare/userInterfaces/IFtsoRegistry.sol";
 

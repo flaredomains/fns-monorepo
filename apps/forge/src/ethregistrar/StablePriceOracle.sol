@@ -4,8 +4,8 @@ pragma solidity ~0.8.17;
 import "./IPriceOracle.sol";
 import "./StringUtils.sol";
 import "./IAggregator.sol";
-import "@openzeppelin/access/Ownable.sol";
-import "@openzeppelin/utils/introspection/IERC165.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 // StablePriceOracle sets a price in USD, based on an oracle.
 contract StablePriceOracle is IPriceOracle {
