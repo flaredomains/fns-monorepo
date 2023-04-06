@@ -17,9 +17,36 @@ uint256 constant SECS_PER_YEAR = 31556952;
 
 contract TestStablePriceOracleFLR is Test {
     StablePriceOracleFLR public stablePriceOracleFLR;
+    event RentPriceChanged(uint256[5] prices);
 
     function setUp() public {
         stablePriceOracleFLR = new StablePriceOracleFLR(
+            [
+                uint256(1000),  // 1-letter name price (attoUSD)
+                500,            // 2-letter name price (attoUSD)
+                250,            // 3-letter name price (attoUSD)
+                125,            // 4-letter name price (attoUSD)
+                75              // 5-letter name price (attoUSD)
+            ]
+        );
+    }
+
+    function testFail_invalidConstructorArguments() public {
+        StablePriceOracleFLR fail_stablePriceOracleFLR = new StablePriceOracleFLR(
+            [
+                // The smallest valid value is $1/year 
+                uint256(1), // 1-letter name price (attoUSD)
+                1,          // 2-letter name price (attoUSD)
+                0,          // 3-letter name price (attoUSD)
+                1,          // 4-letter name price (attoUSD)
+                2           // 5-letter name price (attoUSD)
+            ]
+        );
+    }
+
+    function testFail_nonOwnerCantCallSetPrices() public {
+        vm.prank(address0);
+        stablePriceOracleFLR.setPrices(
             [
                 uint256((700 * 1e18) / SECS_PER_YEAR),        // 1-letter name price (attoUSD)
                 (350 * 1e18) / SECS_PER_YEAR,                 // 2-letter name price (attoUSD)
@@ -30,16 +57,39 @@ contract TestStablePriceOracleFLR is Test {
         );
     }
 
-    function testFail_invalidConstructorArguments() public {
-        StablePriceOracleFLR fail_stablePriceOracleFLR = new StablePriceOracleFLR(
-            [
-                // The smallest valid value is $2/year 
-                uint256((2 * 1e18) / SECS_PER_YEAR),        // 1-letter name price (attoUSD)
-                350,                 // 2-letter name price (attoUSD)
-                100,                 // 3-letter name price (attoUSD)
-                50,                  // 4-letter name price (attoUSD)
-                25                   // 5-letter name price (attoUSD)
-            ]
-        );
+    function test_ownerCanCallSetPricesAndEventEmits() public {
+        uint256[5] memory annualRentPricesUSD = [
+            uint256(2000),  // 1-letter name price (attoUSD)
+            500,            // 2-letter name price (attoUSD)
+            250,            // 3-letter name price (attoUSD)
+            125,            // 4-letter name price (attoUSD)
+            75              // 5-letter name price (attoUSD)
+        ];
+
+        vm.expectEmit(true, false, false, false);
+        emit RentPriceChanged(annualRentPricesUSD);
+
+        stablePriceOracleFLR.setPrices(annualRentPricesUSD);
     }
+
+    function test_1LetterPriceIsCorrect() public {
+        uint256 oneLetterPriceUSDAnnual = 1000;
+        uint256 oneLetterPriceAttoUSDAnnual = oneLetterPriceUSDAnnual * 1e18;
+        uint256 oneLetterPriceAttoUSDPerSec = oneLetterPriceAttoUSDAnnual / stablePriceOracleFLR.secondsPerYear();
+        uint256 numYearsToPrice = 5;
+
+        // uint256 expectedPrice = 
+
+        // assertEq(stablePriceOracleFLR.price("a", 0, stablePriceOracleFLR.secondsPerYear() * numYearsToPrice))
+    }
+
+    function test_2LetterPriceIsCorrect() public {}
+
+    function test_3LetterPriceIsCorrect() public {}
+
+    function test_4LetterPriceIsCorrect() public {}
+
+    function test_5LetterPriceIsCorrect() public {}
+
+    function test_GT5LetterPriceIsCorrect() public {}
 }

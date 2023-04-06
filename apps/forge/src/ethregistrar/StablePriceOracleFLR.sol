@@ -30,25 +30,25 @@ contract StablePriceOracleFLR is IPriceOracle, Ownable {
 
     event RentPriceChanged(uint256[5] prices);
 
-    constructor(uint256[5] memory _rentPricesAttoUSDPerSec) {
-        setPrices(_rentPricesAttoUSDPerSec);
+    constructor(uint256[5] memory _annualRentPricesUSD) {
+        setPrices(_annualRentPricesUSD);
     }
 
-    // Input prices are expected to be normal USD pricing multiplied by 1e18:
-    function setPrices(uint256[5] memory _rentPricesAttoUSDPerSec) public onlyOwner {
-        require((_rentPricesAttoUSDPerSec[0] * secondsPerYear) / 1e18 > 0, "Input 1 Letter Price is too small");
-        require((_rentPricesAttoUSDPerSec[1] * secondsPerYear) / 1e18 > 0, "Input 2 Letter Price is too small");
-        require((_rentPricesAttoUSDPerSec[2] * secondsPerYear) / 1e18 > 0, "Input 3 Letter Price is too small");
-        require((_rentPricesAttoUSDPerSec[3] * secondsPerYear) / 1e18 > 0, "Input 4 Letter Price is too small");
-        require((_rentPricesAttoUSDPerSec[4] * secondsPerYear) / 1e18 > 0, "Input 5+ Letter Price is too small");
+    // Input prices are expected to be normal USD pricing in integer format:
+    function setPrices(uint256[5] memory _annualRentPricesUSD) public onlyOwner {
+        require(_annualRentPricesUSD[0] > 0, "Input 1 Letter Price is too small");
+        require(_annualRentPricesUSD[1] > 0, "Input 2 Letter Price is too small");
+        require(_annualRentPricesUSD[2] > 0, "Input 3 Letter Price is too small");
+        require(_annualRentPricesUSD[3] > 0, "Input 4 Letter Price is too small");
+        require(_annualRentPricesUSD[4] > 0, "Input 5+ Letter Price is too small");
 
-        price1LetterAttoUSDPerSec = _rentPricesAttoUSDPerSec[0];
-        price2LetterAttoUSDPerSec = _rentPricesAttoUSDPerSec[1];
-        price3LetterAttoUSDPerSec = _rentPricesAttoUSDPerSec[2];
-        price4LetterAttoUSDPerSec = _rentPricesAttoUSDPerSec[3];
-        price5LetterAttoUSDPerSec = _rentPricesAttoUSDPerSec[4];
+        price1LetterAttoUSDPerSec = (_annualRentPricesUSD[0] * 1e18) / secondsPerYear;
+        price2LetterAttoUSDPerSec = (_annualRentPricesUSD[1] * 1e18) / secondsPerYear;
+        price3LetterAttoUSDPerSec = (_annualRentPricesUSD[2] * 1e18) / secondsPerYear;
+        price4LetterAttoUSDPerSec = (_annualRentPricesUSD[3] * 1e18) / secondsPerYear;
+        price5LetterAttoUSDPerSec = (_annualRentPricesUSD[4] * 1e18) / secondsPerYear;
 
-        emit RentPriceChanged(_rentPricesAttoUSDPerSec);
+        emit RentPriceChanged(_annualRentPricesUSD);
     }
 
     function price(
