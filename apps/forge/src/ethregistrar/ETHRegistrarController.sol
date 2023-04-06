@@ -53,8 +53,8 @@ contract ETHRegistrarController is
         string name,
         bytes32 indexed label,
         address indexed owner,
-        uint256 price,
-        uint256 oracleTimestamp,
+        uint256 baseCost,
+        uint256 premium,
         uint256 expires
     );
     event NameRenewed(
@@ -158,7 +158,7 @@ contract ETHRegistrarController is
         uint16 ownerControlledFuses
     ) public payable override {
         IPriceOracle.Price memory price = rentPrice(name, duration);
-        if (msg.value < price.price) {
+        if (msg.value < price.base + price.premium) {
             revert InsufficientValue();
         }
 
@@ -197,14 +197,14 @@ contract ETHRegistrarController is
             name,
             keccak256(bytes(name)),
             owner,
-            price.price,
-            price.oracleTimestamp,
+            price.base,
+            price.premium,
             expires
         );
 
-        if (msg.value > price.price) {
+        if (msg.value > (price.base + price.premium)) {
             payable(msg.sender).transfer(
-                msg.value - price.price
+                msg.value - (price.base + price.premium)
             );
         }
     }
@@ -216,13 +216,13 @@ contract ETHRegistrarController is
         bytes32 labelhash = keccak256(bytes(name));
         uint256 tokenId = uint256(labelhash);
         IPriceOracle.Price memory price = rentPrice(name, duration);
-        if (msg.value < price.price) {
+        if (msg.value < price.base) {
             revert InsufficientValue();
         }
         uint256 expires = nameWrapper.renew(tokenId, duration);
 
-        if (msg.value > price.price) {
-            payable(msg.sender).transfer(msg.value - price.price);
+        if (msg.value > price.base) {
+            payable(msg.sender).transfer(msg.value - price.base);
         }
 
         emit NameRenewed(name, labelhash, msg.value, expires);

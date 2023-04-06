@@ -4,7 +4,7 @@ pragma abicoder v2;
 
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
-import "fns/ethregistrar/StablePriceOracleFLR.sol";
+import "fns/ethregistrar/StablePriceOracle.sol";
 
 import "fns-test/utils/HardhatAddresses.sol";
 
@@ -16,11 +16,12 @@ uint256 constant TIME_STAMP = 1678393495;
 uint256 constant SECS_PER_YEAR = 31556952;
 
 contract TestStablePriceOracleFLR is Test {
-    StablePriceOracleFLR public stablePriceOracleFLR;
+    StablePriceOracle public stablePriceOracle;
     event RentPriceChanged(uint256[5] prices);
 
     function setUp() public {
-        stablePriceOracleFLR = new StablePriceOracleFLR(
+        stablePriceOracle = new StablePriceOracle(
+            0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
             [
                 uint256(1000),  // 1-letter name price (attoUSD)
                 500,            // 2-letter name price (attoUSD)
@@ -32,7 +33,8 @@ contract TestStablePriceOracleFLR is Test {
     }
 
     function testFail_invalidConstructorArguments() public {
-        StablePriceOracleFLR fail_stablePriceOracleFLR = new StablePriceOracleFLR(
+        StablePriceOracle fail_stablePriceOracle = new StablePriceOracle(
+            0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
             [
                 // The smallest valid value is $1/year 
                 uint256(1), // 1-letter name price (attoUSD)
@@ -46,7 +48,7 @@ contract TestStablePriceOracleFLR is Test {
 
     function testFail_nonOwnerCantCallSetPrices() public {
         vm.prank(address0);
-        stablePriceOracleFLR.setPrices(
+        stablePriceOracle.setPrices(
             [
                 uint256((700 * 1e18) / SECS_PER_YEAR),        // 1-letter name price (attoUSD)
                 (350 * 1e18) / SECS_PER_YEAR,                 // 2-letter name price (attoUSD)
@@ -69,13 +71,13 @@ contract TestStablePriceOracleFLR is Test {
         vm.expectEmit(true, false, false, false);
         emit RentPriceChanged(annualRentPricesUSD);
 
-        stablePriceOracleFLR.setPrices(annualRentPricesUSD);
+        stablePriceOracle.setPrices(annualRentPricesUSD);
     }
 
     function test_1LetterPriceIsCorrect() public {
         uint256 oneLetterPriceUSDAnnual = 1000;
         uint256 oneLetterPriceAttoUSDAnnual = oneLetterPriceUSDAnnual * 1e18;
-        uint256 oneLetterPriceAttoUSDPerSec = oneLetterPriceAttoUSDAnnual / stablePriceOracleFLR.secondsPerYear();
+        uint256 oneLetterPriceAttoUSDPerSec = oneLetterPriceAttoUSDAnnual / stablePriceOracle.secondsPerYear();
         uint256 numYearsToPrice = 5;
 
         // uint256 expectedPrice = 

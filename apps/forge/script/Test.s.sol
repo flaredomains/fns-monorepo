@@ -10,7 +10,7 @@ import "fns/registry/ReverseRegistrar.sol";
 import "fns/wrapper/NameWrapper.sol";
 import "fns/wrapper/StaticMetadataService.sol";
 import "fns/ethregistrar/ETHRegistrarController.sol";
-import "fns/ethregistrar/StablePriceOracleFLR.sol";
+import "fns/ethregistrar/StablePriceOracle.sol";
 import "fns/ethregistrar/DummyOracle.sol";
 
 import "fns-test/utils/ENSNamehash.sol";
@@ -22,7 +22,7 @@ contract TestScript is Script {
     NameWrapper public nameWrapper = NameWrapper(0x382f565bD2Fa4C9006D84f928744929B83b42d55);
     ReverseRegistrar public reverseRegistrar = ReverseRegistrar(0x4B295988f67C0a7E0ed2c3FD2A210c6147632b7e);
     DummyOracle public dummyOracle = DummyOracle(0x54c2cB6eEe2b4B0EEBd0AC750d8399C3626bBdDE);
-    StablePriceOracleFLR public stablePriceOracle = StablePriceOracleFLR(0x6a464936FF34A47bd0a7A62191Da75E0ebD65E3c);
+    StablePriceOracle public stablePriceOracle = StablePriceOracle(0x6a464936FF34A47bd0a7A62191Da75E0ebD65E3c);
     ETHRegistrarController public ethRegistrarController = ETHRegistrarController(0x5b4E0C64f0e5924727A5608374cCFDFDB4D318B6);
     PublicResolver public publicResolver = PublicResolver(0x68470b26610348472dE725E307b10D61EF6368b8);
 

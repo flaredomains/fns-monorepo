@@ -13,21 +13,21 @@ contract LinearPremiumPriceOracle is StablePriceOracle {
         bytes4(keccak256("timeUntilPremium(uint,uint"));
 
     constructor(
-        AggregatorInterface _usdOracle,
-        uint256[] memory _rentPrices,
+        address _flareContractRegistry,
+        uint256[5] memory _rentPrices,
         uint256 _initialPremium,
         uint256 _premiumDecreaseRate
-    ) public StablePriceOracle(_usdOracle, _rentPrices) {
+    ) StablePriceOracle(_flareContractRegistry, _rentPrices) {
         initialPremium = _initialPremium;
         premiumDecreaseRate = _premiumDecreaseRate;
     }
 
     function _premium(
-        string memory name,
+        string memory /* name */,
         uint256 expires,
         uint256 /*duration*/
     ) internal view override returns (uint256) {
-        expires = expires.add(GRACE_PERIOD);
+        expires = expires + GRACE_PERIOD;
         if (expires > block.timestamp) {
             // No premium for renewals
             return 0;
