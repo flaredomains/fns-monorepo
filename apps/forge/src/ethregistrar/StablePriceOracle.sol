@@ -3,7 +3,6 @@ pragma solidity ~0.8.17;
 
 import "./IPriceOracle.sol";
 import "./StringUtils.sol";
-// import "./IAggregator.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "@flare/userInterfaces/IFlareContractRegistry.sol";
@@ -28,9 +27,6 @@ contract StablePriceOracle is IPriceOracle, Ownable {
     uint256 public price3LetterAttoUSDPerSec;
     uint256 public price4LetterAttoUSDPerSec;
     uint256 public price5LetterAttoUSDPerSec;
-
-    // Oracle address
-    // IAggregator public immutable usdOracle;
 
     event RentPriceChanged(uint256[5] prices);
 
