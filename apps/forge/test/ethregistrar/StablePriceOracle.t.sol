@@ -10,13 +10,6 @@ import "fns/ethregistrar/mock/MockFlareContractRegistry.sol";
 
 import "fns-test/utils/HardhatAddresses.sol";
 
-address constant ZERO_ADDRESS = 0x0000000000000000000000000000000000000000;
-// Set Timestamp to something reasonable (3/9/23 @ 1:25pm) so that BaseRegistrar time
-// keeping works correctly. Forge defaults this to 1
-uint256 constant TIME_STAMP = 1678393495;
-
-uint256 constant SECS_PER_YEAR = 31556952;
-
 contract TestStablePriceOracle is Test {
     StablePriceOracle public stablePriceOracle;
     MockFtsoRegistry public mockFtsoRegistry;
@@ -122,7 +115,6 @@ contract TestStablePriceOracle is Test {
         assertEq(stablePriceOracle.price("wee", 0, numSecondsToPrice).base, expectedPrice);
     }
 
-
     function test_4LetterPriceIsCorrect() public {
         uint256 fourLetterPriceAttoUSDAnnual = fourLetterAnnualPriceUSD * 1e18;
         uint256 fourLetterPriceAttoUSDPerSec = fourLetterPriceAttoUSDAnnual / stablePriceOracle.secondsPerYear();
@@ -133,7 +125,6 @@ contract TestStablePriceOracle is Test {
         assertEq(stablePriceOracle.price("four", 0, numSecondsToPrice).base, expectedPrice);
     }
 
-
     function test_5LetterPriceIsCorrect() public {
         uint256 fiveLetterPriceAttoUSDAnnual = fiveLetterAnnualPriceUSD * 1e18;
         uint256 fiveLetterPriceAttoUSDPerSec = fiveLetterPriceAttoUSDAnnual / stablePriceOracle.secondsPerYear();
@@ -143,7 +134,6 @@ contract TestStablePriceOracle is Test {
 
         assertEq(stablePriceOracle.price("ricky", 0, numSecondsToPrice).base, expectedPrice);
     }
-
 
     function test_GT5LetterPriceIsCorrect() public {
         uint256 fiveLetterPriceAttoUSDAnnual = fiveLetterAnnualPriceUSD * 1e18;
