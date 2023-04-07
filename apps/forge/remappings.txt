@@ -3,6 +3,6 @@ forge-std/=lib/forge-std/src/
 @openzeppelin/=lib/openzeppelin-contracts
 @punkdomains/=lib/punk-contracts/contracts
 @flare/=lib/flare-smart-contracts/contracts
-@ensdomains/buffer=lib/buffer
+@ensdomains/=lib/ensdomains
 fns/=src/
 fns-test/=test/

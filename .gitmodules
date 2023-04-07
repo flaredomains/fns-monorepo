@@ -13,9 +13,3 @@
 [submodule "apps/forge/lib/punk-contracts"]
 	path = apps/forge/lib/punk-contracts
 	url = https://github.com/punk-domains/punk-contracts
-[submodule "apps/forge/lib/buffer"]
-	path = apps/forge/lib/buffer
-	url = https://github.com/ensdomains/buffer
-[submodule "apps/forge/lib/solsha1"]
-	path = apps/forge/lib/solsha1
-	url = https://github.com/ensdomains/solsha1
