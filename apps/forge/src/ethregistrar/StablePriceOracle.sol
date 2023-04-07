@@ -94,9 +94,9 @@ contract StablePriceOracle is IPriceOracle, Ownable {
      * @dev Returns the pricing premium in internal base units.
      */
     function _premium(
-        string memory name,
-        uint256 expires,
-        uint256 duration
+        string memory /* name */,
+        uint256 /* expires */,
+        uint256 /* duration */
     ) internal view virtual returns (uint256) {
         return 0;
     }

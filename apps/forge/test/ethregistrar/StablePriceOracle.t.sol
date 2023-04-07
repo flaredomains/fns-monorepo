@@ -44,7 +44,7 @@ contract TestStablePriceOracle is Test {
     }
 
     function testFail_invalidConstructorArguments() public {
-        StablePriceOracle fail_stablePriceOracle = new StablePriceOracle(
+        new StablePriceOracle(
             address(mockFlareContractRegistry),
             [
                 // The smallest valid value is $1/year 
