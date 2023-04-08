@@ -4,6 +4,11 @@ import Plus from '../../public/Plus.svg'
 import Delete from '../../public/Delete.svg'
 import Image from 'next/image'
 
+import ENSRegistry from '../../src/pages/abi/ENSRegistry.json'
+import PublicResolver from '../../src/pages/abi/PublicResolver.json'
+
+import { useContractRead, useContractReads } from 'wagmi'
+
 const listAddresses: Array<{ leftText: String; rightText: String }> = [
   { leftText: 'XTP', rightText: '0x880426bb362Bf481d6891839f1B0dAEB57900591' },
   { leftText: 'BTC', rightText: 'aaaa' },
@@ -29,6 +34,23 @@ const listTextRecords: Array<{ leftText: String; rightText: String }> = [
   { leftText: 'org.telegram', rightText: '' },
   { leftText: 'eth.ens.delegate', rightText: '' },
 ]
+
+const keysTexts: Array<string> = [
+  'URL',
+  'Avatar',
+  'Description',
+  'Notice',
+  'Keywords',
+  'com.discord',
+  'com.github',
+  'com.reddit',
+  'com.twitter',
+  'com.twitter',
+  'org.telegram',
+  'eth.ens.delegate',
+]
+
+const keysAddr: Array<string> = ['XTP', 'BTC', 'LTC', 'DOGE']
 
 const Info = ({
   leftText,
@@ -106,7 +128,13 @@ const Info = ({
   )
 }
 
-export default function Records({ address }: { address: String }) {
+export default function Records({
+  data,
+  editMode,
+}: {
+  data: string
+  editMode: boolean
+}) {
   const [recordsEditMode, setRecordsEditMode] = useState<boolean>(false)
   const [arrAddresses, setArrAddresses] =
     useState<Array<{ leftText: String; rightText: String }>>(listAddresses)
@@ -133,7 +161,7 @@ export default function Records({ address }: { address: String }) {
   }, [])
 
   // Save the REAL array in a copy
-  function editMode() {
+  function editModeFunc() {
     setCopyArrAddr(arrAddresses)
     setCopyArrTextRecords(arrTextRecords)
     setRecordsEditMode(true)
@@ -173,7 +201,7 @@ export default function Records({ address }: { address: String }) {
             {/* Add/Edit Record buttons Desktop */}
             {!recordsEditMode && (
               <button
-                onClick={() => editMode()}
+                onClick={() => editModeFunc()}
                 className="justify-center items-center hidden text-center bg-[#F97316] h-8 w-1/2 rounded-lg text-white px-auto mt-5 hover:scale-105 transform transition duration-300 ease-out md:w-1/4 lg:flex lg:mt-0 lg:ml-auto"
               >
                 <p className="text-xs font-medium mr-2">Add/Edit Record</p>
@@ -245,7 +273,7 @@ export default function Records({ address }: { address: String }) {
           {/* Add/Edit Record buttons Mobile */}
           {!recordsEditMode && (
             <button
-              onClick={() => editMode()}
+              onClick={() => editModeFunc()}
               className="flex justify-center items-center text-center bg-[#F97316] h-8 w-1/2 rounded-lg text-white px-auto mt-5 md:w-1/4 lg:hidden lg:mt-0 lg:ml-auto"
             >
               <p className="text-xs font-medium mr-2">Add/Edit Record</p>

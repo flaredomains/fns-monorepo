@@ -10,29 +10,10 @@ import { useContractRead, useContractReads } from 'wagmi'
 const namehash = require('eth-ens-namehash')
 
 const listAddresses: Array<{ leftText: string; rightText: string }> = [
-  { leftText: 'XTP', rightText: '0x880426bb362Bf481d6891839f1B0dAEB57900591' },
+  { leftText: 'XTP', rightText: '' },
   { leftText: 'BTC', rightText: '' },
   { leftText: 'LTC', rightText: '' },
   { leftText: 'DOGE', rightText: '' },
-]
-
-const listTextRecords: Array<{ leftText: string; rightText: string }> = [
-  {
-    leftText: 'Email',
-    rightText: '0x880426bb362Bf481d6891839f1B0dAEB57900591',
-  },
-  { leftText: 'URL', rightText: '' },
-  { leftText: 'Avatar', rightText: '' },
-  { leftText: 'Description', rightText: '' },
-  { leftText: 'Notice', rightText: '' },
-  { leftText: 'Keywords', rightText: '' },
-  { leftText: 'com.discord', rightText: '' },
-  { leftText: 'com.github', rightText: '' },
-  { leftText: 'com.reddit', rightText: '' },
-  { leftText: 'com.twitter', rightText: '' },
-  { leftText: 'com.twitter', rightText: '' },
-  { leftText: 'org.telegram', rightText: '' },
-  { leftText: 'eth.ens.delegate', rightText: '' },
 ]
 
 const keysTexts: Array<string> = [
@@ -116,6 +97,8 @@ export default function Content({
   prepared: boolean
 }) {
   const [recordPrepared, setRecordPrepared] = useState(false)
+
+  // console.log('namehash.hash(result)', namehash.hash(result))
 
   const { data: records } = useContractRead({
     address: ENSRegistry.address as `0x${string}`,

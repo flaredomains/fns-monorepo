@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react'
 import { Web3Modal } from '@web3modal/react'
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { configureChains, createClient, WagmiConfig } from 'wagmi'
-import { goerli } from 'wagmi/chains'
 
 import { Chain } from 'wagmi'
 

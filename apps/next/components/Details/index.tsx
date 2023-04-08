@@ -12,13 +12,7 @@ import { sha3_256 } from 'js-sha3'
 import web3 from 'web3-utils'
 const namehash = require('eth-ens-namehash')
 
-import {
-  useAccount,
-  useContractRead,
-  useContract,
-  useEnsName,
-  useProvider,
-} from 'wagmi'
+import { useAccount, useContractRead, useContract } from 'wagmi'
 
 export default function Details({ result }: { result: string }) {
   const [prepared, setPrepared] = useState<boolean>(false)

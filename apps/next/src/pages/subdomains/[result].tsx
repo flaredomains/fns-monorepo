@@ -7,12 +7,12 @@ import Subdomains from '../../../components/Subdomains'
 export default function Result() {
   // Change to Wagmi data about user subdomain
   const [arrSubdomains, setArrSubdomains] = useState([
-    { domain: 'neel.flr' },
-    { domain: 'chase.flr' },
-    { domain: 'ben.flr' },
+    'neel.flr',
+    'chase.flr',
+    'ben.flr',
   ])
 
-  const [result, setResult] = useState<String>('')
+  const [result, setResult] = useState<string>('')
 
   const [path, setPath] = useState<String>('')
 
@@ -21,8 +21,8 @@ export default function Result() {
   useEffect(() => {
     if (!router.isReady) return
 
-    const result = router.query.result as String
-    const path = router.pathname as String
+    const result = router.query.result as string
+    const path = router.pathname as string
     setPath(path)
     setResult(result)
   }, [router.isReady, router.query])

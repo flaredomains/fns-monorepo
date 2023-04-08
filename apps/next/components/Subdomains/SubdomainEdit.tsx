@@ -3,20 +3,41 @@ import SubdomainLine from './SubdomainLine'
 import SubDetails from './SubDetails'
 import Records from './Records'
 
+import ETHRegistrarController from '../../src/pages/abi/ETHRegistrarController.json'
+import BaseRegistrar from '../../src/pages/abi/BaseRegistrar.json'
+import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
+
+import web3 from 'web3-utils'
+const namehash = require('eth-ens-namehash')
+
+import { useAccount, useContractRead } from 'wagmi'
+
 export default function SubdomainEdit({
   data,
-  date,
   editMode,
   setEditMode,
   setDataEdit,
 }: {
-  data: Array<any>
-  date: Date // Probably to cancel
+  data: string
   editMode: boolean
   setEditMode: React.Dispatch<React.SetStateAction<boolean>>
-  setDataEdit: React.Dispatch<React.SetStateAction<any[]>>
+  setDataEdit: React.Dispatch<React.SetStateAction<string>>
 }) {
-  const address = '0x880426bb362Bf481d6891839f1B0dAEB57900591'
+  const { data: date } = useContractRead({
+    address: BaseRegistrar.address as `0x${string}`,
+    abi: BaseRegistrar.abi,
+    functionName: 'nameExpires',
+    enabled: editMode,
+    args: [
+      web3.sha3(data.endsWith('.flr') ? data.slice(0, -4) : data) as string,
+    ],
+    onSuccess(data: any) {
+      console.log('Success nameExpires', Number(data))
+    },
+    onError(error) {
+      console.log('Error nameExpires', error)
+    },
+  })
 
   return (
     <>
@@ -24,17 +45,20 @@ export default function SubdomainEdit({
       <div className="flex-col bg-gray-800 px-8 pb-5 pt-11">
         <SubdomainLine
           data={data}
-          date={date}
           editMode={editMode}
           setEditMode={setEditMode}
           setDataEdit={setDataEdit}
         />
       </div>
       {/* Details */}
-      <SubDetails address={address} date={date} />
+      <SubDetails
+        data={data}
+        date={date ? new Date(date) : new Date()}
+        editMode={editMode}
+      />
 
       {/* Records / Addresses */}
-      <Records address={address} />
+      <Records data={data} editMode={editMode} />
     </>
   )
 }

@@ -15,7 +15,7 @@ export default function Subdomains({
   arrSubdomains: Array<any>
 }) {
   const [editMode, setEditMode] = useState(false)
-  const [dataEdit, setDataEdit] = useState<Array<any>>([])
+  const [dataEdit, setDataEdit] = useState<string>('')
 
   const [prepared, setPrepared] = useState<boolean>(false)
   const [preparedHash, setPreparedHash] = useState<boolean>(false)
@@ -53,7 +53,6 @@ export default function Subdomains({
 
           {!editMode && (
             <SubdomainContent
-              date={date}
               arrSubdomains={arrSubdomains}
               editMode={editMode}
               setEditMode={setEditMode}
@@ -64,7 +63,6 @@ export default function Subdomains({
           {editMode && (
             <SubdomainEdit
               data={dataEdit}
-              date={date}
               editMode={editMode}
               setEditMode={setEditMode}
               setDataEdit={setDataEdit}

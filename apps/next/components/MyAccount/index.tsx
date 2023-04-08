@@ -9,6 +9,9 @@ import Reverse_Record from './Reverse_Record'
 import { useAccount, useContract } from 'wagmi'
 
 import BaseRegistar from '../../src/pages/abi/BaseRegistrar.json'
+import ETHRegistrarController from '../../src/pages/abi/ETHRegistrarController.json'
+
+import web3 from 'web3-utils'
 
 const OwnedDomains = ({ date, domain }: { date: Date; domain: string }) => {
   const day = date.getDate()
@@ -63,7 +66,10 @@ export default function MyAccount({
   })
 
   // Owned Domain
-  console.log('contract', contract?.filters.NameRegistered(null, address, null))
+  console.log(
+    'contract',
+    contract?.filters.NameRegistered(null, address, null).topics
+  )
 
   return (
     <div className="flex-col w-11/12 mt-6 mx-auto lg:flex lg:flex-row lg:w-full">

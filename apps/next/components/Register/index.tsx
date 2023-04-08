@@ -18,6 +18,7 @@ import {
   useContractWrite,
   usePrepareContractWrite,
 } from 'wagmi'
+import { BigNumber, ethers } from 'ethers'
 
 const Alert = ({ available }: { available: boolean }) => {
   return (
@@ -59,6 +60,10 @@ const StepTitle = () => {
 }
 
 export default function Register({ result }: { result: string }) {
+  // For steps animation
+  const [count, setCount] = useState(0)
+
+  const [priceFLR, setPriceFLR] = useState(1)
   const [regPeriod, setRegPeriod] = useState(1)
   const [preparedHash, setPreparedHash] = useState<boolean>(false)
   const [hashHex, setHashHex] = useState<string>('')
@@ -76,6 +81,7 @@ export default function Register({ result }: { result: string }) {
         ? result.slice(0, -4)
         : result
       const hash = web3.sha3(resultFiltered) as string
+      console.log('hash', hash)
       setFilterResult(resultFiltered)
       setHashHex(hash)
       setPreparedHash(true)
@@ -102,10 +108,15 @@ export default function Register({ result }: { result: string }) {
     address: ETHRegistarController.address as `0x${string}`,
     abi: ETHRegistarController.abi,
     functionName: 'rentPrice',
-    args: [result as string, regPeriod],
+    args: [
+      result as string,
+      BigNumber.from(regPeriod).mul(31536000) as BigNumber,
+    ], // 31536000
     onSuccess(data: any) {
-      console.log('Success rentPrice', data)
-      console.log('Base', Number(data.base))
+      // console.log('Success rentPrice', data)
+      // console.log('Base', Number(data.base))
+      // console.log('Premium', Number(data.premium))
+      setPriceFLR(Number(data.base))
     },
     onError(error) {
       console.log('Error rentPrice', error)
@@ -162,9 +173,15 @@ export default function Register({ result }: { result: string }) {
                 <StepTitle />
 
                 {/* Steps */}
-                <Steps />
+                <Steps count={count} />
 
-                <Bottom />
+                <Bottom
+                  result={filterResult}
+                  regPeriod={regPeriod}
+                  price={priceFLR}
+                  count={count}
+                  setCount={setCount}
+                />
               </>
             )}
           </div>

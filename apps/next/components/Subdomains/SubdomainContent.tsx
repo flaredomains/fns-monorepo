@@ -31,16 +31,14 @@ const AddSubdomain = ({ arrSubdomains }: { arrSubdomains: Array<any> }) => {
 
 export default function SubdomainContent({
   arrSubdomains,
-  date,
   editMode,
   setEditMode,
   setDataEdit,
 }: {
   arrSubdomains: Array<any>
-  date: Date
   editMode: boolean
   setEditMode: React.Dispatch<React.SetStateAction<boolean>>
-  setDataEdit: React.Dispatch<React.SetStateAction<any[]>>
+  setDataEdit: React.Dispatch<React.SetStateAction<string>>
 }) {
   return (
     <>
@@ -52,7 +50,6 @@ export default function SubdomainContent({
             <SubdomainLine
               key={index}
               data={item}
-              date={date}
               setEditMode={setEditMode}
               editMode={editMode}
               setDataEdit={setDataEdit}

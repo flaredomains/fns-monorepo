@@ -36,14 +36,14 @@ const TotalPrice = ({
         <p className="text-[#91A3B8] font-medium text-sm lg:text-xs xl:text-sm">
           Estimated Total Price
         </p>
-        <p className="flex items-center text-white font-semibold text-2xl lg:text-lg xl:text-2xl">
+        <div className="flex items-center text-white font-semibold text-2xl lg:text-lg xl:text-2xl">
           {priceToPay ? (
             priceToPay.toFixed(2)
           ) : (
             <Loading isFinalPrize={false} isCalculation={false} />
           )}{' '}
           FLR
-        </p>
+        </div>
       </div>
     </>
   )
@@ -86,6 +86,7 @@ const FinalPrice = ({
       .then((response) => {
         const priceData = response.data
         const price = priceData['USD']
+        // console.log('price', price)
         setEthPrice(price)
       })
       .catch((error) => {
@@ -98,14 +99,14 @@ const FinalPrice = ({
       <div className="flex flex-col text-center items-center w-full bg-[#F97316] h-32 py-6 rounded-b-lg lg:rounded-bl-none lg:rounded-r-lg lg:w-1/3">
         <div className="px-20 flex flex-col justify-center items-center text-center lg:px-10">
           <p className="text-[#FED7AA] text-xs">At most</p>
-          <p className="flex items-center text-white font-semibold text-2xl lg:text-lg xl:text-2xl">
+          <div className="flex items-center text-white font-semibold text-2xl lg:text-lg xl:text-2xl">
             {priceToPay ? (
               (priceToPay + fee / 10 ** 18).toFixed(2)
             ) : (
               <Loading isFinalPrize={true} isCalculation={false} />
             )}{' '}
             FLR
-          </p>
+          </div>
           <div className="flex items-center text-[#FED7AA] text-xs">
             <p className="text-[#FED7AA] text-xs mr-1">Calculated to</p>
             <span className="font-semibold text-white flex items-center">
