@@ -19,7 +19,7 @@ import "./IDNSRegistrar.sol";
  *      corresponding name in ENS.
  */
 contract DNSRegistrar is IDNSRegistrar, IERC165 {
-    using BytesUtils for bytes;
+    using DNS_BytesUtils for bytes;
     using Buffer for Buffer.buffer;
     using RRUtils for *;
 

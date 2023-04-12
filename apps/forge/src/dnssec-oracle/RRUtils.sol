@@ -7,7 +7,7 @@ import "@ensdomains/buffer/contracts/Buffer.sol";
  * @dev RRUtils is a library that provides utilities for parsing DNS resource records.
  */
 library RRUtils {
-    using BytesUtils for *;
+    using DNS_BytesUtils for *;
     using Buffer for *;
 
     /**

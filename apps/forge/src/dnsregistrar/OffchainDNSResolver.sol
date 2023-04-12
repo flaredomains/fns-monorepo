@@ -30,7 +30,7 @@ uint16 constant TYPE_TXT = 16;
 
 contract OffchainDNSResolver is IExtendedResolver {
     using RRUtils for *;
-    using BytesUtils for bytes;
+    using DNS_BytesUtils for bytes;
 
     IENS public immutable ens;
     DNSSEC public immutable oracle;

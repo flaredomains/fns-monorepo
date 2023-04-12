@@ -13,5 +13,5 @@ interface Digest {
     function verify(
         bytes calldata data,
         bytes calldata hash
-    ) external pure virtual returns (bool);
+    ) external pure returns (bool);
 }

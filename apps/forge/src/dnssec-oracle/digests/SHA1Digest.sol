@@ -8,7 +8,7 @@ import "@ensdomains/solsha1/contracts/SHA1.sol";
  * @dev Implements the DNSSEC SHA1 digest.
  */
 contract SHA1Digest is Digest {
-    using BytesUtils for *;
+    using DNS_BytesUtils for *;
 
     function verify(
         bytes calldata data,

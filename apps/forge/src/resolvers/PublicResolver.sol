@@ -5,8 +5,6 @@ import "fns/registry/IENS.sol";
 import "./profiles/ABIResolver.sol";
 import "./profiles/AddrResolver.sol";
 import "./profiles/ContentHashResolver.sol";
-// TODO: Re-enable DNSResolver after DNS is integrated
-// import "./profiles/DNSResolver.sol";
 import "./profiles/InterfaceResolver.sol";
 import "./profiles/NameResolver.sol";
 import "./profiles/PubkeyResolver.sol";
@@ -19,8 +17,6 @@ import "fns/wrapper/INameWrapper.sol";
  * A simple resolver anyone can use; only allows the owner of a node to set its
  * address.
  */
-    // TODO: Re-enable DNSResolver after DNS is integrated
-    // DNSResolver,
 contract PublicResolver is
     Multicallable,
     ABIResolver,

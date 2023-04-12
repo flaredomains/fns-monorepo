@@ -7,7 +7,7 @@ import "../BytesUtils.sol";
  * @dev Implements the DNSSEC SHA256 digest.
  */
 contract SHA256Digest is Digest {
-    using BytesUtils for *;
+    using DNS_BytesUtils for *;
 
     function verify(
         bytes calldata data,

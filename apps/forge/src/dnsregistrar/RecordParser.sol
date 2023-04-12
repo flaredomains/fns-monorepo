@@ -4,7 +4,7 @@ pragma solidity ^0.8.11;
 import "../dnssec-oracle/BytesUtils.sol";
 
 library RecordParser {
-    using BytesUtils for bytes;
+    using DNS_BytesUtils for bytes;
 
     /**
      * @dev Parses a key-value record into a key and value.

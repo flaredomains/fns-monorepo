@@ -1,6 +1,6 @@
 pragma solidity ^0.8.4;
 
-library BytesUtils {
+library DNS_BytesUtils {
     error OffsetOutOfBoundsError(uint256 offset, uint256 length);
 
     /*

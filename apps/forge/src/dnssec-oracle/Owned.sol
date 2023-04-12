@@ -11,7 +11,7 @@ contract Owned {
         _;
     }
 
-    constructor() public {
+    constructor() {
         owner = msg.sender;
     }
 

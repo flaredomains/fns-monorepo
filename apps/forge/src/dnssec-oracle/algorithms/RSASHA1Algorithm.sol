@@ -9,7 +9,7 @@ import "@ensdomains/solsha1/contracts/SHA1.sol";
  * @dev Implements the DNSSEC RSASHA1 algorithm.
  */
 contract RSASHA1Algorithm is Algorithm {
-    using BytesUtils for *;
+    using DNS_BytesUtils for *;
 
     function verify(
         bytes calldata key,

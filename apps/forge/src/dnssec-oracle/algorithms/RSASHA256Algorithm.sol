@@ -8,7 +8,7 @@ import "./RSAVerify.sol";
  * @dev Implements the DNSSEC RSASHA256 algorithm.
  */
 contract RSASHA256Algorithm is Algorithm {
-    using BytesUtils for *;
+    using DNS_BytesUtils for *;
 
     function verify(
         bytes calldata key,

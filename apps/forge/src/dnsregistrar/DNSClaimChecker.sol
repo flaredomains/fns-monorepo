@@ -7,7 +7,7 @@ import "../dnssec-oracle/RRUtils.sol";
 import "@ensdomains/buffer/contracts/Buffer.sol";
 
 library DNSClaimChecker {
-    using BytesUtils for bytes;
+    using DNS_BytesUtils for bytes;
     using RRUtils for *;
     using Buffer for Buffer.buffer;
 
