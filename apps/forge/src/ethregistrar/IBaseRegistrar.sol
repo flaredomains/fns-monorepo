@@ -7,12 +7,8 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 interface IBaseRegistrar is IERC721 {
     event ControllerAdded(address indexed controller);
     event ControllerRemoved(address indexed controller);
-    event NameMigrated(
-        uint256 indexed id,
-        address indexed owner,
-        uint256 expires
-    );
     event NameRegistered(
+        string indexed name,
         uint256 indexed id,
         address indexed owner,
         uint256 expires
