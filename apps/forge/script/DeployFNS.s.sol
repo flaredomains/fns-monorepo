@@ -85,7 +85,7 @@ contract DeployFNS is Script {
         baseRegistrar.register('mtetna', simoneAddr, 365 days);
         baseRegistrar.register('trains', simoneAddr, 365 days);
 
-        IMintedDomainNames.Data[] memory domainNames = mintedDomainNames.getAllUserMintedDomainNames(simoneAddr);
+        IMintedDomainNames.Data[] memory domainNames = mintedDomainNames.getAll(simoneAddr);
 
         vm.stopBroadcast();
 

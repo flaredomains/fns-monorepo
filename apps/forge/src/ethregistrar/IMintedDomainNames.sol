@@ -6,6 +6,6 @@ interface IMintedDomainNames {
         uint256 expiry;
         string label;
     }
-    function getAllUserMintedDomainNames(address owner) external view returns (IMintedDomainNames.Data[] memory);
-    function addUserMintedDomainName(address owner, uint256 id, uint256 expiry, string calldata label) external;
+    function getAll(address owner) external view returns (IMintedDomainNames.Data[] memory);
+    function add(address owner, uint256 id, uint256 expiry, string calldata label) external;
 }

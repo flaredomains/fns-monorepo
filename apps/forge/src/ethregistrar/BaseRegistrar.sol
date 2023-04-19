@@ -195,7 +195,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
             _burn(id);
         }
         _mint(owner, id);
-        mintedDomainNamesContract.addUserMintedDomainName(owner, id, expiry, label);
+        mintedDomainNamesContract.add(owner, id, expiry, label);
         if (updateRegistry) {
             ens.setSubnodeOwner(baseNode, bytes32(id), owner);
         }
