@@ -6,7 +6,7 @@ import "forge-std/console.sol";
 import "fns/registry/ENSRegistry.sol";
 import "fns/resolvers/PublicResolver.sol";
 import "fns/ethregistrar/BaseRegistrar.sol";
-import "fns/ethregistrar/MintedIds.sol";
+import "fns/ethregistrar/MintedDomainNames.sol";
 import "fns/registry/ReverseRegistrar.sol";
 import "fns/wrapper/NameWrapper.sol";
 import "fns/wrapper/StaticMetadataService.sol";
@@ -34,8 +34,8 @@ contract DeployFNS is Script {
         BaseRegistrar baseRegistrar = new BaseRegistrar(ensRegistry, ENSNamehash.namehash('flr'), noNameCollisions);
 
         // Deploy the mintedIds data struct contract, then update the reference within Base Registrar
-        MintedIds mintedIds = new MintedIds(address(baseRegistrar));
-        baseRegistrar.updateMintedIdsContract(mintedIds);
+        MintedDomainNames mintedDomainNames = new MintedDomainNames(address(baseRegistrar));
+        baseRegistrar.updateMintedDomainNamesContract(mintedDomainNames);
 
         // Make BaseRegistrar the owner of the base 'flr' node
         baseRegistrar.addController(owner);
@@ -85,11 +85,21 @@ contract DeployFNS is Script {
         baseRegistrar.register('mtetna', simoneAddr, 365 days);
         baseRegistrar.register('trains', simoneAddr, 365 days);
 
+        IMintedDomainNames.Data[] memory domainNames = mintedDomainNames.getAllUserMintedDomainNames(simoneAddr);
+
         vm.stopBroadcast();
+
+        for(uint i = 0; i < domainNames.length; ++i) {
+            console.log(
+                "domainNames: id => %s, expiry => %d, label => %s",
+                domainNames[i].id,
+                domainNames[i].expiry,
+                domainNames[i].label);
+        }
 
         console.log("ensRegistry: %s", address(ensRegistry));
         console.log("baseRegistrar: %s", address(baseRegistrar));
-        console.log("mintedIds: %s", address(mintedIds));
+        console.log("mintedIds: %s", address(mintedDomainNames));
         console.log("metadataService: %s", address(metadataService));
         console.log("nameWrapper: %s", address(nameWrapper));
         console.log("reverseRegistrar: %s", address(reverseRegistrar));

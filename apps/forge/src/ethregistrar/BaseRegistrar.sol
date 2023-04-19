@@ -6,7 +6,7 @@ import "fns/no-collisions/INoNameCollisions.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@punkdomains/interfaces/IBasePunkTLD.sol";
-import "./IMintedIds.sol";
+import "./IMintedDomainNames.sol";
 
 contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     // A map of expiry times
@@ -36,7 +36,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
         bytes4(keccak256("reclaim(uint256,address)"));
     
     INoNameCollisions public noNameCollisionsContract;
-    IMintedIds public mintedIdsContract;
+    IMintedDomainNames public mintedDomainNamesContract;
 
     /**
      * v2.1.3 version of _isApprovedOrOwner which calls ownerOf(tokenId) and takes grace period into consideration instead of ERC721.ownerOf(tokenId);
@@ -100,8 +100,8 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
      * @dev This assumes that the interface remains constant
      * @param newContract the new MintedIds Contract address
      */
-    function updateMintedIdsContract(IMintedIds newContract) public onlyOwner {
-        mintedIdsContract = newContract;
+    function updateMintedDomainNamesContract(IMintedDomainNames newContract) public onlyOwner {
+        mintedDomainNamesContract = newContract;
     }
 
     /**
@@ -184,27 +184,25 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
         bool updateRegistry
     ) internal live onlyController noCollision(label) returns (uint256) {
         uint256 id = uint256(keccak256(bytes(label)));
+        uint256 expiry = block.timestamp + duration;
 
         require(available(id));
-        require(
-            block.timestamp + duration + GRACE_PERIOD >
-                block.timestamp + GRACE_PERIOD
-        ); // Prevent future overflow
+        require(expiry + GRACE_PERIOD > block.timestamp + GRACE_PERIOD); // Prevent future overflow
 
-        expiries[id] = block.timestamp + duration;
+        expiries[id] = expiry;
         if (_exists(id)) {
             // Name was previously owned, and expired
             _burn(id);
         }
         _mint(owner, id);
-        mintedIdsContract.addUserMintedId(owner, id);
+        mintedDomainNamesContract.addUserMintedDomainName(owner, id, expiry, label);
         if (updateRegistry) {
             ens.setSubnodeOwner(baseNode, bytes32(id), owner);
         }
 
-        emit NameRegistered(label, id, owner, block.timestamp + duration);
+        emit NameRegistered(label, id, owner, expiry);
 
-        return block.timestamp + duration;
+        return expiry;
     }
 
     function renew(

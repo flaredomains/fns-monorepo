@@ -1,9 +1,9 @@
 pragma solidity >=0.8.4;
 
-import "./IMintedIds.sol";
+import "./IMintedDomainNames.sol";
 
-contract MintedIds is IMintedIds {
-    mapping(address => uint256[]) mintedIds;
+contract MintedDomainNames is IMintedDomainNames {
+    mapping(address => IMintedDomainNames.Data[]) mintedDomainNames;
     address immutable baseRegistrar;
 
     /**
@@ -20,26 +20,29 @@ contract MintedIds is IMintedIds {
      * @return the number of minted ids for the provided address
      */
     function getUserMintedIdsLength(address owner) external view returns (uint) {
-        return mintedIds[owner].length;
+        return mintedDomainNames[owner].length;
     }
 
     /**
      * @dev Get all user minted ids - in this case, the hash of the label string,
      *      converted to uint256
      * @param owner The address to return the list of minted ids of
-     * @return the list of ids minted by the provided address
+     * @return the list of domain names minted by the provided address
      */
-    function getAllUserMintedIds(address owner) external view returns (uint256[] memory) {
-        return mintedIds[owner];
+    function getAllUserMintedDomainNames(address owner) external view returns (IMintedDomainNames.Data[] memory) {
+        return mintedDomainNames[owner];
     }
 
     /**
      * @dev Add a user minted id, gated to the baseRegistrar contract
      * @param owner The address to add the id to
-     * @param id the id to append to the minted list of the address
+     * @param id the id of the registered domain name
+     * @param expiry the expiry timestamp of the registered domain name
+     * @param label the lable of the registered domain name
      */
-    function addUserMintedId(address owner, uint256 id) external {
+    function addUserMintedDomainName(
+        address owner, uint256 id, uint256 expiry, string calldata label) external {
         require(msg.sender == baseRegistrar);
-        mintedIds[owner].push(id);
+        mintedDomainNames[owner].push(IMintedDomainNames.Data(id, expiry, label));
     }
 }
