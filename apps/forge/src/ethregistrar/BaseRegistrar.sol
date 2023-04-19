@@ -6,10 +6,11 @@ import "fns/no-collisions/INoNameCollisions.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@punkdomains/interfaces/IBasePunkTLD.sol";
+import "./IMintedIds.sol";
 
 contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     // A map of expiry times
-    mapping(uint256 => uint256) expiries;
+    mapping(uint256 => uint256) public expiries;
     // The IENS registry
     IENS public ens;
     // The namehash of the TLD this registrar owns (eg, .eth)
@@ -35,6 +36,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
         bytes4(keccak256("reclaim(uint256,address)"));
     
     INoNameCollisions public noNameCollisionsContract;
+    IMintedIds public mintedIdsContract;
 
     /**
      * v2.1.3 version of _isApprovedOrOwner which calls ownerOf(tokenId) and takes grace period into consideration instead of ERC721.ownerOf(tokenId);
@@ -85,11 +87,21 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     /**
      * @dev Allows the owner of the contract to update the Collision Registry, in case it
      *      is ever altered in the future
-     * @dev This assumes that the interface to check
+     * @dev This assumes that the interface remains constant
      * @param newContract the new NoNameCollisions Contract address
      */
     function updateNoNameCollisionContract(INoNameCollisions newContract) public onlyOwner {
         noNameCollisionsContract = newContract;
+    }
+
+    /**
+     * @dev Allows the owner of the contract to update the MintedIds contract, in case it
+     *      needs to be updated in the future
+     * @dev This assumes that the interface remains constant
+     * @param newContract the new MintedIds Contract address
+     */
+    function updateMintedIdsContract(IMintedIds newContract) public onlyOwner {
+        mintedIdsContract = newContract;
     }
 
     /**
@@ -161,6 +173,10 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
         return _register(label, owner, duration, false);
     }
 
+    function getLabelId(string calldata label) public pure returns (uint256) {
+        return uint256(keccak256(bytes(label)));
+    }
+
     function _register(
         string calldata label,
         address owner,
@@ -181,6 +197,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
             _burn(id);
         }
         _mint(owner, id);
+        mintedIdsContract.addUserMintedId(owner, id);
         if (updateRegistry) {
             ens.setSubnodeOwner(baseNode, bytes32(id), owner);
         }

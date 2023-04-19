@@ -6,6 +6,7 @@ import "forge-std/console.sol";
 import "fns/registry/ENSRegistry.sol";
 import "fns/resolvers/PublicResolver.sol";
 import "fns/ethregistrar/BaseRegistrar.sol";
+import "fns/ethregistrar/MintedIds.sol";
 import "fns/registry/ReverseRegistrar.sol";
 import "fns/wrapper/NameWrapper.sol";
 import "fns/wrapper/StaticMetadataService.sol";
@@ -32,6 +33,10 @@ contract DeployFNS is Script {
         // This is Ownable, and owned by the msg.sender (private key)
         BaseRegistrar baseRegistrar = new BaseRegistrar(ensRegistry, ENSNamehash.namehash('flr'), noNameCollisions);
 
+        // Deploy the mintedIds data struct contract, then update the reference within Base Registrar
+        MintedIds mintedIds = new MintedIds(address(baseRegistrar));
+        baseRegistrar.updateMintedIdsContract(mintedIds);
+
         // Make BaseRegistrar the owner of the base 'flr' node
         baseRegistrar.addController(owner);
         ensRegistry.setSubnodeOwner(rootNode, keccak256('flr'), address(baseRegistrar));
@@ -45,13 +50,10 @@ contract DeployFNS is Script {
         // TODO: Set the default resolver
         ReverseRegistrar reverseRegistrar = new ReverseRegistrar(ensRegistry);
 
-        // TODO: Update to real oracle
-        DummyOracle dummyOracle = new DummyOracle(100000000);
-
         // TODO: Update pricing on 1 & 2 character names as well
         StablePriceOracle stablePriceOracle = new StablePriceOracle(
             0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
-            [uint256(0), 0, 300, 100, 5]);
+            [uint256(5), 4, 3, 2, 1]);
         ETHRegistrarController ethRegistrarController = new ETHRegistrarController(
             baseRegistrar,
             stablePriceOracle,
@@ -72,14 +74,25 @@ contract DeployFNS is Script {
         ensRegistry.setSubnodeOwner(
             ENSNamehash.namehash('reverse'), keccak256('addr'), address(reverseRegistrar));
 
+
+        // Register some names to simone
+        address simoneAddr = 0x8D37cb3624e1CB8480DceCC7884330a0449Dd9f0;
+        baseRegistrar.register('simone', simoneAddr, 365 days);
+        baseRegistrar.register('simone2', simoneAddr, 365 days);
+        baseRegistrar.register('asdfasdf', simoneAddr, 365 days);
+        baseRegistrar.register('elevate', simoneAddr, 365 days);
+        baseRegistrar.register('italy', simoneAddr, 365 days);
+        baseRegistrar.register('mtetna', simoneAddr, 365 days);
+        baseRegistrar.register('trains', simoneAddr, 365 days);
+
         vm.stopBroadcast();
 
         console.log("ensRegistry: %s", address(ensRegistry));
         console.log("baseRegistrar: %s", address(baseRegistrar));
+        console.log("mintedIds: %s", address(mintedIds));
         console.log("metadataService: %s", address(metadataService));
         console.log("nameWrapper: %s", address(nameWrapper));
         console.log("reverseRegistrar: %s", address(reverseRegistrar));
-        console.log("dummyOracle: %s", address(dummyOracle));
         console.log("stablePriceOracle: %s", address(stablePriceOracle));
         console.log("ethRegistrarController: %s", address(ethRegistrarController));
         console.log("publicResolver: %s", address(publicResolver));

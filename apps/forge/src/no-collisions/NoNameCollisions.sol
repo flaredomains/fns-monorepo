@@ -18,7 +18,8 @@ contract NoNameCollisions is INoNameCollisions, Ownable {
      * @return true if there is a name collision, false otherwise
      */
     function isNameCollision(string calldata name) external view returns (bool) {
-        return collisionRegistry.getDomainHolder(name) != address(0);
+        // return collisionRegistry.getDomainHolder(name) != address(0);
+        return false;
     }
 
     /**
