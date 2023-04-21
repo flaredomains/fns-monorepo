@@ -80,7 +80,7 @@ function Main() {
             name="input-field"
             value={route}
             onChange={(e) => {
-              setRoute(e.target.value)
+              setRoute(e.target.value.toLowerCase())
             }}
             onInput={(event) => {
               const inputElement = event.target as HTMLInputElement

@@ -135,7 +135,7 @@ function Pages_buttons({ result, path }: any) {
             name="input-field"
             value={route}
             onChange={(e) => {
-              setRoute(e.target.value)
+              setRoute(e.target.value.toLowerCase().toLowerCase())
             }}
             onInput={(event) => {
               const inputElement = event.target as HTMLInputElement

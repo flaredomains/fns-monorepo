@@ -13,12 +13,14 @@ import web3 from 'web3-utils'
 const namehash = require('eth-ens-namehash')
 
 import { useAccount, useContractRead, useContract } from 'wagmi'
+import { BigNumber } from 'ethers'
 
 export default function Details({ result }: { result: string }) {
   const [prepared, setPrepared] = useState<boolean>(false)
   const [preparedHash, setPreparedHash] = useState<boolean>(false)
   const [hashHex, setHashHex] = useState<string>('')
   const [filterResult, setFilterResult] = useState<string>('')
+  const [expiredReady, setExpiredReady] = useState<boolean>(false)
 
   // Check if result end with .flr and we do an hash with the resultFiltered for registrant and date
   useEffect(() => {
@@ -123,17 +125,32 @@ export default function Details({ result }: { result: string }) {
     },
   })
 
-  const { data: date } = useContractRead({
+  const { data: getLabelId } = useContractRead({
     address: BaseRegistrar.address as `0x${string}`,
     abi: BaseRegistrar.abi,
-    functionName: 'nameExpires',
+    functionName: 'getLabelId',
     enabled: !available && prepared,
-    args: [hashHex],
+    args: [filterResult],
     onSuccess(data: any) {
-      console.log('Success nameExpires', Number(data))
+      // console.log('Success getLabelId', Number(data))
+      setExpiredReady(true)
     },
     onError(error) {
-      console.log('Error nameExpires', error)
+      console.log('Error getLabelId', error)
+    },
+  })
+
+  const { data: expire } = useContractRead({
+    address: BaseRegistrar.address as `0x${string}`,
+    abi: BaseRegistrar.abi,
+    functionName: 'expiries',
+    enabled: expiredReady,
+    args: [getLabelId as BigNumber],
+    onSuccess(data: any) {
+      // console.log('Success expire', Number(data))
+    },
+    onError(error) {
+      console.log('Error expire', error)
     },
   })
 
@@ -150,7 +167,7 @@ export default function Details({ result }: { result: string }) {
             available={available}
             registrant_address={available ? '' : registrant ? registrant : ''}
             controller={available ? '' : controller ? controller : ''}
-            date={available ? new Date() : new Date(Number(date) * 1000)}
+            date={available ? new Date() : new Date(Number(expire) * 1000)}
           />
 
           {!available && available !== undefined && (

@@ -3,26 +3,11 @@ import Image from 'next/image'
 import ArrowDown from '../../public/ArrowDown.svg'
 
 import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
+import Resolver from '../../src/pages/abi/ReverseRegistrar.sol/Resolver.json'
 
-import { useContractWrite, usePrepareContractWrite } from 'wagmi'
+const namehash = require('eth-ens-namehash')
 
-const arrTextTest = [
-  {
-    text: 'chase',
-  },
-  {
-    text: 'ben',
-  },
-  {
-    text: 'leonardo',
-  },
-  {
-    text: 'andrew',
-  },
-  {
-    text: 'ric',
-  },
-]
+import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi'
 
 const Rev_Record_Line = ({
   text,
@@ -43,16 +28,26 @@ const Rev_Record_Line = ({
   )
 }
 
-const Dropdown = () => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [selectText, setSelectText] = useState('')
+const Dropdown = ({
+  isOpen,
+  setIsOpen,
+  addressDomain,
+  selectText,
+  setSelectText,
+}: {
+  isOpen: boolean
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  addressDomain: Array<Domain>
+  selectText: string
+  setSelectText: React.Dispatch<React.SetStateAction<string>>
+}) => {
   return (
     <>
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className="flex-col cursor-pointer relative"
+        className="flex-col cursor-pointer relative w-1/2"
       >
-        <div className="flex justify-between items-center p-3 w-full mt-7 bg-gray-700 rounded-lg lg:w-1/2">
+        <div className="flex justify-between items-center p-3 w-full mt-7 bg-gray-700 rounded-lg">
           <p
             className={`text-base font-medium ${
               selectText ? 'text-gray-200' : 'text-gray-400'
@@ -67,10 +62,10 @@ const Dropdown = () => {
             isOpen ? 'absolute' : 'hidden'
           } bg-gray-700 w-full mt-2 rounded-lg lg:w-1/2`}
         >
-          {arrTextTest.map((item, index) => (
+          {addressDomain.map((item, index) => (
             <Rev_Record_Line
               key={index}
-              text={item.text}
+              text={item.label}
               setSelectText={setSelectText}
             />
           ))}
@@ -80,8 +75,24 @@ const Dropdown = () => {
   )
 }
 
-export default function Reverse_Record() {
+type Domain = {
+  label: string
+  expire: number
+}
+
+export default function Reverse_Record({
+  isOpen,
+  setIsOpen,
+  addressDomain,
+}: {
+  isOpen: boolean
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  addressDomain: Array<Domain>
+}) {
   const [isLarge, setisLarge] = useState(false)
+  const [selectText, setSelectText] = useState('')
+
+  const { address, isConnected } = useAccount()
 
   useEffect(() => {
     // First render
@@ -100,26 +111,33 @@ export default function Reverse_Record() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  //  SetName
+  console.log('selectText', selectText)
+  // namehash.hash(selectText + '.flr'),
 
-  // const { config: prepareSetName } = usePrepareContractWrite({
-  //   address: ReverseRegistrar.address as `0x${string}`,
-  //   abi: ReverseRegistrar.abi,
-  //   functionName: 'setName',
-  //   onSuccess(data: any) {
-  //     console.log('Success prepareSetName', data)
-  //     // setPrepared(true)
-  //   },
-  //   onError(error) {
-  //     console.log('Error prepareSetName', error)
-  //   },
-  // })
-  // const { write: setName } = useContractWrite({
-  //   ...prepareSetName,
-  //   onSuccess(data) {
-  //     console.log('Success', data)
-  //   },
-  // })
+  //  SetName
+  const { config: prepareSetName } = usePrepareContractWrite({
+    address: ReverseRegistrar.address as `0x${string}`,
+    abi: ReverseRegistrar.abi,
+    functionName: 'setName',
+    args: [selectText],
+    overrides: {
+      from: address as `0x${string}`,
+    },
+    enabled: selectText !== '',
+    onSuccess(data: any) {
+      console.log('Success prepareSetName', data)
+      // setPrepared(true)
+    },
+    onError(error) {
+      console.log('Error prepareSetName', error)
+    },
+  })
+  const { write: setName } = useContractWrite({
+    ...prepareSetName,
+    onSuccess(data) {
+      console.log('Success', data)
+    },
+  })
 
   return (
     <>
@@ -142,7 +160,13 @@ export default function Reverse_Record() {
       </p>
 
       {/* Dropdown */}
-      <Dropdown />
+      <Dropdown
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        addressDomain={addressDomain}
+        selectText={selectText}
+        setSelectText={setSelectText}
+      />
 
       {/* Text */}
       <p className="mt-2 w-full font-normal text-sm text-gray-400 lg:w-1/2">

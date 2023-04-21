@@ -4,6 +4,8 @@ import Image from 'next/image'
 
 import ENSRegistry from '../../src/pages/abi/ENSRegistry.json'
 import PublicResolver from '../../src/pages/abi/PublicResolver.json'
+import AddrResolver from '../../src/pages/abi/PublicResolver.sol/AddrResolver.json'
+import TextResolver from '../../src/pages/abi/PublicResolver.sol/TextResolver.json'
 
 import { useContractRead, useContractReads } from 'wagmi'
 
@@ -117,7 +119,7 @@ export default function Content({
 
   const { data: addresses } = useContractRead({
     address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
+    abi: AddrResolver.abi,
     functionName: 'addr',
     enabled: prepared && recordPrepared,
     args: [namehash.hash(result)],
@@ -146,7 +148,7 @@ export default function Content({
 
   const textsPrepare = keysTexts.map((item, index) => ({
     address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
+    abi: TextResolver.abi,
     functionName: 'text',
     args: [namehash.hash(result), item],
   }))

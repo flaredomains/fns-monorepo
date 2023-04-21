@@ -1,5 +1,4 @@
 {
-  "address": "0x8d4436341c28c8AdA92f851515ba7B28a4050295",
   "abi": [
     {
       "anonymous": false,
@@ -838,9 +837,15 @@
     "absolutePath": "src/on-chain/ENSRegistry.sol",
     "id": 2300,
     "exportedSymbols": {
-      "ENS": [1785],
-      "ENSRegistry": [2177],
-      "ENSRegistryWithFallback": [2299]
+      "ENS": [
+        1785
+      ],
+      "ENSRegistry": [
+        2177
+      ],
+      "ENSRegistryWithFallback": [
+        2299
+      ]
     },
     "nodeType": "SourceUnit",
     "src": "128:9386:1",
@@ -850,7 +855,12 @@
         "nodeType": "PragmaDirective",
         "src": "128:25:1",
         "nodes": [],
-        "literals": ["solidity", ">=", "0.4", ".24"]
+        "literals": [
+          "solidity",
+          ">=",
+          "0.4",
+          ".24"
+        ]
       },
       {
         "id": 1785,
@@ -2458,7 +2468,9 @@
         "contractKind": "interface",
         "documentation": null,
         "fullyImplemented": false,
-        "linearizedBaseContracts": [1785],
+        "linearizedBaseContracts": [
+          1785
+        ],
         "name": "ENS",
         "scope": 2300
       },
@@ -2467,7 +2479,12 @@
         "nodeType": "PragmaDirective",
         "src": "1853:23:1",
         "nodes": [],
-        "literals": ["solidity", "^", "0.5", ".0"]
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".0"
+        ]
       },
       {
         "id": 2177,
@@ -2691,7 +2708,9 @@
               "nodes": [],
               "statements": [
                 {
-                  "assignments": [1810],
+                  "assignments": [
+                    1810
+                  ],
                   "declarations": [
                     {
                       "constant": false,
@@ -2959,7 +2978,10 @@
                       "id": 1816,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [6008, 6009],
+                      "overloadedDeclarations": [
+                        6008,
+                        6009
+                      ],
                       "referencedDeclaration": 6008,
                       "src": "2365:7:1",
                       "typeDescriptions": {
@@ -3487,7 +3509,9 @@
               "nodes": [],
               "statements": [
                 {
-                  "assignments": [1881],
+                  "assignments": [
+                    1881
+                  ],
                   "declarations": [
                     {
                       "constant": false,
@@ -4125,7 +4149,9 @@
               "nodes": [],
               "statements": [
                 {
-                  "assignments": [1931],
+                  "assignments": [
+                    1931
+                  ],
                   "declarations": [
                     {
                       "constant": false,
@@ -5505,7 +5531,9 @@
               "nodes": [],
               "statements": [
                 {
-                  "assignments": [2032],
+                  "assignments": [
+                    2032
+                  ],
                   "declarations": [
                     {
                       "constant": false,
@@ -7406,11 +7434,16 @@
             "src": "1996:3:1"
           }
         ],
-        "contractDependencies": [1785],
+        "contractDependencies": [
+          1785
+        ],
         "contractKind": "contract",
         "documentation": "The ENS registry contract.",
         "fullyImplemented": true,
-        "linearizedBaseContracts": [2177, 1785],
+        "linearizedBaseContracts": [
+          2177,
+          1785
+        ],
         "name": "ENSRegistry",
         "scope": 2300
       },
@@ -7419,7 +7452,12 @@
         "nodeType": "PragmaDirective",
         "src": "7873:23:1",
         "nodes": [],
-        "literals": ["solidity", "^", "0.5", ".0"]
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".0"
+        ]
       },
       {
         "id": 2299,
@@ -8526,7 +8564,9 @@
               "nodes": [],
               "statements": [
                 {
-                  "assignments": [2274],
+                  "assignments": [
+                    2274
+                  ],
                   "declarations": [
                     {
                       "constant": false,
@@ -8944,11 +8984,18 @@
             "src": "8075:11:1"
           }
         ],
-        "contractDependencies": [1785, 2177],
+        "contractDependencies": [
+          1785,
+          2177
+        ],
         "contractKind": "contract",
         "documentation": "The ENS registry contract.",
         "fullyImplemented": true,
-        "linearizedBaseContracts": [2299, 2177, 1785],
+        "linearizedBaseContracts": [
+          2299,
+          2177,
+          1785
+        ],
         "name": "ENSRegistryWithFallback",
         "scope": 2300
       }

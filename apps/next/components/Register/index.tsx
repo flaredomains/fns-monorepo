@@ -17,6 +17,7 @@ import {
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
+  useContractEvent,
 } from 'wagmi'
 import { BigNumber, ethers } from 'ethers'
 
@@ -81,7 +82,7 @@ export default function Register({ result }: { result: string }) {
         ? result.slice(0, -4)
         : result
       const hash = web3.sha3(resultFiltered) as string
-      console.log('hash', hash)
+      // console.log('hash', hash)
       setFilterResult(resultFiltered)
       setHashHex(hash)
       setPreparedHash(true)
@@ -108,10 +109,7 @@ export default function Register({ result }: { result: string }) {
     address: ETHRegistarController.address as `0x${string}`,
     abi: ETHRegistarController.abi,
     functionName: 'rentPrice',
-    args: [
-      result as string,
-      BigNumber.from(regPeriod).mul(31536000) as BigNumber,
-    ], // 31536000
+    args: [result as string, regPeriod], // 31536000
     onSuccess(data: any) {
       // console.log('Success rentPrice', data)
       // console.log('Base', Number(data.base))
@@ -140,6 +138,15 @@ export default function Register({ result }: { result: string }) {
     }
     setRegPeriod(regPeriod - 1)
   }
+
+  // useContractEvent({
+  //   address: ETHRegistarController.address as `0x${string}`,
+  //   abi: ETHRegistarController.abi,
+  //   eventName: 'NameRegistered',
+  //   listener(name, label, owner, baseCost, premium, expires) {
+  //     console.log(name, label, owner, baseCost, premium, expires)
+  //   },
+  // })
 
   return (
     <>
