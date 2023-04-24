@@ -30,6 +30,7 @@ contract NoNameCollisions is INoNameCollisions, Ownable {
      * @param newCollisionRegistry the new CollisionRegistry address
      */
     function updateCollisionRegistry(IBasePunkTLD newCollisionRegistry) external onlyOwner {
+        require(address(newCollisionRegistry) != address(0), "Cannot Update To Zero Address");
         collisionRegistry = newCollisionRegistry;
         emit CollisionRegistryUpdated(address(newCollisionRegistry));
     }

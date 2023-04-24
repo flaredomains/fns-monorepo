@@ -71,6 +71,11 @@ contract PublicResolver is
         address _trustedETHController,
         address _trustedReverseRegistrar
     ) {
+        require(address(_ens) != address(0), "Cannot Initialize To Zero Address");
+        require(address(wrapperAddress) != address(0), "Cannot Initialize To Zero Address");
+        require(address(_trustedETHController) != address(0), "Cannot Initialize To Zero Address");
+        require(address(_trustedReverseRegistrar) != address(0), "Cannot Initialize To Zero Address");
+
         ens = _ens;
         nameWrapper = wrapperAddress;
         trustedETHController = _trustedETHController;
