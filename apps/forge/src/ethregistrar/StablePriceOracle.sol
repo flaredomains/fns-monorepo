@@ -9,7 +9,7 @@ import "@flare/userInterfaces/IFlareContractRegistry.sol";
 import "@flare/userInterfaces/IFtsoRegistry.sol";
 
 // StablePriceOracle sets a price in USD, based on an oracle.
-contract StablePriceOracle is IPriceOracle, Ownable {
+contract StablePriceOracle is IPriceOracle, IERC165, Ownable {
     using StringUtils for *;
 
     // This address is used to JIT (Just-In-Time) lookup the address of the FtsoRegistry,
