@@ -42,6 +42,12 @@ contract StablePriceOracle is IPriceOracle, Ownable {
         require(_annualRentPricesUSD[2] > 0, "Input 3 Letter Price is too small");
         require(_annualRentPricesUSD[3] > 0, "Input 4 Letter Price is too small");
         require(_annualRentPricesUSD[4] > 0, "Input 5+ Letter Price is too small");
+        require(
+            _annualRentPricesUSD[0] > _annualRentPricesUSD[1] &&
+            _annualRentPricesUSD[1] > _annualRentPricesUSD[2] &&
+            _annualRentPricesUSD[2] > _annualRentPricesUSD[3] &&
+            _annualRentPricesUSD[3] > _annualRentPricesUSD[4],
+            "Price ordering not valid");
 
         price1LetterAttoUSDPerSec = (_annualRentPricesUSD[0] * 1e18) / secondsPerYear;
         price2LetterAttoUSDPerSec = (_annualRentPricesUSD[1] * 1e18) / secondsPerYear;
