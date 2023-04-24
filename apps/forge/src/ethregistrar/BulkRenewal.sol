@@ -13,9 +13,8 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 contract BulkRenewal is IBulkRenewal, IERC165, ReentrancyGuard {
-    // TODO: Update this to FLR
-    bytes32 private constant ETH_NAMEHASH =
-        0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae;
+    bytes32 private constant FLR_NAMEHASH =
+        0xfd9ed02f44147ba87d942b154c98562d831e3a24daea862ee12868ac20f7bcc3;
 
     IENS public immutable ens;
 
@@ -24,11 +23,11 @@ contract BulkRenewal is IBulkRenewal, IERC165, ReentrancyGuard {
     }
 
     function getController() internal view returns (ETHRegistrarController) {
-        IResolver r = IResolver(ens.resolver(ETH_NAMEHASH));
+        IResolver r = IResolver(ens.resolver(FLR_NAMEHASH));
         return
             ETHRegistrarController(
                 r.interfaceImplementer(
-                    ETH_NAMEHASH,
+                    FLR_NAMEHASH,
                     type(IETHRegistrarController).interfaceId
                 )
             );
