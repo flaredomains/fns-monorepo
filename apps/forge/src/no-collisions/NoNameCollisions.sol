@@ -7,6 +7,8 @@ import "@punkdomains/interfaces/IBasePunkTLD.sol";
 contract NoNameCollisions is INoNameCollisions, Ownable {
     IBasePunkTLD public collisionRegistry; // = IBasePunkTLD(0xBDACF94dDCAB51c39c2dD50BffEe60Bb8021949a);
 
+    event CollisionRegistryUpdated(address NewCollisionRegistry);
+
     constructor(address _collisionRegistry) {
         collisionRegistry = IBasePunkTLD(_collisionRegistry);
     }
@@ -18,8 +20,7 @@ contract NoNameCollisions is INoNameCollisions, Ownable {
      * @return true if there is a name collision, false otherwise
      */
     function isNameCollision(string calldata name) external view returns (bool) {
-        // return collisionRegistry.getDomainHolder(name) != address(0);
-        return false;
+        return collisionRegistry.getDomainHolder(name) != address(0);
     }
 
     /**
@@ -30,5 +31,6 @@ contract NoNameCollisions is INoNameCollisions, Ownable {
      */
     function updateCollisionRegistry(IBasePunkTLD newCollisionRegistry) external onlyOwner {
         collisionRegistry = newCollisionRegistry;
+        emit CollisionRegistryUpdated(address(newCollisionRegistry));
     }
 }
