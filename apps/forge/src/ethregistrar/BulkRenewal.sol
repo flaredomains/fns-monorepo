@@ -9,8 +9,10 @@ import "./IBulkRenewal.sol";
 import "./IPriceOracle.sol";
 
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract BulkRenewal is IBulkRenewal, IERC165 {
+contract BulkRenewal is IBulkRenewal, IERC165, ReentrancyGuard {
     // TODO: Update this to FLR
     bytes32 private constant ETH_NAMEHASH =
         0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae;
@@ -53,7 +55,7 @@ contract BulkRenewal is IBulkRenewal, IERC165 {
     function renewAll(
         string[] calldata names,
         uint256 duration
-    ) external payable override {
+    ) external payable override nonReentrant {
         ETHRegistrarController controller = getController();
         uint256 length = names.length;
         for (uint256 i = 0; i < length; ) {
@@ -68,7 +70,7 @@ contract BulkRenewal is IBulkRenewal, IERC165 {
             }
         }
         // Send any excess funds back
-        payable(msg.sender).transfer(address(this).balance);
+        Address.sendValue(payable(msg.sender), address(this).balance);
     }
 
     function supportsInterface(
