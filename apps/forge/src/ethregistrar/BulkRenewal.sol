@@ -56,7 +56,6 @@ contract BulkRenewal is IBulkRenewal, IERC165 {
     ) external payable override {
         ETHRegistrarController controller = getController();
         uint256 length = names.length;
-        uint256 total;
         for (uint256 i = 0; i < length; ) {
             IPriceOracle.Price memory price = controller.rentPrice(
                 names[i],
@@ -66,7 +65,6 @@ contract BulkRenewal is IBulkRenewal, IERC165 {
             controller.renew{value: totalPrice}(names[i], duration);
             unchecked {
                 ++i;
-                total += totalPrice;
             }
         }
         // Send any excess funds back
