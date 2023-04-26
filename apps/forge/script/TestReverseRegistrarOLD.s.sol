@@ -5,6 +5,7 @@ import "forge-std/console.sol";
 
 import "fns/registry/ENSRegistry.sol";
 import "fns/resolvers/PublicResolver.sol";
+import "fns/resolvers/profiles/NameResolver.sol";
 import "fns/ethregistrar/BaseRegistrar.sol";
 import "fns/ethregistrar/MintedDomainNames.sol";
 import "fns/registry/ReverseRegistrar.sol";
@@ -17,14 +18,15 @@ import "fns/no-collisions/NoNameCollisions.sol";
 
 import "fns-test/utils/ENSNamehash.sol";
 
-contract DeployFNS is Script {
-    address owner = 0x09Ec74F54dc4b316D8cd6DFBeB91263fB20E19d2; // public key of metamask wallet
+contract TestReverseRegistrar is Script {
+    // address owner = 0x09Ec74F54dc4b316D8cd6DFBeB91263fB20E19d2; // public key of metamask wallet
+    address owner = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
     bytes32 constant rootNode = 0x0;
 
     // Entrypoint to deploy script
     function run() external {
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        vm.startBroadcast(deployerPrivateKey);
+        // uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        vm.startBroadcast(0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80);
 
         // The root owner will be the msg.sender, which should be the private key owner
         ENSRegistry ensRegistry = new ENSRegistry();
@@ -62,6 +64,7 @@ contract DeployFNS is Script {
 
         PublicResolver publicResolver = new PublicResolver(
             ensRegistry, nameWrapper, address(ethRegistrarController), address(reverseRegistrar));
+        NameResolver nameResolver = NameResolver(address(publicResolver));
 
         // Set the resolver
         baseRegistrar.setResolver(address(publicResolver));
@@ -75,16 +78,34 @@ contract DeployFNS is Script {
         ensRegistry.setSubnodeOwner(
             ENSNamehash.namehash('reverse'), keccak256('addr'), address(reverseRegistrar));
 
+        baseRegistrar.register('hooray', owner, 365 days);
+        //reverseRegistrar.claim(owner);
+        bytes32 nodeHash = reverseRegistrar.setName('hooray');
+
+        console.logBytes32(nodeHash);
+        console.log(nameResolver.name(nodeHash));
+
         vm.stopBroadcast();
 
-        console.log("ensRegistry: %s", address(ensRegistry));
-        console.log("baseRegistrar: %s", address(baseRegistrar));
-        console.log("mintedDomainNames: %s", address(mintedDomainNames));
-        console.log("metadataService: %s", address(metadataService));
-        console.log("nameWrapper: %s", address(nameWrapper));
-        console.log("reverseRegistrar: %s", address(reverseRegistrar));
-        console.log("stablePriceOracle: %s", address(stablePriceOracle));
-        console.log("ethRegistrarController: %s", address(ethRegistrarController));
-        console.log("publicResolver: %s", address(publicResolver));
+        // console.log("ensRegistry: %s", address(ensRegistry));
+        // console.log("baseRegistrar: %s", address(baseRegistrar));
+        // console.log("mintedDomainNames: %s", address(mintedDomainNames));
+        // console.log("metadataService: %s", address(metadataService));
+        // console.log("nameWrapper: %s", address(nameWrapper));
+        // console.log("reverseRegistrar: %s", address(reverseRegistrar));
+        // console.log("stablePriceOracle: %s", address(stablePriceOracle));
+        // console.log("ethRegistrarController: %s", address(ethRegistrarController));
+        // console.log("publicResolver: %s", address(publicResolver));
+
+        // == Logs ==
+        // claimForAddr::reverseNode
+        // 0x36f4458307cdb864c670ce989072842621dd6b7022b8abacc37f7fab25890b27
+        // claimForAddr::labelHash
+        // 0x19682d67812181b19d61f09263ab9e723b258d8d7949f68794d8916171bea91d
+        // claimForAddr::reverseNode
+        // 0x36f4458307cdb864c670ce989072842621dd6b7022b8abacc37f7fab25890b27
+        // claimForAddr::labelHash
+        // 0x19682d67812181b19d61f09263ab9e723b258d8d7949f68794d8916171bea91d
+        // hooray
     }
 }
