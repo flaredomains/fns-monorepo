@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import { ethers } from 'ethers'
 
 const ETH_TO_USD_API_URL = 'https://min-api.cryptocompare.com/data/price'
 
@@ -28,7 +29,7 @@ const TotalPrice = ({
   priceToPay,
 }: {
   regPeriod: number
-  priceToPay: number
+  priceToPay: string
 }) => {
   return (
     <>
@@ -38,7 +39,7 @@ const TotalPrice = ({
         </p>
         <div className="flex items-center text-white font-semibold text-2xl lg:text-lg xl:text-2xl">
           {priceToPay ? (
-            priceToPay.toFixed(2)
+            priceToPay.slice(0, 6)
           ) : (
             <Loading isFinalPrize={false} isCalculation={false} />
           )}{' '}
@@ -71,7 +72,7 @@ const FinalPrice = ({
 }: {
   regPeriod: number
   fee: number
-  priceToPay: number
+  priceToPay: string
 }) => {
   const [ethPrice, setEthPrice] = useState<number>(0)
 
@@ -101,7 +102,7 @@ const FinalPrice = ({
           <p className="text-[#FED7AA] text-xs">At most</p>
           <div className="flex items-center text-white font-semibold text-2xl lg:text-lg xl:text-2xl">
             {priceToPay ? (
-              (priceToPay + fee / 10 ** 18).toFixed(2)
+              (Number(priceToPay) + fee / 10 ** 18).toFixed(3)
             ) : (
               <Loading isFinalPrize={true} isCalculation={false} />
             )}{' '}
@@ -112,7 +113,7 @@ const FinalPrice = ({
             <span className="font-semibold text-white flex items-center">
               $
               {priceToPay ? (
-                ((priceToPay + fee / 10 ** 18) * ethPrice).toFixed(2)
+                ((Number(priceToPay) + fee / 10 ** 18) * ethPrice).toFixed(2)
               ) : (
                 <Loading isFinalPrize={true} isCalculation={true} />
               )}{' '}
@@ -132,12 +133,13 @@ export default function Final_price({
 }: {
   regPeriod: number
   fee: number
-  priceToPay: number
+  priceToPay: string
 }) {
+  const flrPrice = ethers.utils.formatEther(priceToPay ? priceToPay : 1)
   return (
     <div className="flex flex-col items-center mt-9 h-96 w-full bg-[#334155] rounded-t-lg lg:flex-row lg:rounded-l-lg lg:h-32">
       <div className="bg-[#334155] flex flex-col items-center w-full lg:w-2/3 lg:flex-row">
-        <TotalPrice regPeriod={regPeriod} priceToPay={priceToPay} />
+        <TotalPrice regPeriod={regPeriod} priceToPay={flrPrice} />
 
         {/* + */}
         <div className="text-white text-xl">+</div>
@@ -145,8 +147,8 @@ export default function Final_price({
         <GasFee fee={fee} />
       </div>
 
-      {/* Final Price -- TODO change 0.011 with gas fee */}
-      <FinalPrice regPeriod={regPeriod} fee={fee} priceToPay={priceToPay} />
+      {/* Final Price */}
+      <FinalPrice regPeriod={regPeriod} fee={fee} priceToPay={flrPrice} />
     </div>
   )
 }

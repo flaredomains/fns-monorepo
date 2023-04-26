@@ -54,7 +54,7 @@ const ReqToRegister = ({
 }: {
   result: string
   regPeriod: number
-  price: number
+  price: string
   count: number
   setCount: React.Dispatch<React.SetStateAction<number>>
 }) => {
@@ -65,7 +65,7 @@ const ReqToRegister = ({
 
   const { address } = useAccount()
 
-  console.log('regPeriod * 31536000', regPeriod * 31536000)
+  // console.log('regPeriod * 31536000', regPeriod * 31536000)
 
   const { data: commitmentHash, isFetched: isMakeCommitmentReady } =
     useContractRead({
@@ -75,7 +75,7 @@ const ReqToRegister = ({
       args: [
         result as string,
         address as `0x${string}`,
-        BigNumber.from(regPeriod).mul(31536000),
+        BigNumber.from(regPeriod).mul(31556952),
         web3.sha3(address as `0x${string}`),
         '0x68470b26610348472dE725E307b10D61EF6368b8' as `0x${string}`,
         [],
@@ -135,13 +135,6 @@ const ReqToRegister = ({
       })
   }
 
-  // const contract = useContract({
-  //   address: ETHRegistarController.address as `0x${string}`,
-  //   abi: ETHRegistarController.abi,
-  // })
-
-  // Number(price).toString()
-
   function wait() {
     setIsWaiting(true)
     let counter = 1
@@ -159,20 +152,6 @@ const ReqToRegister = ({
     }, 60000)
   }
 
-  /**
-   * {
-        value: ethers.utils.parseEther(Number(price).toString()),
-      },
-   */
-
-  // const { data } = useContractRead({
-  //   address: ETHRegistarController.address as `0x${string}`,
-  //   abi: ETHRegistarController.abi,
-  //   functionName: 'prices',
-  // })
-
-  // console.log('prices', data)
-
   // Prepare Register
   const { config: configRegister } = usePrepareContractWrite({
     address: ETHRegistarController.address as `0x${string}`,
@@ -182,7 +161,7 @@ const ReqToRegister = ({
     args: [
       result as string,
       address as `0x${string}`,
-      BigNumber.from(regPeriod).mul(31536000),
+      BigNumber.from(regPeriod).mul(31556952),
       web3.sha3(address as `0x${string}`),
       '0x68470b26610348472dE725E307b10D61EF6368b8' as `0x${string}`,
       [],
@@ -191,7 +170,7 @@ const ReqToRegister = ({
     ],
     overrides: {
       from: address as `0x${string}`,
-      value: ethers.utils.parseUnits(Number(price).toString(), 'wei'),
+      value: BigNumber.from(price), // .add((10 ** 18).toString())
       gasLimit: BigNumber.from(1000000),
     },
     onSuccess(data) {
@@ -204,19 +183,12 @@ const ReqToRegister = ({
     },
   })
 
-  console.log(
-    'ethers.utils.parseUnits(Number(price).toString(), "wei")',
-    ethers.utils.parseUnits(Number(price).toString(), 'wei')
-  )
-
+  // console.log('BigNumber.from(price)', BigNumber.from(price))
   // console.log(
-  //   'BigNumber.from(price)',
-  //   BigNumber.from(price),
-  //   'number:',
-  //   Number(price)
+  //   'ethers.utils.parseUnits(price, wei)',
+  //   ethers.utils.parseUnits(price, 'wei')
   // )
-
-  // ethers.utils.parseEther(Number(price).toString()),
+  // console.log('price', price)
 
   // Register
   const { writeAsync: register } = useContractWrite({
@@ -314,7 +286,7 @@ export default function Bottom({
 }: {
   result: string
   regPeriod: number
-  price: number
+  price: string
   count: number
   setCount: React.Dispatch<React.SetStateAction<number>>
 }) {

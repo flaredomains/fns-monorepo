@@ -64,7 +64,7 @@ export default function Register({ result }: { result: string }) {
   // For steps animation
   const [count, setCount] = useState(0)
 
-  const [priceFLR, setPriceFLR] = useState(1)
+  const [priceFLR, setPriceFLR] = useState('1')
   const [regPeriod, setRegPeriod] = useState(1)
   const [preparedHash, setPreparedHash] = useState<boolean>(false)
   const [hashHex, setHashHex] = useState<string>('')
@@ -109,12 +109,13 @@ export default function Register({ result }: { result: string }) {
     address: ETHRegistarController.address as `0x${string}`,
     abi: ETHRegistarController.abi,
     functionName: 'rentPrice',
-    args: [result as string, regPeriod], // 31536000
+    args: [filterResult as string, regPeriod * 31556952], // 31536000
     onSuccess(data: any) {
-      // console.log('Success rentPrice', data)
+      console.log('Success rentPrice', data)
       // console.log('Base', Number(data.base))
+      // console.log('Base', ethers.utils.formatEther(data.base))
       // console.log('Premium', Number(data.premium))
-      setPriceFLR(Number(data.base))
+      setPriceFLR(data.base)
     },
     onError(error) {
       console.log('Error rentPrice', error)
@@ -122,9 +123,6 @@ export default function Register({ result }: { result: string }) {
   })
 
   const { data: fee } = useFeeData()
-
-  // console.log('ETHRegistarController.address', ETHRegistarController.address)
-  // console.log('ETHRegistarController.abi', ETHRegistarController.abi)
 
   const incrementYears = () => {
     if (regPeriod >= 999) return
@@ -138,15 +136,6 @@ export default function Register({ result }: { result: string }) {
     }
     setRegPeriod(regPeriod - 1)
   }
-
-  // useContractEvent({
-  //   address: ETHRegistarController.address as `0x${string}`,
-  //   abi: ETHRegistarController.abi,
-  //   eventName: 'NameRegistered',
-  //   listener(name, label, owner, baseCost, premium, expires) {
-  //     console.log(name, label, owner, baseCost, premium, expires)
-  //   },
-  // })
 
   return (
     <>
@@ -164,7 +153,7 @@ export default function Register({ result }: { result: string }) {
                 {/* Increment Selector */}
                 <Selector
                   regPeriod={regPeriod}
-                  priceToPay={Number(price?.base)}
+                  priceToPay={priceFLR}
                   incrementYears={incrementYears}
                   decreaseYears={decreaseYears}
                 />
@@ -173,7 +162,7 @@ export default function Register({ result }: { result: string }) {
                 <Final_price
                   regPeriod={regPeriod}
                   fee={Number(fee?.gasPrice)}
-                  priceToPay={Number(price?.base)}
+                  priceToPay={priceFLR}
                 />
 
                 {/* Steps title mobile hidden */}

@@ -3,11 +3,19 @@ import Image from 'next/image'
 import ArrowDown from '../../public/ArrowDown.svg'
 
 import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
+import PublicRegistrar from '../../src/pages/abi/PublicResolver.json'
+import NameResolver from '../../src/pages/abi/PublicResolver.sol/NameResolver.json'
 import Resolver from '../../src/pages/abi/ReverseRegistrar.sol/Resolver.json'
+import ENS from '../../src/pages/abi/ReverseRegistrar.sol/ENS.json'
 
 const namehash = require('eth-ens-namehash')
 
-import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi'
+import {
+  useAccount,
+  useContractRead,
+  useContractWrite,
+  usePrepareContractWrite,
+} from 'wagmi'
 
 const Rev_Record_Line = ({
   text,
@@ -91,6 +99,7 @@ export default function Reverse_Record({
 }) {
   const [isLarge, setisLarge] = useState(false)
   const [selectText, setSelectText] = useState('')
+  const [prepared, setPrepared] = useState(false)
 
   const { address, isConnected } = useAccount()
 
@@ -111,19 +120,80 @@ export default function Reverse_Record({
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  console.log('selectText', selectText)
+  // NameResolver Name
+  const { data: mainDomain } = useContractRead({
+    address: PublicRegistrar.address as `0x${string}`,
+    abi: NameResolver.abi,
+    functionName: 'name',
+    enabled: isConnected,
+    args: [namehash.hash(`${address}.addr.reverse`)],
+    onSuccess(data: any) {
+      console.log('Success name', data)
+    },
+    onError(error) {
+      console.log('Error name', error)
+    },
+  })
+
+  // console.log('selectText', selectText)
   // namehash.hash(selectText + '.flr'),
 
-  //  SetName
+  // Claim write call and then setName call in the useEffect below
+  async function setNameFunc() {
+    await claim?.()
+      .then(async (tx) => {
+        const receipt = await tx.wait()
+        if (receipt.status == 1) {
+          console.log('Approval transaction succeeded!', receipt.logs)
+          setPrepared(true)
+          return
+        }
+        console.error('Approval transaction reverted!', receipt.logs)
+        setPrepared(false)
+      })
+      .catch(() => {
+        console.error('User rejected approval!')
+        setPrepared(false)
+      })
+  }
+
+  // SetName call after the claim call
+  useEffect(() => {
+    if (prepared) {
+      setName?.()
+    }
+  }, [prepared])
+
+  // Prepare Claim
+  const { config: prepareClaim } = usePrepareContractWrite({
+    address: ReverseRegistrar.address as `0x${string}`,
+    abi: ReverseRegistrar.abi,
+    functionName: 'claim',
+    enabled: isConnected && selectText !== '',
+    args: [address],
+    onSuccess(data: any) {
+      console.log('Success prepareclaim', data)
+    },
+    onError(error) {
+      console.error('Error claim', error)
+    },
+  })
+
+  // Claim
+  const { writeAsync: claim } = useContractWrite({
+    ...prepareClaim,
+    onSuccess(data) {
+      // console.log('Success claim', data)
+    },
+  })
+
+  //  SetName Prepare selectText + '.flr'
   const { config: prepareSetName } = usePrepareContractWrite({
     address: ReverseRegistrar.address as `0x${string}`,
     abi: ReverseRegistrar.abi,
     functionName: 'setName',
-    args: [selectText],
-    overrides: {
-      from: address as `0x${string}`,
-    },
-    enabled: selectText !== '',
+    args: ['simone'],
+    enabled: prepared,
     onSuccess(data: any) {
       console.log('Success prepareSetName', data)
       // setPrepared(true)
@@ -132,6 +202,8 @@ export default function Reverse_Record({
       console.log('Error prepareSetName', error)
     },
   })
+
+  // SetName Write Func
   const { write: setName } = useContractWrite({
     ...prepareSetName,
     onSuccess(data) {
@@ -139,6 +211,7 @@ export default function Reverse_Record({
     },
   })
 
+  // console.log(isConnected)
   return (
     <>
       <div className="flex justify-between mt-16">
@@ -147,7 +220,10 @@ export default function Reverse_Record({
           {isLarge ? 'Primary FNS Name (Reverse Record)' : 'Primary FNS Name'}
         </p>
         {/* Button */}
-        <div className="flex items-center px-3 py-1 bg-[#F97316] rounded-full cursor-pointer hover:scale-110 active:scale-125 transform transition duration-300 ease-out lg:py-2 lg:px-4">
+        <div
+          onClick={() => setNameFunc()}
+          className="flex items-center px-3 py-1 bg-[#F97316] rounded-full cursor-pointer hover:scale-110 active:scale-125 transform transition duration-300 ease-out lg:py-2 lg:px-4"
+        >
           <p className="text-white text-sm font-medium">Not Set</p>
         </div>
       </div>
