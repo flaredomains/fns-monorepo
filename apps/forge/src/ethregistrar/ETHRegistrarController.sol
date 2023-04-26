@@ -37,8 +37,12 @@ contract ETHRegistrarController is
     using Address for address;
 
     uint256 public constant MIN_REGISTRATION_DURATION = 28 days;
-    bytes32 private constant ETH_NODE =
-        0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae;
+    // bytes32 private constant ETH_NODE =
+    //     0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae;
+
+    // TODO: This is the namehash of .flr, rename the variable to FLR_NODE accordingly
+    bytes32 private constant FLR_NODE =
+        0xfd9ed02f44147ba87d942b154c98562d831e3a24daea862ee12868ac20f7bcc3;
     uint64 private constant MAX_EXPIRY = type(uint64).max;
     BaseRegistrar immutable base;
     IPriceOracle public priceOracle;
@@ -273,7 +277,7 @@ contract ETHRegistrarController is
         bytes[] calldata data
     ) internal {
         // use hardcoded .eth namehash
-        bytes32 nodehash = keccak256(abi.encodePacked(ETH_NODE, label));
+        bytes32 nodehash = keccak256(abi.encodePacked(FLR_NODE, label));
         IResolver resolver = IResolver(resolverAddress);
         resolver.multicallWithNodeCheck(nodehash, data);
     }
