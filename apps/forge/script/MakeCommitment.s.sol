@@ -34,9 +34,48 @@ contract Template is Script {
 
     // Entrypoint to deploy script
     function run() external {
-        vm.startBroadcast(DEPLOYER_PRIVATE_KEY);
+        uint256 broadcastPrivKey = OWNER_PRIVATE_KEY;
+        address broadcastAddress = OWNER_ADDRESS;
+        address publicResolver = 0x008bDf16e7981c0C3Cc47F425D04344B569d2A1a;
+        address ethRegistrarControllerAddr = 0xf379EB8addFb3c270AFd994F29524932768A6b18;
+        string memory name = "test";
+
+        vm.startBroadcast(broadcastPrivKey);
 
         // Begin script specifics
+        ETHRegistrarController ethRegistrarController = ETHRegistrarController(ethRegistrarControllerAddr);
+
+        // bytes32 commitment = ethRegistrarController.makeCommitment(
+        //     name,
+        //     broadcastAddress,
+        //     31556952,
+        //     keccak256(bytes(name)),
+        //     publicResolver,
+        //     new bytes[](0),
+        //     true,
+        //     0);
+        
+        // console.logBytes32(commitment);
+        // ethRegistrarController.commit(commitment);
+        
+        // console.log("Before Warp: block.timestamp = %s", block.timestamp);
+        // vm.warp(block.timestamp + 600);
+        // console.log("After Warp: block.timestamp = %s", block.timestamp);
+
+        IPriceOracle.Price memory price = ethRegistrarController.rentPrice(name, 31556952);
+        uint256 totalPrice = price.base + price.premium;
+
+        console.log("Price of name:%s => %s", name, totalPrice);
+
+        ethRegistrarController.register{ value: totalPrice }(
+            name,
+            broadcastAddress,
+            31556952,
+            keccak256(bytes(name)),
+            publicResolver,
+            new bytes[](0),
+            true,
+            0);
 
         vm.stopBroadcast();
     }
