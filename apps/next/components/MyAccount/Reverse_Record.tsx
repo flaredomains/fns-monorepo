@@ -139,53 +139,53 @@ export default function Reverse_Record({
   // namehash.hash(selectText + '.flr'),
 
   // Claim write call and then setName call in the useEffect below
-  async function setNameFunc() {
-    await claim?.()
-      .then(async (tx) => {
-        const receipt = await tx.wait()
-        if (receipt.status == 1) {
-          console.log('Approval transaction succeeded!', receipt.logs)
-          setPrepared(true)
-          return
-        }
-        console.error('Approval transaction reverted!', receipt.logs)
-        setPrepared(false)
-      })
-      .catch(() => {
-        console.error('User rejected approval!')
-        setPrepared(false)
-      })
-  }
+  // async function setNameFunc() {
+  //   await claim?.()
+  //     .then(async (tx) => {
+  //       const receipt = await tx.wait()
+  //       if (receipt.status == 1) {
+  //         console.log('Approval transaction succeeded!', receipt.logs)
+  //         setPrepared(true)
+  //         return
+  //       }
+  //       console.error('Approval transaction reverted!', receipt.logs)
+  //       setPrepared(false)
+  //     })
+  //     .catch(() => {
+  //       console.error('User rejected approval!')
+  //       setPrepared(false)
+  //     })
+  // }
 
   // SetName call after the claim call
-  useEffect(() => {
-    if (prepared) {
-      setName?.()
-    }
-  }, [prepared])
+  // useEffect(() => {
+  //   if (prepared) {
+  //     setName?.()
+  //   }
+  // }, [prepared])
 
   // Prepare Claim
-  const { config: prepareClaim } = usePrepareContractWrite({
-    address: ReverseRegistrar.address as `0x${string}`,
-    abi: ReverseRegistrar.abi,
-    functionName: 'claim',
-    enabled: isConnected && selectText !== '',
-    args: [address],
-    onSuccess(data: any) {
-      console.log('Success prepareclaim', data)
-    },
-    onError(error) {
-      console.error('Error claim', error)
-    },
-  })
+  // const { config: prepareClaim } = usePrepareContractWrite({
+  //   address: ReverseRegistrar.address as `0x${string}`,
+  //   abi: ReverseRegistrar.abi,
+  //   functionName: 'claim',
+  //   enabled: isConnected && selectText !== '',
+  //   args: [address],
+  //   onSuccess(data: any) {
+  //     console.log('Success prepareclaim', data)
+  //   },
+  //   onError(error) {
+  //     console.error('Error claim', error)
+  //   },
+  // })
 
-  // Claim
-  const { writeAsync: claim } = useContractWrite({
-    ...prepareClaim,
-    onSuccess(data) {
-      // console.log('Success claim', data)
-    },
-  })
+  // // Claim
+  // const { writeAsync: claim } = useContractWrite({
+  //   ...prepareClaim,
+  //   onSuccess(data) {
+  //     // console.log('Success claim', data)
+  //   },
+  // })
 
   //  SetName Prepare selectText + '.flr'
   const { config: prepareSetName } = usePrepareContractWrite({
@@ -193,7 +193,7 @@ export default function Reverse_Record({
     abi: ReverseRegistrar.abi,
     functionName: 'setName',
     args: ['simone'],
-    enabled: prepared,
+    // enabled: prepared,
     onSuccess(data: any) {
       console.log('Success prepareSetName', data)
       // setPrepared(true)
@@ -221,7 +221,7 @@ export default function Reverse_Record({
         </p>
         {/* Button */}
         <div
-          onClick={() => setNameFunc()}
+          onClick={() => setName?.()}
           className="flex items-center px-3 py-1 bg-[#F97316] rounded-full cursor-pointer hover:scale-110 active:scale-125 transform transition duration-300 ease-out lg:py-2 lg:px-4"
         >
           <p className="text-white text-sm font-medium">Not Set</p>

@@ -141,7 +141,7 @@ const ReqToRegister = ({
     const intervalId = setInterval(function () {
       console.log(`Waiting for ${counter} minute(s)`)
       counter++
-      if (counter > 10) {
+      if (counter > 1) {
         clearInterval(intervalId)
         console.log('Finished waiting!')
         // code to be executed after 10 minutes
@@ -171,7 +171,7 @@ const ReqToRegister = ({
     overrides: {
       from: address as `0x${string}`,
       value: BigNumber.from(price), // .add((10 ** 18).toString())
-      gasLimit: BigNumber.from(1000000),
+      // gasLimit: BigNumber.from(1000000),
     },
     onSuccess(data) {
       console.log('Success prepare register', data)

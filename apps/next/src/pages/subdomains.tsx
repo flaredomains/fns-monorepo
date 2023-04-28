@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from 'react'
-import Side_Navbar from '../../../components/Side_Navbar'
+import Side_Navbar from '../../components/Side_Navbar'
 import { useRouter } from 'next/router'
-import Pages_buttons from '../../../components/Pages_buttons'
-import Details from '../../../components/Details'
+import Pages_buttons from '../../components/Pages_buttons'
+import Subdomains from '../../components/Subdomains'
 
 export default function Result() {
+  // Change to Wagmi data about user subdomain
+  const [arrSubdomains, setArrSubdomains] = useState([
+    'neel.flr',
+    'chase.flr',
+    'ben.flr',
+  ])
+
   const [result, setResult] = useState<string>('')
 
+  const [path, setPath] = useState<String>('')
+
   const router = useRouter()
-  const [path, setPath] = useState<string>('')
 
   useEffect(() => {
     if (!router.isReady) return
@@ -31,7 +39,7 @@ export default function Result() {
             {/* Three button Register, Details, Subdomain / Search Input (hidden mobile) */}
             <Pages_buttons result={result} path={path} />
 
-            <Details result={result} />
+            <Subdomains result={result} arrSubdomains={arrSubdomains} />
           </div>
         </div>
       </div>

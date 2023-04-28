@@ -54,7 +54,7 @@ const Button = ({
   return (
     <Link
       href={{
-        pathname: `${page}/[result]`,
+        pathname: `${page}`,
         query: { result: result },
       }}
     >
@@ -109,16 +109,10 @@ function Pages_buttons({ result, path }: any) {
               result={result}
               page={item.page}
               button_style={`${item.button_style}${
-                path === item.page + '/[result]'
-                  ? ' bg-gray-700'
-                  : ' bg-transparent'
+                path === item.page ? ' bg-gray-700' : ' bg-transparent'
               }`}
               image_style={item.image_style}
-              text_style={
-                path === item.page + '/[result]'
-                  ? ' text-white'
-                  : ' text-gray-500'
-              }
+              text_style={path === item.page ? ' text-white' : ' text-gray-500'}
               src={item.src}
             />
           ))}

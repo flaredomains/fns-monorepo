@@ -20,7 +20,7 @@ function Main() {
 
     if (pattern.test(route) || exception.test(route)) {
       console.log('Input is valid!')
-      router.push('register/' + route.toLowerCase())
+      router.push('register?result=' + route.toLowerCase())
     } else {
       console.log('Input is invalid!')
       const inputElement = e.target.elements['input-field'] as HTMLInputElement

@@ -5,7 +5,7 @@ import Image from 'next/image'
 import SubdomainLine from './SubdomainLine'
 
 const AddSubdomain = ({ arrSubdomains }: { arrSubdomains: Array<any> }) => {
-  const [isOpen, setIsOpen] = useState(true)
+  const [isOpen, setIsOpen] = useState(false)
   const [input, setInput] = useState('')
   return (
     <>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import Register from '../../../components/Register'
-import Side_Navbar from '../../../components/Side_Navbar'
+import Register from '../../components/Register'
+import Side_Navbar from '../../components/Side_Navbar'
 import { useRouter } from 'next/router'
-import Pages_buttons from '../../../components/Pages_buttons'
+import Pages_buttons from '../../components/Pages_buttons'
 
 export default function Result() {
   const [result, setResult] = useState<string>('')
