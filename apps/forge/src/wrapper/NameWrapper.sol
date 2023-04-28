@@ -42,10 +42,10 @@ contract NameWrapper is
     string public constant name = "NameWrapper";
 
     uint64 private constant GRACE_PERIOD = 90 days;
-    bytes32 private constant ETH_NODE =
-        0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae;
-    bytes32 private constant ETH_LABELHASH =
-        0x4f5b812789fc606be1b3b16908db13fc7a9adf7ca72641f84d75b47069d3d7f0;
+    bytes32 private constant FLR_NODE =
+        0xfd9ed02f44147ba87d942b154c98562d831e3a24daea862ee12868ac20f7bcc3;
+    // Labelhash is just the keccak of "flr" or "eth", sometimes represented as a uint256
+    bytes32 private constant FLR_LABELHASH = 0x848313180a0fba6baf0d056afcae526bd33cc52dc58a1a864e1906017cb3ceaf;
     bytes32 private constant ROOT_NODE =
         0x0000000000000000000000000000000000000000000000000000000000000000;
 
@@ -61,10 +61,10 @@ contract NameWrapper is
         registrar = _registrar;
         metadataService = _metadataService;
 
-        /* Burn PARENT_CANNOT_CONTROL and CANNOT_UNWRAP fuses for ROOT_NODE and ETH_NODE */
+        /* Burn PARENT_CANNOT_CONTROL and CANNOT_UNWRAP fuses for ROOT_NODE and FLR_NODE */
 
         _setData(
-            uint256(ETH_NODE),
+            uint256(FLR_NODE),
             address(0),
             uint32(PARENT_CANNOT_CONTROL | CANNOT_UNWRAP),
             MAX_EXPIRY
@@ -76,7 +76,7 @@ contract NameWrapper is
             MAX_EXPIRY
         );
         names[ROOT_NODE] = "\x00";
-        names[ETH_NODE] = "\x03eth\x00";
+        names[FLR_NODE] = "\x03flr\x00";
     }
 
     function supportsInterface(
@@ -92,7 +92,7 @@ contract NameWrapper is
 
     /**
      * @notice Gets the owner of a name
-     * @param id Label as a string of the .eth domain to wrap
+     * @param id Label as a string of the .flr domain to wrap
      * @return owner The owner of the name
      */
 
@@ -208,9 +208,9 @@ contract NameWrapper is
     }
 
     /**
-     * @notice Wraps a .eth domain, creating a new token and sending the original ERC721 token to this contract
-     * @dev Can be called by the owner of the name on the .eth registrar or an authorised caller on the registrar
-     * @param label Label as a string of the .eth domain to wrap
+     * @notice Wraps a .flr domain, creating a new token and sending the original ERC721 token to this contract
+     * @dev Can be called by the owner of the name on the .flr registrar or an authorised caller on the registrar
+     * @param label Label as a string of the .flr domain to wrap
      * @param wrappedOwner Owner of the name in this contract
      * @param ownerControlledFuses Initial owner-controlled fuses to set
      * @param resolver Resolver contract address
@@ -229,7 +229,7 @@ contract NameWrapper is
             !registrar.isApprovedForAll(registrant, msg.sender)
         ) {
             revert UnauthorisedAddr(
-                _makeNode(ETH_NODE, bytes32(tokenId)),
+                _makeNode(FLR_NODE, bytes32(tokenId)),
                 msg.sender
             );
         }
@@ -252,14 +252,14 @@ contract NameWrapper is
     }
 
     /**
-     * @dev Registers a new .eth second-level domain and wraps it.
+     * @dev Registers a new .flr second-level domain and wraps it.
      *      Only callable by authorised controllers.
-     * @param label The label to register (Eg, 'foo' for 'foo.eth').
+     * @param label The label to register (Eg, 'foo' for 'foo.flr').
      * @param wrappedOwner The owner of the wrapped name.
      * @param duration The duration, in seconds, to register the name for.
      * @param resolver The resolver address to set on the IENS registry (optional).
      * @param ownerControlledFuses Initial owner-controlled fuses to set
-     * @return registrarExpiry The expiry date of the new name on the .eth registrar, in seconds since the Unix epoch.
+     * @return registrarExpiry The expiry date of the new name on the .flr registrar, in seconds since the Unix epoch.
      */
 
     function registerAndWrapETH2LD(
@@ -280,18 +280,18 @@ contract NameWrapper is
     }
 
     /**
-     * @notice Renews a .eth second-level domain.
+     * @notice Renews a .flr second-level domain.
      * @dev Only callable by authorised controllers.
-     * @param tokenId The hash of the label to register (eg, `keccak256('foo')`, for 'foo.eth').
+     * @param tokenId The hash of the label to register (eg, `keccak256('foo')`, for 'foo.flr').
      * @param duration The number of seconds to renew the name for.
-     * @return expires The expiry date of the name on the .eth registrar, in seconds since the Unix epoch.
+     * @return expires The expiry date of the name on the .flr registrar, in seconds since the Unix epoch.
      */
 
     function renew(
         uint256 tokenId,
         uint256 duration
     ) external onlyController returns (uint256 expires) {
-        bytes32 node = _makeNode(ETH_NODE, bytes32(tokenId));
+        bytes32 node = _makeNode(FLR_NODE, bytes32(tokenId));
 
         uint256 registrarExpiry = registrar.renew(tokenId, duration);
 
@@ -318,7 +318,7 @@ contract NameWrapper is
     }
 
     /**
-     * @notice Wraps a non .eth domain, of any kind. Could be a DNSSEC name vitalik.xyz or a subdomain
+     * @notice Wraps a non .flr domain, of any kind. Could be a DNSSEC name vitalik.xyz or a subdomain
      * @dev Can be called by the owner in the registry or an authorised caller in the registry
      * @param _name The name to wrap, in DNS format
      * @param wrappedOwner Owner of the name in this contract
@@ -336,7 +336,7 @@ contract NameWrapper is
 
         names[node] = _name;
 
-        if (parentNode == ETH_NODE) {
+        if (parentNode == FLR_NODE) {
             revert IncompatibleParent();
         }
 
@@ -356,10 +356,10 @@ contract NameWrapper is
     }
 
     /**
-     * @notice Unwraps a .eth domain. e.g. vitalik.eth
+     * @notice Unwraps a .flr domain. e.g. vitalik.flr
      * @dev Can be called by the owner in the wrapper or an authorised caller in the wrapper
-     * @param labelhash Labelhash of the .eth domain
-     * @param registrant Sets the owner in the .eth registrar to this address
+     * @param labelhash Labelhash of the .flr domain
+     * @param registrant Sets the owner in the .flr registrar to this address
      * @param controller Sets the owner in the registry to this address
      */
 
@@ -367,11 +367,11 @@ contract NameWrapper is
         bytes32 labelhash,
         address registrant,
         address controller
-    ) public onlyTokenOwner(_makeNode(ETH_NODE, labelhash)) {
+    ) public onlyTokenOwner(_makeNode(FLR_NODE, labelhash)) {
         if (registrant == address(this)) {
             revert IncorrectTargetOwner(registrant);
         }
-        _unwrap(_makeNode(ETH_NODE, labelhash), controller);
+        _unwrap(_makeNode(FLR_NODE, labelhash), controller);
         registrar.safeTransferFrom(
             address(this),
             registrant,
@@ -380,7 +380,7 @@ contract NameWrapper is
     }
 
     /**
-     * @notice Unwraps a non .eth domain, of any kind. Could be a DNSSEC name vitalik.xyz or a subdomain
+     * @notice Unwraps a non .flr domain, of any kind. Could be a DNSSEC name vitalik.xyz or a subdomain
      * @dev Can be called by the owner in the wrapper or an authorised caller in the wrapper
      * @param parentNode Parent namehash of the name e.g. vitalik.xyz would be namehash('xyz')
      * @param labelhash Labelhash of the name, e.g. vitalik.xyz would be keccak256('vitalik')
@@ -392,7 +392,7 @@ contract NameWrapper is
         bytes32 labelhash,
         address controller
     ) public onlyTokenOwner(_makeNode(parentNode, labelhash)) {
-        if (parentNode == ETH_NODE) {
+        if (parentNode == FLR_NODE) {
             revert IncompatibleParent();
         }
         if (controller == address(0x0) || controller == address(this)) {
@@ -466,7 +466,7 @@ contract NameWrapper is
     }
 
     /**
-     * @notice Upgrades a domain of any kind. Could be a .eth name vitalik.eth, a DNSSEC name vitalik.xyz, or a subdomain
+     * @notice Upgrades a domain of any kind. Could be a .flr name vitalik.flr, a DNSSEC name vitalik.xyz, or a subdomain
      * @dev Can be called by the owner or an authorised caller
      * @param _name The name to upgrade, in DNS format
      * @param extraData Extra data to pass to the upgrade contract
@@ -499,7 +499,7 @@ contract NameWrapper is
     }
 
     /** 
-    /* @notice Sets fuses of a name that you own the parent of. Can also be called by the owner of a .eth name
+    /* @notice Sets fuses of a name that you own the parent of. Can also be called by the owner of a .flr name
      * @param parentNode Parent namehash of the name e.g. vitalik.xyz would be namehash('xyz')
      * @param labelhash Labelhash of the name, e.g. vitalik.xyz would be keccak256('vitalik')
      * @param fuses Fuses to burn
@@ -787,7 +787,7 @@ contract NameWrapper is
     ) public view returns (bool) {
         bytes32 node = _makeNode(parentNode, labelhash);
         bool wrapped = _isWrapped(node);
-        if (parentNode != ETH_NODE) {
+        if (parentNode != FLR_NODE) {
             return wrapped;
         }
         try registrar.ownerOf(uint256(labelhash)) returns (address owner) {
@@ -803,7 +803,7 @@ contract NameWrapper is
         uint256 tokenId,
         bytes calldata data
     ) public returns (bytes4) {
-        //check if it's the eth registrar ERC721
+        //check if it's the flr registrar ERC721
         if (msg.sender != address(registrar)) {
             revert IncorrectTokenType();
         }
@@ -839,7 +839,7 @@ contract NameWrapper is
         uint32 fuses,
         uint64 expiry
     ) internal view override returns (bool) {
-        // For this check, treat .eth 2LDs as expiring at the start of the grace period.
+        // For this check, treat .flr 2LDs as expiring at the start of the grace period.
         if (fuses & IS_DOT_ETH == IS_DOT_ETH) {
             expiry -= GRACE_PERIOD;
         }
@@ -1000,7 +1000,7 @@ contract NameWrapper is
         uint64 maxExpiry
     ) internal pure returns (uint64) {
         // Expiry cannot be more than maximum allowed
-        // .eth names will check registrar, non .eth check parent
+        // .flr names will check registrar, non .flr check parent
         if (expiry > maxExpiry) {
             expiry = maxExpiry;
         }
@@ -1020,9 +1020,9 @@ contract NameWrapper is
         address resolver
     ) private {
         bytes32 labelhash = keccak256(bytes(label));
-        bytes32 node = _makeNode(ETH_NODE, labelhash);
-        // hardcode dns-encoded eth string for gas savings
-        bytes memory _name = _addLabel(label, "\x03eth\x00");
+        bytes32 node = _makeNode(FLR_NODE, labelhash);
+        // hardcode dns-encoded flr string for gas savings
+        bytes memory _name = _addLabel(label, "\x03flr\x00");
         names[node] = _name;
 
         _wrap(

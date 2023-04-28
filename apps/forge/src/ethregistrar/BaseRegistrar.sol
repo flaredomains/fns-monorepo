@@ -64,12 +64,12 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     }
 
     modifier live() {
-        require(ens.owner(baseNode) == address(this));
+        require(ens.owner(baseNode) == address(this), "BaseRegistrar: Base Node Not Live");
         _;
     }
 
     modifier onlyController() {
-        require(controllers[msg.sender]);
+        require(controllers[msg.sender], "BaseRegistrar: onlyController");
         _;
     }
 
@@ -80,7 +80,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     modifier noCollision(string calldata name) {
         require(
             !noNameCollisionsContract.isNameCollision(name),
-            "FLR Domain Already Exists In Collision Registry");
+            "BaseRegistrar: FLR Domain Already Exists In Collision Registry");
         _;
     }
 
@@ -113,7 +113,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     function ownerOf(
         uint256 tokenId
     ) public view override(IERC721, ERC721) returns (address) {
-        require(expiries[tokenId] > block.timestamp);
+        require(expiries[tokenId] > block.timestamp, "BaseRegistrar: Token Id Expired");
         return super.ownerOf(tokenId);
     }
 
@@ -186,8 +186,8 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
         uint256 id = uint256(keccak256(bytes(label)));
         uint256 expiry = block.timestamp + duration;
 
-        require(available(id));
-        require(expiry + GRACE_PERIOD > block.timestamp + GRACE_PERIOD); // Prevent future overflow
+        require(available(id), "BaseRegistrar: Name is not available");
+        require(expiry + GRACE_PERIOD > block.timestamp + GRACE_PERIOD, "BaseRegistrar: Expiry Overflow"); // Prevent future overflow
 
         expiries[id] = expiry;
         if (_exists(id)) {
@@ -209,9 +209,10 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
         uint256 id,
         uint256 duration
     ) external override live onlyController returns (uint256) {
-        require(expiries[id] + GRACE_PERIOD >= block.timestamp); // Name must be registered here or in grace period
+        require(expiries[id] + GRACE_PERIOD >= block.timestamp, "BaseRegistrar: Name has expired"); // Name must be registered here or in grace period
         require(
-            expiries[id] + duration + GRACE_PERIOD > duration + GRACE_PERIOD
+            expiries[id] + duration + GRACE_PERIOD > duration + GRACE_PERIOD,
+            "BaseRegistrar: Expiry Overflow"
         ); // Prevent future overflow
 
         expiries[id] += duration;
@@ -223,7 +224,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
      * @dev Reclaim ownership of a name in IENS, if you own it in the registrar.
      */
     function reclaim(uint256 id, address owner) external override live {
-        require(_isApprovedOrOwner(msg.sender, id));
+        require(_isApprovedOrOwner(msg.sender, id), "BaseRegistrar: Must be owner or approved");
         ens.setSubnodeOwner(baseNode, bytes32(id), owner);
     }
 
