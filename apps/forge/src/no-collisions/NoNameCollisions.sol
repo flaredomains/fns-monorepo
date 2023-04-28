@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@punkdomains/interfaces/IBasePunkTLD.sol";
 
 contract NoNameCollisions is INoNameCollisions, Ownable {
-    IBasePunkTLD public collisionRegistry; // = IBasePunkTLD(0xBDACF94dDCAB51c39c2dD50BffEe60Bb8021949a);
+    IBasePunkTLD public collisionRegistry;
 
     event CollisionRegistryUpdated(address NewCollisionRegistry);
 
@@ -30,7 +30,7 @@ contract NoNameCollisions is INoNameCollisions, Ownable {
      * @param newCollisionRegistry the new CollisionRegistry address
      */
     function updateCollisionRegistry(IBasePunkTLD newCollisionRegistry) external onlyOwner {
-        require(address(newCollisionRegistry) != address(0), "Cannot Update To Zero Address");
+        require(address(newCollisionRegistry) != address(0), "NoNameCollisions: Cannot Update To Zero Address");
         collisionRegistry = newCollisionRegistry;
         emit CollisionRegistryUpdated(address(newCollisionRegistry));
     }
