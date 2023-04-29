@@ -16,11 +16,11 @@ import "fns/ethregistrar/mock/MockStablePriceOracle.sol";
 import "fns/ethregistrar/DummyOracle.sol";
 import "fns/no-collisions/NoNameCollisions.sol";
 
-import {DeployFNS} from "./DeployFNSAbstract.s.sol";
+import {DeployFNSAbstract} from "./DeployFNSAbstract.s.sol";
 
 import "fns-test/utils/ENSNamehash.sol";
 
-contract Template is Script, DeployFNS {
+contract Template is Script, DeployFNSAbstract {
     function run() external {
         uint256 broadcastPrivKey = ANVIL_OWNER_PRIVATE_KEY;
         address broadcastAddress = ANVIL_OWNER_ADDRESS;

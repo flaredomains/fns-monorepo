@@ -20,7 +20,7 @@ import "fns-test/utils/ENSNamehash.sol";
 
 bytes32 constant ROOT_NODE = 0x0;
 
-abstract contract DeployFNS is Script {
+abstract contract DeployFNSAbstract is Script {
     // Anvil Wallets
     address immutable ANVIL_DEPLOYER_ADDRESS = vm.envAddress("ANVIL_DEPLOYER_ADDRESS");
     uint256 immutable ANVIL_DEPLOYER_PRIVATE_KEY = vm.envUint("ANVIL_DEPLOYER_PRIVATE_KEY");
@@ -40,8 +40,10 @@ abstract contract DeployFNS is Script {
 
     // Entrypoint to deploy script
     function setUp() external {
-        uint256 deployerPrivKey = ANVIL_DEPLOYER_PRIVATE_KEY;
-        address deployerAddress = ANVIL_DEPLOYER_ADDRESS;
+        // uint256 deployerPrivKey = ANVIL_DEPLOYER_PRIVATE_KEY;
+        // address deployerAddress = ANVIL_DEPLOYER_ADDRESS;
+        uint256 deployerPrivKey = DEPLOYER_PRIVATE_KEY;
+        address deployerAddress = DEPLOYER_ADDRESS;
 
         vm.startBroadcast(deployerPrivKey);
 
