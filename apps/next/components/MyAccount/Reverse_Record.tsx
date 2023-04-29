@@ -68,7 +68,7 @@ const Dropdown = ({
         <div
           className={`${
             isOpen ? 'absolute' : 'hidden'
-          } bg-gray-700 w-full mt-2 rounded-lg lg:w-1/2`}
+          } bg-gray-700 w-full mt-2 rounded-lg`}
         >
           {addressDomain.map((item, index) => (
             <Rev_Record_Line

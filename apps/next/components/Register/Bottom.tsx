@@ -13,6 +13,7 @@ import {
 import { BigNumber, ethers } from 'ethers'
 
 import ETHRegistarController from '../../src/pages/abi/ETHRegistrarController.json'
+import PublicResolver from '../../src/pages/abi/PublicResolver.json'
 
 import web3 from 'web3-utils'
 const namehash = require('eth-ens-namehash')
@@ -77,7 +78,7 @@ const ReqToRegister = ({
         address as `0x${string}`,
         BigNumber.from(regPeriod).mul(31556952),
         web3.sha3(address as `0x${string}`),
-        '0x68470b26610348472dE725E307b10D61EF6368b8' as `0x${string}`,
+        PublicResolver.address as `0x${string}`,
         [],
         true,
         0,
@@ -144,8 +145,7 @@ const ReqToRegister = ({
       if (counter > 1) {
         clearInterval(intervalId)
         console.log('Finished waiting!')
-        // code to be executed after 10 minutes
-        setCount(count + 1)
+        // setCount(count + 1)
         setRegisterReady(true)
         setIsWaiting(false)
       }
@@ -157,24 +157,25 @@ const ReqToRegister = ({
     address: ETHRegistarController.address as `0x${string}`,
     abi: ETHRegistarController.abi,
     functionName: 'register',
-    // enabled: registerReady,
+    enabled: registerReady,
     args: [
       result as string,
       address as `0x${string}`,
       BigNumber.from(regPeriod).mul(31556952),
       web3.sha3(address as `0x${string}`),
-      '0x68470b26610348472dE725E307b10D61EF6368b8' as `0x${string}`,
+      PublicResolver.address as `0x${string}`,
       [],
       true,
       0,
     ],
     overrides: {
       from: address as `0x${string}`,
-      value: BigNumber.from(price), // .add((10 ** 18).toString())
-      // gasLimit: BigNumber.from(1000000),
+      value: BigNumber.from(price),
+      gasLimit: BigNumber.from(1000000),
     },
     onSuccess(data) {
       console.log('Success prepare register', data)
+      setCount(count + 1)
     },
     onError(error) {
       console.log('Error prepare register', error)
@@ -245,13 +246,13 @@ const ReqToRegister = ({
               <p className="text-base font-semibold mr-2">Commit</p>
               <Image className="h-4 w-4" src={Plus} alt="FNS" />
             </button>
-            <button
+            {/* <button
               onClick={() => registerFunc()}
               className="flex justify-center items-center ml-4 px-6 py-3 bg-[#F97316] h-12 rounded-lg text-white px-auto hover:scale-105 transform transition duration-300 ease-out"
             >
               <p className="text-base font-semibold mr-2">Register</p>
               <Image className="h-4 w-4" src={Plus} alt="FNS" />
-            </button>
+            </button> */}
           </>
         )}
       </div>

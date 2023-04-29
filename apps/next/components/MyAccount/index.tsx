@@ -9,7 +9,7 @@ import Reverse_Record from './Reverse_Record'
 import { useAccount, useContract, useProvider, useContractRead } from 'wagmi'
 
 import BaseRegistrar from '../../src/pages/abi/BaseRegistrar.json'
-import MintedIds from '../../src/pages/abi/MintedIds.json'
+import MintedDomainNames from '../../src/pages/abi/MintedDomainNames.json'
 import ETHRegistrarController from '../../src/pages/abi/ETHRegistrarController.json'
 import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
 
@@ -30,7 +30,7 @@ const OwnedDomains = ({ date, domain }: { date: Date; domain: string }) => {
           {/* Domain */}
           <Link
             href={{
-              pathname: `details/[result]`,
+              pathname: `details`,
               query: { result: domain + '.flr' },
             }}
           >
@@ -68,14 +68,16 @@ export default function MyAccount() {
   const date = new Date(1678273065000)
 
   const { data } = useContractRead({
-    address: MintedIds.address as `0x${string}`,
-    abi: MintedIds.abi,
+    address: MintedDomainNames.address as `0x${string}`,
+    abi: MintedDomainNames.abi,
     functionName: 'getAll',
     enabled: isConnected,
     args: [address],
     onSuccess(data: any) {
       console.log('Success getAll', data)
-      const ownedDomain = data.map((item: any, index: any) => {
+      console.log('Get array of domains', data[0])
+      const arrDomains = data[0]
+      const ownedDomain = arrDomains.map((item: any, index: any) => {
         return {
           label: item.label,
           expire: Number(item.expiry),

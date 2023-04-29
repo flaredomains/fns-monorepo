@@ -85,7 +85,7 @@ function Pages_buttons({ result, path }: any) {
 
     if (pattern.test(route) || exception.test(route)) {
       console.log('Input is valid!')
-      router.push(path.split('/')[0] + route.toLowerCase())
+      router.push(path + '?result=' + route.toLowerCase())
     } else {
       console.log('Input is invalid!')
       const inputElement = e.target.elements['input-field'] as HTMLInputElement
