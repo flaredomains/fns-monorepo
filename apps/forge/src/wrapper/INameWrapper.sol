@@ -158,4 +158,6 @@ interface INameWrapper is IERC1155 {
     function isWrapped(bytes32) external view returns (bool);
 
     function isWrapped(bytes32, bytes32) external view returns (bool);
+
+    function getFLRTokenId(string memory label) external pure returns (bytes32 nodeId, uint256 id);
 }

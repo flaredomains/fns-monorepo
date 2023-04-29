@@ -2,6 +2,9 @@ pragma solidity ^0.8.6;
 
 import "./IENS.sol";
 
+// TODO: Remove
+import "forge-std/console.sol";
+
 /**
  * The ENS registry contract.
  */
@@ -18,8 +21,16 @@ contract ENSRegistry is IENS {
 
     // Permits modifications only by the owner of the specified node.
     modifier authorised(bytes32 node) {
+        // TODO: Remove
+        console.log("ENSRegistry authorised(bytes32 node), msg.sender = %s", msg.sender);
+        console.logBytes32(node);
+
         address _owner = records[node].owner;
-        require(_owner == msg.sender || operators[_owner][msg.sender]);
+
+        // TODO: Remove
+        console.log("Owner of node = %s", _owner);
+
+        require(_owner == msg.sender || operators[_owner][msg.sender], "ENSRegistry: Not authorised");
         _;
     }
 

@@ -12,6 +12,7 @@ import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Recei
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {BytesUtils} from "./BytesUtils.sol";
 import {ERC20Recoverable} from "fns/utils/ERC20Recoverable.sol";
+import {IMintedDomainNames} from "fns/ethregistrar/IMintedDomainNames.sol";
 
 error UnauthorisedAddr(bytes32 node, address addr);
 error IncompatibleParent();
@@ -50,6 +51,8 @@ contract NameWrapper is
         0x0000000000000000000000000000000000000000000000000000000000000000;
 
     INameWrapperUpgrade public upgradeContract;
+    IMintedDomainNames public mintedDomainNamesContract;
+
     uint64 private constant MAX_EXPIRY = type(uint64).max;
 
     constructor(
@@ -86,6 +89,16 @@ contract NameWrapper is
             interfaceId == type(INameWrapper).interfaceId ||
             interfaceId == type(IERC721Receiver).interfaceId ||
             super.supportsInterface(interfaceId);
+    }
+
+    /**
+     * @dev Allows the owner of the contract to update the MintedIds contract, in case it
+     *      needs to be updated in the future
+     * @dev This assumes that the interface remains constant
+     * @param newContract the new MintedIds Contract address
+     */
+    function updateMintedDomainNamesContract(IMintedDomainNames newContract) public onlyOwner {
+        mintedDomainNamesContract = newContract;
     }
 
     /* ERC1155 Fuse */
@@ -832,7 +845,27 @@ contract NameWrapper is
         return IERC721Receiver(to).onERC721Received.selector;
     }
 
+    /**
+     * @dev Helper pure function to easily generate the node (ENSRegistry) and id (NameWrapper tokenId)
+     * @param label - the input name excluding ".flr"
+     * @param nodeId - The node hash that is used in the ENSRegistry
+     * @param id - The tokenId used to mint the NameWrapper ERC1155 Token
+     */
+    function getFLRTokenId(string memory label) external pure returns (bytes32 nodeId, uint256 id) {
+        nodeId = keccak256(abi.encodePacked(FLR_NODE, keccak256(bytes(label))));
+        id = uint256(nodeId);
+    }
+
     /***** Internal functions */
+    function _postTransferAction(
+        address from,
+        address to,
+        uint256 id,
+        uint32 fuses,
+        uint64 expiry
+    ) internal override {
+        mintedDomainNamesContract.addFromTransfer(from, to, id, fuses, expiry);
+    }
 
     function _preTransferCheck(
         uint256 id,
@@ -1024,6 +1057,9 @@ contract NameWrapper is
         // hardcode dns-encoded flr string for gas savings
         bytes memory _name = _addLabel(label, "\x03flr\x00");
         names[node] = _name;
+
+        // uint256(node) is the tokenId when mint is called
+        mintedDomainNamesContract.add(wrappedOwner, uint256(node), fuses, expiry, label);
 
         _wrap(
             node,
