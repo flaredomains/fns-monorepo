@@ -35,10 +35,6 @@ contract TestReverseRegistrar is Script {
         // This is Ownable, and owned by the msg.sender (private key)
         BaseRegistrar baseRegistrar = new BaseRegistrar(ensRegistry, ENSNamehash.namehash('flr'), noNameCollisions);
 
-        // Deploy the mintedIds data struct contract, then update the reference within Base Registrar
-        MintedDomainNames mintedDomainNames = new MintedDomainNames(address(baseRegistrar));
-        baseRegistrar.updateMintedDomainNamesContract(mintedDomainNames);
-
         // Make BaseRegistrar the owner of the base 'flr' node
         baseRegistrar.addController(owner);
         ensRegistry.setSubnodeOwner(rootNode, keccak256('flr'), address(baseRegistrar));
@@ -48,6 +44,10 @@ contract TestReverseRegistrar is Script {
         // TODO: Update this to our own website
         StaticMetadataService metadataService = new StaticMetadataService("https://ens.domains/");
         NameWrapper nameWrapper = new NameWrapper(ensRegistry, baseRegistrar, metadataService);
+
+        // Deploy the mintedIds data struct contract, then update the reference within Base Registrar
+        MintedDomainNames mintedDomainNames = new MintedDomainNames(nameWrapper);
+        nameWrapper.updateMintedDomainNamesContract(mintedDomainNames);
 
         ReverseRegistrar reverseRegistrar = new ReverseRegistrar(ensRegistry);
 

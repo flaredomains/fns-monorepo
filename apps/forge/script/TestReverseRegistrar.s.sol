@@ -47,10 +47,6 @@ contract Go is Script {
             // This is Ownable, and owned by the msg.sender (private key)
             baseRegistrar = new BaseRegistrar(ensRegistry, ENSNamehash.namehash('flr'), noNameCollisions);
 
-            // Deploy the mintedIds data struct contract, then update the reference within Base Registrar
-            MintedDomainNames mintedDomainNames = new MintedDomainNames(address(baseRegistrar));
-            baseRegistrar.updateMintedDomainNamesContract(mintedDomainNames);
-
             // Make BaseRegistrar the owner of the base 'flr' node
             baseRegistrar.addController(ANVIL_DEPLOYER);
             ensRegistry.setSubnodeOwner(rootNode, keccak256('flr'), address(baseRegistrar));
@@ -60,6 +56,10 @@ contract Go is Script {
             // TODO: Update this to our own website
             StaticMetadataService metadataService = new StaticMetadataService("https://ens.domains/");
             NameWrapper nameWrapper = new NameWrapper(ensRegistry, baseRegistrar, metadataService);
+
+            // Deploy the mintedIds data struct contract, then update the reference within Base Registrar
+            MintedDomainNames mintedDomainNames = new MintedDomainNames(nameWrapper);
+            nameWrapper.updateMintedDomainNamesContract(mintedDomainNames);
 
             reverseRegistrar = new ReverseRegistrar(ensRegistry);
 

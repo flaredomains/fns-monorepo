@@ -18,7 +18,9 @@ import "fns/no-collisions/mocks/MockPunkTLD.sol";
 
 import "fns-test/utils/ENSNamehash.sol";
 
-contract Go is Script {
+bytes32 constant ROOT_NODE = 0x0;
+
+abstract contract DeployFNS is Script {
     // Anvil Wallets
     address immutable ANVIL_DEPLOYER_ADDRESS = vm.envAddress("ANVIL_DEPLOYER_ADDRESS");
     uint256 immutable ANVIL_DEPLOYER_PRIVATE_KEY = vm.envUint("ANVIL_DEPLOYER_PRIVATE_KEY");
@@ -31,12 +33,15 @@ contract Go is Script {
     address immutable OWNER_ADDRESS = vm.envAddress("OWNER_ADDRESS");
     uint256 immutable OWNER_PRIVATE_KEY = vm.envUint("OWNER_PRIVATE_KEY");
 
-    bytes32 constant rootNode = 0x0;
+    PublicResolver publicResolver;
+    ETHRegistrarController ethRegistrarController;
+    MintedDomainNames mintedDomainNames;
+    NameWrapper nameWrapper;
 
     // Entrypoint to deploy script
-    function run() external {
-        uint256 deployerPrivKey = DEPLOYER_PRIVATE_KEY;
-        address deployerAddress = DEPLOYER_ADDRESS;
+    function setUp() external {
+        uint256 deployerPrivKey = ANVIL_DEPLOYER_PRIVATE_KEY;
+        address deployerAddress = ANVIL_DEPLOYER_ADDRESS;
 
         vm.startBroadcast(deployerPrivKey);
 
@@ -57,16 +62,16 @@ contract Go is Script {
 
         // Make BaseRegistrar the owner of the base 'flr' node
         baseRegistrar.addController(deployerAddress);
-        ensRegistry.setSubnodeOwner(rootNode, keccak256('flr'), address(baseRegistrar));
+        ensRegistry.setSubnodeOwner(ROOT_NODE, keccak256('flr'), address(baseRegistrar));
         baseRegistrar.register('deployer', deployerAddress, 365 days);
         require(ensRegistry.owner(ENSNamehash.namehash('deployer.flr')) == deployerAddress, "Owner not expected");
 
         // TODO: Update this to our own website
         StaticMetadataService metadataService = new StaticMetadataService("https://ens.domains/");
-        NameWrapper nameWrapper = new NameWrapper(ensRegistry, baseRegistrar, metadataService);
+        nameWrapper = new NameWrapper(ensRegistry, baseRegistrar, metadataService);
 
         // Deploy the mintedIds data struct contract, then update the reference within Base Registrar
-        MintedDomainNames mintedDomainNames = new MintedDomainNames(nameWrapper);
+        mintedDomainNames = new MintedDomainNames(nameWrapper);
         nameWrapper.updateMintedDomainNamesContract(mintedDomainNames);
 
         ReverseRegistrar reverseRegistrar = new ReverseRegistrar(ensRegistry);
@@ -75,7 +80,7 @@ contract Go is Script {
         MockStablePriceOracle stablePriceOracle = new MockStablePriceOracle(
             0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
             [uint256(5), 4, 3, 2, 1]);
-        ETHRegistrarController ethRegistrarController = new ETHRegistrarController(
+        ethRegistrarController = new ETHRegistrarController(
             baseRegistrar,
             stablePriceOracle,
             60,
@@ -83,7 +88,7 @@ contract Go is Script {
             reverseRegistrar,
             nameWrapper);
 
-        PublicResolver publicResolver = new PublicResolver(
+        publicResolver = new PublicResolver(
             ensRegistry, nameWrapper, address(ethRegistrarController), address(reverseRegistrar));
 
         // Set the resolver
@@ -95,10 +100,10 @@ contract Go is Script {
         reverseRegistrar.setController(address(ethRegistrarController), true);
 
         // TODO: Should this be set to the deployer address or the reverseRegistrar contract?
-        ensRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), deployerAddress);
+        ensRegistry.setSubnodeOwner(ROOT_NODE, keccak256('reverse'), deployerAddress);
         ensRegistry.setSubnodeOwner(
             ENSNamehash.namehash('reverse'), keccak256('addr'), address(reverseRegistrar));
-        ensRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), address(reverseRegistrar));
+        ensRegistry.setSubnodeOwner(ROOT_NODE, keccak256('reverse'), address(reverseRegistrar));
 
         console.log("1. ensRegistry: %s", address(ensRegistry));
         console.log("2. noNameCollisions: %s", address(noNameCollisions));
@@ -114,15 +119,3 @@ contract Go is Script {
         vm.stopBroadcast();
     }
 }
-
-// == Logs ==
-//   ensRegistry:               0xC3a40851BFB8Fd1dFa779C1fB0301C87Da5eB2Ed
-//   noNameCollisions:          0xf3E5AaC256A8329fBEC9090F58CF009d779263E7
-//   baseRegistrar:             0x66c2bC48d877D0CB3658de837697556649ba57E5
-//   mintedDomainNames:         0xDCf74710CF33c149E9eFC9CB7AFda62865f6204a
-//   metadataService:           0x067D1959a6A151DDB85B49F09cce0421f29687Ff
-//   nameWrapper:               0x7412BfB1803691A29Ae3cf5a0890bD002feB4EFD
-//   reverseRegistrar:          0x18c666B4Beeaa3B8493581C6e4E2BaB1Ad4EfBEf
-//   stablePriceOracle:         0xeFE07Ff30Cf48c6c3279059B0798388dB44d4aDc
-//   ethRegistrarController:    0x462bf6E5C9398cD5d4770CB22208D26e988ecF61
-//   publicResolver:            0x6ff8772C8BdC2fFeaD7A7271E99F0b93642533F0

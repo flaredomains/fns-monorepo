@@ -41,7 +41,7 @@ contract DeployFNS is Script {
         baseRegistrar.register('mtetna', simoneAddr, 365 days);
         baseRegistrar.register('trains', simoneAddr, 365 days);
 
-        IMintedDomainNames.Data[] memory domainNames = mintedDomainNames.getAll(simoneAddr);
+        (IMintedDomainNames.Data[] memory domainNames, uint256 length) = mintedDomainNames.getAll(simoneAddr);
 
         IPriceOracle.Price memory price = ethRegistrarController.rentPrice(
             "a", stablePriceOracle.secondsPerYear());

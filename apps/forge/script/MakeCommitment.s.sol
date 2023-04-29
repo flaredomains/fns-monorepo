@@ -38,7 +38,7 @@ contract Template is Script {
         address broadcastAddress = OWNER_ADDRESS;
         address publicResolver = 0x008bDf16e7981c0C3Cc47F425D04344B569d2A1a;
         address ethRegistrarControllerAddr = 0xf379EB8addFb3c270AFd994F29524932768A6b18;
-        string memory name = "test";
+        string memory name = "simone";
 
         vm.startBroadcast(broadcastPrivKey);
 
@@ -67,15 +67,15 @@ contract Template is Script {
 
         console.log("Price of name:%s => %s", name, totalPrice);
 
-        ethRegistrarController.register{ value: totalPrice }(
-            name,
-            broadcastAddress,
-            31556952,
-            keccak256(bytes(name)),
-            publicResolver,
-            new bytes[](0),
-            true,
-            0);
+        // ethRegistrarController.register{ value: totalPrice }(
+        //     name,
+        //     broadcastAddress,
+        //     31556952,
+        //     keccak256(bytes(name)),
+        //     publicResolver,
+        //     new bytes[](0),
+        //     true,
+        //     0);
 
         vm.stopBroadcast();
     }

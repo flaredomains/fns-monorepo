@@ -32,11 +32,20 @@ contract Template is Script {
 
     bytes32 constant rootNode = 0x0;
 
+    constructor() {
+        console.log("constructor()");
+    }
+
+    function setUp() public {
+        console.log("setUp()");
+    }
+
     // Entrypoint to deploy script
     function run() external {
         vm.startBroadcast(DEPLOYER_PRIVATE_KEY);
 
         // Begin script specifics
+        console.log("run()");
 
         vm.stopBroadcast();
     }
