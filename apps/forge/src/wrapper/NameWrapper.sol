@@ -119,7 +119,7 @@ contract NameWrapper is
      * @param label Label as a string of the .flr domain to wrap. For "test.flr", input "test"
      * @return owner The owner of the name
      */
-    function ownerOf(string calldata label) public view returns (address owner) {
+    function ownerOfLabel(string calldata label) public view returns (address owner) {
         return super.ownerOf(
             uint256(keccak256(abi.encodePacked(FLR_NODE, keccak256(bytes(label))))));
     }
