@@ -5,7 +5,6 @@ import "fns/registry/IFNS.sol";
 import "fns/no-collisions/INoNameCollisions.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@punkdomains/interfaces/IBasePunkTLD.sol";
 
 contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     // A map of expiry times
