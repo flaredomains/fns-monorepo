@@ -1,7 +1,7 @@
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "fns/registry/IENS.sol";
+import "fns/registry/IFNS.sol";
 import "./Controllable.sol";
 
 contract Root is Ownable, Controllable {
@@ -12,10 +12,10 @@ contract Root is Ownable, Controllable {
 
     event TLDLocked(bytes32 indexed label);
 
-    IENS public ens;
+    IFNS public ens;
     mapping(bytes32 => bool) public locked;
 
-    constructor(IENS _ens) {
+    constructor(IFNS _ens) {
         ens = _ens;
     }
 

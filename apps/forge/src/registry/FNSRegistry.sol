@@ -1,6 +1,6 @@
 pragma solidity ^0.8.6;
 
-import "./IENS.sol";
+import "./IFNS.sol";
 
 // TODO: Remove
 import "forge-std/console.sol";
@@ -8,7 +8,7 @@ import "forge-std/console.sol";
 /**
  * The FNS registry contract.
  */
-contract FNSRegistry is IENS {
+contract FNSRegistry is IFNS {
 
     struct Record {
         address owner;

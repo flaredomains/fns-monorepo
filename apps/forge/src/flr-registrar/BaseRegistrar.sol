@@ -1,7 +1,7 @@
 pragma solidity >=0.8.4;
 
 import "./IBaseRegistrar.sol";
-import "fns/registry/IENS.sol";
+import "fns/registry/IFNS.sol";
 import "fns/no-collisions/INoNameCollisions.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -11,8 +11,8 @@ import "./IMintedDomainNames.sol";
 contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     // A map of expiry times
     mapping(uint256 => uint256) public expiries;
-    // The IENS registry
-    IENS public ens;
+    // The IFNS registry
+    IFNS public ens;
     // The namehash of the TLD this registrar owns (eg, .flr)
     bytes32 public baseNode;
     // A map of addresses that are authorised to register and renew names.
@@ -57,7 +57,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
             isApprovedForAll(owner, spender));
     }
 
-    constructor(IENS _ens, bytes32 _baseNode, INoNameCollisions _noNameCollisionsContract) ERC721("", "") {
+    constructor(IFNS _ens, bytes32 _baseNode, INoNameCollisions _noNameCollisionsContract) ERC721("", "") {
         ens = _ens;
         baseNode = _baseNode;
         noNameCollisionsContract = _noNameCollisionsContract;
@@ -221,7 +221,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     }
 
     /**
-     * @dev Reclaim ownership of a name in IENS, if you own it in the registrar.
+     * @dev Reclaim ownership of a name in IFNS, if you own it in the registrar.
      */
     function reclaim(uint256 id, address owner) external override live {
         require(_isApprovedOrOwner(msg.sender, id), "BaseRegistrar: Must be owner or approved");

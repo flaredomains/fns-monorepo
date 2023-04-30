@@ -6,7 +6,7 @@ import {Controllable} from "fns/root/Controllable.sol";
 import {INameWrapper, CANNOT_UNWRAP, CANNOT_BURN_FUSES, CANNOT_TRANSFER, CANNOT_SET_RESOLVER, CANNOT_SET_TTL, CANNOT_CREATE_SUBDOMAIN, PARENT_CANNOT_CONTROL, CAN_DO_EVERYTHING, IS_DOT_ETH, CAN_EXTEND_EXPIRY, PARENT_CONTROLLED_FUSES, USER_SETTABLE_FUSES} from "./INameWrapper.sol";
 import {INameWrapperUpgrade} from "./INameWrapperUpgrade.sol";
 import {IMetadataService} from "./IMetadataService.sol";
-import {IENS} from "fns/registry/IENS.sol";
+import {IFNS} from "fns/registry/IFNS.sol";
 import {IBaseRegistrar} from "fns/flr-registrar/IBaseRegistrar.sol";
 import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
@@ -36,7 +36,7 @@ contract NameWrapper is
 {
     using BytesUtils for bytes;
 
-    IENS public immutable ens;
+    IFNS public immutable ens;
     IBaseRegistrar public immutable registrar;
     IMetadataService public metadataService;
     mapping(bytes32 => bytes) public names;
@@ -56,7 +56,7 @@ contract NameWrapper is
     uint64 private constant MAX_EXPIRY = type(uint64).max;
 
     constructor(
-        IENS _ens,
+        IFNS _ens,
         IBaseRegistrar _registrar,
         IMetadataService _metadataService
     ) {
@@ -270,7 +270,7 @@ contract NameWrapper is
      * @param label The label to register (Eg, 'foo' for 'foo.flr').
      * @param wrappedOwner The owner of the wrapped name.
      * @param duration The duration, in seconds, to register the name for.
-     * @param resolver The resolver address to set on the IENS registry (optional).
+     * @param resolver The resolver address to set on the IFNS registry (optional).
      * @param ownerControlledFuses Initial owner-controlled fuses to set
      * @return registrarExpiry The expiry date of the new name on the .flr registrar, in seconds since the Unix epoch.
      */
@@ -641,7 +641,7 @@ contract NameWrapper is
     }
 
     /**
-     * @notice Sets records for the name in the IENS Registry
+     * @notice Sets records for the name in the IFNS Registry
      * @param node Namehash of the name to set a record for
      * @param owner New owner in the registry
      * @param resolver Resolver contract

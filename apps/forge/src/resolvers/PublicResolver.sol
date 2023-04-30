@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17 <0.9.0;
 
-import "fns/registry/IENS.sol";
+import "fns/registry/IFNS.sol";
 import "./profiles/ABIResolver.sol";
 import "./profiles/AddrResolver.sol";
 import "./profiles/ContentHashResolver.sol";
@@ -28,7 +28,7 @@ contract PublicResolver is
     TextResolver,
     ExtendedResolver
 {
-    IENS immutable ens;
+    IFNS immutable ens;
     INameWrapper immutable nameWrapper;
     address immutable trustedETHController;
     address immutable trustedReverseRegistrar;
@@ -66,7 +66,7 @@ contract PublicResolver is
     );
 
     constructor(
-        IENS _ens,
+        IFNS _ens,
         INameWrapper wrapperAddress,
         address _trustedETHController,
         address _trustedReverseRegistrar

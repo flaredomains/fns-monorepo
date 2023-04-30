@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ~0.8.17;
 
-import "fns/registry/IENS.sol";
+import "fns/registry/IFNS.sol";
 import "./FLRRegistrarController.sol";
 import "./IFLRRegistrarController.sol";
 import "fns/resolvers/IResolver.sol";
@@ -16,9 +16,9 @@ contract BulkRenewal is IBulkRenewal, IERC165, ReentrancyGuard {
     bytes32 private constant FLR_NAMEHASH =
         0xfd9ed02f44147ba87d942b154c98562d831e3a24daea862ee12868ac20f7bcc3;
 
-    IENS public immutable ens;
+    IFNS public immutable ens;
 
-    constructor(IENS _ens) {
+    constructor(IFNS _ens) {
         ens = _ens;
     }
 

@@ -2,7 +2,7 @@ pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "fns/root/Controllable.sol";
-import "./IENS.sol";
+import "./IFNS.sol";
 import "./IReverseRegistrar.sol";
 import "fns/resolvers/profiles/NameResolver.sol";
 
@@ -15,7 +15,7 @@ bytes32 constant ADDR_REVERSE_NODE = 0x91d1777781884d03a6757a803996e38de2a42967f
 bytes32 constant lookup = 0x3031323334353637383961626364656600000000000000000000000000000000;
 
 contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
-    IENS public immutable ens;
+    IFNS public immutable ens;
     NameResolver public defaultResolver;
 
     event ReverseClaimed(address indexed addr, bytes32 indexed node);
@@ -25,7 +25,7 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
      * @dev Constructor
      * @param ensAddr The address of the ENS registry.
      */
-    constructor(IENS ensAddr) {
+    constructor(IFNS ensAddr) {
         ens = ensAddr;
 
         // NOTE: This has been disabled because it pertains to migration. We will not have an owner
