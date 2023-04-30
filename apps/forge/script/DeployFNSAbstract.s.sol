@@ -10,7 +10,7 @@ import "fns/ethregistrar/MintedDomainNames.sol";
 import "fns/registry/ReverseRegistrar.sol";
 import "fns/wrapper/NameWrapper.sol";
 import "fns/wrapper/StaticMetadataService.sol";
-import "fns/ethregistrar/ETHRegistrarController.sol";
+import "fns/ethregistrar/FLRRegistrarController.sol";
 import "fns/ethregistrar/mock/MockStablePriceOracle.sol";
 import "fns/ethregistrar/DummyOracle.sol";
 import "fns/no-collisions/NoNameCollisions.sol";
@@ -34,7 +34,7 @@ abstract contract DeployFNSAbstract is Script {
     uint256 immutable OWNER_PRIVATE_KEY = vm.envUint("OWNER_PRIVATE_KEY");
 
     PublicResolver publicResolver;
-    ETHRegistrarController ethRegistrarController;
+    FLRRegistrarController flrRegistrarController;
     MintedDomainNames mintedDomainNames;
     NameWrapper nameWrapper;
 
@@ -82,7 +82,7 @@ abstract contract DeployFNSAbstract is Script {
         MockStablePriceOracle stablePriceOracle = new MockStablePriceOracle(
             0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
             [uint256(5), 4, 3, 2, 1]);
-        ethRegistrarController = new ETHRegistrarController(
+        flrRegistrarController = new FLRRegistrarController(
             baseRegistrar,
             stablePriceOracle,
             60,
@@ -91,15 +91,15 @@ abstract contract DeployFNSAbstract is Script {
             nameWrapper);
 
         publicResolver = new PublicResolver(
-            ensRegistry, nameWrapper, address(ethRegistrarController), address(reverseRegistrar));
+            ensRegistry, nameWrapper, address(flrRegistrarController), address(reverseRegistrar));
 
         // Set the resolver
         baseRegistrar.setResolver(address(publicResolver));
         reverseRegistrar.setDefaultResolver(address(publicResolver));
 
         baseRegistrar.addController(address(nameWrapper));
-        nameWrapper.setController(address(ethRegistrarController), true);
-        reverseRegistrar.setController(address(ethRegistrarController), true);
+        nameWrapper.setController(address(flrRegistrarController), true);
+        reverseRegistrar.setController(address(flrRegistrarController), true);
 
         // TODO: Should this be set to the deployer address or the reverseRegistrar contract?
         ensRegistry.setSubnodeOwner(ROOT_NODE, keccak256('reverse'), deployerAddress);
@@ -115,7 +115,7 @@ abstract contract DeployFNSAbstract is Script {
         console.log("6. nameWrapper: %s", address(nameWrapper));
         console.log("7. reverseRegistrar: %s", address(reverseRegistrar));
         console.log("8. stablePriceOracle: %s", address(stablePriceOracle));
-        console.log("9. ethRegistrarController: %s", address(ethRegistrarController));
+        console.log("9. flrRegistrarController: %s", address(flrRegistrarController));
         console.log("10. publicResolver: %s", address(publicResolver));
 
         vm.stopBroadcast();

@@ -10,7 +10,7 @@ import "fns/ethregistrar/MintedDomainNames.sol";
 import "fns/registry/ReverseRegistrar.sol";
 import "fns/wrapper/NameWrapper.sol";
 import "fns/wrapper/StaticMetadataService.sol";
-import "fns/ethregistrar/ETHRegistrarController.sol";
+import "fns/ethregistrar/FLRRegistrarController.sol";
 import "fns/ethregistrar/mock/MockStablePriceOracle.sol";
 import "fns/ethregistrar/DummyOracle.sol";
 import "fns/no-collisions/NoNameCollisions.sol";
@@ -27,7 +27,7 @@ contract DeployFNS is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         BaseRegistrar baseRegistrar = BaseRegistrar(0x5EaaB25F9646EcC3409871ae8805Af7CB40827fe);
-        ETHRegistrarController ethRegistrarController = ETHRegistrarController(0x9e3dd48683455a66808bcF289BB76454b548009E);
+        FLRRegistrarController flrRegistrarController = FLRRegistrarController(0x9e3dd48683455a66808bcF289BB76454b548009E);
         MintedDomainNames mintedDomainNames = MintedDomainNames(0xdE073A8EaDBAA39E164Ee29C18cBeBb6bEc6205a);
         MockStablePriceOracle stablePriceOracle = MockStablePriceOracle(0x9CBb680Ed793483f87aCa2D2B2bD2aE29ada4789);
 
@@ -43,37 +43,37 @@ contract DeployFNS is Script {
 
         (IMintedDomainNames.Data[] memory domainNames, uint256 length) = mintedDomainNames.getAll(simoneAddr);
 
-        IPriceOracle.Price memory price = ethRegistrarController.rentPrice(
+        IPriceOracle.Price memory price = flrRegistrarController.rentPrice(
             "a", stablePriceOracle.secondsPerYear());
         console.log("Price for 'a'");
         console.logUint(price.base);
         console.logUint(price.premium);
 
-        price = ethRegistrarController.rentPrice(
+        price = flrRegistrarController.rentPrice(
             "ab", stablePriceOracle.secondsPerYear());
         console.log("Price for 'ab'");
         console.logUint(price.base);
         console.logUint(price.premium);
 
-        price = ethRegistrarController.rentPrice(
+        price = flrRegistrarController.rentPrice(
             "abc", stablePriceOracle.secondsPerYear());
         console.log("Price for 'abc'");
         console.logUint(price.base);
         console.logUint(price.premium);
 
-        price = ethRegistrarController.rentPrice(
+        price = flrRegistrarController.rentPrice(
             "abcd", stablePriceOracle.secondsPerYear());
         console.log("Price for 'abcd'");
         console.logUint(price.base);
         console.logUint(price.premium);
 
-        price = ethRegistrarController.rentPrice(
+        price = flrRegistrarController.rentPrice(
             "abcde", stablePriceOracle.secondsPerYear());
         console.log("Price for 'abcde'");
         console.logUint(price.base);
         console.logUint(price.premium);
 
-        price = ethRegistrarController.rentPrice(
+        price = flrRegistrarController.rentPrice(
             "abcdef", stablePriceOracle.secondsPerYear());
         console.log("Price for 'abcdef'");
         console.logUint(price.base);

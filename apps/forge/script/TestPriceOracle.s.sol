@@ -9,7 +9,7 @@ import "fns/ethregistrar/BaseRegistrar.sol";
 import "fns/registry/ReverseRegistrar.sol";
 import "fns/wrapper/NameWrapper.sol";
 import "fns/wrapper/StaticMetadataService.sol";
-import "fns/ethregistrar/ETHRegistrarController.sol";
+import "fns/ethregistrar/FLRRegistrarController.sol";
 import "fns/ethregistrar/mock/MockStablePriceOracle.sol";
 import "fns/ethregistrar/IPriceOracle.sol";
 import "fns/ethregistrar/DummyOracle.sol";
@@ -25,16 +25,16 @@ contract TestPriceOracle is Script {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        ETHRegistrarController ethRegistrarController = ETHRegistrarController(0x57798c5b167386fEbc0fC7C7ad5Da41aD1a2a238);
+        FLRRegistrarController flrRegistrarController = FLRRegistrarController(0x57798c5b167386fEbc0fC7C7ad5Da41aD1a2a238);
         MockStablePriceOracle stablePriceOracle = MockStablePriceOracle(0xB6CF79583256858c385FD56bFC7210bf1ade05a0);
 
-        IPriceOracle.Price memory price = ethRegistrarController.rentPrice(
+        IPriceOracle.Price memory price = flrRegistrarController.rentPrice(
             "a", stablePriceOracle.secondsPerYear());
         console.log("Price for 'a'");
         console.logUint(price.base);
         console.logUint(price.premium);
 
-        price = ethRegistrarController.rentPrice(
+        price = flrRegistrarController.rentPrice(
             "simone", stablePriceOracle.secondsPerYear());
         console.log("Price for 'simone'");
         console.logUint(price.base);

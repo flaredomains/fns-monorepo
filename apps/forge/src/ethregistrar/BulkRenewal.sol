@@ -2,7 +2,7 @@
 pragma solidity ~0.8.17;
 
 import "fns/registry/IENS.sol";
-import "./ETHRegistrarController.sol";
+import "./FLRRegistrarController.sol";
 import "./IETHRegistrarController.sol";
 import "fns/resolvers/IResolver.sol";
 import "./IBulkRenewal.sol";
@@ -22,10 +22,10 @@ contract BulkRenewal is IBulkRenewal, IERC165, ReentrancyGuard {
         ens = _ens;
     }
 
-    function getController() internal view returns (ETHRegistrarController) {
+    function getController() internal view returns (FLRRegistrarController) {
         IResolver r = IResolver(ens.resolver(FLR_NAMEHASH));
         return
-            ETHRegistrarController(
+            FLRRegistrarController(
                 r.interfaceImplementer(
                     FLR_NAMEHASH,
                     type(IETHRegistrarController).interfaceId
@@ -37,7 +37,7 @@ contract BulkRenewal is IBulkRenewal, IERC165, ReentrancyGuard {
         string[] calldata names,
         uint256 duration
     ) external view override returns (uint256 total) {
-        ETHRegistrarController controller = getController();
+        FLRRegistrarController controller = getController();
         uint256 length = names.length;
         for (uint256 i = 0; i < length; ) {
             IPriceOracle.Price memory price = controller.rentPrice(
@@ -55,7 +55,7 @@ contract BulkRenewal is IBulkRenewal, IERC165, ReentrancyGuard {
         string[] calldata names,
         uint256 duration
     ) external payable override nonReentrant {
-        ETHRegistrarController controller = getController();
+        FLRRegistrarController controller = getController();
         uint256 length = names.length;
         for (uint256 i = 0; i < length; ) {
             IPriceOracle.Price memory price = controller.rentPrice(

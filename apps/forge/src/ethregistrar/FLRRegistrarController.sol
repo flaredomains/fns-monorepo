@@ -13,6 +13,9 @@ import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {INameWrapper} from "../wrapper/INameWrapper.sol";
 import {ERC20Recoverable} from "fns/utils/ERC20Recoverable.sol";
 
+// TODO: Remove
+import "forge-std/console.sol";
+
 error CommitmentTooNew(bytes32 commitment);
 error CommitmentTooOld(bytes32 commitment);
 error NameNotAvailable(string name);
@@ -27,7 +30,7 @@ error MaxCommitmentAgeTooHigh();
 /**
  * @dev A registrar controller for registering and renewing names at fixed cost.
  */
-contract ETHRegistrarController is
+contract FLRRegistrarController is
     Ownable,
     IETHRegistrarController,
     IERC165,
@@ -78,10 +81,12 @@ contract ETHRegistrarController is
         INameWrapper _nameWrapper
     ) {
         if (_maxCommitmentAge <= _minCommitmentAge) {
+            console.log("revert MaxCommitmentAgeTooLow");
             revert MaxCommitmentAgeTooLow();
         }
 
         if (_maxCommitmentAge > block.timestamp) {
+            console.log("revert MaxCommitmentAgeTooHigh");
             revert MaxCommitmentAgeTooHigh();
         }
 
@@ -127,6 +132,7 @@ contract ETHRegistrarController is
     ) public pure override returns (bytes32) {
         bytes32 label = keccak256(bytes(name));
         if (data.length > 0 && resolver == address(0)) {
+            //console.log("revert ResolverRequiredWhenDataSupplied");
             revert ResolverRequiredWhenDataSupplied();
         }
         return
@@ -146,6 +152,7 @@ contract ETHRegistrarController is
 
     function commit(bytes32 commitment) public override {
         if (commitments[commitment] + maxCommitmentAge >= block.timestamp) {
+            console.log("revert UnexpiredCommitmentExists(commitment)");
             revert UnexpiredCommitmentExists(commitment);
         }
         commitments[commitment] = block.timestamp;
@@ -163,6 +170,7 @@ contract ETHRegistrarController is
     ) public payable override {
         IPriceOracle.Price memory price = rentPrice(name, duration);
         if (msg.value < price.base + price.premium) {
+            console.log("revert InsufficientValue");
             revert InsufficientValue();
         }
 
@@ -221,6 +229,7 @@ contract ETHRegistrarController is
         uint256 tokenId = uint256(labelhash);
         IPriceOracle.Price memory price = rentPrice(name, duration);
         if (msg.value < price.base) {
+            console.log("revert InsufficientValue");
             revert InsufficientValue();
         }
         uint256 expires = nameWrapper.renew(tokenId, duration);
@@ -253,20 +262,24 @@ contract ETHRegistrarController is
     ) internal {
         // Require an old enough commitment.
         if (commitments[commitment] + minCommitmentAge > block.timestamp) {
+            console.log("revert CommitmentTooNew");
             revert CommitmentTooNew(commitment);
         }
 
         // If the commitment is too old, or the name is registered, stop
         if (commitments[commitment] + maxCommitmentAge <= block.timestamp) {
+            console.log("revert CommitmentTooOld");
             revert CommitmentTooOld(commitment);
         }
         if (!available(name)) {
+            console.log("revert NameNotAvailable");
             revert NameNotAvailable(name);
         }
 
         delete (commitments[commitment]);
 
         if (duration < MIN_REGISTRATION_DURATION) {
+            console.log("revert DurationTooShort");
             revert DurationTooShort(duration);
         }
     }
@@ -276,7 +289,7 @@ contract ETHRegistrarController is
         bytes32 label,
         bytes[] calldata data
     ) internal {
-        // use hardcoded .eth namehash
+        // use hardcoded .flr namehash
         bytes32 nodehash = keccak256(abi.encodePacked(FLR_NODE, label));
         IResolver resolver = IResolver(resolverAddress);
         resolver.multicallWithNodeCheck(nodehash, data);
@@ -291,7 +304,7 @@ contract ETHRegistrarController is
             msg.sender,
             owner,
             resolver,
-            string.concat(name, ".eth")
+            string.concat(name, ".flr")
         );
     }
 }

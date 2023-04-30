@@ -9,7 +9,7 @@ import "fns/ethregistrar/BaseRegistrar.sol";
 import "fns/registry/ReverseRegistrar.sol";
 import "fns/wrapper/NameWrapper.sol";
 import "fns/wrapper/StaticMetadataService.sol";
-import "fns/ethregistrar/ETHRegistrarController.sol";
+import "fns/ethregistrar/FLRRegistrarController.sol";
 import "fns/ethregistrar/mock/MockStablePriceOracle.sol";
 import "fns/ethregistrar/IPriceOracle.sol";
 import "fns/ethregistrar/DummyOracle.sol";
@@ -27,11 +27,11 @@ contract UpdatePriceOracle is Script {
 
         // ENSRegistry ensRegistry = ENSRegistry(0x8E60eEeB7634930bba7a9d74f01Af9c9e78c9063);
         // BaseRegistrar baseRegistrar = BaseRegistrar(0x7113e298973444eCC1c52bDdA92B2Ad5d5399426);
-        ETHRegistrarController ethRegistrarController = ETHRegistrarController(0x57798c5b167386fEbc0fC7C7ad5Da41aD1a2a238);
+        FLRRegistrarController flrRegistrarController = FLRRegistrarController(0x57798c5b167386fEbc0fC7C7ad5Da41aD1a2a238);
 
-        console.log(ethRegistrarController.owner());
-        ethRegistrarController.transferOwnership(owner);
-        console.log(ethRegistrarController.owner());
+        console.log(flrRegistrarController.owner());
+        flrRegistrarController.transferOwnership(owner);
+        console.log(flrRegistrarController.owner());
 
         MockStablePriceOracle stablePriceOracle = new MockStablePriceOracle(
             0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
@@ -39,9 +39,9 @@ contract UpdatePriceOracle is Script {
 
         console.log("Stable Price Oracle Deployed to: %s", address(stablePriceOracle));
 
-        ethRegistrarController.setPriceOracle(IPriceOracle(stablePriceOracle));
+        flrRegistrarController.setPriceOracle(IPriceOracle(stablePriceOracle));
 
-        IPriceOracle.Price memory price = ethRegistrarController.rentPrice(
+        IPriceOracle.Price memory price = flrRegistrarController.rentPrice(
             "a", stablePriceOracle.secondsPerYear());
         
         console.log("Price for 'a'");

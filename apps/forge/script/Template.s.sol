@@ -10,7 +10,7 @@ import "fns/ethregistrar/MintedDomainNames.sol";
 import "fns/registry/ReverseRegistrar.sol";
 import "fns/wrapper/NameWrapper.sol";
 import "fns/wrapper/StaticMetadataService.sol";
-import "fns/ethregistrar/ETHRegistrarController.sol";
+import "fns/ethregistrar/FLRRegistrarController.sol";
 import "fns/ethregistrar/mock/MockStablePriceOracle.sol";
 import "fns/ethregistrar/DummyOracle.sol";
 import "fns/no-collisions/NoNameCollisions.sol";

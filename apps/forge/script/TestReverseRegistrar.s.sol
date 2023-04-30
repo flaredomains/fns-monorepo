@@ -10,7 +10,7 @@ import "fns/ethregistrar/MintedDomainNames.sol";
 import "fns/registry/ReverseRegistrar.sol";
 import "fns/wrapper/NameWrapper.sol";
 import "fns/wrapper/StaticMetadataService.sol";
-import "fns/ethregistrar/ETHRegistrarController.sol";
+import "fns/ethregistrar/FLRRegistrarController.sol";
 import "fns/ethregistrar/mock/MockStablePriceOracle.sol";
 import "fns/ethregistrar/DummyOracle.sol";
 import "fns/no-collisions/NoNameCollisions.sol";
@@ -66,7 +66,7 @@ contract Go is Script {
             MockStablePriceOracle stablePriceOracle = new MockStablePriceOracle(
                 0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
                 [uint256(5), 4, 3, 2, 1]);
-            ETHRegistrarController ethRegistrarController = new ETHRegistrarController(
+            FLRRegistrarController flrRegistrarController = new FLRRegistrarController(
                 baseRegistrar,
                 stablePriceOracle,
                 600,
@@ -75,7 +75,7 @@ contract Go is Script {
                 nameWrapper);
 
             PublicResolver publicResolver = new PublicResolver(
-                ensRegistry, nameWrapper, address(ethRegistrarController), address(reverseRegistrar));
+                ensRegistry, nameWrapper, address(flrRegistrarController), address(reverseRegistrar));
             nameResolver = NameResolver(address(publicResolver));
 
             // Set the resolver
@@ -83,8 +83,8 @@ contract Go is Script {
             reverseRegistrar.setDefaultResolver(address(publicResolver));
 
             baseRegistrar.addController(address(nameWrapper));
-            nameWrapper.setController(address(ethRegistrarController), true);
-            reverseRegistrar.setController(address(ethRegistrarController), true);
+            nameWrapper.setController(address(flrRegistrarController), true);
+            reverseRegistrar.setController(address(flrRegistrarController), true);
 
             // TODO: Should this be set to the deployer address or the reverseRegistrar contract?
             ensRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), ANVIL_DEPLOYER);

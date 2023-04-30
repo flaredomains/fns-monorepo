@@ -11,7 +11,7 @@ import "fns/ethregistrar/IMintedDomainNames.sol";
 import "fns/registry/ReverseRegistrar.sol";
 import "fns/wrapper/NameWrapper.sol";
 import "fns/wrapper/StaticMetadataService.sol";
-import "fns/ethregistrar/ETHRegistrarController.sol";
+import "fns/ethregistrar/FLRRegistrarController.sol";
 import "fns/ethregistrar/mock/MockStablePriceOracle.sol";
 import "fns/ethregistrar/DummyOracle.sol";
 import "fns/no-collisions/NoNameCollisions.sol";
@@ -28,7 +28,7 @@ contract Template is Script, DeployFNSAbstract {
 
         vm.startBroadcast(broadcastPrivKey);
 
-        bytes32 commitment = ethRegistrarController.makeCommitment(
+        bytes32 commitment = flrRegistrarController.makeCommitment(
             name,
             broadcastAddress,
             31556952,
@@ -39,18 +39,18 @@ contract Template is Script, DeployFNSAbstract {
             0);
         
         console.logBytes32(commitment);
-        ethRegistrarController.commit(commitment);
+        flrRegistrarController.commit(commitment);
         
         console.log("Before Warp: block.timestamp = %s", block.timestamp);
         vm.warp(block.timestamp + 600);
         console.log("After Warp: block.timestamp = %s", block.timestamp);
 
-        IPriceOracle.Price memory price = ethRegistrarController.rentPrice(name, 31556952);
+        IPriceOracle.Price memory price = flrRegistrarController.rentPrice(name, 31556952);
         uint256 totalPrice = price.base + price.premium;
 
         console.log("Price of name:%s => %s", name, totalPrice);
 
-        ethRegistrarController.register{ value: totalPrice }(
+        flrRegistrarController.register{ value: totalPrice }(
             name,
             broadcastAddress,
             31556952,

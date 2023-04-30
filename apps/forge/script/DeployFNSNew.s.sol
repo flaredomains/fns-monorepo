@@ -10,7 +10,7 @@ import "fns/ethregistrar/MintedDomainNames.sol";
 import "fns/registry/ReverseRegistrar.sol";
 import "fns/wrapper/NameWrapper.sol";
 import "fns/wrapper/StaticMetadataService.sol";
-import "fns/ethregistrar/ETHRegistrarController.sol";
+import "fns/ethregistrar/FLRRegistrarController.sol";
 import "fns/ethregistrar/mock/MockStablePriceOracle.sol";
 import "fns/ethregistrar/DummyOracle.sol";
 import "fns/no-collisions/NoNameCollisions.sol";
@@ -75,7 +75,7 @@ contract Go is Script {
         MockStablePriceOracle stablePriceOracle = new MockStablePriceOracle(
             0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
             [uint256(5), 4, 3, 2, 1]);
-        ETHRegistrarController ethRegistrarController = new ETHRegistrarController(
+        FLRRegistrarController flrRegistrarController = new FLRRegistrarController(
             baseRegistrar,
             stablePriceOracle,
             60,
@@ -84,15 +84,15 @@ contract Go is Script {
             nameWrapper);
 
         PublicResolver publicResolver = new PublicResolver(
-            ensRegistry, nameWrapper, address(ethRegistrarController), address(reverseRegistrar));
+            ensRegistry, nameWrapper, address(flrRegistrarController), address(reverseRegistrar));
 
         // Set the resolver
         baseRegistrar.setResolver(address(publicResolver));
         reverseRegistrar.setDefaultResolver(address(publicResolver));
 
         baseRegistrar.addController(address(nameWrapper));
-        nameWrapper.setController(address(ethRegistrarController), true);
-        reverseRegistrar.setController(address(ethRegistrarController), true);
+        nameWrapper.setController(address(flrRegistrarController), true);
+        reverseRegistrar.setController(address(flrRegistrarController), true);
 
         // TODO: Should this be set to the deployer address or the reverseRegistrar contract?
         ensRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), deployerAddress);
@@ -108,7 +108,7 @@ contract Go is Script {
         console.log("6. nameWrapper: %s", address(nameWrapper));
         console.log("7. reverseRegistrar: %s", address(reverseRegistrar));
         console.log("8. stablePriceOracle: %s", address(stablePriceOracle));
-        console.log("9. ethRegistrarController: %s", address(ethRegistrarController));
+        console.log("9. flrRegistrarController: %s", address(flrRegistrarController));
         console.log("10. publicResolver: %s", address(publicResolver));
 
         vm.stopBroadcast();
@@ -124,5 +124,5 @@ contract Go is Script {
 //   nameWrapper:               0x7412BfB1803691A29Ae3cf5a0890bD002feB4EFD
 //   reverseRegistrar:          0x18c666B4Beeaa3B8493581C6e4E2BaB1Ad4EfBEf
 //   stablePriceOracle:         0xeFE07Ff30Cf48c6c3279059B0798388dB44d4aDc
-//   ethRegistrarController:    0x462bf6E5C9398cD5d4770CB22208D26e988ecF61
+//   flrRegistrarController:    0x462bf6E5C9398cD5d4770CB22208D26e988ecF61
 //   publicResolver:            0x6ff8772C8BdC2fFeaD7A7271E99F0b93642533F0
