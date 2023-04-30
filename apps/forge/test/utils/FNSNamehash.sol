@@ -4,7 +4,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "fns-test/utils/fns_strings.sol";
 
 /*
- * @dev Solidity implementation of the ENS namehash algorithm.
+ * @dev Solidity implementation of the FNS namehash algorithm.
  *
  * Warning! Does not normalize or validate names before hashing.
  */

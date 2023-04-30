@@ -36,7 +36,7 @@ interface INameWrapper is IERC1155 {
     event FusesSet(bytes32 indexed node, uint32 fuses);
     event ExpiryExtended(bytes32 indexed node, uint64 expiry);
 
-    function ens() external view returns (IFNS);
+    function fns() external view returns (IFNS);
 
     function registrar() external view returns (IBaseRegistrar);
 

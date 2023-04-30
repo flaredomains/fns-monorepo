@@ -42,7 +42,7 @@ contract TestReverseRegistrar is Script {
         require(fnsRegistry.owner(FNSNamehash.namehash('deployer.flr')) == owner, "Owner not expected");
 
         // TODO: Update this to our own website
-        StaticMetadataService metadataService = new StaticMetadataService("https://ens.domains/");
+        StaticMetadataService metadataService = new StaticMetadataService("https://fns.domains/");
         NameWrapper nameWrapper = new NameWrapper(fnsRegistry, baseRegistrar, metadataService);
 
         // Deploy the mintedIds data struct contract, then update the reference within Base Registrar

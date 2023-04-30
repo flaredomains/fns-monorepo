@@ -21,7 +21,7 @@ uint256 constant TIME_STAMP = 1678393495;
 
 contract TestBaseRegistrar is Test {
     BaseRegistrar public registrar;
-    FNSRegistry public ens;
+    FNSRegistry public fns;
     NoNameCollisions public noNameCollisions;
 
     address immutable ownerAccount = address(this);
@@ -30,13 +30,13 @@ contract TestBaseRegistrar is Test {
     address constant otherAccount = address2;
 
     function setUp() public {
-        ens = new FNSRegistry();
+        fns = new FNSRegistry();
         MockPunkTLD mockPunkTLD = new MockPunkTLD();
         noNameCollisions = new NoNameCollisions(address(mockPunkTLD));
-        registrar = new BaseRegistrar(ens, FNSNamehash.namehash('eth'), noNameCollisions);
+        registrar = new BaseRegistrar(fns, FNSNamehash.namehash('flr'), noNameCollisions);
 
         registrar.addController(controllerAccount);
-        ens.setSubnodeOwner(0x0, keccak256('eth'), address(registrar));
+        fns.setSubnodeOwner(0x0, keccak256('flr'), address(registrar));
 
         vm.warp(TIME_STAMP);
     }
@@ -46,7 +46,7 @@ contract TestBaseRegistrar is Test {
         vm.prank(controllerAccount);
         registrar.register('newname', registrantAccount, 86400);
 
-        assertEq(ens.owner(FNSNamehash.namehash('newname.eth')), registrantAccount);
+        assertEq(fns.owner(FNSNamehash.namehash('newname.flr')), registrantAccount);
         assertEq(registrar.ownerOf(uint256(keccak256('newname'))), registrantAccount);
         assertEq(registrar.nameExpires(uint256(keccak256('newname'))), TIME_STAMP + 86400);
     }
@@ -55,7 +55,7 @@ contract TestBaseRegistrar is Test {
     function testAllowRegistrationsWithoutUpdatingRegistry() public {
         vm.prank(controllerAccount);
         registrar.registerOnly('silentname', registrantAccount, 86400);
-        assertEq(ens.owner(FNSNamehash.namehash('silentname.eth')), ZERO_ADDRESS);
+        assertEq(fns.owner(FNSNamehash.namehash('silentname.flr')), ZERO_ADDRESS);
         assertEq(registrar.ownerOf(uint256(keccak256('silentname'))), registrantAccount);
         assertEq(registrar.nameExpires(uint256(keccak256('silentname'))), TIME_STAMP + 86400);
     }
@@ -108,17 +108,17 @@ contract TestBaseRegistrar is Test {
         vm.prank(controllerAccount);
         registrar.register('newname', registrantAccount, 86400);
 
-        // Make ZERO_ADDRESS the owner of newname.eth
-        ens.setSubnodeOwner(0x0, keccak256('eth'), address(this));
-        ens.setSubnodeOwner(FNSNamehash.namehash('eth'), keccak256('newname'), ZERO_ADDRESS);
-        assertEq(ens.owner(FNSNamehash.namehash('newname.eth')), ZERO_ADDRESS);
+        // Make ZERO_ADDRESS the owner of newname.flr
+        fns.setSubnodeOwner(0x0, keccak256('flr'), address(this));
+        fns.setSubnodeOwner(FNSNamehash.namehash('flr'), keccak256('newname'), ZERO_ADDRESS);
+        assertEq(fns.owner(FNSNamehash.namehash('newname.flr')), ZERO_ADDRESS);
 
         // Now attempt reclaim from registrantAccount
-        ens.setSubnodeOwner(0x0, keccak256('eth'), address(registrar));
+        fns.setSubnodeOwner(0x0, keccak256('flr'), address(registrar));
         vm.prank(registrantAccount);
         registrar.reclaim(uint256(keccak256('newname')), registrantAccount);
 
-        assertEq(ens.owner(FNSNamehash.namehash('newname.eth')), registrantAccount);
+        assertEq(fns.owner(FNSNamehash.namehash('newname.flr')), registrantAccount);
     }
 
     // Original Test: 'should prohibit anyone else from reclaiming a name'
@@ -137,7 +137,7 @@ contract TestBaseRegistrar is Test {
         registrar.transferFrom(registrantAccount, otherAccount, uint256(keccak256('newname')));
 
         assertEq(registrar.ownerOf(uint256(keccak256('newname'))), otherAccount);
-        assertEq(ens.owner(FNSNamehash.namehash('newname.eth')), registrantAccount);
+        assertEq(fns.owner(FNSNamehash.namehash('newname.flr')), registrantAccount);
 
         vm.prank(otherAccount);
         registrar.transferFrom(otherAccount, registrantAccount, uint256(keccak256('newname')));
@@ -203,6 +203,6 @@ contract TestBaseRegistrar is Test {
     function testShouldAllowOwnerToSetResolverAddress() public {
         vm.prank(ownerAccount);
         registrar.setResolver(registrantAccount);
-        assertEq(ens.resolver(FNSNamehash.namehash('eth')), registrantAccount);
+        assertEq(fns.resolver(FNSNamehash.namehash('flr')), registrantAccount);
     }
 }

@@ -13,7 +13,7 @@ pragma solidity ^0.8.6;
 // import "fns-test/utils/HardhatAddresses.sol";
 
 // contract TestPublicResolver is Test {
-//     FNSRegistry public ens;
+//     FNSRegistry public fns;
 //     DummyNameWrapper public nameWrapper;
 //     PublicResolver public resolver;
 
@@ -21,11 +21,11 @@ pragma solidity ^0.8.6;
 //     address constant ZERO_ADDRESS = 0x0000000000000000000000000000000000000000;
 
 //     function setUp() public {
-//         ens = new FNSRegistry();
+//         fns = new FNSRegistry();
 //         nameWrapper = new DummyNameWrapper();
-//         resolver = new PublicResolver(ens, INameWrapper(address(nameWrapper)), dummyTrustedETHController, ZERO_ADDRESS);
+//         resolver = new PublicResolver(fns, INameWrapper(address(nameWrapper)), dummyTrustedETHController, ZERO_ADDRESS);
 
-//         ens.setSubnodeOwner(0x0, keccak256('eth'), address(this));
+//         fns.setSubnodeOwner(0x0, keccak256('flr'), address(this));
 //     }
 
 //     // fallback function

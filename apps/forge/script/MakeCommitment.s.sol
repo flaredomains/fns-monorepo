@@ -36,21 +36,24 @@ contract Template is Script {
     function run() external {
         uint256 broadcastPrivKey = OWNER_PRIVATE_KEY;
         address broadcastAddress = OWNER_ADDRESS;
-        address publicResolver = 0x008bDf16e7981c0C3Cc47F425D04344B569d2A1a;
-        address ethRegistrarControllerAddr = 0xf379EB8addFb3c270AFd994F29524932768A6b18;
-        string memory name = "simone";
+        address publicResolverAddr = 0xB0e7D1Cc039e8678148Bd713Df0d1A6f84131B72;
+        address flrRegistrarControllerAddr = 0xd0b66Bcc2a02cfA55D4b86f4547a3aE94d785C2d;
+        address reverseRegistrarAddr = 0xCD4CC38FAc6332887141d4880078eD001fC6E2A9;
+        string memory name = "dad";
 
         vm.startBroadcast(broadcastPrivKey);
 
         // Begin script specifics
-        FLRRegistrarController flrRegistrarController = FLRRegistrarController(ethRegistrarControllerAddr);
+        FLRRegistrarController flrRegistrarController = FLRRegistrarController(flrRegistrarControllerAddr);
+        PublicResolver publicResolver = PublicResolver(publicResolverAddr);
+        ReverseRegistrar reverseRegistrar = ReverseRegistrar(reverseRegistrarAddr);
 
         // bytes32 commitment = flrRegistrarController.makeCommitment(
         //     name,
         //     broadcastAddress,
         //     31556952,
         //     keccak256(bytes(name)),
-        //     publicResolver,
+        //     publicResolverAddr,
         //     new bytes[](0),
         //     true,
         //     0);
@@ -67,15 +70,19 @@ contract Template is Script {
 
         console.log("Price of name:%s => %s", name, totalPrice);
 
-        // flrRegistrarController.register{ value: totalPrice }(
-        //     name,
-        //     broadcastAddress,
-        //     31556952,
-        //     keccak256(bytes(name)),
-        //     publicResolver,
-        //     new bytes[](0),
-        //     true,
-        //     0);
+        flrRegistrarController.register{ value: totalPrice }(
+            name,
+            broadcastAddress,
+            31556952,
+            keccak256(bytes(name)),
+            publicResolverAddr,
+            new bytes[](0),
+            true,
+            0);
+        
+        string memory reverseName = publicResolver.name(reverseRegistrar.node(broadcastAddress));
+        console.log("NAME SET FOR: %s", broadcastAddress);
+        console.logString(reverseName);
 
         vm.stopBroadcast();
     }

@@ -13,6 +13,9 @@ import "./profiles/ExtendedResolver.sol";
 import "./Multicallable.sol";
 import "fns/wrapper/INameWrapper.sol";
 
+// TODO: Remove
+import "forge-std/console.sol";
+
 /**
  * A simple resolver anyone can use; only allows the owner of a node to set its
  * address.
@@ -28,7 +31,7 @@ contract PublicResolver is
     TextResolver,
     ExtendedResolver
 {
-    IFNS immutable ens;
+    IFNS immutable fns;
     INameWrapper immutable nameWrapper;
     address immutable trustedETHController;
     address immutable trustedReverseRegistrar;
@@ -76,7 +79,7 @@ contract PublicResolver is
         require(address(_trustedETHController) != address(0), "Cannot Initialize To Zero Address");
         require(address(_trustedReverseRegistrar) != address(0), "Cannot Initialize To Zero Address");
 
-        ens = _ens;
+        fns = _ens;
         nameWrapper = wrapperAddress;
         trustedETHController = _trustedETHController;
         trustedReverseRegistrar = _trustedReverseRegistrar;
@@ -131,9 +134,16 @@ contract PublicResolver is
             msg.sender == trustedETHController ||
             msg.sender == trustedReverseRegistrar
         ) {
+            console.log("isAuthorised: msg.sender is trustedETHController or trustedReverseRegistrar");
             return true;
         }
-        address owner = ens.owner(node);
+
+
+        address owner = fns.owner(node);
+
+        console.log("isAuthorised: owner = %s", owner);
+        console.log("isAuthorised: msg.sender = %s", msg.sender);
+
         if (owner == address(nameWrapper)) {
             owner = nameWrapper.ownerOf(uint256(node));
         }

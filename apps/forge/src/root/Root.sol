@@ -12,11 +12,11 @@ contract Root is Ownable, Controllable {
 
     event TLDLocked(bytes32 indexed label);
 
-    IFNS public ens;
+    IFNS public fns;
     mapping(bytes32 => bool) public locked;
 
     constructor(IFNS _ens) {
-        ens = _ens;
+        fns = _ens;
     }
 
     function setSubnodeOwner(
@@ -24,11 +24,11 @@ contract Root is Ownable, Controllable {
         address owner
     ) external onlyController {
         require(!locked[label]);
-        ens.setSubnodeOwner(ROOT_NODE, label, owner);
+        fns.setSubnodeOwner(ROOT_NODE, label, owner);
     }
 
     function setResolver(address resolver) external onlyOwner {
-        ens.setResolver(ROOT_NODE, resolver);
+        fns.setResolver(ROOT_NODE, resolver);
     }
 
     function lock(bytes32 label) external onlyOwner {

@@ -2,14 +2,14 @@
  *Submitted for verification at Etherscan.io on 2020-01-30
 */
 
-// File: @ensdomains/ens/contracts/ENS.sol
+// File: @ensdomains/fns/contracts/FNS.sol
 
 // Evaluation: 
 
 pragma solidity >=0.4.24;
 
 // EVALUATION: On-chain matches existing from new repo
-interface ENS {
+interface FNS {
 
     // Logged when the owner of a node assigns a new owner to a subnode.
     event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner);
@@ -40,16 +40,16 @@ interface ENS {
     function isApprovedForAll(address owner, address operator) external view returns (bool);
 }
 
-// File: @ensdomains/ens/contracts/FNSRegistry.sol
+// File: @ensdomains/fns/contracts/FNSRegistry.sol
 
 pragma solidity ^0.5.0;
 
 
 /**
- * The ENS registry contract.
+ * The FNS registry contract.
  */
 // EVALUATION: On-chain matches existing from new repo
-contract FNSRegistry is ENS {
+contract FNSRegistry is FNS {
 
     struct Record {
         address owner;
@@ -68,7 +68,7 @@ contract FNSRegistry is ENS {
     }
 
     /**
-     * @dev Constructs a new ENS registrar.
+     * @dev Constructs a new FNS registrar.
      */
     constructor() public {
         records[0x0].owner = msg.sender;
@@ -144,7 +144,7 @@ contract FNSRegistry is ENS {
 
     /**
      * @dev Enable or disable approval for a third party ("operator") to manage
-     *  all of `msg.sender`'s ENS records. Emits the ApprovalForAll event.
+     *  all of `msg.sender`'s FNS records. Emits the ApprovalForAll event.
      * @param operator Address to add to the set of authorized operators.
      * @param approved True if the operator is approved, false to revoke approval.
      */
@@ -221,24 +221,24 @@ contract FNSRegistry is ENS {
     }
 }
 
-// File: @ensdomains/ens/contracts/ENSRegistryWithFallback.sol
+// File: @ensdomains/fns/contracts/ENSRegistryWithFallback.sol
 
 pragma solidity ^0.5.0;
 
 
 
 /**
- * The ENS registry contract.
+ * The FNS registry contract.
  */
 // EVALUATION: We don't need this, because we don't have the original implementation to migrate from
 contract ENSRegistryWithFallback is FNSRegistry {
 
-    ENS public old;
+    FNS public old;
 
     /**
-     * @dev Constructs a new ENS registrar.
+     * @dev Constructs a new FNS registrar.
      */
-    constructor(ENS _old) public FNSRegistry() {
+    constructor(FNS _old) public FNSRegistry() {
         old = _old;
     }
 

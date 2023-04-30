@@ -2,12 +2,12 @@
  *Submitted for verification at Etherscan.io on 2020-01-30
 */
 
-// File: @ensdomains/ens/contracts/ENS.sol
+// File: @ensdomains/fns/contracts/FNS.sol
 
 pragma solidity >=0.4.24;
 
 // EVALUATION: On-chain matches existing from new repo
-interface ENS {
+interface FNS {
 
     // Logged when the owner of a node assigns a new owner to a subnode.
     event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner);
@@ -634,10 +634,10 @@ contract BaseRegistrar is IERC721, Ownable {
     event NameRegistered(uint256 indexed id, address indexed owner, uint expires);
     event NameRenewed(uint256 indexed id, uint expires);
 
-    // The ENS registry
-    ENS public ens;
+    // The FNS registry
+    FNS public fns;
 
-    // The namehash of the TLD this registrar owns (eg, .eth)
+    // The namehash of the TLD this registrar owns (eg, .flr)
     bytes32 public baseNode;
 
     // A map of addresses that are authorised to register and renew names.
@@ -666,7 +666,7 @@ contract BaseRegistrar is IERC721, Ownable {
     function renew(uint256 id, uint duration) external returns(uint);
 
     /**
-     * @dev Reclaim ownership of a name in ENS, if you own it in the registrar.
+     * @dev Reclaim ownership of a name in FNS, if you own it in the registrar.
      */
     function reclaim(uint256 id, address owner) external;
 }
@@ -696,13 +696,13 @@ contract BaseRegistrarImplementation is BaseRegistrar, ERC721 {
     );
     bytes4 constant private RECLAIM_ID = bytes4(keccak256("reclaim(uint256,address)"));
 
-    constructor(ENS _ens, bytes32 _baseNode) public {
-        ens = _ens;
+    constructor(FNS _ens, bytes32 _baseNode) public {
+        fns = _ens;
         baseNode = _baseNode;
     }
 
     modifier live {
-        require(ens.owner(baseNode) == address(this));
+        require(fns.owner(baseNode) == address(this));
         _;
     }
 
@@ -736,7 +736,7 @@ contract BaseRegistrarImplementation is BaseRegistrar, ERC721 {
 
     // Set the resolver for the TLD this registrar manages.
     function setResolver(address resolver) external onlyOwner {
-        ens.setResolver(baseNode, resolver);
+        fns.setResolver(baseNode, resolver);
     }
 
     // Returns the expiration timestamp of the specified id.
@@ -781,7 +781,7 @@ contract BaseRegistrarImplementation is BaseRegistrar, ERC721 {
         }
         _mint(owner, id);
         if(updateRegistry) {
-            ens.setSubnodeOwner(baseNode, bytes32(id), owner);
+            fns.setSubnodeOwner(baseNode, bytes32(id), owner);
         }
 
         emit NameRegistered(id, owner, now + duration);
@@ -799,11 +799,11 @@ contract BaseRegistrarImplementation is BaseRegistrar, ERC721 {
     }
 
     /**
-     * @dev Reclaim ownership of a name in ENS, if you own it in the registrar.
+     * @dev Reclaim ownership of a name in FNS, if you own it in the registrar.
      */
     function reclaim(uint256 id, address owner) external live {
         require(_isApprovedOrOwner(msg.sender, id));
-        ens.setSubnodeOwner(baseNode, bytes32(id), owner);
+        fns.setSubnodeOwner(baseNode, bytes32(id), owner);
     }
 
     function supportsInterface(bytes4 interfaceID) external view returns (bool) {

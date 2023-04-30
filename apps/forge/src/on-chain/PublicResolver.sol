@@ -2,11 +2,11 @@
  *Submitted for verification at Etherscan.io on 2020-02-03
 */
 
-// File: @ensdomains/ens/contracts/ENS.sol
+// File: @ensdomains/fns/contracts/FNS.sol
 
 pragma solidity >=0.4.24;
 
-interface ENS {
+interface FNS {
 
     // Logged when the owner of a node assigns a new owner to a subnode.
     event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner);
@@ -77,7 +77,7 @@ contract ABIResolver is ResolverBase {
     mapping(bytes32=>mapping(uint256=>bytes)) abis;
 
     /**
-     * Sets the ABI associated with an ENS node.
+     * Sets the ABI associated with an FNS node.
      * Nodes may have one ABI of each content type. To remove an ABI, set it to
      * the empty string.
      * @param node The node to update.
@@ -93,9 +93,9 @@ contract ABIResolver is ResolverBase {
     }
 
     /**
-     * Returns the ABI associated with an ENS node.
+     * Returns the ABI associated with an FNS node.
      * Defined in EIP205.
-     * @param node The ENS node to query
+     * @param node The FNS node to query
      * @param contentTypes A bitwise OR of the ABI formats accepted by the caller.
      * @return contentType The content type of the return value
      * @return data The ABI data
@@ -133,8 +133,8 @@ contract AddrResolver is ResolverBase {
     mapping(bytes32=>mapping(uint=>bytes)) _addresses;
 
     /**
-     * Sets the address associated with an ENS node.
-     * May only be called by the owner of that node in the ENS registry.
+     * Sets the address associated with an FNS node.
+     * May only be called by the owner of that node in the FNS registry.
      * @param node The node to update.
      * @param a The address to set.
      */
@@ -143,8 +143,8 @@ contract AddrResolver is ResolverBase {
     }
 
     /**
-     * Returns the address associated with an ENS node.
-     * @param node The ENS node to query.
+     * Returns the address associated with an FNS node.
+     * @param node The FNS node to query.
      * @return The associated address.
      */
     function addr(bytes32 node) public view returns (address payable) {
@@ -185,8 +185,8 @@ contract ContentHashResolver is ResolverBase {
     mapping(bytes32=>bytes) hashes;
 
     /**
-     * Sets the contenthash associated with an ENS node.
-     * May only be called by the owner of that node in the ENS registry.
+     * Sets the contenthash associated with an FNS node.
+     * May only be called by the owner of that node in the FNS registry.
      * @param node The node to update.
      * @param hash The contenthash to set
      */
@@ -196,8 +196,8 @@ contract ContentHashResolver is ResolverBase {
     }
 
     /**
-     * Returns the contenthash associated with an ENS node.
-     * @param node The ENS node to query.
+     * Returns the contenthash associated with an FNS node.
+     * @param node The FNS node to query.
      * @return The associated contenthash.
      */
     function contenthash(bytes32 node) external view returns (bytes memory) {
@@ -1218,7 +1218,7 @@ contract InterfaceResolver is ResolverBase, AddrResolver {
      * the contract at `addr()`. If `addr()` is set, a contract exists at that address, and that
      * contract implements EIP168 and returns `true` for the specified interfaceID, its address
      * will be returned.
-     * @param node The ENS node to query.
+     * @param node The FNS node to query.
      * @param interfaceID The EIP 168 interface ID to check for.
      * @return The address that implements this interface, or 0 if the interface is unsupported.
      */
@@ -1266,8 +1266,8 @@ contract NameResolver is ResolverBase {
     mapping(bytes32=>string) names;
 
     /**
-     * Sets the name associated with an ENS node, for reverse records.
-     * May only be called by the owner of that node in the ENS registry.
+     * Sets the name associated with an FNS node, for reverse records.
+     * May only be called by the owner of that node in the FNS registry.
      * @param node The node to update.
      * @param name The name to set.
      */
@@ -1277,9 +1277,9 @@ contract NameResolver is ResolverBase {
     }
 
     /**
-     * Returns the name associated with an ENS node, for reverse records.
+     * Returns the name associated with an FNS node, for reverse records.
      * Defined in EIP181.
-     * @param node The ENS node to query.
+     * @param node The FNS node to query.
      * @return The associated name.
      */
     function name(bytes32 node) external view returns (string memory) {
@@ -1309,8 +1309,8 @@ contract PubkeyResolver is ResolverBase {
     mapping(bytes32=>PublicKey) pubkeys;
 
     /**
-     * Sets the SECP256k1 public key associated with an ENS node.
-     * @param node The ENS node to query
+     * Sets the SECP256k1 public key associated with an FNS node.
+     * @param node The FNS node to query
      * @param x the X coordinate of the curve point for the public key.
      * @param y the Y coordinate of the curve point for the public key.
      */
@@ -1320,9 +1320,9 @@ contract PubkeyResolver is ResolverBase {
     }
 
     /**
-     * Returns the SECP256k1 public key associated with an ENS node.
+     * Returns the SECP256k1 public key associated with an FNS node.
      * Defined in EIP 619.
-     * @param node The ENS node to query
+     * @param node The FNS node to query
      * @return x, y the X and Y coordinates of the curve point for the public key.
      */
     function pubkey(bytes32 node) external view returns (bytes32 x, bytes32 y) {
@@ -1347,8 +1347,8 @@ contract TextResolver is ResolverBase {
     mapping(bytes32=>mapping(string=>string)) texts;
 
     /**
-     * Sets the text data associated with an ENS node and key.
-     * May only be called by the owner of that node in the ENS registry.
+     * Sets the text data associated with an FNS node and key.
+     * May only be called by the owner of that node in the FNS registry.
      * @param node The node to update.
      * @param key The key to set.
      * @param value The text data value to set.
@@ -1359,8 +1359,8 @@ contract TextResolver is ResolverBase {
     }
 
     /**
-     * Returns the text data associated with an ENS node and key.
-     * @param node The ENS node to query.
+     * Returns the text data associated with an FNS node and key.
+     * @param node The FNS node to query.
      * @param key The text data key to query.
      * @return The associated text data.
      */
@@ -1392,7 +1392,7 @@ pragma experimental ABIEncoderV2;
  * address.
  */
 contract PublicResolver is ABIResolver, AddrResolver, ContentHashResolver, DNSResolver, InterfaceResolver, NameResolver, PubkeyResolver, TextResolver {
-    ENS ens;
+    FNS fns;
 
     /**
      * A mapping of authorisations. An address that is authorised for a name
@@ -1404,8 +1404,8 @@ contract PublicResolver is ABIResolver, AddrResolver, ContentHashResolver, DNSRe
 
     event AuthorisationChanged(bytes32 indexed node, address indexed owner, address indexed target, bool isAuthorised);
 
-    constructor(ENS _ens) public {
-        ens = _ens;
+    constructor(FNS _ens) public {
+        fns = _ens;
     }
 
     /**
@@ -1426,7 +1426,7 @@ contract PublicResolver is ABIResolver, AddrResolver, ContentHashResolver, DNSRe
     }
 
     function isAuthorised(bytes32 node) internal view returns(bool) {
-        address owner = ens.owner(node);
+        address owner = fns.owner(node);
         return owner == msg.sender || authorisations[node][owner][msg.sender];
     }
 

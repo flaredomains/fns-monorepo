@@ -38,7 +38,7 @@ contract ConfigureFNS is Script {
         baseRegistrar.register('deployer', owner, 86400);
         require(fnsRegistry.owner(FNSNamehash.namehash('deployer.flr')) == owner, "Owner not expected");
 
-        StaticMetadataService metadataService = new StaticMetadataService("https://ens.domains/");
+        StaticMetadataService metadataService = new StaticMetadataService("https://fns.domains/");
         NameWrapper nameWrapper = new NameWrapper(fnsRegistry, baseRegistrar, metadataService);
         ReverseRegistrar reverseRegistrar = new ReverseRegistrar(fnsRegistry);
         DummyOracle dummyOracle = new DummyOracle(100000000);

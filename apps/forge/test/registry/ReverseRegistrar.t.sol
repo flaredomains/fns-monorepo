@@ -220,7 +220,7 @@ contract TestReverseRegistrar is Test {
     
     // Original Test: 'setNameForAddr'::'allows an owner() of a contract to claimWithResolverForAddr on behalf of the contract'
     function testSetNameForAddrAllowOwnerOfContractToClaimWithResolverForAddrOnBehalfOfContract() public {
-        string memory name = 'dummyownable.eth';
+        string memory name = 'dummyownable.flr';
         reverseRegistrar.setNameForAddr(address(dummyOwnableContract), address(this), address(publicResolver), name);
         assertEq(fnsRegistry.owner(dummyOwnableReverseNode), address(this));
         assertEq(publicResolver.name(dummyOwnableReverseNode), name);

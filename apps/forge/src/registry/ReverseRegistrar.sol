@@ -15,7 +15,7 @@ bytes32 constant ADDR_REVERSE_NODE = 0x91d1777781884d03a6757a803996e38de2a42967f
 bytes32 constant lookup = 0x3031323334353637383961626364656600000000000000000000000000000000;
 
 contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
-    IFNS public immutable ens;
+    IFNS public immutable fns;
     NameResolver public defaultResolver;
 
     event ReverseClaimed(address indexed addr, bytes32 indexed node);
@@ -23,10 +23,10 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
 
     /**
      * @dev Constructor
-     * @param ensAddr The address of the ENS registry.
+     * @param ensAddr The address of the FNS registry.
      */
     constructor(IFNS ensAddr) {
-        ens = ensAddr;
+        fns = ensAddr;
 
         // NOTE: This has been disabled because it pertains to migration. We will not have an owner
         //       of the ADDR_REVERSE_NODE by default, and thus no existing ReverseRegistrar to
@@ -44,7 +44,7 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
         require(
             addr == msg.sender ||
                 controllers[msg.sender] ||
-                ens.isApprovedForAll(addr, msg.sender) ||
+                fns.isApprovedForAll(addr, msg.sender) ||
                 ownsContract(addr),
             "ReverseRegistrar: Caller is not a controller or authorised by address or the address itself"
         );
@@ -61,22 +61,22 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
     }
 
     /**
-     * @dev Transfers ownership of the reverse ENS record associated with the
+     * @dev Transfers ownership of the reverse FNS record associated with the
      *      calling account.
-     * @param owner The address to set as the owner of the reverse record in ENS.
-     * @return The ENS node hash of the reverse record.
+     * @param owner The address to set as the owner of the reverse record in FNS.
+     * @return The FNS node hash of the reverse record.
      */
     function claim(address owner) public override returns (bytes32) {
         return claimForAddr(msg.sender, owner, address(defaultResolver));
     }
 
     /**
-     * @dev Transfers ownership of the reverse ENS record associated with the
+     * @dev Transfers ownership of the reverse FNS record associated with the
      *      calling account.
      * @param addr The reverse record to set
-     * @param owner The address to set as the owner of the reverse record in ENS.
+     * @param owner The address to set as the owner of the reverse record in FNS.
      * @param resolver The resolver of the reverse node
-     * @return The ENS node hash of the reverse record.
+     * @return The FNS node hash of the reverse record.
      */
     function claimForAddr(
         address addr,
@@ -94,16 +94,16 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
         console.logBytes32(labelHash);
         
         emit ReverseClaimed(addr, reverseNode);
-        ens.setSubnodeRecord(ADDR_REVERSE_NODE, labelHash, owner, resolver, 0);
+        fns.setSubnodeRecord(ADDR_REVERSE_NODE, labelHash, owner, resolver, 0);
         return reverseNode;
     }
 
     /**
-     * @dev Transfers ownership of the reverse ENS record associated with the
+     * @dev Transfers ownership of the reverse FNS record associated with the
      *      calling account.
-     * @param owner The address to set as the owner of the reverse record in ENS.
+     * @param owner The address to set as the owner of the reverse record in FNS.
      * @param resolver The address of the resolver to set; 0 to leave unchanged.
-     * @return The ENS node hash of the reverse record.
+     * @return The FNS node hash of the reverse record.
      */
     function claimWithResolver(
         address owner,
@@ -113,11 +113,11 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
     }
 
     /**
-     * @dev Sets the `name()` record for the reverse ENS record associated with
+     * @dev Sets the `name()` record for the reverse FNS record associated with
      * the calling account. First updates the resolver to the default reverse
      * resolver if necessary.
      * @param name The name to set for this address.
-     * @return The ENS node hash of the reverse record.
+     * @return The FNS node hash of the reverse record.
      */
     function setName(string memory name) public override returns (bytes32) {
         return
@@ -130,14 +130,14 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
     }
 
     /**
-     * @dev Sets the `name()` record for the reverse ENS record associated with
+     * @dev Sets the `name()` record for the reverse FNS record associated with
      * the account provided. Updates the resolver to a designated resolver
      * Only callable by controllers and authorised users
      * @param addr The reverse record to set
      * @param owner The owner of the reverse node
      * @param resolver The resolver of the reverse node
      * @param name The name to set for this address.
-     * @return The ENS node hash of the reverse record.
+     * @return The FNS node hash of the reverse record.
      */
     function setNameForAddr(
         address addr,
@@ -153,7 +153,7 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
     /**
      * @dev Returns the node hash for a given account's reverse records.
      * @param addr The address to hash
-     * @return The ENS node hash.
+     * @return The FNS node hash.
      */
     function node(address addr) public pure override returns (bytes32) {
         return

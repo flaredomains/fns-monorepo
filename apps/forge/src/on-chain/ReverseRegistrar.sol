@@ -2,11 +2,11 @@
  *Submitted for verification at Etherscan.io on 2020-01-30
 */
 
-// File: @ensdomains/ens/contracts/ENS.sol
+// File: @ensdomains/fns/contracts/FNS.sol
 
 pragma solidity >=0.4.24;
 
-interface ENS {
+interface FNS {
 
     // Logged when the owner of a node assigns a new owner to a subnode.
     event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner);
@@ -37,7 +37,7 @@ interface ENS {
     function isApprovedForAll(address owner, address operator) external view returns (bool);
 }
 
-// File: @ensdomains/ens/contracts/ReverseRegistrar.sol
+// File: @ensdomains/fns/contracts/ReverseRegistrar.sol
 
 pragma solidity ^0.5.0;
 
@@ -50,71 +50,71 @@ contract ReverseRegistrar {
     // namehash('addr.reverse')
     bytes32 public constant ADDR_REVERSE_NODE = 0x91d1777781884d03a6757a803996e38de2a42967fb37eeaca72729271025a9e2;
 
-    ENS public ens;
+    FNS public fns;
     Resolver public defaultResolver;
 
     /**
      * @dev Constructor
-     * @param ensAddr The address of the ENS registry.
+     * @param ensAddr The address of the FNS registry.
      * @param resolverAddr The address of the default reverse resolver.
      */
-    constructor(ENS ensAddr, Resolver resolverAddr) public {
-        ens = ensAddr;
+    constructor(FNS ensAddr, Resolver resolverAddr) public {
+        fns = ensAddr;
         defaultResolver = resolverAddr;
 
         // Assign ownership of the reverse record to our deployer
-        ReverseRegistrar oldRegistrar = ReverseRegistrar(ens.owner(ADDR_REVERSE_NODE));
+        ReverseRegistrar oldRegistrar = ReverseRegistrar(fns.owner(ADDR_REVERSE_NODE));
         if (address(oldRegistrar) != address(0x0)) {
             oldRegistrar.claim(msg.sender);
         }
     }
     
     /**
-     * @dev Transfers ownership of the reverse ENS record associated with the
+     * @dev Transfers ownership of the reverse FNS record associated with the
      *      calling account.
-     * @param owner The address to set as the owner of the reverse record in ENS.
-     * @return The ENS node hash of the reverse record.
+     * @param owner The address to set as the owner of the reverse record in FNS.
+     * @return The FNS node hash of the reverse record.
      */
     function claim(address owner) public returns (bytes32) {
         return claimWithResolver(owner, address(0x0));
     }
 
     /**
-     * @dev Transfers ownership of the reverse ENS record associated with the
+     * @dev Transfers ownership of the reverse FNS record associated with the
      *      calling account.
-     * @param owner The address to set as the owner of the reverse record in ENS.
+     * @param owner The address to set as the owner of the reverse record in FNS.
      * @param resolver The address of the resolver to set; 0 to leave unchanged.
-     * @return The ENS node hash of the reverse record.
+     * @return The FNS node hash of the reverse record.
      */
     function claimWithResolver(address owner, address resolver) public returns (bytes32) {
         bytes32 label = sha3HexAddress(msg.sender);
         bytes32 node = keccak256(abi.encodePacked(ADDR_REVERSE_NODE, label));
-        address currentOwner = ens.owner(node);
+        address currentOwner = fns.owner(node);
 
         // Update the resolver if required
-        if (resolver != address(0x0) && resolver != ens.resolver(node)) {
+        if (resolver != address(0x0) && resolver != fns.resolver(node)) {
             // Transfer the name to us first if it's not already
             if (currentOwner != address(this)) {
-                ens.setSubnodeOwner(ADDR_REVERSE_NODE, label, address(this));
+                fns.setSubnodeOwner(ADDR_REVERSE_NODE, label, address(this));
                 currentOwner = address(this);
             }
-            ens.setResolver(node, resolver);
+            fns.setResolver(node, resolver);
         }
 
         // Update the owner if required
         if (currentOwner != owner) {
-            ens.setSubnodeOwner(ADDR_REVERSE_NODE, label, owner);
+            fns.setSubnodeOwner(ADDR_REVERSE_NODE, label, owner);
         }
 
         return node;
     }
 
     /**
-     * @dev Sets the `name()` record for the reverse ENS record associated with
+     * @dev Sets the `name()` record for the reverse FNS record associated with
      * the calling account. First updates the resolver to the default reverse
      * resolver if necessary.
      * @param name The name to set for this address.
-     * @return The ENS node hash of the reverse record.
+     * @return The FNS node hash of the reverse record.
      */
     function setName(string memory name) public returns (bytes32) {
         bytes32 node = claimWithResolver(address(this), address(defaultResolver));
@@ -125,7 +125,7 @@ contract ReverseRegistrar {
     /**
      * @dev Returns the node hash for a given account's reverse records.
      * @param addr The address to hash
-     * @return The ENS node hash.
+     * @return The FNS node hash.
      */
     function node(address addr) public pure returns (bytes32) {
         return keccak256(abi.encodePacked(ADDR_REVERSE_NODE, sha3HexAddress(addr)));

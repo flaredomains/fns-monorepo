@@ -16,14 +16,14 @@ contract BulkRenewal is IBulkRenewal, IERC165, ReentrancyGuard {
     bytes32 private constant FLR_NAMEHASH =
         0xfd9ed02f44147ba87d942b154c98562d831e3a24daea862ee12868ac20f7bcc3;
 
-    IFNS public immutable ens;
+    IFNS public immutable fns;
 
     constructor(IFNS _ens) {
-        ens = _ens;
+        fns = _ens;
     }
 
     function getController() internal view returns (FLRRegistrarController) {
-        IResolver r = IResolver(ens.resolver(FLR_NAMEHASH));
+        IResolver r = IResolver(fns.resolver(FLR_NAMEHASH));
         return
             FLRRegistrarController(
                 r.interfaceImplementer(

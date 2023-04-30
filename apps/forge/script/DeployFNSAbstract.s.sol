@@ -37,6 +37,7 @@ abstract contract DeployFNSAbstract is Script {
     FLRRegistrarController flrRegistrarController;
     MintedDomainNames mintedDomainNames;
     NameWrapper nameWrapper;
+    ReverseRegistrar reverseRegistrar;
 
     // Entrypoint to deploy script
     function setUp() external {
@@ -69,14 +70,14 @@ abstract contract DeployFNSAbstract is Script {
         require(fnsRegistry.owner(FNSNamehash.namehash('deployer.flr')) == deployerAddress, "Owner not expected");
 
         // TODO: Update this to our own website
-        StaticMetadataService metadataService = new StaticMetadataService("https://ens.domains/");
+        StaticMetadataService metadataService = new StaticMetadataService("https://fns.domains/");
         nameWrapper = new NameWrapper(fnsRegistry, baseRegistrar, metadataService);
 
         // Deploy the mintedIds data struct contract, then update the reference within Base Registrar
         mintedDomainNames = new MintedDomainNames(nameWrapper);
         nameWrapper.updateMintedDomainNamesContract(mintedDomainNames);
 
-        ReverseRegistrar reverseRegistrar = new ReverseRegistrar(fnsRegistry);
+        reverseRegistrar = new ReverseRegistrar(fnsRegistry);
 
         // TODO: Update this to Regular StablePriceOracle for mainnet deployment
         MockStablePriceOracle stablePriceOracle = new MockStablePriceOracle(

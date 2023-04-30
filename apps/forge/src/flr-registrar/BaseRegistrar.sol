@@ -12,7 +12,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     // A map of expiry times
     mapping(uint256 => uint256) public expiries;
     // The IFNS registry
-    IFNS public ens;
+    IFNS public fns;
     // The namehash of the TLD this registrar owns (eg, .flr)
     bytes32 public baseNode;
     // A map of addresses that are authorised to register and renew names.
@@ -58,13 +58,13 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     }
 
     constructor(IFNS _ens, bytes32 _baseNode, INoNameCollisions _noNameCollisionsContract) ERC721("", "") {
-        ens = _ens;
+        fns = _ens;
         baseNode = _baseNode;
         noNameCollisionsContract = _noNameCollisionsContract;
     }
 
     modifier live() {
-        require(ens.owner(baseNode) == address(this), "BaseRegistrar: Base Node Not Live");
+        require(fns.owner(baseNode) == address(this), "BaseRegistrar: Base Node Not Live");
         _;
     }
 
@@ -131,7 +131,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
 
     // Set the resolver for the TLD this registrar manages.
     function setResolver(address resolver) external override onlyOwner {
-        ens.setResolver(baseNode, resolver);
+        fns.setResolver(baseNode, resolver);
     }
 
     // Returns the expiration timestamp of the specified id.
@@ -147,7 +147,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
 
     /**
      * @dev Register a name.
-     * @param label The label for the given TLD. If 'based.eth', label is 'based'
+     * @param label The label for the given TLD. If 'based.flr', label is 'based'
      * @param owner The address that should own the registration.
      * @param duration Duration in seconds for the registration.
      */
@@ -161,7 +161,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
 
     /**
      * @dev Register a name, without modifying the registry.
-     * @param label The label for the given TLD. If 'based.eth', label is 'based'
+     * @param label The label for the given TLD. If 'based.flr', label is 'based'
      * @param owner The address that should own the registration.
      * @param duration Duration in seconds for the registration.
      */
@@ -197,7 +197,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
         _mint(owner, id);
         
         if (updateRegistry) {
-            ens.setSubnodeOwner(baseNode, bytes32(id), owner);
+            fns.setSubnodeOwner(baseNode, bytes32(id), owner);
         }
 
         emit NameRegistered(label, id, owner, expiry);
@@ -225,7 +225,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
      */
     function reclaim(uint256 id, address owner) external override live {
         require(_isApprovedOrOwner(msg.sender, id), "BaseRegistrar: Must be owner or approved");
-        ens.setSubnodeOwner(baseNode, bytes32(id), owner);
+        fns.setSubnodeOwner(baseNode, bytes32(id), owner);
     }
 
     function supportsInterface(

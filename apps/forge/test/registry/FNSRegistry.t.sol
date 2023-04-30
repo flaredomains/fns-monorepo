@@ -6,7 +6,7 @@ import "forge-std/Test.sol";
 import "forge-std/console.sol";
 import "fns/registry/FNSRegistry.sol";
 
-contract TestENSRegistry is Test {
+contract TestFNSRegistry is Test {
     FNSRegistry public fnsRegistry;
     bytes32 constant rootNode = 0x0;
     address constant addr = 0x0000000000000000000000000000000000001234;
@@ -15,45 +15,45 @@ contract TestENSRegistry is Test {
         fnsRegistry = new FNSRegistry();
     }
 
-    // Original ENS test: 'should allow ownership transfers'
+    // Original FNS test: 'should allow ownership transfers'
     function testAllowOwnershipTransfer() public {
         fnsRegistry.setOwner(rootNode, addr);
         assertEq(addr, fnsRegistry.owner(rootNode));
     }
 
-    // Original ENS test: 'should prohibit transfers by non-owners'
+    // Original FNS test: 'should prohibit transfers by non-owners'
     function testCannotTransferAsNonOwner() public {
         bytes32 unOwnedNode = bytes32(uint256(0x1));
         vm.expectRevert();
         fnsRegistry.setOwner(unOwnedNode, addr);
     }
 
-    // Original ENS test: 'should allow setting resolvers'
+    // Original FNS test: 'should allow setting resolvers'
     function testAllowSettingResolvers() public {
         fnsRegistry.setResolver(rootNode, addr);
         assertEq(fnsRegistry.resolver(rootNode), addr);
     }
 
-    // Original ENS test: 'should prevent setting resolvers by non-owners'
+    // Original FNS test: 'should prevent setting resolvers by non-owners'
     function testCannotSetResolversAsNonOwner() public {
         bytes32 unOwnedNode = bytes32(uint256(0x1));
         vm.expectRevert();
         fnsRegistry.setResolver(unOwnedNode, addr);
     }
 
-    // Original ENS test: 'should allow setting the TTL'
+    // Original FNS test: 'should allow setting the TTL'
     function testAllowSettingTTL() public {
         fnsRegistry.setTTL(rootNode, 3600);
         assertEq(fnsRegistry.ttl(rootNode), uint64(3600));
     }
 
-    // Original ENS test: 'should prevent setting the TTL by non-owners'
+    // Original FNS test: 'should prevent setting the TTL by non-owners'
     function testCannotSetTTLAsNonOwner() public {
         vm.expectRevert();
         fnsRegistry.setTTL('0x1', 3600);
     }
 
-    // Original ENS test: 'should allow the creation of subnodes'
+    // Original FNS test: 'should allow the creation of subnodes'
     function testAllowCreatingSubnodes() public {
         fnsRegistry.setSubnodeOwner(rootNode, sha256('label'), addr);
 
@@ -62,7 +62,7 @@ contract TestENSRegistry is Test {
         assertEq(fnsRegistry.owner(subnode), addr);
     }
 
-    // Original ENS test: 'should prohibit subnode creation by non-owners'
+    // Original FNS test: 'should prohibit subnode creation by non-owners'
     function testCannotCreateSubnodesAsNonOwner() public {
         bytes32 label = sha256('label'); // must be done early to avoid expectRevert on sha256
         vm.expectRevert();
@@ -70,7 +70,7 @@ contract TestENSRegistry is Test {
         fnsRegistry.setSubnodeOwner(rootNode, label, addr);
     }
 
-    // Original ENS test: 'should allow setting the record' in ENSRegistryWithFallback
+    // Original FNS test: 'should allow setting the record' in ENSRegistryWithFallback
     function testAllowSettingRecord() public {
         address newOwner = address(1);
         address newResolver = address(2);
@@ -82,7 +82,7 @@ contract TestENSRegistry is Test {
         assertEq(fnsRegistry.ttl(rootNode), newTTL);
     }
 
-    // Original ENS test: 'should allow setting subnode records' in ENSRegistryWithFallback
+    // Original FNS test: 'should allow setting subnode records' in ENSRegistryWithFallback
     function testAllowSettingSubnodeRecords() public {
         bytes32 subnodeLabel = sha256('label');
         address newOwner = address(1);
@@ -99,9 +99,9 @@ contract TestENSRegistry is Test {
         assertEq(fnsRegistry.ttl(subnode), newTTL);
     }
 
-    // Original ENS test: 'should implement authorisations/operators' in ENSRegistryWithFallback
+    // Original FNS test: 'should implement authorisations/operators' in ENSRegistryWithFallback
     // NOTE: This has been rewritten to actually test that the new operator can succesfully update
-    //       the owner of an ENS record they don't own (one that has been delegated to them with
+    //       the owner of an FNS record they don't own (one that has been delegated to them with
     //       3rd party rights)
     // TODO: Make a negative test for this same pattern
     function testAllowSetApprovalForAll() public {

@@ -81,6 +81,19 @@ contract Template is Script, DeployFNSAbstract {
             console.logString(data[i].label);
         }
 
+        // Check the set name
+        string memory reverseName = publicResolver.name(reverseRegistrar.node(broadcastAddress));
+        console.log("NAME SET FOR: %s", broadcastAddress);
+        console.logString(reverseName);
+        
+        vm.stopBroadcast();
+
+        // Now set the name for the new owner
+        vm.startBroadcast(ANVIL_DEPLOYER_PRIVATE_KEY);
+        bytes32 node = reverseRegistrar.setName(name);
+        reverseName = publicResolver.name(node);
+        console.log("NAME SET FOR: %s", ANVIL_DEPLOYER_ADDRESS);
+        console.logString(reverseName);
         vm.stopBroadcast();
     }
 }
