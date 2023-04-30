@@ -120,8 +120,7 @@ contract NameWrapper is
      * @return owner The owner of the name
      */
     function ownerOfLabel(string calldata label) public view returns (address owner) {
-        return super.ownerOf(
-            uint256(keccak256(abi.encodePacked(FLR_NODE, keccak256(bytes(label))))));
+        return ownerOf(uint256(keccak256(abi.encodePacked(FLR_NODE, keccak256(bytes(label))))));
     }
 
     /**
