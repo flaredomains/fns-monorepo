@@ -846,9 +846,9 @@ contract NameWrapper is
     }
 
     /**
-     * @dev Helper pure function to easily generate the node (ENSRegistry) and id (NameWrapper tokenId)
+     * @dev Helper pure function to easily generate the node (FNSRegistry) and id (NameWrapper tokenId)
      * @param label - the input name excluding ".flr"
-     * @param nodeId - The node hash that is used in the ENSRegistry
+     * @param nodeId - The node hash that is used in the FNSRegistry
      * @param id - The tokenId used to mint the NameWrapper ERC1155 Token
      */
     function getFLRTokenId(string memory label) external pure returns (bytes32 nodeId, uint256 id) {

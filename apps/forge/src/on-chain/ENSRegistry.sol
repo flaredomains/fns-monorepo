@@ -40,7 +40,7 @@ interface ENS {
     function isApprovedForAll(address owner, address operator) external view returns (bool);
 }
 
-// File: @ensdomains/ens/contracts/ENSRegistry.sol
+// File: @ensdomains/ens/contracts/FNSRegistry.sol
 
 pragma solidity ^0.5.0;
 
@@ -49,7 +49,7 @@ pragma solidity ^0.5.0;
  * The ENS registry contract.
  */
 // EVALUATION: On-chain matches existing from new repo
-contract ENSRegistry is ENS {
+contract FNSRegistry is ENS {
 
     struct Record {
         address owner;
@@ -231,14 +231,14 @@ pragma solidity ^0.5.0;
  * The ENS registry contract.
  */
 // EVALUATION: We don't need this, because we don't have the original implementation to migrate from
-contract ENSRegistryWithFallback is ENSRegistry {
+contract ENSRegistryWithFallback is FNSRegistry {
 
     ENS public old;
 
     /**
      * @dev Constructs a new ENS registrar.
      */
-    constructor(ENS _old) public ENSRegistry() {
+    constructor(ENS _old) public FNSRegistry() {
         old = _old;
     }
 

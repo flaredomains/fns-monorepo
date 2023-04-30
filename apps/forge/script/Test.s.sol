@@ -3,7 +3,7 @@ pragma solidity ^0.8.10;
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
 
-import "fns/registry/ENSRegistry.sol";
+import "fns/registry/FNSRegistry.sol";
 import "fns/resolvers/PublicResolver.sol";
 import "fns/flr-registrar/BaseRegistrar.sol";
 import "fns/registry/ReverseRegistrar.sol";
@@ -16,7 +16,7 @@ import "fns/flr-registrar/DummyOracle.sol";
 import "fns-test/utils/ENSNamehash.sol";
 
 contract TestScript is Script {
-    ENSRegistry public ensRegistry = ENSRegistry(0x8E60eEeB7634930bba7a9d74f01Af9c9e78c9063);
+    FNSRegistry public fnsRegistry = FNSRegistry(0x8E60eEeB7634930bba7a9d74f01Af9c9e78c9063);
     BaseRegistrar public baseRegistrar = BaseRegistrar(0x7113e298973444eCC1c52bDdA92B2Ad5d5399426);
     StaticMetadataService public metadataService = StaticMetadataService(0x9f002F58143895D4990b9643BE920f8706a1f468);
     NameWrapper public nameWrapper = NameWrapper(0x382f565bD2Fa4C9006D84f928744929B83b42d55);

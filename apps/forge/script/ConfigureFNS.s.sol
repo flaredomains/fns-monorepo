@@ -3,7 +3,7 @@ pragma solidity ^0.8.10;
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
 
-import "fns/registry/ENSRegistry.sol";
+import "fns/registry/FNSRegistry.sol";
 import "fns/resolvers/PublicResolver.sol";
 import "fns/flr-registrar/BaseRegistrar.sol";
 import "fns/registry/ReverseRegistrar.sol";
@@ -21,7 +21,7 @@ contract ConfigureFNS is Script {
     address owner = 0x09Ec74F54dc4b316D8cd6DFBeB91263fB20E19d2;
     // address owner = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
 
-    ENSRegistry public ensRegistry;// = ENSRegistry(0x01Ea6d29d8DB586AA2884A3eeb47F4301f8Ac5D4);
+    FNSRegistry public fnsRegistry;// = FNSRegistry(0x01Ea6d29d8DB586AA2884A3eeb47F4301f8Ac5D4);
     BaseRegistrar public baseRegistrar;// = BaseRegistrar(0x73e263e83741f797Deb8aB8C8742fe6c815cbABf);
     NoNameCollisions public noNameCollisions;
 
@@ -29,18 +29,18 @@ contract ConfigureFNS is Script {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        ensRegistry = new ENSRegistry();
+        fnsRegistry = new FNSRegistry();
         noNameCollisions = new NoNameCollisions(0xBDACF94dDCAB51c39c2dD50BffEe60Bb8021949a);
-        baseRegistrar = new BaseRegistrar(ensRegistry, ENSNamehash.namehash('flr'), noNameCollisions);
+        baseRegistrar = new BaseRegistrar(fnsRegistry, ENSNamehash.namehash('flr'), noNameCollisions);
 
         baseRegistrar.addController(owner);
-        ensRegistry.setSubnodeOwner(rootNode, keccak256('flr'), address(baseRegistrar));
+        fnsRegistry.setSubnodeOwner(rootNode, keccak256('flr'), address(baseRegistrar));
         baseRegistrar.register('deployer', owner, 86400);
-        require(ensRegistry.owner(ENSNamehash.namehash('deployer.flr')) == owner, "Owner not expected");
+        require(fnsRegistry.owner(ENSNamehash.namehash('deployer.flr')) == owner, "Owner not expected");
 
         StaticMetadataService metadataService = new StaticMetadataService("https://ens.domains/");
-        NameWrapper nameWrapper = new NameWrapper(ensRegistry, baseRegistrar, metadataService);
-        ReverseRegistrar reverseRegistrar = new ReverseRegistrar(ensRegistry);
+        NameWrapper nameWrapper = new NameWrapper(fnsRegistry, baseRegistrar, metadataService);
+        ReverseRegistrar reverseRegistrar = new ReverseRegistrar(fnsRegistry);
         DummyOracle dummyOracle = new DummyOracle(100000000);
         StablePriceOracle stablePriceOracle = new StablePriceOracle(
             0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
@@ -53,20 +53,20 @@ contract ConfigureFNS is Script {
             reverseRegistrar,
             nameWrapper);
         PublicResolver publicResolver = new PublicResolver(
-            ensRegistry, nameWrapper, address(flrRegistrarController), address(reverseRegistrar));
+            fnsRegistry, nameWrapper, address(flrRegistrarController), address(reverseRegistrar));
         
         baseRegistrar.setResolver(address(publicResolver));
         baseRegistrar.addController(address(nameWrapper));
         nameWrapper.setController(address(flrRegistrarController), true);
         reverseRegistrar.setController(address(flrRegistrarController), true);
 
-        ensRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), owner);
-        ensRegistry.setSubnodeOwner(
+        fnsRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), owner);
+        fnsRegistry.setSubnodeOwner(
             ENSNamehash.namehash('reverse'), keccak256('addr'), address(reverseRegistrar));
 
         vm.stopBroadcast();
 
-        console.log("ensRegistry: %s", address(ensRegistry));
+        console.log("fnsRegistry: %s", address(fnsRegistry));
         console.log("baseRegistrar: %s", address(baseRegistrar));
         console.log("metadataService: %s", address(metadataService));
         console.log("nameWrapper: %s", address(nameWrapper));

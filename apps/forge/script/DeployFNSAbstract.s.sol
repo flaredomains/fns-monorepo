@@ -3,7 +3,7 @@ pragma solidity ^0.8.10;
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
 
-import "fns/registry/ENSRegistry.sol";
+import "fns/registry/FNSRegistry.sol";
 import "fns/resolvers/PublicResolver.sol";
 import "fns/flr-registrar/BaseRegistrar.sol";
 import "fns/flr-registrar/MintedDomainNames.sol";
@@ -49,7 +49,7 @@ abstract contract DeployFNSAbstract is Script {
 
         // Begin script specifics
         // The root owner will be the msg.sender, which should be the private key owner
-        ENSRegistry ensRegistry = new ENSRegistry();
+        FNSRegistry fnsRegistry = new FNSRegistry();
         
         // TODO: Swap to this on testnet
         // NOTE: mockPunkTLD doesn't verify for some reason due to injection protection, so hardcode false
@@ -60,23 +60,23 @@ abstract contract DeployFNSAbstract is Script {
         NoNameCollisions noNameCollisions = new NoNameCollisions(0xBDACF94dDCAB51c39c2dD50BffEe60Bb8021949a);
 
         // This is Ownable, and owned by the msg.sender (private key)
-        BaseRegistrar baseRegistrar = new BaseRegistrar(ensRegistry, ENSNamehash.namehash('flr'), noNameCollisions);
+        BaseRegistrar baseRegistrar = new BaseRegistrar(fnsRegistry, ENSNamehash.namehash('flr'), noNameCollisions);
 
         // Make BaseRegistrar the owner of the base 'flr' node
         baseRegistrar.addController(deployerAddress);
-        ensRegistry.setSubnodeOwner(ROOT_NODE, keccak256('flr'), address(baseRegistrar));
+        fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256('flr'), address(baseRegistrar));
         baseRegistrar.register('deployer', deployerAddress, 365 days);
-        require(ensRegistry.owner(ENSNamehash.namehash('deployer.flr')) == deployerAddress, "Owner not expected");
+        require(fnsRegistry.owner(ENSNamehash.namehash('deployer.flr')) == deployerAddress, "Owner not expected");
 
         // TODO: Update this to our own website
         StaticMetadataService metadataService = new StaticMetadataService("https://ens.domains/");
-        nameWrapper = new NameWrapper(ensRegistry, baseRegistrar, metadataService);
+        nameWrapper = new NameWrapper(fnsRegistry, baseRegistrar, metadataService);
 
         // Deploy the mintedIds data struct contract, then update the reference within Base Registrar
         mintedDomainNames = new MintedDomainNames(nameWrapper);
         nameWrapper.updateMintedDomainNamesContract(mintedDomainNames);
 
-        ReverseRegistrar reverseRegistrar = new ReverseRegistrar(ensRegistry);
+        ReverseRegistrar reverseRegistrar = new ReverseRegistrar(fnsRegistry);
 
         // TODO: Update this to Regular StablePriceOracle for mainnet deployment
         MockStablePriceOracle stablePriceOracle = new MockStablePriceOracle(
@@ -91,7 +91,7 @@ abstract contract DeployFNSAbstract is Script {
             nameWrapper);
 
         publicResolver = new PublicResolver(
-            ensRegistry, nameWrapper, address(flrRegistrarController), address(reverseRegistrar));
+            fnsRegistry, nameWrapper, address(flrRegistrarController), address(reverseRegistrar));
 
         // Set the resolver
         baseRegistrar.setResolver(address(publicResolver));
@@ -102,12 +102,12 @@ abstract contract DeployFNSAbstract is Script {
         reverseRegistrar.setController(address(flrRegistrarController), true);
 
         // TODO: Should this be set to the deployer address or the reverseRegistrar contract?
-        ensRegistry.setSubnodeOwner(ROOT_NODE, keccak256('reverse'), deployerAddress);
-        ensRegistry.setSubnodeOwner(
+        fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256('reverse'), deployerAddress);
+        fnsRegistry.setSubnodeOwner(
             ENSNamehash.namehash('reverse'), keccak256('addr'), address(reverseRegistrar));
-        ensRegistry.setSubnodeOwner(ROOT_NODE, keccak256('reverse'), address(reverseRegistrar));
+        fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256('reverse'), address(reverseRegistrar));
 
-        console.log("1. ensRegistry: %s", address(ensRegistry));
+        console.log("1. fnsRegistry: %s", address(fnsRegistry));
         console.log("2. noNameCollisions: %s", address(noNameCollisions));
         console.log("3. baseRegistrar: %s", address(baseRegistrar));
         console.log("4. mintedDomainNames: %s", address(mintedDomainNames));

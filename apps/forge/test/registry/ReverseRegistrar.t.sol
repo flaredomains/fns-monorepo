@@ -6,7 +6,7 @@ import "forge-std/Test.sol";
 import "forge-std/console.sol";
 
 import "fns/registry/ReverseRegistrar.sol";
-import "fns/registry/ENSRegistry.sol";
+import "fns/registry/FNSRegistry.sol";
 import "fns/resolvers/PublicResolver.sol";
 import "fns/resolvers/mocks/DummyNameWrapper.sol";
 import "fns/wrapper/INameWrapper.sol";
@@ -15,7 +15,7 @@ import "fns-test/utils/ENSNamehash.sol";
 import "fns-test/utils/HardhatAddresses.sol";
 
 contract TestReverseRegistrar is Test {
-    ENSRegistry public ensRegistry;
+    FNSRegistry public fnsRegistry;
     ReverseRegistrar public reverseRegistrar;
     ReverseRegistrar public dummyOwnableContract;
     PublicResolver public publicResolver;
@@ -32,17 +32,17 @@ contract TestReverseRegistrar is Test {
     bytes32 dummyOwnableReverseNode;
 
     function setUp() public {
-        ensRegistry = new ENSRegistry();
+        fnsRegistry = new FNSRegistry();
         nameWrapper = new DummyNameWrapper();
-        reverseRegistrar = new ReverseRegistrar(ensRegistry);
+        reverseRegistrar = new ReverseRegistrar(fnsRegistry);
 
         // Setup another ReverseRegistrar as a dummy ownable contract, because it is ownable
-        dummyOwnableContract = new ReverseRegistrar(ensRegistry);
+        dummyOwnableContract = new ReverseRegistrar(fnsRegistry);
         dummyOwnableReverseNode = ENSNamehash.getReverseNode(address(dummyOwnableContract));
 
         // A mocked nameWrapper is used here to always return the caller's address for 'ownerOf'
         publicResolver = new PublicResolver(
-            ensRegistry,
+            fnsRegistry,
             INameWrapper(address(nameWrapper)),
             0x0000000000000000000000000000000000000000,
             address(reverseRegistrar));
@@ -50,10 +50,10 @@ contract TestReverseRegistrar is Test {
         reverseRegistrar.setDefaultResolver(address(publicResolver));
 
         // TODO: Why is it necessary to own the 'reverse' subnode here?
-        ensRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), address(this));
+        fnsRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), address(this));
 
         // This makes sense to own, because the reverseRegistrar should control that node
-        ensRegistry.setSubnodeOwner(
+        fnsRegistry.setSubnodeOwner(
             ENSNamehash.namehash('reverse'),
             keccak256('addr'),
             address(reverseRegistrar));
@@ -77,7 +77,7 @@ contract TestReverseRegistrar is Test {
     function testClaimAllowsAccountToClaimItsAddress() public {
         bytes32 nodehash = reverseRegistrar.claim(address1);
         assertEq(nodehash, thisReverseNode);
-        assertEq(ensRegistry.owner(thisReverseNode), address1);
+        assertEq(fnsRegistry.owner(thisReverseNode), address1);
     }
 
     // Original Test: 'claim'::'event ReverseClaimed is emitted'
@@ -98,7 +98,7 @@ contract TestReverseRegistrar is Test {
     function testClaimForAddrAllowsAccountToClaimItsAddress() public {
         bytes32 nodehash = reverseRegistrar.claimForAddr(address(this), address1, address(publicResolver));
         assertEq(nodehash, thisReverseNode);
-        assertEq(ensRegistry.owner(thisReverseNode), address1);
+        assertEq(fnsRegistry.owner(thisReverseNode), address1);
     }
 
     // Original Test: 'claimForAddr'::'event ReverseClaimed is emitted'
@@ -124,31 +124,31 @@ contract TestReverseRegistrar is Test {
     function testClaimForAddrAllowsAuthorisedAccountToClaimDifferentAddress() public {
         // First, grant approval on this test contract from address1 as sender
         vm.prank(address1);
-        ensRegistry.setApprovalForAll(address(this), true);
+        fnsRegistry.setApprovalForAll(address(this), true);
 
         reverseRegistrar.claimForAddr(address1, address2, address(publicResolver));
-        assertEq(ensRegistry.owner(addr1ReverseNode), address2);
+        assertEq(fnsRegistry.owner(addr1ReverseNode), address2);
     }
     
     // Original Test: 'claimForAddr'::'allows a controller to claim a different address'
     function testClaimForAddrAllowsControllerClaimDifferentAddress() public {
         reverseRegistrar.setController(address(this), true);
         reverseRegistrar.claimForAddr(address1, address2, address(publicResolver));
-        assertEq(ensRegistry.owner(addr1ReverseNode), address2);
+        assertEq(fnsRegistry.owner(addr1ReverseNode), address2);
     }
 
     // Original Test: 'claimForAddr'::'allows an owner() of a contract to claim the reverse node of that contract'
     function testClaimForAddrAllowsContractOwnerToClaimReverseNodeOfContract() public {
         reverseRegistrar.setController(address(this), true);
         reverseRegistrar.claimForAddr(address(dummyOwnableContract), address(this), address(publicResolver));
-        assertEq(ensRegistry.owner(dummyOwnableReverseNode), address(this));
+        assertEq(fnsRegistry.owner(dummyOwnableReverseNode), address(this));
     }
 
     // Original Test: 'claimWithResolver'::'allows an account to specify resolver'
     function testClaimWithResolverAllowsAccountToSpecifyResolver() public {
         reverseRegistrar.claimWithResolver(address1, address2);
-        assertEq(ensRegistry.owner(thisReverseNode), address1);
-        assertEq(ensRegistry.resolver(thisReverseNode), address2);
+        assertEq(fnsRegistry.owner(thisReverseNode), address1);
+        assertEq(fnsRegistry.resolver(thisReverseNode), address2);
     }
 
     // Original Test: 'claimWithResolver'::'event ReverseClaimed is emitted'
@@ -166,7 +166,7 @@ contract TestReverseRegistrar is Test {
     // Original Test: 'setName'::'sets name records'
     function testSetNameSetsNameRecords() public {
         reverseRegistrar.setName('testname');
-        assertEq(ensRegistry.resolver(thisReverseNode), address(publicResolver));
+        assertEq(fnsRegistry.resolver(thisReverseNode), address(publicResolver));
         assertEq(publicResolver.name(thisReverseNode), 'testname');
     }
 
@@ -186,7 +186,7 @@ contract TestReverseRegistrar is Test {
     function testSetNameForAddrAllowControllerToSetNameRecordsOnOtherAccounts() public {
         reverseRegistrar.setController(address(this), true);
         reverseRegistrar.setNameForAddr(address1, address(this), address(publicResolver), 'testname');
-        assertEq(ensRegistry.resolver(addr1ReverseNode), address(publicResolver));
+        assertEq(fnsRegistry.resolver(addr1ReverseNode), address(publicResolver));
         assertEq(publicResolver.name(addr1ReverseNode), 'testname');
     }
 
@@ -206,15 +206,15 @@ contract TestReverseRegistrar is Test {
     // Original Test: 'setNameForAddr'::'allows name to be set for an address if the sender is the address'
     function testSetNameForAddrAllowsSettingNameForAnAddressIfSenderIsTheAddress() public {
         reverseRegistrar.setNameForAddr(address(this), address(this), address(publicResolver), 'testname');
-        assertEq(ensRegistry.resolver(thisReverseNode), address(publicResolver));
+        assertEq(fnsRegistry.resolver(thisReverseNode), address(publicResolver));
         assertEq(publicResolver.name(thisReverseNode), 'testname');
     }
     
     // Original Test: 'setNameForAddr'::'allows name to be set for an address if the sender is authorised'
     function testSetNameForAddrAllowSettingNameForAnAddressIfSenderIsAuthorised() public {
-        ensRegistry.setApprovalForAll(address1, true);
+        fnsRegistry.setApprovalForAll(address1, true);
         reverseRegistrar.setNameForAddr(address(this), address(this), address(publicResolver), 'testname');
-        assertEq(ensRegistry.resolver(thisReverseNode), address(publicResolver));
+        assertEq(fnsRegistry.resolver(thisReverseNode), address(publicResolver));
         assertEq(publicResolver.name(thisReverseNode), 'testname');
     }
     
@@ -222,7 +222,7 @@ contract TestReverseRegistrar is Test {
     function testSetNameForAddrAllowOwnerOfContractToClaimWithResolverForAddrOnBehalfOfContract() public {
         string memory name = 'dummyownable.eth';
         reverseRegistrar.setNameForAddr(address(dummyOwnableContract), address(this), address(publicResolver), name);
-        assertEq(ensRegistry.owner(dummyOwnableReverseNode), address(this));
+        assertEq(fnsRegistry.owner(dummyOwnableReverseNode), address(this));
         assertEq(publicResolver.name(dummyOwnableReverseNode), name);
     }
 

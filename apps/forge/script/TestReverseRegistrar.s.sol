@@ -3,7 +3,7 @@ pragma solidity ^0.8.10;
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
 
-import "fns/registry/ENSRegistry.sol";
+import "fns/registry/FNSRegistry.sol";
 import "fns/resolvers/PublicResolver.sol";
 import "fns/flr-registrar/BaseRegistrar.sol";
 import "fns/flr-registrar/MintedDomainNames.sol";
@@ -41,27 +41,27 @@ contract Go is Script {
         {
             // Begin script specifics
             // The root owner will be the msg.sender, which should be the private key owner
-            ENSRegistry ensRegistry = new ENSRegistry();
+            FNSRegistry fnsRegistry = new FNSRegistry();
             NoNameCollisions noNameCollisions = new NoNameCollisions(0xBDACF94dDCAB51c39c2dD50BffEe60Bb8021949a);
 
             // This is Ownable, and owned by the msg.sender (private key)
-            baseRegistrar = new BaseRegistrar(ensRegistry, ENSNamehash.namehash('flr'), noNameCollisions);
+            baseRegistrar = new BaseRegistrar(fnsRegistry, ENSNamehash.namehash('flr'), noNameCollisions);
 
             // Make BaseRegistrar the owner of the base 'flr' node
             baseRegistrar.addController(ANVIL_DEPLOYER);
-            ensRegistry.setSubnodeOwner(rootNode, keccak256('flr'), address(baseRegistrar));
+            fnsRegistry.setSubnodeOwner(rootNode, keccak256('flr'), address(baseRegistrar));
             baseRegistrar.register('deployer', ANVIL_DEPLOYER, 365 days);
-            require(ensRegistry.owner(ENSNamehash.namehash('deployer.flr')) == ANVIL_DEPLOYER, "Owner not expected");
+            require(fnsRegistry.owner(ENSNamehash.namehash('deployer.flr')) == ANVIL_DEPLOYER, "Owner not expected");
 
             // TODO: Update this to our own website
             StaticMetadataService metadataService = new StaticMetadataService("https://ens.domains/");
-            NameWrapper nameWrapper = new NameWrapper(ensRegistry, baseRegistrar, metadataService);
+            NameWrapper nameWrapper = new NameWrapper(fnsRegistry, baseRegistrar, metadataService);
 
             // Deploy the mintedIds data struct contract, then update the reference within Base Registrar
             MintedDomainNames mintedDomainNames = new MintedDomainNames(nameWrapper);
             nameWrapper.updateMintedDomainNamesContract(mintedDomainNames);
 
-            reverseRegistrar = new ReverseRegistrar(ensRegistry);
+            reverseRegistrar = new ReverseRegistrar(fnsRegistry);
 
             MockStablePriceOracle stablePriceOracle = new MockStablePriceOracle(
                 0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
@@ -75,7 +75,7 @@ contract Go is Script {
                 nameWrapper);
 
             PublicResolver publicResolver = new PublicResolver(
-                ensRegistry, nameWrapper, address(flrRegistrarController), address(reverseRegistrar));
+                fnsRegistry, nameWrapper, address(flrRegistrarController), address(reverseRegistrar));
             nameResolver = NameResolver(address(publicResolver));
 
             // Set the resolver
@@ -87,10 +87,10 @@ contract Go is Script {
             reverseRegistrar.setController(address(flrRegistrarController), true);
 
             // TODO: Should this be set to the deployer address or the reverseRegistrar contract?
-            ensRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), ANVIL_DEPLOYER);
-            ensRegistry.setSubnodeOwner(
+            fnsRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), ANVIL_DEPLOYER);
+            fnsRegistry.setSubnodeOwner(
                 ENSNamehash.namehash('reverse'), keccak256('addr'), address(reverseRegistrar));
-            ensRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), address(reverseRegistrar));
+            fnsRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), address(reverseRegistrar));
         }
 
         // Test Deployer ReverseRegistrar

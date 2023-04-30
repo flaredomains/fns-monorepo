@@ -5,7 +5,7 @@ pragma abicoder v2;
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
 import "fns/flr-registrar/BaseRegistrar.sol";
-import "fns/registry/ENSRegistry.sol";
+import "fns/registry/FNSRegistry.sol";
 import "fns/no-collisions/NoNameCollisions.sol";
 import "fns/no-collisions/mocks/MockPunkTLD.sol";
 
@@ -21,7 +21,7 @@ uint256 constant TIME_STAMP = 1678393495;
 
 contract TestBaseRegistrar is Test {
     BaseRegistrar public registrar;
-    ENSRegistry public ens;
+    FNSRegistry public ens;
     NoNameCollisions public noNameCollisions;
 
     address immutable ownerAccount = address(this);
@@ -30,7 +30,7 @@ contract TestBaseRegistrar is Test {
     address constant otherAccount = address2;
 
     function setUp() public {
-        ens = new ENSRegistry();
+        ens = new FNSRegistry();
         MockPunkTLD mockPunkTLD = new MockPunkTLD();
         noNameCollisions = new NoNameCollisions(address(mockPunkTLD));
         registrar = new BaseRegistrar(ens, ENSNamehash.namehash('eth'), noNameCollisions);

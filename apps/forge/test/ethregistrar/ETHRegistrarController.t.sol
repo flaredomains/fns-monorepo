@@ -6,7 +6,7 @@ import "forge-std/Test.sol";
 import "forge-std/console.sol";
 import "fns/flr-registrar/FLRRegistrarController.sol";
 import "fns/flr-registrar/BaseRegistrar.sol";
-import "fns/registry/ENSRegistry.sol";
+import "fns/registry/FNSRegistry.sol";
 
 import "fns-test/utils/HardhatAddresses.sol";
 import "fns-test/utils/ENSNamehash.sol";

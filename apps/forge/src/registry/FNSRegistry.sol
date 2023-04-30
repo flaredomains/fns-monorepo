@@ -6,9 +6,9 @@ import "./IENS.sol";
 import "forge-std/console.sol";
 
 /**
- * The ENS registry contract.
+ * The FNS registry contract.
  */
-contract ENSRegistry is IENS {
+contract FNSRegistry is IENS {
 
     struct Record {
         address owner;
@@ -22,7 +22,7 @@ contract ENSRegistry is IENS {
     // Permits modifications only by the owner of the specified node.
     modifier authorised(bytes32 node) {
         // TODO: Remove
-        console.log("ENSRegistry authorised(bytes32 node), msg.sender = %s", msg.sender);
+        console.log("FNSRegistry authorised(bytes32 node), msg.sender = %s", msg.sender);
         console.logBytes32(node);
 
         address _owner = records[node].owner;
@@ -30,12 +30,12 @@ contract ENSRegistry is IENS {
         // TODO: Remove
         console.log("Owner of node = %s", _owner);
 
-        require(_owner == msg.sender || operators[_owner][msg.sender], "ENSRegistry: Not authorised");
+        require(_owner == msg.sender || operators[_owner][msg.sender], "FNSRegistry: Not authorised");
         _;
     }
 
     /**
-     * @dev Constructs a new ENS registrar.
+     * @dev Constructs a new FNS registrar.
      */
     constructor() {
         records[0x0].owner = msg.sender;
@@ -117,7 +117,7 @@ contract ENSRegistry is IENS {
 
     /**
      * @dev Enable or disable approval for a third party ("operator") to manage
-     *  all of `msg.sender`'s ENS records. Emits the ApprovalForAll event.
+     *  all of `msg.sender`'s FNS records. Emits the ApprovalForAll event.
      * @param operator Address to add to the set of authorized operators.
      * @param approved True if the operator is approved, false to revoke approval.
      */

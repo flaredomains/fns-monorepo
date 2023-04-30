@@ -3,7 +3,7 @@ pragma solidity ^0.8.10;
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
 
-import "fns/registry/ENSRegistry.sol";
+import "fns/registry/FNSRegistry.sol";
 import "fns/resolvers/PublicResolver.sol";
 import "fns/resolvers/profiles/NameResolver.sol";
 import "fns/flr-registrar/BaseRegistrar.sol";
@@ -29,27 +29,27 @@ contract TestReverseRegistrar is Script {
         vm.startBroadcast(0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80);
 
         // The root owner will be the msg.sender, which should be the private key owner
-        ENSRegistry ensRegistry = new ENSRegistry();
+        FNSRegistry fnsRegistry = new FNSRegistry();
         NoNameCollisions noNameCollisions = new NoNameCollisions(0xBDACF94dDCAB51c39c2dD50BffEe60Bb8021949a);
 
         // This is Ownable, and owned by the msg.sender (private key)
-        BaseRegistrar baseRegistrar = new BaseRegistrar(ensRegistry, ENSNamehash.namehash('flr'), noNameCollisions);
+        BaseRegistrar baseRegistrar = new BaseRegistrar(fnsRegistry, ENSNamehash.namehash('flr'), noNameCollisions);
 
         // Make BaseRegistrar the owner of the base 'flr' node
         baseRegistrar.addController(owner);
-        ensRegistry.setSubnodeOwner(rootNode, keccak256('flr'), address(baseRegistrar));
+        fnsRegistry.setSubnodeOwner(rootNode, keccak256('flr'), address(baseRegistrar));
         baseRegistrar.register('deployer', owner, 365 days);
-        require(ensRegistry.owner(ENSNamehash.namehash('deployer.flr')) == owner, "Owner not expected");
+        require(fnsRegistry.owner(ENSNamehash.namehash('deployer.flr')) == owner, "Owner not expected");
 
         // TODO: Update this to our own website
         StaticMetadataService metadataService = new StaticMetadataService("https://ens.domains/");
-        NameWrapper nameWrapper = new NameWrapper(ensRegistry, baseRegistrar, metadataService);
+        NameWrapper nameWrapper = new NameWrapper(fnsRegistry, baseRegistrar, metadataService);
 
         // Deploy the mintedIds data struct contract, then update the reference within Base Registrar
         MintedDomainNames mintedDomainNames = new MintedDomainNames(nameWrapper);
         nameWrapper.updateMintedDomainNamesContract(mintedDomainNames);
 
-        ReverseRegistrar reverseRegistrar = new ReverseRegistrar(ensRegistry);
+        ReverseRegistrar reverseRegistrar = new ReverseRegistrar(fnsRegistry);
 
         MockStablePriceOracle stablePriceOracle = new MockStablePriceOracle(
             0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
@@ -63,7 +63,7 @@ contract TestReverseRegistrar is Script {
             nameWrapper);
 
         PublicResolver publicResolver = new PublicResolver(
-            ensRegistry, nameWrapper, address(flrRegistrarController), address(reverseRegistrar));
+            fnsRegistry, nameWrapper, address(flrRegistrarController), address(reverseRegistrar));
         NameResolver nameResolver = NameResolver(address(publicResolver));
 
         // Set the resolver
@@ -74,8 +74,8 @@ contract TestReverseRegistrar is Script {
         nameWrapper.setController(address(flrRegistrarController), true);
         reverseRegistrar.setController(address(flrRegistrarController), true);
 
-        ensRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), owner);
-        ensRegistry.setSubnodeOwner(
+        fnsRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), owner);
+        fnsRegistry.setSubnodeOwner(
             ENSNamehash.namehash('reverse'), keccak256('addr'), address(reverseRegistrar));
 
         baseRegistrar.register('hooray', owner, 365 days);
@@ -87,7 +87,7 @@ contract TestReverseRegistrar is Script {
 
         vm.stopBroadcast();
 
-        // console.log("ensRegistry: %s", address(ensRegistry));
+        // console.log("fnsRegistry: %s", address(fnsRegistry));
         // console.log("baseRegistrar: %s", address(baseRegistrar));
         // console.log("mintedDomainNames: %s", address(mintedDomainNames));
         // console.log("metadataService: %s", address(metadataService));

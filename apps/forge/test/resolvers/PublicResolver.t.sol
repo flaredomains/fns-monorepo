@@ -5,7 +5,7 @@ pragma solidity ^0.8.6;
 // import "forge-std/Test.sol";
 // import "forge-std/console.sol";
 // import "fns/resolvers/PublicResolver.sol";
-// import "fns/registry/ENSRegistry.sol";
+// import "fns/registry/FNSRegistry.sol";
 // import "fns/resolvers/mocks/DummyNameWrapper.sol";
 // import "fns/wrapper/INameWrapper.sol";
 
@@ -13,7 +13,7 @@ pragma solidity ^0.8.6;
 // import "fns-test/utils/HardhatAddresses.sol";
 
 // contract TestPublicResolver is Test {
-//     ENSRegistry public ens;
+//     FNSRegistry public ens;
 //     DummyNameWrapper public nameWrapper;
 //     PublicResolver public resolver;
 
@@ -21,7 +21,7 @@ pragma solidity ^0.8.6;
 //     address constant ZERO_ADDRESS = 0x0000000000000000000000000000000000000000;
 
 //     function setUp() public {
-//         ens = new ENSRegistry();
+//         ens = new FNSRegistry();
 //         nameWrapper = new DummyNameWrapper();
 //         resolver = new PublicResolver(ens, INameWrapper(address(nameWrapper)), dummyTrustedETHController, ZERO_ADDRESS);
 

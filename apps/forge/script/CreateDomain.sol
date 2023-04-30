@@ -3,7 +3,7 @@ pragma solidity ^0.8.10;
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
 
-import "fns/registry/ENSRegistry.sol";
+import "fns/registry/FNSRegistry.sol";
 import "fns/resolvers/PublicResolver.sol";
 import "fns/flr-registrar/BaseRegistrar.sol";
 import "fns/registry/ReverseRegistrar.sol";
@@ -28,17 +28,17 @@ contract CreateDomain is Script {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        ENSRegistry ensRegistry = ENSRegistry(0x8E60eEeB7634930bba7a9d74f01Af9c9e78c9063);
+        FNSRegistry fnsRegistry = FNSRegistry(0x8E60eEeB7634930bba7a9d74f01Af9c9e78c9063);
         BaseRegistrar baseRegistrar = BaseRegistrar(0x7113e298973444eCC1c52bDdA92B2Ad5d5399426);
         
         baseRegistrar.register(name, destination, 365 days);
 
-        // require(ensRegistry.owner(ENSNamehash.namehash('simone.flr')) == owner, "Owner not expected");
+        // require(fnsRegistry.owner(ENSNamehash.namehash('simone.flr')) == owner, "Owner not expected");
         // require(baseRegistrar.ownerOf(uint256(keccak256(name))) == owner, "Owner not expected");
 
         // baseRegistrar.transferFrom(owner, destination, uint256(keccak256(name)));
 
-        // require(ensRegistry.owner(ENSNamehash.namehash('simone.flr')) == destination, "destination not expected");
+        // require(fnsRegistry.owner(ENSNamehash.namehash('simone.flr')) == destination, "destination not expected");
         
         console.log(baseRegistrar.ownerOf(uint256(keccak256(bytes(name)))));
         require(baseRegistrar.ownerOf(uint256(keccak256(bytes(name)))) == destination, "destination not expected");
