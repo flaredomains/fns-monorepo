@@ -6,7 +6,6 @@ import "fns/no-collisions/INoNameCollisions.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@punkdomains/interfaces/IBasePunkTLD.sol";
-import "./IMintedDomainNames.sol";
 
 contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     // A map of expiry times
@@ -36,7 +35,6 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
         bytes4(keccak256("reclaim(uint256,address)"));
     
     INoNameCollisions public noNameCollisionsContract;
-    IMintedDomainNames public mintedDomainNamesContract;
 
     /**
      * v2.1.3 version of _isApprovedOrOwner which calls ownerOf(tokenId) and takes grace period into consideration instead of ERC721.ownerOf(tokenId);
@@ -92,16 +90,6 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
      */
     function updateNoNameCollisionContract(INoNameCollisions newContract) public onlyOwner {
         noNameCollisionsContract = newContract;
-    }
-
-    /**
-     * @dev Allows the owner of the contract to update the MintedIds contract, in case it
-     *      needs to be updated in the future
-     * @dev This assumes that the interface remains constant
-     * @param newContract the new MintedIds Contract address
-     */
-    function updateMintedDomainNamesContract(IMintedDomainNames newContract) public onlyOwner {
-        mintedDomainNamesContract = newContract;
     }
 
     /**
