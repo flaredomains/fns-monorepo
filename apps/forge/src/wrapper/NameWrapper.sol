@@ -116,7 +116,7 @@ contract NameWrapper is
 
     /**
      * @notice Gets the owner of a name
-     * @param label Label as a string of the .flr domain to wrap
+     * @param label Label as a string of the .flr domain to wrap. For "test.flr", input "test"
      * @return owner The owner of the name
      */
     function ownerOf(string calldata label) public view returns (address owner) {
