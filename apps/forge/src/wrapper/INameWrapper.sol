@@ -139,6 +139,7 @@ interface INameWrapper is IERC1155 {
     function setTTL(bytes32 node, uint64 ttl) external;
 
     function ownerOf(uint256 id) external view returns (address owner);
+    function ownerOf(string calldata label) external view returns (address owner);
 
     function getData(
         uint256 id

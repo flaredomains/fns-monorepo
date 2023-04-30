@@ -105,14 +105,23 @@ contract NameWrapper is
 
     /**
      * @notice Gets the owner of a name
-     * @param id Label as a string of the .flr domain to wrap
+     * @param id The tokenId associated with the namehash of the domain label
      * @return owner The owner of the name
      */
-
     function ownerOf(
         uint256 id
     ) public view override(ERC1155Fuse, INameWrapper) returns (address owner) {
         return super.ownerOf(id);
+    }
+
+    /**
+     * @notice Gets the owner of a name
+     * @param label Label as a string of the .flr domain to wrap
+     * @return owner The owner of the name
+     */
+    function ownerOf(string calldata label) public view returns (address owner) {
+        return super.ownerOf(
+            uint256(keccak256(abi.encodePacked(FLR_NODE, keccak256(bytes(label))))));
     }
 
     /**
