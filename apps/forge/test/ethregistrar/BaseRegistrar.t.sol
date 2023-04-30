@@ -4,7 +4,7 @@ pragma abicoder v2;
 
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
-import "fns/ethregistrar/BaseRegistrar.sol";
+import "fns/flr-registrar/BaseRegistrar.sol";
 import "fns/registry/ENSRegistry.sol";
 import "fns/no-collisions/NoNameCollisions.sol";
 import "fns/no-collisions/mocks/MockPunkTLD.sol";

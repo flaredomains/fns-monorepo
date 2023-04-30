@@ -618,7 +618,7 @@ contract Ownable {
     }
 }
 
-// File: @ensdomains/ethregistrar/contracts/BaseRegistrar.sol
+// File: @ensdomains/flr-registrar/contracts/BaseRegistrar.sol
 
 pragma solidity >=0.4.24;
 
@@ -671,7 +671,7 @@ contract BaseRegistrar is IERC721, Ownable {
     function reclaim(uint256 id, address owner) external;
 }
 
-// File: @ensdomains/ethregistrar/contracts/BaseRegistrarImplementation.sol
+// File: @ensdomains/flr-registrar/contracts/BaseRegistrarImplementation.sol
 
 pragma solidity ^0.5.0;
 

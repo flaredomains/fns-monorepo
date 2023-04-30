@@ -5,13 +5,13 @@ import "forge-std/console.sol";
 
 import "fns/registry/ENSRegistry.sol";
 import "fns/resolvers/PublicResolver.sol";
-import "fns/ethregistrar/BaseRegistrar.sol";
+import "fns/flr-registrar/BaseRegistrar.sol";
 import "fns/registry/ReverseRegistrar.sol";
 import "fns/wrapper/NameWrapper.sol";
 import "fns/wrapper/StaticMetadataService.sol";
-import "fns/ethregistrar/FLRRegistrarController.sol";
-import "fns/ethregistrar/StablePriceOracle.sol";
-import "fns/ethregistrar/DummyOracle.sol";
+import "fns/flr-registrar/FLRRegistrarController.sol";
+import "fns/flr-registrar/StablePriceOracle.sol";
+import "fns/flr-registrar/DummyOracle.sol";
 import "fns/no-collisions/NoNameCollisions.sol";
 
 import "fns-test/utils/ENSNamehash.sol";

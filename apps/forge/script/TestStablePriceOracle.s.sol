@@ -3,8 +3,8 @@ pragma solidity ^0.8.10;
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
 
-import "fns/ethregistrar/mock/MockStablePriceOracle.sol";
-import "fns/ethregistrar/FLRRegistrarController.sol";
+import "fns/flr-registrar/mock/MockStablePriceOracle.sol";
+import "fns/flr-registrar/FLRRegistrarController.sol";
 
 contract TestStablePriceOracle is Script {
     address owner = 0x09Ec74F54dc4b316D8cd6DFBeB91263fB20E19d2; // public key of metamask wallet

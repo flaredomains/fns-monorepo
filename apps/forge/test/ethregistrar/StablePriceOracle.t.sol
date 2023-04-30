@@ -4,9 +4,9 @@ pragma abicoder v2;
 
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
-import "fns/ethregistrar/StablePriceOracle.sol";
-import "fns/ethregistrar/mock/MockFtsoRegistry.sol";
-import "fns/ethregistrar/mock/MockFlareContractRegistry.sol";
+import "fns/flr-registrar/StablePriceOracle.sol";
+import "fns/flr-registrar/mock/MockFtsoRegistry.sol";
+import "fns/flr-registrar/mock/MockFlareContractRegistry.sol";
 
 import "fns-test/utils/HardhatAddresses.sol";
 

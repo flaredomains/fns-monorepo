@@ -7,12 +7,12 @@ import {INameWrapper, CANNOT_UNWRAP, CANNOT_BURN_FUSES, CANNOT_TRANSFER, CANNOT_
 import {INameWrapperUpgrade} from "./INameWrapperUpgrade.sol";
 import {IMetadataService} from "./IMetadataService.sol";
 import {IENS} from "fns/registry/IENS.sol";
-import {IBaseRegistrar} from "fns/ethregistrar/IBaseRegistrar.sol";
+import {IBaseRegistrar} from "fns/flr-registrar/IBaseRegistrar.sol";
 import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {BytesUtils} from "./BytesUtils.sol";
 import {ERC20Recoverable} from "fns/utils/ERC20Recoverable.sol";
-import {IMintedDomainNames} from "fns/ethregistrar/IMintedDomainNames.sol";
+import {IMintedDomainNames} from "fns/flr-registrar/IMintedDomainNames.sol";
 
 error UnauthorisedAddr(bytes32 node, address addr);
 error IncompatibleParent();
