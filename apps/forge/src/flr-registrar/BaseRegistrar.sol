@@ -89,6 +89,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
      */
     function updateNoNameCollisionContract(INoNameCollisions newContract) public onlyOwner {
         noNameCollisionsContract = newContract;
+        emit NoNameCollisionsSet(address(newContract));
     }
 
     /**
@@ -119,6 +120,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     // Set the resolver for the TLD this registrar manages.
     function setResolver(address resolver) external override onlyOwner {
         fns.setResolver(baseNode, resolver);
+        emit ResolverSet(resolver);
     }
 
     // Returns the expiration timestamp of the specified id.
