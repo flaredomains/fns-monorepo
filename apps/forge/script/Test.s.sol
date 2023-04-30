@@ -13,7 +13,7 @@ import "fns/flr-registrar/FLRRegistrarController.sol";
 import "fns/flr-registrar/StablePriceOracle.sol";
 import "fns/flr-registrar/DummyOracle.sol";
 
-import "fns-test/utils/ENSNamehash.sol";
+import "fns-test/utils/FNSNamehash.sol";
 
 contract TestScript is Script {
     FNSRegistry public fnsRegistry = FNSRegistry(0x8E60eEeB7634930bba7a9d74f01Af9c9e78c9063);

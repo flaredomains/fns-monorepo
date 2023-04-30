@@ -15,7 +15,7 @@ import "fns/flr-registrar/mock/MockStablePriceOracle.sol";
 import "fns/flr-registrar/DummyOracle.sol";
 import "fns/no-collisions/NoNameCollisions.sol";
 
-import "fns-test/utils/ENSNamehash.sol";
+import "fns-test/utils/FNSNamehash.sol";
 
 contract Template is Script {
     // Anvil Wallets

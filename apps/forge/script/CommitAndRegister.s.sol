@@ -18,7 +18,7 @@ import "fns/no-collisions/NoNameCollisions.sol";
 
 import {DeployFNSAbstract} from "./DeployFNSAbstract.s.sol";
 
-import "fns-test/utils/ENSNamehash.sol";
+import "fns-test/utils/FNSNamehash.sol";
 
 contract Template is Script, DeployFNSAbstract {
     function run() external {

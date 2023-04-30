@@ -9,7 +9,7 @@ pragma solidity ^0.8.6;
 // import "fns/resolvers/mocks/DummyNameWrapper.sol";
 // import "fns/wrapper/INameWrapper.sol";
 
-// import "fns-test/utils/ENSNamehash.sol";
+// import "fns-test/utils/FNSNamehash.sol";
 // import "fns-test/utils/HardhatAddresses.sol";
 
 // contract TestPublicResolver is Test {

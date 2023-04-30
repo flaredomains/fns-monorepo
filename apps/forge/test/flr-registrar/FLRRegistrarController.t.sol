@@ -9,8 +9,8 @@ import "fns/flr-registrar/BaseRegistrar.sol";
 import "fns/registry/FNSRegistry.sol";
 
 import "fns-test/utils/HardhatAddresses.sol";
-import "fns-test/utils/ENSNamehash.sol";
+import "fns-test/utils/FNSNamehash.sol";
 
-contract TestETHRegistrarController is Test {
+contract TestFLRRegistrarController is Test {
 
 }

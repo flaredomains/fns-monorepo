@@ -16,7 +16,7 @@ import "fns/flr-registrar/DummyOracle.sol";
 import "fns/no-collisions/NoNameCollisions.sol";
 import "fns/no-collisions/mocks/MockPunkTLD.sol";
 
-import "fns-test/utils/ENSNamehash.sol";
+import "fns-test/utils/FNSNamehash.sol";
 
 contract Go is Script {
     // Anvil Wallets
@@ -53,13 +53,13 @@ contract Go is Script {
         NoNameCollisions noNameCollisions = new NoNameCollisions(0xBDACF94dDCAB51c39c2dD50BffEe60Bb8021949a);
 
         // This is Ownable, and owned by the msg.sender (private key)
-        BaseRegistrar baseRegistrar = new BaseRegistrar(fnsRegistry, ENSNamehash.namehash('flr'), noNameCollisions);
+        BaseRegistrar baseRegistrar = new BaseRegistrar(fnsRegistry, FNSNamehash.namehash('flr'), noNameCollisions);
 
         // Make BaseRegistrar the owner of the base 'flr' node
         baseRegistrar.addController(deployerAddress);
         fnsRegistry.setSubnodeOwner(rootNode, keccak256('flr'), address(baseRegistrar));
         baseRegistrar.register('deployer', deployerAddress, 365 days);
-        require(fnsRegistry.owner(ENSNamehash.namehash('deployer.flr')) == deployerAddress, "Owner not expected");
+        require(fnsRegistry.owner(FNSNamehash.namehash('deployer.flr')) == deployerAddress, "Owner not expected");
 
         // TODO: Update this to our own website
         StaticMetadataService metadataService = new StaticMetadataService("https://ens.domains/");
@@ -97,7 +97,7 @@ contract Go is Script {
         // TODO: Should this be set to the deployer address or the reverseRegistrar contract?
         fnsRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), deployerAddress);
         fnsRegistry.setSubnodeOwner(
-            ENSNamehash.namehash('reverse'), keccak256('addr'), address(reverseRegistrar));
+            FNSNamehash.namehash('reverse'), keccak256('addr'), address(reverseRegistrar));
         fnsRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), address(reverseRegistrar));
 
         console.log("1. fnsRegistry: %s", address(fnsRegistry));

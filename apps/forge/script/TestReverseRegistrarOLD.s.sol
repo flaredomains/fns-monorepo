@@ -16,7 +16,7 @@ import "fns/flr-registrar/mock/MockStablePriceOracle.sol";
 import "fns/flr-registrar/DummyOracle.sol";
 import "fns/no-collisions/NoNameCollisions.sol";
 
-import "fns-test/utils/ENSNamehash.sol";
+import "fns-test/utils/FNSNamehash.sol";
 
 contract TestReverseRegistrar is Script {
     // address owner = 0x09Ec74F54dc4b316D8cd6DFBeB91263fB20E19d2; // public key of metamask wallet
@@ -33,13 +33,13 @@ contract TestReverseRegistrar is Script {
         NoNameCollisions noNameCollisions = new NoNameCollisions(0xBDACF94dDCAB51c39c2dD50BffEe60Bb8021949a);
 
         // This is Ownable, and owned by the msg.sender (private key)
-        BaseRegistrar baseRegistrar = new BaseRegistrar(fnsRegistry, ENSNamehash.namehash('flr'), noNameCollisions);
+        BaseRegistrar baseRegistrar = new BaseRegistrar(fnsRegistry, FNSNamehash.namehash('flr'), noNameCollisions);
 
         // Make BaseRegistrar the owner of the base 'flr' node
         baseRegistrar.addController(owner);
         fnsRegistry.setSubnodeOwner(rootNode, keccak256('flr'), address(baseRegistrar));
         baseRegistrar.register('deployer', owner, 365 days);
-        require(fnsRegistry.owner(ENSNamehash.namehash('deployer.flr')) == owner, "Owner not expected");
+        require(fnsRegistry.owner(FNSNamehash.namehash('deployer.flr')) == owner, "Owner not expected");
 
         // TODO: Update this to our own website
         StaticMetadataService metadataService = new StaticMetadataService("https://ens.domains/");
@@ -76,7 +76,7 @@ contract TestReverseRegistrar is Script {
 
         fnsRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), owner);
         fnsRegistry.setSubnodeOwner(
-            ENSNamehash.namehash('reverse'), keccak256('addr'), address(reverseRegistrar));
+            FNSNamehash.namehash('reverse'), keccak256('addr'), address(reverseRegistrar));
 
         baseRegistrar.register('hooray', owner, 365 days);
         //reverseRegistrar.claim(owner);

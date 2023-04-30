@@ -8,7 +8,7 @@ import "fns-test/utils/fns_strings.sol";
  *
  * Warning! Does not normalize or validate names before hashing.
  */
-library ENSNamehash {
+library FNSNamehash {
   using fns_strings for *;
 
   function namehash(bytes memory domain) internal pure returns (bytes32) {

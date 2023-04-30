@@ -15,7 +15,7 @@ import "fns/flr-registrar/IPriceOracle.sol";
 import "fns/flr-registrar/DummyOracle.sol";
 import "fns/no-collisions/NoNameCollisions.sol";
 
-import "fns-test/utils/ENSNamehash.sol";
+import "fns-test/utils/FNSNamehash.sol";
 
 contract UpdatePriceOracle is Script {
     address owner = 0x09Ec74F54dc4b316D8cd6DFBeB91263fB20E19d2; // public key of metamask wallet

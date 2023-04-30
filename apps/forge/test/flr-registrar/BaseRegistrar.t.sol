@@ -11,7 +11,7 @@ import "fns/no-collisions/mocks/MockPunkTLD.sol";
 
 import "@punkdomains/interfaces/IBasePunkTLD.sol";
 
-import "fns-test/utils/ENSNamehash.sol";
+import "fns-test/utils/FNSNamehash.sol";
 import "fns-test/utils/HardhatAddresses.sol";
 
 address constant ZERO_ADDRESS = 0x0000000000000000000000000000000000000000;
@@ -33,7 +33,7 @@ contract TestBaseRegistrar is Test {
         ens = new FNSRegistry();
         MockPunkTLD mockPunkTLD = new MockPunkTLD();
         noNameCollisions = new NoNameCollisions(address(mockPunkTLD));
-        registrar = new BaseRegistrar(ens, ENSNamehash.namehash('eth'), noNameCollisions);
+        registrar = new BaseRegistrar(ens, FNSNamehash.namehash('eth'), noNameCollisions);
 
         registrar.addController(controllerAccount);
         ens.setSubnodeOwner(0x0, keccak256('eth'), address(registrar));
@@ -46,7 +46,7 @@ contract TestBaseRegistrar is Test {
         vm.prank(controllerAccount);
         registrar.register('newname', registrantAccount, 86400);
 
-        assertEq(ens.owner(ENSNamehash.namehash('newname.eth')), registrantAccount);
+        assertEq(ens.owner(FNSNamehash.namehash('newname.eth')), registrantAccount);
         assertEq(registrar.ownerOf(uint256(keccak256('newname'))), registrantAccount);
         assertEq(registrar.nameExpires(uint256(keccak256('newname'))), TIME_STAMP + 86400);
     }
@@ -55,7 +55,7 @@ contract TestBaseRegistrar is Test {
     function testAllowRegistrationsWithoutUpdatingRegistry() public {
         vm.prank(controllerAccount);
         registrar.registerOnly('silentname', registrantAccount, 86400);
-        assertEq(ens.owner(ENSNamehash.namehash('silentname.eth')), ZERO_ADDRESS);
+        assertEq(ens.owner(FNSNamehash.namehash('silentname.eth')), ZERO_ADDRESS);
         assertEq(registrar.ownerOf(uint256(keccak256('silentname'))), registrantAccount);
         assertEq(registrar.nameExpires(uint256(keccak256('silentname'))), TIME_STAMP + 86400);
     }
@@ -110,15 +110,15 @@ contract TestBaseRegistrar is Test {
 
         // Make ZERO_ADDRESS the owner of newname.eth
         ens.setSubnodeOwner(0x0, keccak256('eth'), address(this));
-        ens.setSubnodeOwner(ENSNamehash.namehash('eth'), keccak256('newname'), ZERO_ADDRESS);
-        assertEq(ens.owner(ENSNamehash.namehash('newname.eth')), ZERO_ADDRESS);
+        ens.setSubnodeOwner(FNSNamehash.namehash('eth'), keccak256('newname'), ZERO_ADDRESS);
+        assertEq(ens.owner(FNSNamehash.namehash('newname.eth')), ZERO_ADDRESS);
 
         // Now attempt reclaim from registrantAccount
         ens.setSubnodeOwner(0x0, keccak256('eth'), address(registrar));
         vm.prank(registrantAccount);
         registrar.reclaim(uint256(keccak256('newname')), registrantAccount);
 
-        assertEq(ens.owner(ENSNamehash.namehash('newname.eth')), registrantAccount);
+        assertEq(ens.owner(FNSNamehash.namehash('newname.eth')), registrantAccount);
     }
 
     // Original Test: 'should prohibit anyone else from reclaiming a name'
@@ -137,7 +137,7 @@ contract TestBaseRegistrar is Test {
         registrar.transferFrom(registrantAccount, otherAccount, uint256(keccak256('newname')));
 
         assertEq(registrar.ownerOf(uint256(keccak256('newname'))), otherAccount);
-        assertEq(ens.owner(ENSNamehash.namehash('newname.eth')), registrantAccount);
+        assertEq(ens.owner(FNSNamehash.namehash('newname.eth')), registrantAccount);
 
         vm.prank(otherAccount);
         registrar.transferFrom(otherAccount, registrantAccount, uint256(keccak256('newname')));
@@ -203,6 +203,6 @@ contract TestBaseRegistrar is Test {
     function testShouldAllowOwnerToSetResolverAddress() public {
         vm.prank(ownerAccount);
         registrar.setResolver(registrantAccount);
-        assertEq(ens.resolver(ENSNamehash.namehash('eth')), registrantAccount);
+        assertEq(ens.resolver(FNSNamehash.namehash('eth')), registrantAccount);
     }
 }

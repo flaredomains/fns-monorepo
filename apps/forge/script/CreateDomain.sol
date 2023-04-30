@@ -13,7 +13,7 @@ import "fns/flr-registrar/FLRRegistrarController.sol";
 import "fns/flr-registrar/StablePriceOracle.sol";
 import "fns/flr-registrar/DummyOracle.sol";
 
-import "fns-test/utils/ENSNamehash.sol";
+import "fns-test/utils/FNSNamehash.sol";
 
 // FlexiPunkTLD Contract: 0xBDACF94dDCAB51c39c2dD50BffEe60Bb8021949a
 
@@ -33,12 +33,12 @@ contract CreateDomain is Script {
         
         baseRegistrar.register(name, destination, 365 days);
 
-        // require(fnsRegistry.owner(ENSNamehash.namehash('simone.flr')) == owner, "Owner not expected");
+        // require(fnsRegistry.owner(FNSNamehash.namehash('simone.flr')) == owner, "Owner not expected");
         // require(baseRegistrar.ownerOf(uint256(keccak256(name))) == owner, "Owner not expected");
 
         // baseRegistrar.transferFrom(owner, destination, uint256(keccak256(name)));
 
-        // require(fnsRegistry.owner(ENSNamehash.namehash('simone.flr')) == destination, "destination not expected");
+        // require(fnsRegistry.owner(FNSNamehash.namehash('simone.flr')) == destination, "destination not expected");
         
         console.log(baseRegistrar.ownerOf(uint256(keccak256(bytes(name)))));
         require(baseRegistrar.ownerOf(uint256(keccak256(bytes(name)))) == destination, "destination not expected");

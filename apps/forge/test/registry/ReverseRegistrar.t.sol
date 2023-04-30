@@ -11,7 +11,7 @@ import "fns/resolvers/PublicResolver.sol";
 import "fns/resolvers/mocks/DummyNameWrapper.sol";
 import "fns/wrapper/INameWrapper.sol";
 
-import "fns-test/utils/ENSNamehash.sol";
+import "fns-test/utils/FNSNamehash.sol";
 import "fns-test/utils/HardhatAddresses.sol";
 
 contract TestReverseRegistrar is Test {
@@ -25,10 +25,10 @@ contract TestReverseRegistrar is Test {
 
     // Call solidity implementation of the expected normalized & namehashed reverseNode
     // hash for the given addresses
-    bytes32 thisReverseNode = ENSNamehash.getReverseNode(address(this));
-    bytes32 addr0ReverseNode = ENSNamehash.getReverseNode(address0);
-    bytes32 addr1ReverseNode = ENSNamehash.getReverseNode(address1);
-    bytes32 addr2ReverseNode = ENSNamehash.getReverseNode(address2);
+    bytes32 thisReverseNode = FNSNamehash.getReverseNode(address(this));
+    bytes32 addr0ReverseNode = FNSNamehash.getReverseNode(address0);
+    bytes32 addr1ReverseNode = FNSNamehash.getReverseNode(address1);
+    bytes32 addr2ReverseNode = FNSNamehash.getReverseNode(address2);
     bytes32 dummyOwnableReverseNode;
 
     function setUp() public {
@@ -38,7 +38,7 @@ contract TestReverseRegistrar is Test {
 
         // Setup another ReverseRegistrar as a dummy ownable contract, because it is ownable
         dummyOwnableContract = new ReverseRegistrar(fnsRegistry);
-        dummyOwnableReverseNode = ENSNamehash.getReverseNode(address(dummyOwnableContract));
+        dummyOwnableReverseNode = FNSNamehash.getReverseNode(address(dummyOwnableContract));
 
         // A mocked nameWrapper is used here to always return the caller's address for 'ownerOf'
         publicResolver = new PublicResolver(
@@ -54,7 +54,7 @@ contract TestReverseRegistrar is Test {
 
         // This makes sense to own, because the reverseRegistrar should control that node
         fnsRegistry.setSubnodeOwner(
-            ENSNamehash.namehash('reverse'),
+            FNSNamehash.namehash('reverse'),
             keccak256('addr'),
             address(reverseRegistrar));
         

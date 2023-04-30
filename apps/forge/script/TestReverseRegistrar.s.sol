@@ -15,7 +15,7 @@ import "fns/flr-registrar/mock/MockStablePriceOracle.sol";
 import "fns/flr-registrar/DummyOracle.sol";
 import "fns/no-collisions/NoNameCollisions.sol";
 
-import "fns-test/utils/ENSNamehash.sol";
+import "fns-test/utils/FNSNamehash.sol";
 
 contract Go is Script {
     bytes32 constant rootNode = 0x0;
@@ -45,13 +45,13 @@ contract Go is Script {
             NoNameCollisions noNameCollisions = new NoNameCollisions(0xBDACF94dDCAB51c39c2dD50BffEe60Bb8021949a);
 
             // This is Ownable, and owned by the msg.sender (private key)
-            baseRegistrar = new BaseRegistrar(fnsRegistry, ENSNamehash.namehash('flr'), noNameCollisions);
+            baseRegistrar = new BaseRegistrar(fnsRegistry, FNSNamehash.namehash('flr'), noNameCollisions);
 
             // Make BaseRegistrar the owner of the base 'flr' node
             baseRegistrar.addController(ANVIL_DEPLOYER);
             fnsRegistry.setSubnodeOwner(rootNode, keccak256('flr'), address(baseRegistrar));
             baseRegistrar.register('deployer', ANVIL_DEPLOYER, 365 days);
-            require(fnsRegistry.owner(ENSNamehash.namehash('deployer.flr')) == ANVIL_DEPLOYER, "Owner not expected");
+            require(fnsRegistry.owner(FNSNamehash.namehash('deployer.flr')) == ANVIL_DEPLOYER, "Owner not expected");
 
             // TODO: Update this to our own website
             StaticMetadataService metadataService = new StaticMetadataService("https://ens.domains/");
@@ -89,7 +89,7 @@ contract Go is Script {
             // TODO: Should this be set to the deployer address or the reverseRegistrar contract?
             fnsRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), ANVIL_DEPLOYER);
             fnsRegistry.setSubnodeOwner(
-                ENSNamehash.namehash('reverse'), keccak256('addr'), address(reverseRegistrar));
+                FNSNamehash.namehash('reverse'), keccak256('addr'), address(reverseRegistrar));
             fnsRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), address(reverseRegistrar));
         }
 
