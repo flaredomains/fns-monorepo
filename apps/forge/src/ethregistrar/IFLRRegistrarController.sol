@@ -3,7 +3,7 @@ pragma solidity ~0.8.17;
 
 import "./IPriceOracle.sol";
 
-interface IETHRegistrarController {
+interface IFLRRegistrarController {
     function rentPrice(
         string memory,
         uint256

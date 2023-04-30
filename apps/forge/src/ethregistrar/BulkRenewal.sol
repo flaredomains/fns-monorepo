@@ -3,7 +3,7 @@ pragma solidity ~0.8.17;
 
 import "fns/registry/IENS.sol";
 import "./FLRRegistrarController.sol";
-import "./IETHRegistrarController.sol";
+import "./IFLRRegistrarController.sol";
 import "fns/resolvers/IResolver.sol";
 import "./IBulkRenewal.sol";
 import "./IPriceOracle.sol";
@@ -28,7 +28,7 @@ contract BulkRenewal is IBulkRenewal, IERC165, ReentrancyGuard {
             FLRRegistrarController(
                 r.interfaceImplementer(
                     FLR_NAMEHASH,
-                    type(IETHRegistrarController).interfaceId
+                    type(IFLRRegistrarController).interfaceId
                 )
             );
     }

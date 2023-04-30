@@ -5,7 +5,7 @@ import {BaseRegistrar} from "./BaseRegistrar.sol";
 import {StringUtils} from "./StringUtils.sol";
 import {IResolver} from "fns/resolvers/IResolver.sol";
 import {ReverseRegistrar} from "fns/registry/ReverseRegistrar.sol";
-import {IETHRegistrarController, IPriceOracle} from "./IETHRegistrarController.sol";
+import {IFLRRegistrarController, IPriceOracle} from "./IFLRRegistrarController.sol";
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
@@ -32,7 +32,7 @@ error MaxCommitmentAgeTooHigh();
  */
 contract FLRRegistrarController is
     Ownable,
-    IETHRegistrarController,
+    IFLRRegistrarController,
     IERC165,
     ERC20Recoverable
 {
@@ -246,7 +246,7 @@ contract FLRRegistrarController is
     ) external pure returns (bool) {
         return
             interfaceID == type(IERC165).interfaceId ||
-            interfaceID == type(IETHRegistrarController).interfaceId;
+            interfaceID == type(IFLRRegistrarController).interfaceId;
     }
 
     /* Internal functions */
