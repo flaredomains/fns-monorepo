@@ -185,11 +185,11 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
         }
         _mint(owner, id);
         
+        emit NameRegistered(label, id, owner, expiry);
+
         if (updateRegistry) {
             fns.setSubnodeOwner(baseNode, bytes32(id), owner);
         }
-
-        emit NameRegistered(label, id, owner, expiry);
 
         return expiry;
     }
