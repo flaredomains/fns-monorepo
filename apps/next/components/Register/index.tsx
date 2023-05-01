@@ -10,7 +10,7 @@ import Steps from './Steps'
 import Bottom from './Bottom'
 import web3 from 'web3-utils'
 
-import ETHRegistarController from '../../src/pages/abi/FLRRegistrarController.json'
+import FLRRegistrarController from '../../src/pages/abi/FLRRegistrarController.json'
 import PublicResolver from '../../src/pages/abi/PublicResolver.json'
 
 import {
@@ -121,8 +121,8 @@ export default function Register({ result }: { result: string }) {
 
   // Available READ function
   const { data: available } = useContractRead({
-    address: ETHRegistarController.address as `0x${string}`,
-    abi: ETHRegistarController.abi,
+    address: FLRRegistrarController.address as `0x${string}`,
+    abi: FLRRegistrarController.abi,
     functionName: 'available',
     enabled: preparedHash,
     args: [filterResult],
@@ -136,8 +136,8 @@ export default function Register({ result }: { result: string }) {
 
   // RentPrice READ function
   useContractRead({
-    address: ETHRegistarController.address as `0x${string}`,
-    abi: ETHRegistarController.abi,
+    address: FLRRegistrarController.address as `0x${string}`,
+    abi: FLRRegistrarController.abi,
     functionName: 'rentPrice',
     args: [filterResult as string, regPeriod * 31556952], // 31536000
     onSuccess(data: any) {
@@ -155,8 +155,8 @@ export default function Register({ result }: { result: string }) {
   const { data: fee } = useFeeData()
 
   const contract = useContract({
-    address: ETHRegistarController.address as `0x${string}`,
-    abi: ETHRegistarController.abi,
+    address: FLRRegistrarController.address as `0x${string}`,
+    abi: FLRRegistrarController.abi,
     signerOrProvider: signer,
   })
 

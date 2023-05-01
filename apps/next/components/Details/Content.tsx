@@ -189,10 +189,19 @@ const Info = ({
             <Image
               // onClick={() => deleteButton(isAddressList, index)}
               onClick={() => setInput('')}
-              className="h-5 w-5 cursor-pointer"
+              className="h-5 w-5 cursor-pointer mr-4"
               src={Delete}
               alt="FNS"
             />
+            {/* Save */}
+            {input !== '' && (
+              <button
+                // onClick={() => save()}
+                className="flex justify-center items-center text-center bg-[#F97316] px-2 py-1 rounded-lg text-white border border-[#F97316] lg:ml-auto"
+              >
+                <p className="text-xs font-medium">Save</p>
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -337,12 +346,12 @@ export default function Content({
                   </button>
 
                   {/* Save */}
-                  <button
+                  {/* <button
                     onClick={() => save()}
                     className="flex justify-center items-center text-center bg-[#F97316] px-3 py-2 rounded-lg text-white border border-[#F97316] hover:scale-105 transform transition duration-300 ease-out lg:ml-auto"
                   >
                     <p className="text-xs font-medium">Save</p>
-                  </button>
+                  </button> */}
                 </div>
               </>
             )}
@@ -412,12 +421,12 @@ export default function Content({
                   </button>
 
                   {/* Save */}
-                  <button
+                  {/* <button
                     onClick={() => save()}
                     className="flex justify-center items-center text-center bg-[#F97316] px-3 py-2 rounded-lg text-white border border-[#F97316] lg:ml-auto"
                   >
                     <p className="text-xs font-medium">Save</p>
-                  </button>
+                  </button> */}
                 </div>
               </>
             )}

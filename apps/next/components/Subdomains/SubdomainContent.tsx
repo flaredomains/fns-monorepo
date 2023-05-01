@@ -5,22 +5,88 @@ import Image from 'next/image'
 import SubdomainLine from './SubdomainLine'
 import Link from 'next/link'
 
+import NameWrapper from '../../src/pages/abi/NameWrapper.json'
+import PublicResolver from '../../src/pages/abi/PublicResolver.json'
+
+import { keccak256 } from 'js-sha3'
+
+import {
+  useAccount,
+  useContractRead,
+  usePrepareContractWrite,
+  useContractWrite,
+} from 'wagmi'
+import { BigNumber, ethers } from 'ethers'
+
+const namehash = require('eth-ens-namehash')
+import web3 from 'web3-utils'
+
 const AddSubdomain = ({
   arrSubdomains,
   checkOwnerDomain,
+  filterResult,
 }: {
   arrSubdomains: Array<any>
   checkOwnerDomain: boolean
+  filterResult: string
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [input, setInput] = useState('')
+
+  const { address } = useAccount()
+
+  // ethers.utils.arrayify(keccak256(input))
+  const { config: configSetSubnodeRecord } = usePrepareContractWrite({
+    address: NameWrapper.address as `0x${string}`,
+    abi: NameWrapper.abi,
+    functionName: 'setSubnodeRecord',
+    enabled: input !== '',
+    args: [
+      namehash.hash(filterResult + '.flr'),
+      `0x${keccak256(input)}` as string,
+      address as `0x${string}`,
+      PublicResolver.address as `0x${string}`,
+      0,
+    ],
+    // overrides: {
+    //   gasLimit: BigNumber.from(1000000),
+    // },
+    onSuccess(data) {
+      console.log('Success prepare setSubnodeRecord', data)
+    },
+    onError(error) {
+      console.log('Error prepare setSubnodeRecord', error)
+    },
+  })
+
+  const { write: setSubnodeRecord } = useContractWrite({
+    ...configSetSubnodeRecord,
+    onSuccess(data) {
+      console.log('Success setSubnodeRecord', data)
+    },
+    onError(error) {
+      console.log('Error setSubnodeRecord', error)
+    },
+  })
+
+  console.table({
+    namehash: namehash.hash(filterResult + '.flr'),
+    input: input,
+    filterResult: filterResult + '.flr',
+    PublicResolverAddress: PublicResolver.address,
+    address: address,
+    keccak: `0x${keccak256(input)}`,
+  })
+
+  // console.log(object);
+
   return (
     <>
       <div className="flex flex-row items-center mt-5 bg-gray-800 px-8 py-12 lg:mt-0">
         {isOpen ? (
           <>
             <form
-              // onSubmit={handleSubmit}
+              onSubmit={() => setSubnodeRecord?.()}
               className="flex items-center w-3/5 py-2 px-4 h-12 rounded-md bg-gray-700 border-2 border-gray-500"
             >
               <input
@@ -46,7 +112,7 @@ const AddSubdomain = ({
 
               {/* Save */}
               <button
-                // onClick={() => save()}
+                onClick={() => setSubnodeRecord?.()}
                 disabled={input === ''}
                 type="submit"
                 value="Submit"
@@ -94,15 +160,18 @@ const AddSubdomain = ({
 export default function SubdomainContent({
   arrSubdomains,
   checkOwnerDomain,
+  filterResult,
 }: {
   arrSubdomains: Array<any>
   checkOwnerDomain: boolean
+  filterResult: string
 }) {
   return (
     <>
       <AddSubdomain
         arrSubdomains={arrSubdomains}
         checkOwnerDomain={checkOwnerDomain}
+        filterResult={filterResult}
       />
 
       {arrSubdomains.length > 0 && (

@@ -98,6 +98,7 @@ export default function Subdomains({
           <SubdomainContent
             arrSubdomains={[]}
             checkOwnerDomain={owner === address}
+            filterResult={filterResult}
           />
         </div>
 
