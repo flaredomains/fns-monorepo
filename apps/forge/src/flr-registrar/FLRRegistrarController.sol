@@ -113,7 +113,7 @@ contract FLRRegistrarController is
 
     function available(string memory name) public view override returns (bool) {
         bytes32 label = keccak256(bytes(name));
-        return valid(name) && base.available(uint256(label));
+        return valid(name) && base.available(uint256(label)) && base.isNotCollision(name);
     }
 
     function makeCommitment(

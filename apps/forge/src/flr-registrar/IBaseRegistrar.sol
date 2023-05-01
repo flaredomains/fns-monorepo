@@ -32,6 +32,9 @@ interface IBaseRegistrar is IERC721 {
     // Returns true iff the specified name is available for registration.
     function available(uint256 id) external view returns (bool);
 
+    // Returns true iff the specified name is not a collision in another registry
+    function isNotCollision(string calldata name) external view returns (bool);
+
     /**
      * @dev Register a name.
      */

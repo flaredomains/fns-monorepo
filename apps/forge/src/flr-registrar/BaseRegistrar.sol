@@ -55,6 +55,12 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     }
 
     constructor(IFNS _ens, bytes32 _baseNode, INoNameCollisions _noNameCollisionsContract) ERC721("", "") {
+        require(address(_ens) != address(0), "BaseRegistrar: ENS Contract Can Not Be Address 0");
+        require(_baseNode != 0x0, "BaseRegistrar: BaseNode Can Not Be 0x0");
+        require(
+            address(_noNameCollisionsContract) != address(0),
+            "BaseRegistrar: NoNameCollisions Contract Can Not Be Address 0");
+
         fns = _ens;
         baseNode = _baseNode;
         noNameCollisionsContract = _noNameCollisionsContract;
@@ -71,23 +77,13 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     }
 
     /**
-     * @dev Ensures that there is no name collision on the given collisionRegistry
-     * @param name the string of the base name for TLD ".flr". ex: 'based' for 'based.flr'
-     */
-    modifier noCollision(string calldata name) {
-        require(
-            !noNameCollisionsContract.isNameCollision(name),
-            "BaseRegistrar: FLR Domain Already Exists In Collision Registry");
-        _;
-    }
-
-    /**
      * @dev Allows the owner of the contract to update the Collision Registry, in case it
      *      is ever altered in the future
      * @dev This assumes that the interface remains constant
      * @param newContract the new NoNameCollisions Contract address
      */
     function updateNoNameCollisionContract(INoNameCollisions newContract) public onlyOwner {
+        require(address(newContract) != address(0), "BaseRegistrar: Cannot update NoCollisions to Address 0");
         noNameCollisionsContract = newContract;
         emit NoNameCollisionsSet(address(newContract));
     }
@@ -135,6 +131,14 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     }
 
     /**
+     * @dev Returns true iff the specified name is not already minted by the referenced registry
+     * @param name the string of the base name for TLD ".flr". ex: 'based' for 'based.flr'
+     */
+    function isNotCollision(string calldata name) public view returns (bool){
+        return !noNameCollisionsContract.isNameCollision(name);
+    }
+
+    /**
      * @dev Register a name.
      * @param label The label for the given TLD. If 'based.flr', label is 'based'
      * @param owner The address that should own the registration.
@@ -171,11 +175,12 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
         address owner,
         uint256 duration,
         bool updateRegistry
-    ) internal live onlyController noCollision(label) returns (uint256) {
+    ) internal live onlyController returns (uint256) {
         uint256 id = uint256(keccak256(bytes(label)));
         uint256 expiry = block.timestamp + duration;
 
         require(available(id), "BaseRegistrar: Name is not available");
+        require(isNotCollision(label), "BaseRegistrar: FLR Domain Already Exists In Collision Registry");
         require(expiry + GRACE_PERIOD > block.timestamp + GRACE_PERIOD, "BaseRegistrar: Expiry Overflow"); // Prevent future overflow
 
         expiries[id] = expiry;
