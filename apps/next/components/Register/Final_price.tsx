@@ -59,7 +59,7 @@ const GasFee = ({ fee }: { fee: number }) => {
         </p>
         <p className="text-white font-semibold text-2xl lg:text-lg xl:text-2xl">
           {/* {(fee / 10 ** 18).toFixed(9)} FLR */}
-          0.45 FLR
+          0.5 FLR
         </p>
       </div>
     </>
@@ -103,7 +103,7 @@ const FinalPrice = ({
           <p className="text-[#FED7AA] text-xs">At most</p>
           <div className="flex items-center text-white font-semibold text-2xl lg:text-lg xl:text-2xl">
             {priceToPay ? (
-              (Number(priceToPay) + fee / 10 ** 18).toFixed(3)
+              (Number(priceToPay) + (0.5 * 10 ** 18) / 10 ** 18).toFixed(3)
             ) : (
               <Loading isFinalPrize={true} isCalculation={false} />
             )}{' '}
@@ -114,7 +114,10 @@ const FinalPrice = ({
             <span className="font-semibold text-white flex items-center">
               $
               {priceToPay ? (
-                ((Number(priceToPay) + fee / 10 ** 18) * ethPrice).toFixed(2)
+                (
+                  (Number(priceToPay) + (0.5 * 10 ** 18) / 10 ** 18) *
+                  ethPrice
+                ).toFixed(2)
               ) : (
                 <Loading isFinalPrize={true} isCalculation={true} />
               )}{' '}

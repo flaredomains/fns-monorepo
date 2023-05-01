@@ -3,6 +3,7 @@ import Question from '../../public/Question.svg'
 import Plus from '../../public/Plus.svg'
 import Image from 'next/image'
 import SubdomainLine from './SubdomainLine'
+import Link from 'next/link'
 
 const AddSubdomain = ({ arrSubdomains }: { arrSubdomains: Array<any> }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -80,14 +81,8 @@ const AddSubdomain = ({ arrSubdomains }: { arrSubdomains: Array<any> }) => {
 
 export default function SubdomainContent({
   arrSubdomains,
-  editMode,
-  setEditMode,
-  setDataEdit,
 }: {
   arrSubdomains: Array<any>
-  editMode: boolean
-  setEditMode: React.Dispatch<React.SetStateAction<boolean>>
-  setDataEdit: React.Dispatch<React.SetStateAction<string>>
 }) {
   return (
     <>
@@ -96,13 +91,15 @@ export default function SubdomainContent({
       {arrSubdomains.length > 0 && (
         <div className="flex-col bg-gray-800 px-8 py-5 rounded-b-md">
           {arrSubdomains.map((item, index) => (
-            <SubdomainLine
+            <Link
               key={index}
-              data={item}
-              setEditMode={setEditMode}
-              editMode={editMode}
-              setDataEdit={setDataEdit}
-            />
+              href={{
+                pathname: '/details',
+                query: { result: item },
+              }}
+            >
+              <SubdomainLine key={index} data={item} />
+            </Link>
           ))}
         </div>
       )}

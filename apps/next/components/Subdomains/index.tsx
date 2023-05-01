@@ -14,8 +14,7 @@ export default function Subdomains({
   result: string
   arrSubdomains: Array<any>
 }) {
-  const [editMode, setEditMode] = useState(false)
-  const [dataEdit, setDataEdit] = useState<string>('')
+  // const [editMode, setEditMode] = useState(false)
 
   const [prepared, setPrepared] = useState<boolean>(false)
   const [preparedHash, setPreparedHash] = useState<boolean>(false)
@@ -51,23 +50,8 @@ export default function Subdomains({
           {/* Domain Container */}
           <Domain_Select result={result} />
 
-          {!editMode && (
-            <SubdomainContent
-              arrSubdomains={arrSubdomains}
-              editMode={editMode}
-              setEditMode={setEditMode}
-              setDataEdit={setDataEdit}
-            />
-          )}
-
-          {editMode && (
-            <SubdomainEdit
-              data={dataEdit}
-              editMode={editMode}
-              setEditMode={setEditMode}
-              setDataEdit={setDataEdit}
-            />
-          )}
+          {/* Change with Wagmi Array subdomains */}
+          <SubdomainContent arrSubdomains={[]} />
         </div>
 
         {/* Wallet connect */}
@@ -76,3 +60,14 @@ export default function Subdomains({
     </>
   )
 }
+
+/**
+   {/* {editMode && (
+            <SubdomainEdit
+              data={dataEdit}
+              editMode={editMode}
+              setEditMode={setEditMode}
+              setDataEdit={setDataEdit}
+            />
+          )} 
+ */

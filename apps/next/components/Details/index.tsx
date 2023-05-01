@@ -22,10 +22,40 @@ export default function Details({ result }: { result: string }) {
   const [hashHex, setHashHex] = useState<string>('')
   const [filterResult, setFilterResult] = useState<string>('')
   const [expiredReady, setExpiredReady] = useState<boolean>(false)
+  const [tokenPrepared, setTokenPrepared] = useState(false)
   const [tokenId, setTokenId] = useState<BigNumber>()
+  const [isNormalDomain, setIsNormalDomain] = useState<boolean>(true)
+  const [parent, setParent] = useState<string>('')
+  // const [checkOwnerDomain, setCheckOwnerDomain] = useState<boolean>()
+
+  const { address } = useAccount()
+
+  function getParentDomain(str: string) {
+    // Define a regular expression pattern that matches subdomains of a domain that ends with .flr.
+    const subdomainPattern = /^([a-z0-9][a-z0-9-]*[a-z0-9]\.)+[a-z]{2,}\.flr$/i
+
+    // Use the regular expression pattern to test whether the string matches a subdomain.
+    const isSubdomain = subdomainPattern.test(str)
+    console.log('isSubdomain', isSubdomain)
+
+    if (isSubdomain) {
+      // The input string is a subdomain, extract the parent domain.
+      const parts = str.split('.')
+      const numParts = parts.length
+      const parentDomain = parts.slice(numParts - (numParts - 1)).join('.')
+      setIsNormalDomain(false)
+      return parentDomain
+    } else {
+      return '.flr'
+    }
+  }
 
   // Check if result end with .flr and we do an hash with the resultFiltered for registrant and date
   useEffect(() => {
+    const parent = getParentDomain(result)
+    setParent(parent)
+    console.log('parent', parent)
+
     // Check if ethereum address
     if (/^0x[a-fA-F0-9]{40}$/.test(result)) {
       console.log('Ethereum address')
@@ -51,7 +81,7 @@ export default function Details({ result }: { result: string }) {
     enabled: preparedHash,
     args: [filterResult],
     onSuccess(data: any) {
-      console.log('Success available', data)
+      // console.log('Success available', data)
       setPrepared(true)
     },
     onError(error) {
@@ -59,49 +89,35 @@ export default function Details({ result }: { result: string }) {
     },
   })
 
-  // Check the registrant -- args: hashHex which is the hash of the filterResult
-  // const { data: registrant } = useContractRead({
-  //   address: BaseRegistrar.address as `0x${string}`,
-  //   abi: BaseRegistrar.abi,
-  //   functionName: 'ownerOf',
-  //   enabled: !available && prepared,
-  //   args: [hashHex],
-  //   onSuccess(data: any) {
-  //     console.log('Success ownerOf', data)
-  //   },
-  //   onError(error) {
-  //     console.error('Error ownerOf', error)
-  //   },
-  // })
-
-  const { isFetched: tokerReady } = useContractRead({
+  // getFLRTokenId for registrant (owner)
+  useContractRead({
     address: NameWrapper.address as `0x${string}`,
     abi: NameWrapper.abi,
     functionName: 'getFLRTokenId',
     enabled: !available && prepared,
     args: [filterResult as string],
     onSuccess(data: any) {
-      console.log('Success getFLRTokenId', data)
+      // console.log('Success getFLRTokenId', data)
       setTokenId(data.tokenId)
+      setTokenPrepared(true)
     },
     onError(error) {
       console.error('Error getFLRTokenId', error)
     },
   })
 
+  // Get registrant address (owner)
   const { data: owner } = useContractRead({
     address: NameWrapper.address as `0x${string}`,
     abi: NameWrapper.abi,
     functionName: 'ownerOf',
-    enabled: !available && prepared && tokerReady,
+    enabled: !available && prepared && tokenPrepared,
     args: [tokenId],
-    onSuccess(data: any) {
-      console.log('Success ownerOfLabel', data)
-    },
+    onSuccess(data) {},
     onError(error) {
       console.error('Error ownerOfLabel', error)
     },
-  })
+  }) as any
 
   const { data: controller } = useContractRead({
     address: FLRRegistrarController.address as `0x${string}`,
@@ -145,6 +161,15 @@ export default function Details({ result }: { result: string }) {
     },
   })
 
+  console.table({
+    available: available,
+    getFLRTokenId: tokenId,
+    owner: owner,
+    controller: controller,
+    expire: Number(expire),
+    checkOwnerDomain: address === owner,
+  })
+
   return (
     <>
       {/* Main Content / Wallet connect (hidden mobile) */}
@@ -155,6 +180,7 @@ export default function Details({ result }: { result: string }) {
           <Domain_Select result={result} />
 
           <Info
+            parent={parent}
             available={available}
             registrant_address={available ? '' : owner ? owner : ''}
             controller={available ? '' : controller ? controller : ''}
@@ -162,7 +188,11 @@ export default function Details({ result }: { result: string }) {
           />
 
           {!available && available !== undefined && (
-            <Content result={result} prepared={prepared} />
+            <Content
+              result={result}
+              prepared={prepared}
+              checkOwnerDomain={address === owner}
+            />
           )}
         </div>
 

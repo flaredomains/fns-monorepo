@@ -78,8 +78,9 @@ function Pages_buttons({ result, path }: any) {
   const handleSubmit = (e: any) => {
     e.preventDefault()
 
-    // Regular expression to validate input
-    const pattern = /^[a-zA-Z0-9\s\p{Emoji}]+\.flr$/u
+    // Regular expression to validate input /^[a-zA-Z0-9\s\p{Emoji}]+\.flr$/u
+    const pattern =
+      /^[a-zA-Z0-9\s\p{Emoji}]+(\.[a-zA-Z0-9\s\p{Emoji}]+)*\.flr$/u
 
     const exception = /^0x[a-fA-F0-9]{40}$/
 
@@ -90,7 +91,7 @@ function Pages_buttons({ result, path }: any) {
       console.log('Input is invalid!')
       const inputElement = e.target.elements['input-field'] as HTMLInputElement
       inputElement.setCustomValidity(
-        'Should end with .flr and not contain special characters.'
+        'Should end with .flr and not contain special characters or two or more consecutive dots.'
       )
       inputElement.reportValidity()
     }

@@ -10,8 +10,8 @@ import PublicResolver from '../../src/pages/abi/PublicResolver.json'
 import { useContractRead, useContractReads } from 'wagmi'
 
 const listAddresses: Array<{ leftText: String; rightText: String }> = [
-  { leftText: 'XTP', rightText: '0x880426bb362Bf481d6891839f1B0dAEB57900591' },
-  { leftText: 'BTC', rightText: 'aaaa' },
+  { leftText: 'XTP', rightText: '' },
+  { leftText: 'BTC', rightText: '' },
   { leftText: 'LTC', rightText: '' },
   { leftText: 'DOGE', rightText: '' },
 ]
@@ -19,7 +19,7 @@ const listAddresses: Array<{ leftText: String; rightText: String }> = [
 const listTextRecords: Array<{ leftText: String; rightText: String }> = [
   {
     leftText: 'Email',
-    rightText: '0x880426bb362Bf481d6891839f1B0dAEB57900591',
+    rightText: '',
   },
   { leftText: 'URL', rightText: '' },
   { leftText: 'Avatar', rightText: '' },

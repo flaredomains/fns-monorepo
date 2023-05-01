@@ -89,11 +89,13 @@ const Alert = ({ available }: { available: boolean }) => {
 
 export default function Info({
   available,
+  parent,
   registrant_address,
   controller,
   date,
 }: {
   available: boolean
+  parent: string
   registrant_address: string
   controller: string
   date: Date
@@ -112,7 +114,11 @@ export default function Info({
         {/* Details */}
         <div className="flex-col w-full mt-10">
           {/* Parent */}
-          <InfoLine leftText="Parent" rightText={'.flr'} alternativeText="" />
+          <InfoLine
+            leftText="Parent"
+            rightText={parent ? parent : '.flr'}
+            alternativeText=""
+          />
 
           {/* Registrant */}
           <InfoLine
