@@ -5,8 +5,8 @@ import ArrowDown from '../../public/ArrowDown.svg'
 import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
 import PublicRegistrar from '../../src/pages/abi/PublicResolver.json'
 import NameResolver from '../../src/pages/abi/PublicResolver.sol/NameResolver.json'
-import Resolver from '../../src/pages/abi/ReverseRegistrar.sol/Resolver.json'
-import ENS from '../../src/pages/abi/ReverseRegistrar.sol/ENS.json'
+// import Resolver from '../../src/pages/abi/ReverseRegistrar.sol/Resolver.json'
+// import ENS from '../../src/pages/abi/ReverseRegistrar.sol/ENS.json'
 
 const namehash = require('eth-ens-namehash')
 
@@ -15,6 +15,7 @@ import {
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
+  useWaitForTransaction,
 } from 'wagmi'
 
 const Rev_Record_Line = ({
@@ -100,6 +101,7 @@ export default function Reverse_Record({
   const [isLarge, setisLarge] = useState(false)
   const [selectText, setSelectText] = useState('')
   const [prepared, setPrepared] = useState(false)
+  const [writeFuncHash, setWriteFuncHash] = useState('')
 
   const { address, isConnected } = useAccount()
 
@@ -120,80 +122,41 @@ export default function Reverse_Record({
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  const { data: node, isFetched } = useContractRead({
+    address: ReverseRegistrar.address as `0x${string}`,
+    abi: ReverseRegistrar.abi,
+    functionName: 'node',
+    args: [address],
+    onSuccess(data: any) {
+      console.log('Success node: ', data)
+    },
+    onError(error) {
+      console.log('Error node', error)
+    },
+  })
+
   // NameResolver Name
-  const { data: mainDomain } = useContractRead({
+  const { data: mainDomain, refetch: refetchMainDomain } = useContractRead({
     address: PublicRegistrar.address as `0x${string}`,
     abi: NameResolver.abi,
     functionName: 'name',
-    enabled: isConnected,
-    args: [namehash.hash(`${address}.addr.reverse`)],
+    enabled: isConnected && isFetched,
+    args: [node],
     onSuccess(data: any) {
-      console.log('Success name', data)
+      console.log('Success name: ', data)
     },
     onError(error) {
       console.log('Error name', error)
     },
   })
 
-  // console.log('selectText', selectText)
-  // namehash.hash(selectText + '.flr'),
-
-  // Claim write call and then setName call in the useEffect below
-  // async function setNameFunc() {
-  //   await claim?.()
-  //     .then(async (tx) => {
-  //       const receipt = await tx.wait()
-  //       if (receipt.status == 1) {
-  //         console.log('Approval transaction succeeded!', receipt.logs)
-  //         setPrepared(true)
-  //         return
-  //       }
-  //       console.error('Approval transaction reverted!', receipt.logs)
-  //       setPrepared(false)
-  //     })
-  //     .catch(() => {
-  //       console.error('User rejected approval!')
-  //       setPrepared(false)
-  //     })
-  // }
-
-  // SetName call after the claim call
-  // useEffect(() => {
-  //   if (prepared) {
-  //     setName?.()
-  //   }
-  // }, [prepared])
-
-  // Prepare Claim
-  // const { config: prepareClaim } = usePrepareContractWrite({
-  //   address: ReverseRegistrar.address as `0x${string}`,
-  //   abi: ReverseRegistrar.abi,
-  //   functionName: 'claim',
-  //   enabled: isConnected && selectText !== '',
-  //   args: [address],
-  //   onSuccess(data: any) {
-  //     console.log('Success prepareclaim', data)
-  //   },
-  //   onError(error) {
-  //     console.error('Error claim', error)
-  //   },
-  // })
-
-  // // Claim
-  // const { writeAsync: claim } = useContractWrite({
-  //   ...prepareClaim,
-  //   onSuccess(data) {
-  //     // console.log('Success claim', data)
-  //   },
-  // })
-
   //  SetName Prepare selectText + '.flr'
   const { config: prepareSetName } = usePrepareContractWrite({
     address: ReverseRegistrar.address as `0x${string}`,
     abi: ReverseRegistrar.abi,
     functionName: 'setName',
-    args: ['simone'],
-    // enabled: prepared,
+    args: [selectText],
+    enabled: isConnected && selectText !== '',
     onSuccess(data: any) {
       console.log('Success prepareSetName', data)
       // setPrepared(true)
@@ -204,20 +167,30 @@ export default function Reverse_Record({
   })
 
   // SetName Write Func
-  const { write: setName } = useContractWrite({
+  const { write: setName, isSuccess } = useContractWrite({
     ...prepareSetName,
     onSuccess(data) {
-      console.log('Success', data)
+      console.log('Success setName', data)
+      setWriteFuncHash(data.hash)
+    },
+  }) as any
+
+  const { data } = useWaitForTransaction({
+    hash: writeFuncHash as `0x${string}`,
+    enabled: isSuccess && writeFuncHash,
+    onSuccess(data) {
+      console.log('Success setName block', data)
+      refetchMainDomain()
     },
   })
 
-  // console.log(isConnected)
   return (
     <>
       <div className="flex justify-between mt-16">
         {/* Text */}
         <p className="text-white font-semibold text-lg">
           {isLarge ? 'Primary FNS Name (Reverse Record)' : 'Primary FNS Name'}
+          {mainDomain ? ` : ${mainDomain}.flr` : ''}
         </p>
         {/* Button */}
         <div

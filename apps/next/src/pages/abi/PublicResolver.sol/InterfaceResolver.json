@@ -253,7 +253,7 @@
     "setInterface(bytes32,bytes4,address)": "e59d895d",
     "supportsInterface(bytes4)": "01ffc9a7"
   },
-  "rawMetadata": "{\"compiler\":{\"version\":\"0.5.17+commit.d19bba13\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"a\",\"type\":\"address\"}],\"name\":\"AddrChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"coinType\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"newAddress\",\"type\":\"bytes\"}],\"name\":\"AddressChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes4\",\"name\":\"interfaceID\",\"type\":\"bytes4\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"implementer\",\"type\":\"address\"}],\"name\":\"InterfaceChanged\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"addr\",\"outputs\":[{\"internalType\":\"address payable\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"coinType\",\"type\":\"uint256\"}],\"name\":\"addr\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes4\",\"name\":\"interfaceID\",\"type\":\"bytes4\"}],\"name\":\"interfaceImplementer\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"coinType\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"a\",\"type\":\"bytes\"}],\"name\":\"setAddr\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"a\",\"type\":\"address\"}],\"name\":\"setAddr\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes4\",\"name\":\"interfaceID\",\"type\":\"bytes4\"},{\"internalType\":\"address\",\"name\":\"implementer\",\"type\":\"address\"}],\"name\":\"setInterface\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceID\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"addr(bytes32)\":{\"params\":{\"node\":\"The ENS node to query.\"},\"return\":\"The associated address.\"},\"interfaceImplementer(bytes32,bytes4)\":{\"params\":{\"interfaceID\":\"The EIP 168 interface ID to check for.\",\"node\":\"The ENS node to query.\"},\"return\":\"The address that implements this interface, or 0 if the interface is unsupported.\"},\"setAddr(bytes32,address)\":{\"params\":{\"a\":\"The address to set.\",\"node\":\"The node to update.\"}},\"setInterface(bytes32,bytes4,address)\":{\"params\":{\"implementer\":\"The address of a contract that implements this interface for this node.\",\"interfaceID\":\"The EIP 168 interface ID.\",\"node\":\"The node to update.\"}}}},\"userdoc\":{\"methods\":{\"addr(bytes32)\":{\"notice\":\"Returns the address associated with an ENS node.\"},\"interfaceImplementer(bytes32,bytes4)\":{\"notice\":\"Returns the address of a contract that implements the specified interface for this name. If an implementer has not been set for this interfaceID and name, the resolver will query the contract at `addr()`. If `addr()` is set, a contract exists at that address, and that contract implements EIP168 and returns `true` for the specified interfaceID, its address will be returned.\"},\"setAddr(bytes32,address)\":{\"notice\":\"Sets the address associated with an ENS node. May only be called by the owner of that node in the ENS registry.\"},\"setInterface(bytes32,bytes4,address)\":{\"notice\":\"Sets an interface associated with a name. Setting the address to 0 restores the default behaviour of querying the contract at `addr()` for interface support.\"}}}},\"settings\":{\"compilationTarget\":{\"src/on-chain/PublicResolver.sol\":\"InterfaceResolver\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@ensdomains/=lib/ensdomains/\",\":@flare/=lib/flare-smart-contracts/contracts/\",\":@openzeppelin/=lib/openzeppelin-contracts/\",\":@punkdomains/=lib/punk-contracts/contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":ensdomains/=lib/ensdomains/\",\":flare-smart-contracts/=lib/flare-smart-contracts/\",\":fns-test/=test/\",\":fns/=src/\",\":forge-std/=lib/forge-std/src/\",\":openzeppelin-contracts/=lib/openzeppelin-contracts/\",\":punk-contracts/=lib/punk-contracts/contracts/\"]},\"sources\":{\"src/on-chain/PublicResolver.sol\":{\"keccak256\":\"0xf832bf725249b9b1af5341452474905e413801f0985033bab089535483c35568\",\"urls\":[\"bzz-raw://3305d120776edbc46c5b2a31619c35e4e23e54d2e1c65792c11ad9a2c7956681\",\"dweb:/ipfs/QmetB44i1UWF8tnSZJgeiPJkrcnXNo98qJuG4UyB99AQxk\"]}},\"version\":1}",
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.5.17+commit.d19bba13\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"a\",\"type\":\"address\"}],\"name\":\"AddrChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"coinType\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"newAddress\",\"type\":\"bytes\"}],\"name\":\"AddressChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes4\",\"name\":\"interfaceID\",\"type\":\"bytes4\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"implementer\",\"type\":\"address\"}],\"name\":\"InterfaceChanged\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"addr\",\"outputs\":[{\"internalType\":\"address payable\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"coinType\",\"type\":\"uint256\"}],\"name\":\"addr\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes4\",\"name\":\"interfaceID\",\"type\":\"bytes4\"}],\"name\":\"interfaceImplementer\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"coinType\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"a\",\"type\":\"bytes\"}],\"name\":\"setAddr\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"a\",\"type\":\"address\"}],\"name\":\"setAddr\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes4\",\"name\":\"interfaceID\",\"type\":\"bytes4\"},{\"internalType\":\"address\",\"name\":\"implementer\",\"type\":\"address\"}],\"name\":\"setInterface\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceID\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"addr(bytes32)\":{\"params\":{\"node\":\"The FNS node to query.\"},\"return\":\"The associated address.\"},\"interfaceImplementer(bytes32,bytes4)\":{\"params\":{\"interfaceID\":\"The EIP 168 interface ID to check for.\",\"node\":\"The FNS node to query.\"},\"return\":\"The address that implements this interface, or 0 if the interface is unsupported.\"},\"setAddr(bytes32,address)\":{\"params\":{\"a\":\"The address to set.\",\"node\":\"The node to update.\"}},\"setInterface(bytes32,bytes4,address)\":{\"params\":{\"implementer\":\"The address of a contract that implements this interface for this node.\",\"interfaceID\":\"The EIP 168 interface ID.\",\"node\":\"The node to update.\"}}}},\"userdoc\":{\"methods\":{\"addr(bytes32)\":{\"notice\":\"Returns the address associated with an FNS node.\"},\"interfaceImplementer(bytes32,bytes4)\":{\"notice\":\"Returns the address of a contract that implements the specified interface for this name. If an implementer has not been set for this interfaceID and name, the resolver will query the contract at `addr()`. If `addr()` is set, a contract exists at that address, and that contract implements EIP168 and returns `true` for the specified interfaceID, its address will be returned.\"},\"setAddr(bytes32,address)\":{\"notice\":\"Sets the address associated with an FNS node. May only be called by the owner of that node in the FNS registry.\"},\"setInterface(bytes32,bytes4,address)\":{\"notice\":\"Sets an interface associated with a name. Setting the address to 0 restores the default behaviour of querying the contract at `addr()` for interface support.\"}}}},\"settings\":{\"compilationTarget\":{\"src/on-chain/PublicResolver.sol\":\"InterfaceResolver\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@ensdomains/=lib/ensdomains/\",\":@flare/=lib/flare-smart-contracts/contracts/\",\":@openzeppelin/=lib/openzeppelin-contracts/\",\":@punkdomains/=lib/punk-contracts/contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":ensdomains/=lib/ensdomains/\",\":flare-smart-contracts/=lib/flare-smart-contracts/\",\":fns-test/=test/\",\":fns/=src/\",\":forge-std/=lib/forge-std/src/\",\":openzeppelin-contracts/=lib/openzeppelin-contracts/\",\":punk-contracts/=lib/punk-contracts/contracts/\"]},\"sources\":{\"src/on-chain/PublicResolver.sol\":{\"keccak256\":\"0x4abf1a3161b3e07173e1cd8fa3640922bef695ac871c3a50d8c86add976fbbfa\",\"urls\":[\"bzz-raw://292b87a917edbb4093601553c89f2e927cab3caf71786cd05c25cbc1598b3748\",\"dweb:/ipfs/QmWN9VeBCK2w7AvCQ7xi8j6K1qAeZLnBFUhaaEmrahreGh\"]}},\"version\":1}",
   "metadata": {
     "compiler": {
       "version": "0.5.17+commit.d19bba13"
@@ -482,14 +482,14 @@
         "methods": {
           "addr(bytes32)": {
             "params": {
-              "node": "The ENS node to query."
+              "node": "The FNS node to query."
             },
             "return": "The associated address."
           },
           "interfaceImplementer(bytes32,bytes4)": {
             "params": {
               "interfaceID": "The EIP 168 interface ID to check for.",
-              "node": "The ENS node to query."
+              "node": "The FNS node to query."
             },
             "return": "The address that implements this interface, or 0 if the interface is unsupported."
           },
@@ -511,13 +511,13 @@
       "userdoc": {
         "methods": {
           "addr(bytes32)": {
-            "notice": "Returns the address associated with an ENS node."
+            "notice": "Returns the address associated with an FNS node."
           },
           "interfaceImplementer(bytes32,bytes4)": {
             "notice": "Returns the address of a contract that implements the specified interface for this name. If an implementer has not been set for this interfaceID and name, the resolver will query the contract at `addr()`. If `addr()` is set, a contract exists at that address, and that contract implements EIP168 and returns `true` for the specified interfaceID, its address will be returned."
           },
           "setAddr(bytes32,address)": {
-            "notice": "Sets the address associated with an ENS node. May only be called by the owner of that node in the ENS registry."
+            "notice": "Sets the address associated with an FNS node. May only be called by the owner of that node in the FNS registry."
           },
           "setInterface(bytes32,bytes4,address)": {
             "notice": "Sets an interface associated with a name. Setting the address to 0 restores the default behaviour of querying the contract at `addr()` for interface support."
@@ -551,10 +551,10 @@
     },
     "sources": {
       "src/on-chain/PublicResolver.sol": {
-        "keccak256": "0xf832bf725249b9b1af5341452474905e413801f0985033bab089535483c35568",
+        "keccak256": "0x4abf1a3161b3e07173e1cd8fa3640922bef695ac871c3a50d8c86add976fbbfa",
         "urls": [
-          "bzz-raw://3305d120776edbc46c5b2a31619c35e4e23e54d2e1c65792c11ad9a2c7956681",
-          "dweb:/ipfs/QmetB44i1UWF8tnSZJgeiPJkrcnXNo98qJuG4UyB99AQxk"
+          "bzz-raw://292b87a917edbb4093601553c89f2e927cab3caf71786cd05c25cbc1598b3748",
+          "dweb:/ipfs/QmWN9VeBCK2w7AvCQ7xi8j6K1qAeZLnBFUhaaEmrahreGh"
         ],
         "license": null
       }
@@ -583,7 +583,7 @@
       "DNSResolver": [
         5042
       ],
-      "ENS": [
+      "FNS": [
         2379
       ],
       "InterfaceResolver": [
@@ -1541,7 +1541,7 @@
         "linearizedBaseContracts": [
           2379
         ],
-        "name": "ENS",
+        "name": "FNS",
         "scope": 5629
       },
       {
@@ -3003,7 +3003,7 @@
                 }
               ]
             },
-            "documentation": "Sets the ABI associated with an ENS node.\nNodes may have one ABI of each content type. To remove an ABI, set it to\nthe empty string.\n@param node The node to update.\n@param contentType The content type of the ABI\n@param data The ABI data.",
+            "documentation": "Sets the ABI associated with an FNS node.\nNodes may have one ABI of each content type. To remove an ABI, set it to\nthe empty string.\n@param node The node to update.\n@param contentType The content type of the ABI\n@param data The ABI data.",
             "implemented": true,
             "kind": "function",
             "modifiers": [
@@ -3805,7 +3805,7 @@
                 }
               ]
             },
-            "documentation": "Returns the ABI associated with an ENS node.\nDefined in EIP205.\n@param node The ENS node to query\n@param contentTypes A bitwise OR of the ABI formats accepted by the caller.\n@return contentType The content type of the return value\n@return data The ABI data",
+            "documentation": "Returns the ABI associated with an FNS node.\nDefined in EIP205.\n@param node The FNS node to query\n@param contentTypes A bitwise OR of the ABI formats accepted by the caller.\n@return contentType The content type of the return value\n@return data The ABI data",
             "implemented": true,
             "kind": "function",
             "modifiers": [],
@@ -4710,7 +4710,7 @@
                 }
               ]
             },
-            "documentation": "Sets the address associated with an ENS node.\nMay only be called by the owner of that node in the ENS registry.\n@param node The node to update.\n@param a The address to set.",
+            "documentation": "Sets the address associated with an FNS node.\nMay only be called by the owner of that node in the FNS registry.\n@param node The node to update.\n@param a The address to set.",
             "implemented": true,
             "kind": "function",
             "modifiers": [
@@ -5134,7 +5134,7 @@
                 }
               ]
             },
-            "documentation": "Returns the address associated with an ENS node.\n@param node The ENS node to query.\n@return The associated address.",
+            "documentation": "Returns the address associated with an FNS node.\n@param node The FNS node to query.\n@return The associated address.",
             "implemented": true,
             "kind": "function",
             "modifiers": [],
@@ -6556,7 +6556,7 @@
                 }
               ]
             },
-            "documentation": "Sets the contenthash associated with an ENS node.\nMay only be called by the owner of that node in the ENS registry.\n@param node The node to update.\n@param hash The contenthash to set",
+            "documentation": "Sets the contenthash associated with an FNS node.\nMay only be called by the owner of that node in the FNS registry.\n@param node The node to update.\n@param hash The contenthash to set",
             "implemented": true,
             "kind": "function",
             "modifiers": [
@@ -6724,7 +6724,7 @@
                 }
               ]
             },
-            "documentation": "Returns the contenthash associated with an ENS node.\n@param node The ENS node to query.\n@return The associated contenthash.",
+            "documentation": "Returns the contenthash associated with an FNS node.\n@param node The FNS node to query.\n@return The associated contenthash.",
             "implemented": true,
             "kind": "function",
             "modifiers": [],
@@ -39916,7 +39916,7 @@
                 }
               ]
             },
-            "documentation": "Returns the address of a contract that implements the specified interface for this name.\nIf an implementer has not been set for this interfaceID and name, the resolver will query\nthe contract at `addr()`. If `addr()` is set, a contract exists at that address, and that\ncontract implements EIP168 and returns `true` for the specified interfaceID, its address\nwill be returned.\n@param node The ENS node to query.\n@param interfaceID The EIP 168 interface ID to check for.\n@return The address that implements this interface, or 0 if the interface is unsupported.",
+            "documentation": "Returns the address of a contract that implements the specified interface for this name.\nIf an implementer has not been set for this interfaceID and name, the resolver will query\nthe contract at `addr()`. If `addr()` is set, a contract exists at that address, and that\ncontract implements EIP168 and returns `true` for the specified interfaceID, its address\nwill be returned.\n@param node The FNS node to query.\n@param interfaceID The EIP 168 interface ID to check for.\n@return The address that implements this interface, or 0 if the interface is unsupported.",
             "implemented": true,
             "kind": "function",
             "modifiers": [],
@@ -40631,7 +40631,7 @@
                 }
               ]
             },
-            "documentation": "Sets the name associated with an ENS node, for reverse records.\nMay only be called by the owner of that node in the ENS registry.\n@param node The node to update.\n@param name The name to set.",
+            "documentation": "Sets the name associated with an FNS node, for reverse records.\nMay only be called by the owner of that node in the FNS registry.\n@param node The node to update.\n@param name The name to set.",
             "implemented": true,
             "kind": "function",
             "modifiers": [
@@ -40799,7 +40799,7 @@
                 }
               ]
             },
-            "documentation": "Returns the name associated with an ENS node, for reverse records.\nDefined in EIP181.\n@param node The ENS node to query.\n@return The associated name.",
+            "documentation": "Returns the name associated with an FNS node, for reverse records.\nDefined in EIP181.\n@param node The FNS node to query.\n@return The associated name.",
             "implemented": true,
             "kind": "function",
             "modifiers": [],
@@ -41630,7 +41630,7 @@
                 }
               ]
             },
-            "documentation": "Sets the SECP256k1 public key associated with an ENS node.\n@param node The ENS node to query\n@param x the X coordinate of the curve point for the public key.\n@param y the Y coordinate of the curve point for the public key.",
+            "documentation": "Sets the SECP256k1 public key associated with an FNS node.\n@param node The FNS node to query\n@param x the X coordinate of the curve point for the public key.\n@param y the Y coordinate of the curve point for the public key.",
             "implemented": true,
             "kind": "function",
             "modifiers": [
@@ -41913,7 +41913,7 @@
                 }
               ]
             },
-            "documentation": "Returns the SECP256k1 public key associated with an ENS node.\nDefined in EIP 619.\n@param node The ENS node to query\n@return x, y the X and Y coordinates of the curve point for the public key.",
+            "documentation": "Returns the SECP256k1 public key associated with an FNS node.\nDefined in EIP 619.\n@param node The FNS node to query\n@return x, y the X and Y coordinates of the curve point for the public key.",
             "implemented": true,
             "kind": "function",
             "modifiers": [],
@@ -42697,7 +42697,7 @@
                 }
               ]
             },
-            "documentation": "Sets the text data associated with an ENS node and key.\nMay only be called by the owner of that node in the ENS registry.\n@param node The node to update.\n@param key The key to set.\n@param value The text data value to set.",
+            "documentation": "Sets the text data associated with an FNS node and key.\nMay only be called by the owner of that node in the FNS registry.\n@param node The node to update.\n@param key The key to set.\n@param value The text data value to set.",
             "implemented": true,
             "kind": "function",
             "modifiers": [
@@ -42918,7 +42918,7 @@
                 }
               ]
             },
-            "documentation": "Returns the text data associated with an ENS node and key.\n@param node The ENS node to query.\n@param key The text data key to query.\n@return The associated text data.",
+            "documentation": "Returns the text data associated with an FNS node and key.\n@param node The FNS node to query.\n@param key The text data key to query.\n@return The associated text data.",
             "implemented": true,
             "kind": "function",
             "modifiers": [],
@@ -43311,24 +43311,24 @@
             "src": "48756:7:2",
             "nodes": [],
             "constant": false,
-            "name": "ens",
+            "name": "fns",
             "scope": 5628,
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_contract$_ENS_$2379",
-              "typeString": "contract ENS"
+              "typeIdentifier": "t_contract$_FNS_$2379",
+              "typeString": "contract FNS"
             },
             "typeName": {
               "contractScope": null,
               "id": 5483,
-              "name": "ENS",
+              "name": "FNS",
               "nodeType": "UserDefinedTypeName",
               "referencedDeclaration": 2379,
               "src": "48756:3:2",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ENS_$2379",
-                "typeString": "contract ENS"
+                "typeIdentifier": "t_contract$_FNS_$2379",
+                "typeString": "contract FNS"
               }
             },
             "value": null,
@@ -43566,14 +43566,14 @@
                     "leftHandSide": {
                       "argumentTypes": null,
                       "id": 5507,
-                      "name": "ens",
+                      "name": "fns",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 5484,
                       "src": "49270:3:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_ENS_$2379",
-                        "typeString": "contract ENS"
+                        "typeIdentifier": "t_contract$_FNS_$2379",
+                        "typeString": "contract FNS"
                       }
                     },
                     "nodeType": "Assignment",
@@ -43587,14 +43587,14 @@
                       "referencedDeclaration": 5504,
                       "src": "49276:4:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_ENS_$2379",
-                        "typeString": "contract ENS"
+                        "typeIdentifier": "t_contract$_FNS_$2379",
+                        "typeString": "contract FNS"
                       }
                     },
                     "src": "49270:10:2",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_ENS_$2379",
-                      "typeString": "contract ENS"
+                      "typeIdentifier": "t_contract$_FNS_$2379",
+                      "typeString": "contract FNS"
                     }
                   },
                   "id": 5510,
@@ -43622,19 +43622,19 @@
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_contract$_ENS_$2379",
-                    "typeString": "contract ENS"
+                    "typeIdentifier": "t_contract$_FNS_$2379",
+                    "typeString": "contract FNS"
                   },
                   "typeName": {
                     "contractScope": null,
                     "id": 5503,
-                    "name": "ENS",
+                    "name": "FNS",
                     "nodeType": "UserDefinedTypeName",
                     "referencedDeclaration": 2379,
                     "src": "49243:3:2",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_ENS_$2379",
-                      "typeString": "contract ENS"
+                      "typeIdentifier": "t_contract$_FNS_$2379",
+                      "typeString": "contract FNS"
                     }
                   },
                   "value": null,
@@ -44105,14 +44105,14 @@
                       "expression": {
                         "argumentTypes": null,
                         "id": 5550,
-                        "name": "ens",
+                        "name": "fns",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 5484,
                         "src": "50299:3:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_ENS_$2379",
-                          "typeString": "contract ENS"
+                          "typeIdentifier": "t_contract$_FNS_$2379",
+                          "typeString": "contract FNS"
                         }
                       },
                       "id": 5551,

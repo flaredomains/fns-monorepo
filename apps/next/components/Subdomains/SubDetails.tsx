@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Clipboard_copy from '../../public/Clipboard_copy.svg'
 import Image from 'next/image'
 
-import ETHRegistrarController from '../../src/pages/abi/ETHRegistrarController.json'
+import FLRRegistrarController from '../../src/pages/abi/FLRRegistrarController.json'
 import BaseRegistrar from '../../src/pages/abi/BaseRegistrar.json'
 import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
 
@@ -98,8 +98,8 @@ export default function SubDetails({
   // console.log(hashHex)
 
   const { data: controller } = useContractRead({
-    address: ETHRegistrarController.address as `0x${string}`,
-    abi: ETHRegistrarController.abi,
+    address: FLRRegistrarController.address as `0x${string}`,
+    abi: FLRRegistrarController.abi,
     functionName: 'owner',
     enabled: editMode,
     onSuccess(data: any) {

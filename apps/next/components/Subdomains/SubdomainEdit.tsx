@@ -3,7 +3,7 @@ import SubdomainLine from './SubdomainLine'
 import SubDetails from './SubDetails'
 import Records from './Records'
 
-import ETHRegistrarController from '../../src/pages/abi/ETHRegistrarController.json'
+import FLRRegistrarController from '../../src/pages/abi/FLRRegistrarController.json'
 import BaseRegistrar from '../../src/pages/abi/BaseRegistrar.json'
 import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
 

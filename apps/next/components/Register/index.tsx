@@ -10,7 +10,8 @@ import Steps from './Steps'
 import Bottom from './Bottom'
 import web3 from 'web3-utils'
 
-import ETHRegistarController from '../../src/pages/abi/ETHRegistrarController.json'
+import ETHRegistarController from '../../src/pages/abi/FLRRegistrarController.json'
+import PublicResolver from '../../src/pages/abi/PublicResolver.json'
 
 import {
   useFeeData,
@@ -18,6 +19,9 @@ import {
   useContractWrite,
   usePrepareContractWrite,
   useContractEvent,
+  useContract,
+  useSigner,
+  useAccount,
 } from 'wagmi'
 import { BigNumber, ethers } from 'ethers'
 
@@ -69,6 +73,9 @@ export default function Register({ result }: { result: string }) {
   const [preparedHash, setPreparedHash] = useState<boolean>(false)
   const [hashHex, setHashHex] = useState<string>('')
   const [filterResult, setFilterResult] = useState<string>('')
+
+  const { address, isConnected } = useAccount()
+  const { data: signer } = useSigner()
 
   useEffect(() => {
     // Check if ethereum address
@@ -123,6 +130,47 @@ export default function Register({ result }: { result: string }) {
   })
 
   const { data: fee } = useFeeData()
+  //0.00117262
+  //0.219
+  //0.220 * 2 = 0.44
+
+  const contract = useContract({
+    address: ETHRegistarController.address as `0x${string}`,
+    abi: ETHRegistarController.abi,
+    signerOrProvider: signer,
+  })
+
+  // Get gas fee
+  useEffect(() => {
+    const getGas = async () => {
+      const makeCommitment = await contract?.makeCommitment(
+        result as string,
+        address as `0x${string}`,
+        BigNumber.from(regPeriod).mul(31556952),
+        web3.sha3(address as `0x${string}`),
+        PublicResolver.address as `0x${string}`,
+        [],
+        false,
+        0
+      )
+      const gasCommit = await contract?.estimateGas.commit(makeCommitment)
+      // const gasRegister = await contract?.estimateGas.register(
+      //   result as string,
+      //   address as `0x${string}`,
+      //   BigNumber.from(regPeriod).mul(31556952),
+      //   web3.sha3(address as `0x${string}`),
+      //   PublicResolver.address as `0x${string}`,
+      //   [],
+      //   false,
+      //   0
+      // )
+      console.log('gasCommit', Number(gasCommit))
+    }
+
+    if (isConnected) {
+      getGas()
+    }
+  }, [isConnected])
 
   const incrementYears = () => {
     if (regPeriod >= 999) return

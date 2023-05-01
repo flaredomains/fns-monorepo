@@ -58,7 +58,8 @@ const GasFee = ({ fee }: { fee: number }) => {
           Gas Fee (at most)
         </p>
         <p className="text-white font-semibold text-2xl lg:text-lg xl:text-2xl">
-          {(fee / 10 ** 18).toFixed(9)} FLR
+          {/* {(fee / 10 ** 18).toFixed(9)} FLR */}
+          0.45 FLR
         </p>
       </div>
     </>

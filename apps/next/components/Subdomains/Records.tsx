@@ -4,7 +4,7 @@ import Plus from '../../public/Plus.svg'
 import Delete from '../../public/Delete.svg'
 import Image from 'next/image'
 
-import ENSRegistry from '../../src/pages/abi/ENSRegistry.json'
+import FNSRegistry from '../../src/pages/abi/FNSRegistry.json'
 import PublicResolver from '../../src/pages/abi/PublicResolver.json'
 
 import { useContractRead, useContractReads } from 'wagmi'
@@ -32,7 +32,6 @@ const listTextRecords: Array<{ leftText: String; rightText: String }> = [
   { leftText: 'com.twitter', rightText: '' },
   { leftText: 'com.twitter', rightText: '' },
   { leftText: 'org.telegram', rightText: '' },
-  { leftText: 'eth.ens.delegate', rightText: '' },
 ]
 
 const keysTexts: Array<string> = [
@@ -47,7 +46,6 @@ const keysTexts: Array<string> = [
   'com.twitter',
   'com.twitter',
   'org.telegram',
-  'eth.ens.delegate',
 ]
 
 const keysAddr: Array<string> = ['XTP', 'BTC', 'LTC', 'DOGE']

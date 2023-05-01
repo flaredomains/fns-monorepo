@@ -1,5 +1,5 @@
 {
-  "address": "0xD09CF5fB02997C55791a5633207DC35cdbd30F03",
+  "address": "0x29d32ecd41Fd891ada16af5071efa5Aa7c5A1664",
   "abi": [
     {
       "anonymous": false,
@@ -419,7 +419,7 @@
     "setTTL(bytes32,uint64)": "14ab9038",
     "ttl(bytes32)": "16a25cbd"
   },
-  "rawMetadata": "{\"compiler\":{\"version\":\"0.5.17+commit.d19bba13\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"ApprovalForAll\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"label\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"NewOwner\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"resolver\",\"type\":\"address\"}],\"name\":\"NewResolver\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"ttl\",\"type\":\"uint64\"}],\"name\":\"NewTTL\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"recordExists\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"resolver\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"setApprovalForAll\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"setOwner\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"resolver\",\"type\":\"address\"},{\"internalType\":\"uint64\",\"name\":\"ttl\",\"type\":\"uint64\"}],\"name\":\"setRecord\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"resolver\",\"type\":\"address\"}],\"name\":\"setResolver\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"label\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"setSubnodeOwner\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"label\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"resolver\",\"type\":\"address\"},{\"internalType\":\"uint64\",\"name\":\"ttl\",\"type\":\"uint64\"}],\"name\":\"setSubnodeRecord\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"ttl\",\"type\":\"uint64\"}],\"name\":\"setTTL\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"ttl\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"src/on-chain/ENSRegistry.sol\":\"ENS\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@ensdomains/=lib/ensdomains/\",\":@flare/=lib/flare-smart-contracts/contracts/\",\":@openzeppelin/=lib/openzeppelin-contracts/\",\":@punkdomains/=lib/punk-contracts/contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":ensdomains/=lib/ensdomains/\",\":flare-smart-contracts/=lib/flare-smart-contracts/\",\":fns-test/=test/\",\":fns/=src/\",\":forge-std/=lib/forge-std/src/\",\":openzeppelin-contracts/=lib/openzeppelin-contracts/\",\":punk-contracts/=lib/punk-contracts/contracts/\"]},\"sources\":{\"src/on-chain/ENSRegistry.sol\":{\"keccak256\":\"0x6c817c8e9def0525742b0fa257371e04b27d6685e4b8d178849b9a9efa8a1211\",\"urls\":[\"bzz-raw://e9b8de02ee58e2ebc284c93d358794a50430fd6e63a8b3c61320041f6d160871\",\"dweb:/ipfs/QmUASGpRdL9Fnob2YxfdDzkxveiKMUg2GYAERE6TLSVzoz\"]}},\"version\":1}",
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.5.17+commit.d19bba13\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"ApprovalForAll\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"label\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"NewOwner\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"resolver\",\"type\":\"address\"}],\"name\":\"NewResolver\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"ttl\",\"type\":\"uint64\"}],\"name\":\"NewTTL\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"recordExists\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"resolver\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"setApprovalForAll\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"setOwner\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"resolver\",\"type\":\"address\"},{\"internalType\":\"uint64\",\"name\":\"ttl\",\"type\":\"uint64\"}],\"name\":\"setRecord\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"resolver\",\"type\":\"address\"}],\"name\":\"setResolver\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"label\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"setSubnodeOwner\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"label\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"resolver\",\"type\":\"address\"},{\"internalType\":\"uint64\",\"name\":\"ttl\",\"type\":\"uint64\"}],\"name\":\"setSubnodeRecord\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"ttl\",\"type\":\"uint64\"}],\"name\":\"setTTL\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"ttl\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"src/on-chain/ENSRegistry.sol\":\"FNS\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@ensdomains/=lib/ensdomains/\",\":@flare/=lib/flare-smart-contracts/contracts/\",\":@openzeppelin/=lib/openzeppelin-contracts/\",\":@punkdomains/=lib/punk-contracts/contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":ensdomains/=lib/ensdomains/\",\":flare-smart-contracts/=lib/flare-smart-contracts/\",\":fns-test/=test/\",\":fns/=src/\",\":forge-std/=lib/forge-std/src/\",\":openzeppelin-contracts/=lib/openzeppelin-contracts/\",\":punk-contracts/=lib/punk-contracts/contracts/\"]},\"sources\":{\"src/on-chain/ENSRegistry.sol\":{\"keccak256\":\"0xb95c8d084f21870f83dc949b86e5a262b16ef356550ae178c7bef38d68a7939e\",\"urls\":[\"bzz-raw://a08ea9a79180f22249ea31cba536ea169e6820bc20c790be89bbfb8394ce1541\",\"dweb:/ipfs/QmahjAQbEKXtbhUhF3c2Y6MYQLySo24Sir8Pi5Xv8B58Rb\"]}},\"version\":1}",
   "metadata": {
     "compiler": {
       "version": "0.5.17+commit.d19bba13"
@@ -818,16 +818,16 @@
         "runs": 200
       },
       "compilationTarget": {
-        "src/on-chain/ENSRegistry.sol": "ENS"
+        "src/on-chain/ENSRegistry.sol": "FNS"
       },
       "libraries": {}
     },
     "sources": {
       "src/on-chain/ENSRegistry.sol": {
-        "keccak256": "0x6c817c8e9def0525742b0fa257371e04b27d6685e4b8d178849b9a9efa8a1211",
+        "keccak256": "0xb95c8d084f21870f83dc949b86e5a262b16ef356550ae178c7bef38d68a7939e",
         "urls": [
-          "bzz-raw://e9b8de02ee58e2ebc284c93d358794a50430fd6e63a8b3c61320041f6d160871",
-          "dweb:/ipfs/QmUASGpRdL9Fnob2YxfdDzkxveiKMUg2GYAERE6TLSVzoz"
+          "bzz-raw://a08ea9a79180f22249ea31cba536ea169e6820bc20c790be89bbfb8394ce1541",
+          "dweb:/ipfs/QmahjAQbEKXtbhUhF3c2Y6MYQLySo24Sir8Pi5Xv8B58Rb"
         ],
         "license": null
       }
@@ -838,9 +838,9 @@
     "absolutePath": "src/on-chain/ENSRegistry.sol",
     "id": 2300,
     "exportedSymbols": {
-      "ENS": [1785],
-      "ENSRegistry": [2177],
-      "ENSRegistryWithFallback": [2299]
+      "ENSRegistryWithFallback": [2299],
+      "FNS": [1785],
+      "FNSRegistry": [2177]
     },
     "nodeType": "SourceUnit",
     "src": "128:9386:1",
@@ -2459,7 +2459,7 @@
         "documentation": null,
         "fullyImplemented": false,
         "linearizedBaseContracts": [1785],
-        "name": "ENS",
+        "name": "FNS",
         "scope": 2300
       },
       {
@@ -2479,7 +2479,7 @@
             "nodeType": "StructDefinition",
             "src": "2007:90:1",
             "nodes": [],
-            "canonicalName": "ENSRegistry.Record",
+            "canonicalName": "FNSRegistry.Record",
             "members": [
               {
                 "constant": false,
@@ -2578,7 +2578,7 @@
             "storageLocation": "default",
             "typeDescriptions": {
               "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Record_$1795_storage_$",
-              "typeString": "mapping(bytes32 => struct ENSRegistry.Record)"
+              "typeString": "mapping(bytes32 => struct FNSRegistry.Record)"
             },
             "typeName": {
               "id": 1798,
@@ -2596,7 +2596,7 @@
               "src": "2103:27:1",
               "typeDescriptions": {
                 "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Record_$1795_storage_$",
-                "typeString": "mapping(bytes32 => struct ENSRegistry.Record)"
+                "typeString": "mapping(bytes32 => struct FNSRegistry.Record)"
               },
               "valueType": {
                 "contractScope": null,
@@ -2607,7 +2607,7 @@
                 "src": "2123:6:1",
                 "typeDescriptions": {
                   "typeIdentifier": "t_struct$_Record_$1795_storage_ptr",
-                  "typeString": "struct ENSRegistry.Record"
+                  "typeString": "struct FNSRegistry.Record"
                 }
               }
             },
@@ -2736,7 +2736,7 @@
                         "src": "2336:7:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Record_$1795_storage_$",
-                          "typeString": "mapping(bytes32 => struct ENSRegistry.Record storage ref)"
+                          "typeString": "mapping(bytes32 => struct FNSRegistry.Record storage ref)"
                         }
                       },
                       "id": 1813,
@@ -2761,7 +2761,7 @@
                       "src": "2336:13:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_struct$_Record_$1795_storage",
-                        "typeString": "struct ENSRegistry.Record storage ref"
+                        "typeString": "struct FNSRegistry.Record storage ref"
                       }
                     },
                     "id": 1814,
@@ -3062,7 +3062,7 @@
                           "src": "2540:7:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Record_$1795_storage_$",
-                            "typeString": "mapping(bytes32 => struct ENSRegistry.Record storage ref)"
+                            "typeString": "mapping(bytes32 => struct FNSRegistry.Record storage ref)"
                           }
                         },
                         "id": 1837,
@@ -3092,7 +3092,7 @@
                         "src": "2540:12:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_struct$_Record_$1795_storage",
-                          "typeString": "struct ENSRegistry.Record storage ref"
+                          "typeString": "struct FNSRegistry.Record storage ref"
                         }
                       },
                       "id": 1838,
@@ -3152,7 +3152,7 @@
                 }
               ]
             },
-            "documentation": "@dev Constructs a new ENS registrar.",
+            "documentation": "@dev Constructs a new FNS registrar.",
             "implemented": true,
             "kind": "constructor",
             "modifiers": [],
@@ -4723,7 +4723,7 @@
                           "src": "4819:7:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Record_$1795_storage_$",
-                            "typeString": "mapping(bytes32 => struct ENSRegistry.Record storage ref)"
+                            "typeString": "mapping(bytes32 => struct FNSRegistry.Record storage ref)"
                           }
                         },
                         "id": 1971,
@@ -4748,7 +4748,7 @@
                         "src": "4819:13:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_struct$_Record_$1795_storage",
-                          "typeString": "struct ENSRegistry.Record storage ref"
+                          "typeString": "struct FNSRegistry.Record storage ref"
                         }
                       },
                       "id": 1972,
@@ -5006,7 +5006,7 @@
                           "src": "5115:7:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Record_$1795_storage_$",
-                            "typeString": "mapping(bytes32 => struct ENSRegistry.Record storage ref)"
+                            "typeString": "mapping(bytes32 => struct FNSRegistry.Record storage ref)"
                           }
                         },
                         "id": 1994,
@@ -5031,7 +5031,7 @@
                         "src": "5115:13:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_struct$_Record_$1795_storage",
-                          "typeString": "struct ENSRegistry.Record storage ref"
+                          "typeString": "struct FNSRegistry.Record storage ref"
                         }
                       },
                       "id": 1995,
@@ -5417,7 +5417,7 @@
                 }
               ]
             },
-            "documentation": "@dev Enable or disable approval for a third party (\"operator\") to manage\n all of `msg.sender`'s ENS records. Emits the ApprovalForAll event.\n@param operator Address to add to the set of authorized operators.\n@param approved True if the operator is approved, false to revoke approval.",
+            "documentation": "@dev Enable or disable approval for a third party (\"operator\") to manage\n all of `msg.sender`'s FNS records. Emits the ApprovalForAll event.\n@param operator Address to add to the set of authorized operators.\n@param approved True if the operator is approved, false to revoke approval.",
             "implemented": true,
             "kind": "function",
             "modifiers": [],
@@ -5550,7 +5550,7 @@
                         "src": "5912:7:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Record_$1795_storage_$",
-                          "typeString": "mapping(bytes32 => struct ENSRegistry.Record storage ref)"
+                          "typeString": "mapping(bytes32 => struct FNSRegistry.Record storage ref)"
                         }
                       },
                       "id": 2035,
@@ -5575,7 +5575,7 @@
                       "src": "5912:13:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_struct$_Record_$1795_storage",
-                        "typeString": "struct ENSRegistry.Record storage ref"
+                        "typeString": "struct FNSRegistry.Record storage ref"
                       }
                     },
                     "id": 2036,
@@ -5634,16 +5634,16 @@
                           "referencedDeclaration": 6043,
                           "src": "5961:4:1",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_contract$_ENSRegistry_$2177",
-                            "typeString": "contract ENSRegistry"
+                            "typeIdentifier": "t_contract$_FNSRegistry_$2177",
+                            "typeString": "contract FNSRegistry"
                           }
                         }
                       ],
                       "expression": {
                         "argumentTypes": [
                           {
-                            "typeIdentifier": "t_contract$_ENSRegistry_$2177",
-                            "typeString": "contract ENSRegistry"
+                            "typeIdentifier": "t_contract$_FNSRegistry_$2177",
+                            "typeString": "contract FNSRegistry"
                           }
                         ],
                         "id": 2039,
@@ -5877,7 +5877,7 @@
                         "src": "6292:7:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Record_$1795_storage_$",
-                          "typeString": "mapping(bytes32 => struct ENSRegistry.Record storage ref)"
+                          "typeString": "mapping(bytes32 => struct FNSRegistry.Record storage ref)"
                         }
                       },
                       "id": 2061,
@@ -5902,7 +5902,7 @@
                       "src": "6292:13:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_struct$_Record_$1795_storage",
-                        "typeString": "struct ENSRegistry.Record storage ref"
+                        "typeString": "struct FNSRegistry.Record storage ref"
                       }
                     },
                     "id": 2062,
@@ -6029,7 +6029,7 @@
                         "src": "6562:7:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Record_$1795_storage_$",
-                          "typeString": "mapping(bytes32 => struct ENSRegistry.Record storage ref)"
+                          "typeString": "mapping(bytes32 => struct FNSRegistry.Record storage ref)"
                         }
                       },
                       "id": 2074,
@@ -6054,7 +6054,7 @@
                       "src": "6562:13:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_struct$_Record_$1795_storage",
-                        "typeString": "struct ENSRegistry.Record storage ref"
+                        "typeString": "struct FNSRegistry.Record storage ref"
                       }
                     },
                     "id": 2075,
@@ -6191,7 +6191,7 @@
                           "src": "6836:7:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Record_$1795_storage_$",
-                            "typeString": "mapping(bytes32 => struct ENSRegistry.Record storage ref)"
+                            "typeString": "mapping(bytes32 => struct FNSRegistry.Record storage ref)"
                           }
                         },
                         "id": 2087,
@@ -6216,7 +6216,7 @@
                         "src": "6836:13:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_struct$_Record_$1795_storage",
-                          "typeString": "struct ENSRegistry.Record storage ref"
+                          "typeString": "struct FNSRegistry.Record storage ref"
                         }
                       },
                       "id": 2088,
@@ -6603,7 +6603,7 @@
                           "src": "7402:7:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Record_$1795_storage_$",
-                            "typeString": "mapping(bytes32 => struct ENSRegistry.Record storage ref)"
+                            "typeString": "mapping(bytes32 => struct FNSRegistry.Record storage ref)"
                           }
                         },
                         "id": 2120,
@@ -6628,7 +6628,7 @@
                         "src": "7402:13:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_struct$_Record_$1795_storage",
-                          "typeString": "struct ENSRegistry.Record storage ref"
+                          "typeString": "struct FNSRegistry.Record storage ref"
                         }
                       },
                       "id": 2121,
@@ -6800,7 +6800,7 @@
                           "src": "7548:7:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Record_$1795_storage_$",
-                            "typeString": "mapping(bytes32 => struct ENSRegistry.Record storage ref)"
+                            "typeString": "mapping(bytes32 => struct FNSRegistry.Record storage ref)"
                           }
                         },
                         "id": 2138,
@@ -6825,7 +6825,7 @@
                         "src": "7548:13:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_struct$_Record_$1795_storage",
-                          "typeString": "struct ENSRegistry.Record storage ref"
+                          "typeString": "struct FNSRegistry.Record storage ref"
                         }
                       },
                       "id": 2139,
@@ -6879,7 +6879,7 @@
                                 "src": "7586:7:1",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Record_$1795_storage_$",
-                                  "typeString": "mapping(bytes32 => struct ENSRegistry.Record storage ref)"
+                                  "typeString": "mapping(bytes32 => struct FNSRegistry.Record storage ref)"
                                 }
                               },
                               "id": 2143,
@@ -6904,7 +6904,7 @@
                               "src": "7586:13:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_struct$_Record_$1795_storage",
-                                "typeString": "struct ENSRegistry.Record storage ref"
+                                "typeString": "struct FNSRegistry.Record storage ref"
                               }
                             },
                             "id": 2144,
@@ -7061,7 +7061,7 @@
                           "src": "7696:7:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Record_$1795_storage_$",
-                            "typeString": "mapping(bytes32 => struct ENSRegistry.Record storage ref)"
+                            "typeString": "mapping(bytes32 => struct FNSRegistry.Record storage ref)"
                           }
                         },
                         "id": 2158,
@@ -7086,7 +7086,7 @@
                         "src": "7696:13:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_struct$_Record_$1795_storage",
-                          "typeString": "struct ENSRegistry.Record storage ref"
+                          "typeString": "struct FNSRegistry.Record storage ref"
                         }
                       },
                       "id": 2159,
@@ -7140,7 +7140,7 @@
                                 "src": "7729:7:1",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_mapping$_t_bytes32_$_t_struct$_Record_$1795_storage_$",
-                                  "typeString": "mapping(bytes32 => struct ENSRegistry.Record storage ref)"
+                                  "typeString": "mapping(bytes32 => struct FNSRegistry.Record storage ref)"
                                 }
                               },
                               "id": 2163,
@@ -7165,7 +7165,7 @@
                               "src": "7729:13:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_struct$_Record_$1795_storage",
-                                "typeString": "struct ENSRegistry.Record storage ref"
+                                "typeString": "struct FNSRegistry.Record storage ref"
                               }
                             },
                             "id": 2164,
@@ -7392,13 +7392,13 @@
             "baseName": {
               "contractScope": null,
               "id": 1787,
-              "name": "ENS",
+              "name": "FNS",
               "nodeType": "UserDefinedTypeName",
               "referencedDeclaration": 1785,
               "src": "1996:3:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ENS_$1785",
-                "typeString": "contract ENS"
+                "typeIdentifier": "t_contract$_FNS_$1785",
+                "typeString": "contract FNS"
               }
             },
             "id": 1788,
@@ -7408,10 +7408,10 @@
         ],
         "contractDependencies": [1785],
         "contractKind": "contract",
-        "documentation": "The ENS registry contract.",
+        "documentation": "The FNS registry contract.",
         "fullyImplemented": true,
         "linearizedBaseContracts": [2177, 1785],
-        "name": "ENSRegistry",
+        "name": "FNSRegistry",
         "scope": 2300
       },
       {
@@ -7437,19 +7437,19 @@
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_contract$_ENS_$1785",
-              "typeString": "contract ENS"
+              "typeIdentifier": "t_contract$_FNS_$1785",
+              "typeString": "contract FNS"
             },
             "typeName": {
               "contractScope": null,
               "id": 2181,
-              "name": "ENS",
+              "name": "FNS",
               "nodeType": "UserDefinedTypeName",
               "referencedDeclaration": 1785,
               "src": "8094:3:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ENS_$1785",
-                "typeString": "contract ENS"
+                "typeIdentifier": "t_contract$_FNS_$1785",
+                "typeString": "contract FNS"
               }
             },
             "value": null,
@@ -7483,8 +7483,8 @@
                       "referencedDeclaration": 2182,
                       "src": "8228:3:1",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_ENS_$1785",
-                        "typeString": "contract ENS"
+                        "typeIdentifier": "t_contract$_FNS_$1785",
+                        "typeString": "contract FNS"
                       }
                     },
                     "nodeType": "Assignment",
@@ -7498,14 +7498,14 @@
                       "referencedDeclaration": 2184,
                       "src": "8234:4:1",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_ENS_$1785",
-                        "typeString": "contract ENS"
+                        "typeIdentifier": "t_contract$_FNS_$1785",
+                        "typeString": "contract FNS"
                       }
                     },
                     "src": "8228:10:1",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_ENS_$1785",
-                      "typeString": "contract ENS"
+                      "typeIdentifier": "t_contract$_FNS_$1785",
+                      "typeString": "contract FNS"
                     }
                   },
                   "id": 2192,
@@ -7514,7 +7514,7 @@
                 }
               ]
             },
-            "documentation": "@dev Constructs a new ENS registrar.",
+            "documentation": "@dev Constructs a new FNS registrar.",
             "implemented": true,
             "kind": "constructor",
             "modifiers": [
@@ -7524,14 +7524,14 @@
                 "modifierName": {
                   "argumentTypes": null,
                   "id": 2186,
-                  "name": "ENSRegistry",
+                  "name": "FNSRegistry",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
                   "referencedDeclaration": 2177,
                   "src": "8204:11:1",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_type$_t_contract$_ENSRegistry_$2177_$",
-                    "typeString": "type(contract ENSRegistry)"
+                    "typeIdentifier": "t_type$_t_contract$_FNSRegistry_$2177_$",
+                    "typeString": "type(contract FNSRegistry)"
                   }
                 },
                 "nodeType": "ModifierInvocation",
@@ -7553,19 +7553,19 @@
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_contract$_ENS_$1785",
-                    "typeString": "contract ENS"
+                    "typeIdentifier": "t_contract$_FNS_$1785",
+                    "typeString": "contract FNS"
                   },
                   "typeName": {
                     "contractScope": null,
                     "id": 2183,
-                    "name": "ENS",
+                    "name": "FNS",
                     "nodeType": "UserDefinedTypeName",
                     "referencedDeclaration": 1785,
                     "src": "8187:3:1",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_ENS_$1785",
-                      "typeString": "contract ENS"
+                      "typeIdentifier": "t_contract$_FNS_$1785",
+                      "typeString": "contract FNS"
                     }
                   },
                   "value": null,
@@ -7705,8 +7705,8 @@
                               "referencedDeclaration": 2182,
                               "src": "8536:3:1",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_ENS_$1785",
-                                "typeString": "contract ENS"
+                                "typeIdentifier": "t_contract$_FNS_$1785",
+                                "typeString": "contract FNS"
                               }
                             },
                             "id": 2206,
@@ -8015,8 +8015,8 @@
                               "referencedDeclaration": 2182,
                               "src": "8884:3:1",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_ENS_$1785",
-                                "typeString": "contract ENS"
+                                "typeIdentifier": "t_contract$_FNS_$1785",
+                                "typeString": "contract FNS"
                               }
                             },
                             "id": 2230,
@@ -8325,8 +8325,8 @@
                               "referencedDeclaration": 2182,
                               "src": "9231:3:1",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_ENS_$1785",
-                                "typeString": "contract ENS"
+                                "typeIdentifier": "t_contract$_FNS_$1785",
+                                "typeString": "contract FNS"
                               }
                             },
                             "id": 2254,
@@ -8930,13 +8930,13 @@
             "baseName": {
               "contractScope": null,
               "id": 2179,
-              "name": "ENSRegistry",
+              "name": "FNSRegistry",
               "nodeType": "UserDefinedTypeName",
               "referencedDeclaration": 2177,
               "src": "8075:11:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ENSRegistry_$2177",
-                "typeString": "contract ENSRegistry"
+                "typeIdentifier": "t_contract$_FNSRegistry_$2177",
+                "typeString": "contract FNSRegistry"
               }
             },
             "id": 2180,
@@ -8946,7 +8946,7 @@
         ],
         "contractDependencies": [1785, 2177],
         "contractKind": "contract",
-        "documentation": "The ENS registry contract.",
+        "documentation": "The FNS registry contract.",
         "fullyImplemented": true,
         "linearizedBaseContracts": [2299, 2177, 1785],
         "name": "ENSRegistryWithFallback",

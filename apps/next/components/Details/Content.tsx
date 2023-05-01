@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import Clipboard_copy from '../../public/Clipboard_copy.svg'
 import Image from 'next/image'
 
-import ENSRegistry from '../../src/pages/abi/ENSRegistry.json'
+import FNSRegistry from '../../src/pages/abi/FNSRegistry.json'
 import PublicResolver from '../../src/pages/abi/PublicResolver.json'
 import AddrResolver from '../../src/pages/abi/PublicResolver.sol/AddrResolver.json'
 import TextResolver from '../../src/pages/abi/PublicResolver.sol/TextResolver.json'
@@ -103,8 +103,8 @@ export default function Content({
   // console.log('namehash.hash(result)', namehash.hash(result))
 
   const { data: records } = useContractRead({
-    address: ENSRegistry.address as `0x${string}`,
-    abi: ENSRegistry.abi,
+    address: FNSRegistry.address as `0x${string}`,
+    abi: FNSRegistry.abi,
     functionName: 'resolver',
     enabled: prepared,
     args: [namehash.hash(result)],
@@ -133,8 +133,8 @@ export default function Content({
 
   // console.log('namehash.hash(result)', namehash.hash(result))
   const { data: owner } = useContractRead({
-    address: ENSRegistry.address as `0x${string}`,
-    abi: ENSRegistry.abi,
+    address: FNSRegistry.address as `0x${string}`,
+    abi: FNSRegistry.abi,
     functionName: 'owner',
     enabled: prepared && recordPrepared,
     args: [namehash.hash(result)],

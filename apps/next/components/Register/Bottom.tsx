@@ -8,11 +8,10 @@ import {
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
-  useContract,
 } from 'wagmi'
 import { BigNumber, ethers } from 'ethers'
 
-import ETHRegistarController from '../../src/pages/abi/ETHRegistrarController.json'
+import ETHRegistarController from '../../src/pages/abi/FLRRegistrarController.json'
 import PublicResolver from '../../src/pages/abi/PublicResolver.json'
 
 import web3 from 'web3-utils'
@@ -80,7 +79,7 @@ const ReqToRegister = ({
         web3.sha3(address as `0x${string}`),
         PublicResolver.address as `0x${string}`,
         [],
-        true,
+        false,
         0,
       ],
       onSuccess(data: any) {
@@ -165,7 +164,7 @@ const ReqToRegister = ({
       web3.sha3(address as `0x${string}`),
       PublicResolver.address as `0x${string}`,
       [],
-      true,
+      false,
       0,
     ],
     overrides: {

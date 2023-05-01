@@ -10,7 +10,7 @@ import { useAccount, useContract, useProvider, useContractRead } from 'wagmi'
 
 import BaseRegistrar from '../../src/pages/abi/BaseRegistrar.json'
 import MintedDomainNames from '../../src/pages/abi/MintedDomainNames.json'
-import ETHRegistrarController from '../../src/pages/abi/ETHRegistrarController.json'
+import FLRRegistrarController from '../../src/pages/abi/FLRRegistrarController.json'
 import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
 
 import web3 from 'web3-utils'

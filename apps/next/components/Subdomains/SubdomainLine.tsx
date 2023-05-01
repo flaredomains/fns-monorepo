@@ -4,7 +4,7 @@ import Delete from '../../public/Delete.svg'
 import Back from '../../public/left-arrow.svg'
 import Image from 'next/image'
 
-import ETHRegistrarController from '../../src/pages/abi/ETHRegistrarController.json'
+import FLRRegistrarController from '../../src/pages/abi/FLRRegistrarController.json'
 import BaseRegistrar from '../../src/pages/abi/BaseRegistrar.json'
 import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
 

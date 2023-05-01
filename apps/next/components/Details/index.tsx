@@ -4,9 +4,10 @@ import WalletConnect from '../WalletConnect'
 import Info from './Info'
 import Content from './Content'
 
-import ETHRegistrarController from '../../src/pages/abi/ETHRegistrarController.json'
+import FLRRegistrarController from '../../src/pages/abi/FLRRegistrarController.json'
 import BaseRegistrar from '../../src/pages/abi/BaseRegistrar.json'
-import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
+// import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
+import NameWrapper from '../../src/pages/abi/nameWrapper.json'
 
 import { sha3_256 } from 'js-sha3'
 import web3 from 'web3-utils'
@@ -21,6 +22,7 @@ export default function Details({ result }: { result: string }) {
   const [hashHex, setHashHex] = useState<string>('')
   const [filterResult, setFilterResult] = useState<string>('')
   const [expiredReady, setExpiredReady] = useState<boolean>(false)
+  const [tokenId, setTokenId] = useState<BigNumber>()
 
   // Check if result end with .flr and we do an hash with the resultFiltered for registrant and date
   useEffect(() => {
@@ -28,8 +30,6 @@ export default function Details({ result }: { result: string }) {
     if (/^0x[a-fA-F0-9]{40}$/.test(result)) {
       console.log('Ethereum address')
       setFilterResult(result)
-      // setHashHex(hash)
-      // setPreparedHash(true)
     } else if (result) {
       const resultFiltered = result.endsWith('.flr')
         ? result.slice(0, -4)
@@ -41,48 +41,12 @@ export default function Details({ result }: { result: string }) {
     }
   }, [result])
 
-  const { address } = useAccount()
-
-  const contract = useContract({
-    address: BaseRegistrar.address as `0x${string}`,
-    abi: BaseRegistrar.abi,
-  })
-
-  // console.log(contract)
-  // console.log('Contract Controller Event', contract?.filters.ControllerAdded())
-
-  // const { data: node } = useContractRead({
-  //   address: ReverseRegistrar.address as `0x${string}`,
-  //   abi: ReverseRegistrar.abi,
-  //   functionName: 'node',
-  //   // enabled: preparedHash,
-  //   args: ['0x09Ec74F54dc4b316D8cd6DFBeB91263fB20E19d2'],
-  //   onSuccess(data: any) {
-  //     console.log('Success node', data)
-  //     const test = web3.asciiToHex(filterResult)
-  //     console.log('test', test)
-  //     // setPrepared(true)
-  //   },
-  //   onError(error) {
-  //     console.log('Error node', error)
-  //   },
-  // })
-
-  // const provider = useProvider()
-  // console.log('provider', provider)
-  // const test = async () => {
-  //   const name = await provider.lookupAddress(
-  //     '0x09Ec74F54dc4b316D8cd6DFBeB91263fB20E19d2'
-  //   )
-  //   console.log('name', name)
-  // }
-
-  // test()
+  // const { address } = useAccount()
 
   // Check if the name is available -- args: filterResult
   const { data: available } = useContractRead({
-    address: ETHRegistrarController.address as `0x${string}`,
-    abi: ETHRegistrarController.abi,
+    address: FLRRegistrarController.address as `0x${string}`,
+    abi: FLRRegistrarController.abi,
     functionName: 'available',
     enabled: preparedHash,
     args: [filterResult],
@@ -96,25 +60,52 @@ export default function Details({ result }: { result: string }) {
   })
 
   // Check the registrant -- args: hashHex which is the hash of the filterResult
-  const { data: registrant } = useContractRead({
-    address: BaseRegistrar.address as `0x${string}`,
-    abi: BaseRegistrar.abi,
-    functionName: 'ownerOf',
+  // const { data: registrant } = useContractRead({
+  //   address: BaseRegistrar.address as `0x${string}`,
+  //   abi: BaseRegistrar.abi,
+  //   functionName: 'ownerOf',
+  //   enabled: !available && prepared,
+  //   args: [hashHex],
+  //   onSuccess(data: any) {
+  //     console.log('Success ownerOf', data)
+  //   },
+  //   onError(error) {
+  //     console.error('Error ownerOf', error)
+  //   },
+  // })
+
+  const { isFetched: tokerReady } = useContractRead({
+    address: NameWrapper.address as `0x${string}`,
+    abi: NameWrapper.abi,
+    functionName: 'getFLRTokenId',
     enabled: !available && prepared,
-    args: [hashHex],
+    args: [filterResult as string],
     onSuccess(data: any) {
-      console.log('Success ownerOf', data)
+      console.log('Success getFLRTokenId', data)
+      setTokenId(data.tokenId)
     },
     onError(error) {
-      console.error('Error ownerOf', error)
+      console.error('Error getFLRTokenId', error)
     },
   })
 
-  // console.log(hashHex)
+  const { data: owner } = useContractRead({
+    address: NameWrapper.address as `0x${string}`,
+    abi: NameWrapper.abi,
+    functionName: 'ownerOf',
+    enabled: !available && prepared && tokerReady,
+    args: [tokenId],
+    onSuccess(data: any) {
+      console.log('Success ownerOfLabel', data)
+    },
+    onError(error) {
+      console.error('Error ownerOfLabel', error)
+    },
+  })
 
   const { data: controller } = useContractRead({
-    address: ETHRegistrarController.address as `0x${string}`,
-    abi: ETHRegistrarController.abi,
+    address: FLRRegistrarController.address as `0x${string}`,
+    abi: FLRRegistrarController.abi,
     functionName: 'owner',
     enabled: !available && prepared,
     onSuccess(data: any) {
@@ -165,7 +156,7 @@ export default function Details({ result }: { result: string }) {
 
           <Info
             available={available}
-            registrant_address={available ? '' : registrant ? registrant : ''}
+            registrant_address={available ? '' : owner ? owner : ''}
             controller={available ? '' : controller ? controller : ''}
             date={available ? new Date() : new Date(Number(expire) * 1000)}
           />
