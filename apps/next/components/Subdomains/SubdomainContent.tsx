@@ -48,9 +48,6 @@ const AddSubdomain = ({
       PublicResolver.address as `0x${string}`,
       0,
     ],
-    // overrides: {
-    //   gasLimit: BigNumber.from(1000000),
-    // },
     onSuccess(data) {
       console.log('Success prepare setSubnodeRecord', data)
     },
@@ -86,7 +83,7 @@ const AddSubdomain = ({
         {isOpen ? (
           <>
             <form
-              onSubmit={() => setSubnodeRecord?.()}
+              // onSubmit={() => setSubnodeRecord?.()}
               className="flex items-center w-3/5 py-2 px-4 h-12 rounded-md bg-gray-700 border-2 border-gray-500"
             >
               <input

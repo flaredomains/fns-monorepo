@@ -9,7 +9,12 @@ import PublicResolver from '../../src/pages/abi/PublicResolver.json'
 import AddrResolver from '../../src/pages/abi/PublicResolver.sol/AddrResolver.json'
 import TextResolver from '../../src/pages/abi/PublicResolver.sol/TextResolver.json'
 
-import { useContractRead, useContractReads } from 'wagmi'
+import {
+  useContractRead,
+  useContractReads,
+  usePrepareContractWrite,
+  useContractWrite,
+} from 'wagmi'
 
 const namehash = require('eth-ens-namehash')
 
@@ -54,62 +59,9 @@ const keysTexts: Array<string> = [
 
 const keysAddr: Array<string> = ['XTP', 'BTC', 'LTC', 'DOGE']
 
-const RecordSection = ({
-  leftText,
-  rightText,
-}: {
-  leftText: string
-  rightText: string
-}) => {
-  const [copied, setCopied] = useState(false)
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(rightText)
-    setCopied(true)
-
-    setTimeout(() => {
-      setCopied(false)
-    }, 1000)
-  }
-
-  return (
-    <>
-      <div className="flex flex-col mb-3 lg:flex-row">
-        <p className="w-32 text-white font-medium text-xs mr-6">{leftText}</p>
-        <div className="flex items-center mt-2 lg:mt-0">
-          <p
-            className={`${
-              rightText ? 'text-[#F97316]' : 'text-gray-400'
-            } font-medium text-xs mr-3`}
-          >
-            {rightText
-              ? `${
-                  /^0x/.test(rightText) // Check if is an address or normal test
-                    ? `${rightText.slice(0, 6)}...${rightText.slice(-4)}`
-                    : rightText
-                }`
-              : 'Not Set'}
-          </p>
-          {copied ? (
-            <>
-              <p className="text-[#F97316] font-medium text-sm">Copied</p>
-            </>
-          ) : (
-            rightText && (
-              <Image
-                onClick={handleCopy}
-                className="h-4 w-4 cursor-pointer"
-                src={Clipboard_copy}
-                alt="FNS"
-              />
-            )
-          )}
-        </div>
-      </div>
-    </>
-  )
-}
-
+// leftText ---> key -- ex. ETH,BTC,... or email,URL
+// rightText ---> value -- ex. addrETH, addrBTC,... or simone@elevatesoftware.io,....
+// isAddressList --- if is Address field or Text Record field
 const Info = ({
   leftText,
   rightText,
@@ -136,6 +88,56 @@ const Info = ({
       setCopied(false)
     }, 1000)
   }
+
+  // WAGMI TEXT RECORD WRITE FUNCTION will active if isAddressList === false
+  // setText(namehash(domainName), keyString, valueString)
+  const { config: prepareSetText } = usePrepareContractWrite({
+    address: PublicResolver.address as `0x${string}`,
+    abi: TextResolver.abi,
+    functionName: 'setText',
+    // args: [input],   TODO: put the right args
+    enabled: !isAddressList && input !== '',
+    onSuccess(data: any) {
+      console.log('Success prepareSetText', data)
+    },
+    onError(error) {
+      console.log('Error prepareSetText', error)
+    },
+  })
+
+  // SetName Write Func
+  const { write: writeSetText } = useContractWrite({
+    ...prepareSetText,
+    onSuccess(data) {
+      console.log('Success writeSetText', data)
+      // setWriteFuncHash(data.hash)
+    },
+  }) as any
+
+  // WAGMI ADDRESSES WRITE FUNCTION will active if isAddressList === true
+  // setAddr(bytes32 node, uint256 coinType, bytes a)
+  const { config: prepareSetAddr } = usePrepareContractWrite({
+    address: PublicResolver.address as `0x${string}`,
+    abi: prepareSetText.abi,
+    functionName: 'setAddr',
+    // args: [input],   TODO: put the right args
+    enabled: isAddressList && input !== '',
+    onSuccess(data: any) {
+      console.log('Success setAddr', data)
+    },
+    onError(error) {
+      console.log('Error setAddr', error)
+    },
+  })
+
+  // SetName Write Func
+  const { write: writeSetAddr } = useContractWrite({
+    ...prepareSetAddr,
+    onSuccess(data) {
+      console.log('Success writeSetAddr', data)
+    },
+  }) as any
+
   return (
     <>
       <div className="flex flex-col mb-3 lg:flex-row lg:items-center">
@@ -187,16 +189,19 @@ const Info = ({
               />
             </div>
             <Image
-              // onClick={() => deleteButton(isAddressList, index)}
               onClick={() => setInput('')}
               className="h-5 w-5 cursor-pointer mr-4"
               src={Delete}
               alt="FNS"
             />
-            {/* Save */}
+            {/* Save -- setText or setAddr (based on isAddressList variable) */}
             {input !== '' && (
               <button
-                // onClick={() => save()}
+                onClick={
+                  isAddressList
+                    ? () => writeSetAddr?.() // setAddr write function
+                    : () => writeSetText?.() // setText write function
+                }
                 className="flex justify-center items-center text-center bg-[#F97316] px-2 py-1 rounded-lg text-white border border-[#F97316] lg:ml-auto"
               >
                 <p className="text-xs font-medium">Save</p>
