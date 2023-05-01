@@ -4,8 +4,13 @@ import WalletConnect from '../WalletConnect'
 import SubdomainContent from './SubdomainContent'
 import SubdomainEdit from './SubdomainEdit'
 
+import NameWrapper from '../../src/pages/abi/nameWrapper.json'
+
 import web3 from 'web3-utils'
 const namehash = require('eth-ens-namehash')
+
+import { useAccount, useContractRead } from 'wagmi'
+import { BigNumber } from 'ethers'
 
 export default function Subdomains({
   result,
@@ -20,8 +25,12 @@ export default function Subdomains({
   const [preparedHash, setPreparedHash] = useState<boolean>(false)
   const [hashHex, setHashHex] = useState<string>('')
   const [filterResult, setFilterResult] = useState<string>('')
+  const [tokenPrepared, setTokenPrepared] = useState(false)
+  const [tokenId, setTokenId] = useState<BigNumber>()
 
   const date = new Date(1678273065000)
+
+  const { address } = useAccount()
 
   useEffect(() => {
     // Check if ethereum address
@@ -41,6 +50,41 @@ export default function Subdomains({
     }
   }, [result])
 
+  useContractRead({
+    address: NameWrapper.address as `0x${string}`,
+    abi: NameWrapper.abi,
+    functionName: 'getFLRTokenId',
+    args: [filterResult as string],
+    onSuccess(data: any) {
+      // console.log('Success getFLRTokenId', data)
+      setTokenId(data.tokenId)
+      setTokenPrepared(true)
+    },
+    onError(error) {
+      console.error('Error getFLRTokenId', error)
+    },
+  })
+
+  // Get registrant address (owner)
+  const { data: owner } = useContractRead({
+    address: NameWrapper.address as `0x${string}`,
+    abi: NameWrapper.abi,
+    functionName: 'ownerOf',
+    enabled: tokenPrepared,
+    args: [tokenId],
+    onSuccess(data) {},
+    onError(error) {
+      console.error('Error ownerOfLabel', error)
+    },
+  }) as any
+
+  console.table({
+    result: result,
+    owner: owner,
+    tokenId: tokenId,
+  })
+  console.log('owner === address', owner === address)
+
   return (
     <>
       {/* Main Content / Wallet connect (hidden mobile) */}
@@ -51,7 +95,10 @@ export default function Subdomains({
           <Domain_Select result={result} />
 
           {/* Change with Wagmi Array subdomains */}
-          <SubdomainContent arrSubdomains={[]} />
+          <SubdomainContent
+            arrSubdomains={[]}
+            checkOwnerDomain={owner === address}
+          />
         </div>
 
         {/* Wallet connect */}

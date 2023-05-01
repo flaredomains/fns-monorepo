@@ -4,6 +4,8 @@ import { useRouter } from 'next/router'
 import Pages_buttons from '../../components/Pages_buttons'
 import Subdomains from '../../components/Subdomains'
 
+import web3 from 'web3-utils'
+
 export default function Result() {
   // Change to Wagmi data about user subdomain
   const [arrSubdomains, setArrSubdomains] = useState([
@@ -13,7 +15,6 @@ export default function Result() {
   ])
 
   const [result, setResult] = useState<string>('')
-
   const [path, setPath] = useState<String>('')
 
   const router = useRouter()

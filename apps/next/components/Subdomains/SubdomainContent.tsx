@@ -5,7 +5,13 @@ import Image from 'next/image'
 import SubdomainLine from './SubdomainLine'
 import Link from 'next/link'
 
-const AddSubdomain = ({ arrSubdomains }: { arrSubdomains: Array<any> }) => {
+const AddSubdomain = ({
+  arrSubdomains,
+  checkOwnerDomain,
+}: {
+  arrSubdomains: Array<any>
+  checkOwnerDomain: boolean
+}) => {
   const [isOpen, setIsOpen] = useState(false)
   const [input, setInput] = useState('')
   return (
@@ -55,7 +61,11 @@ const AddSubdomain = ({ arrSubdomains }: { arrSubdomains: Array<any> }) => {
             {/* No subdomains have been added yet */}
             {typeof arrSubdomains !== 'undefined' &&
               arrSubdomains.length === 0 && (
-                <div className="flex w-full lg:w-3/4 bg-gray-500 py-3 px-5 rounded-lg mr-4">
+                <div
+                  className={`flex w-full ${
+                    checkOwnerDomain ? `lg:w-3/4` : 'lg:w-full'
+                  } bg-gray-500 py-3 px-5 rounded-lg mr-4`}
+                >
                   <Image className="h-4 w-4 mr-2" src={Question} alt="FNS" />
                   <div className="flex-col">
                     <p className="text-gray-200 font-semibold text-sm">
@@ -65,13 +75,15 @@ const AddSubdomain = ({ arrSubdomains }: { arrSubdomains: Array<any> }) => {
                 </div>
               )}
             {/* Button */}
-            <button
-              onClick={() => setIsOpen(true)}
-              className="flex justify-center items-center text-center bg-[#F97316] h-11 w-1/2 rounded-lg text-white px-auto hover:scale-105 transform transition duration-100 ease-out md:w-1/4 lg:ml-auto"
-            >
-              <p className="text-xs font-medium mr-2">Add Subdomain</p>
-              <Image className="h-4 w-4" src={Plus} alt="FNS" />
-            </button>
+            {checkOwnerDomain && (
+              <button
+                onClick={() => setIsOpen(true)}
+                className="flex justify-center items-center text-center bg-[#F97316] h-11 w-1/2 rounded-lg text-white px-auto hover:scale-105 transform transition duration-100 ease-out md:w-1/4 lg:ml-auto"
+              >
+                <p className="text-xs font-medium mr-2">Add Subdomain</p>
+                <Image className="h-4 w-4" src={Plus} alt="FNS" />
+              </button>
+            )}
           </>
         )}
       </div>
@@ -81,12 +93,17 @@ const AddSubdomain = ({ arrSubdomains }: { arrSubdomains: Array<any> }) => {
 
 export default function SubdomainContent({
   arrSubdomains,
+  checkOwnerDomain,
 }: {
   arrSubdomains: Array<any>
+  checkOwnerDomain: boolean
 }) {
   return (
     <>
-      <AddSubdomain arrSubdomains={arrSubdomains} />
+      <AddSubdomain
+        arrSubdomains={arrSubdomains}
+        checkOwnerDomain={checkOwnerDomain}
+      />
 
       {arrSubdomains.length > 0 && (
         <div className="flex-col bg-gray-800 px-8 py-5 rounded-b-md">
