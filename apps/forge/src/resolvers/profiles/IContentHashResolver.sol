@@ -5,8 +5,8 @@ interface IContentHashResolver {
     event ContenthashChanged(bytes32 indexed node, bytes hash);
 
     /**
-     * Returns the contenthash associated with an ENS node.
-     * @param node The ENS node to query.
+     * Returns the contenthash associated with an FNS node.
+     * @param node The FNS node to query.
      * @return The associated contenthash.
      */
     function contenthash(bytes32 node) external view returns (bytes memory);

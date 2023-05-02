@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.4;
 
-import "@openzeppelin/utils/introspection/IERC165.sol";
+import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "../ResolverBase.sol";
 import "./AddrResolver.sol";
 import "./IInterfaceResolver.sol";
@@ -33,7 +33,7 @@ abstract contract InterfaceResolver is IInterfaceResolver, AddrResolver {
      * the contract at `addr()`. If `addr()` is set, a contract exists at that address, and that
      * contract implements EIP165 and returns `true` for the specified interfaceID, its address
      * will be returned.
-     * @param node The ENS node to query.
+     * @param node The FNS node to query.
      * @param interfaceID The EIP 165 interface ID to check for.
      * @return The address that implements this interface, or 0 if the interface is unsupported.
      */

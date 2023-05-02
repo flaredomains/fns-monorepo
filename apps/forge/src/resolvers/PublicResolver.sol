@@ -1,12 +1,10 @@
 //SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17 <0.9.0;
 
-import "fns/registry/IENS.sol";
+import "fns/registry/IFNS.sol";
 import "./profiles/ABIResolver.sol";
 import "./profiles/AddrResolver.sol";
 import "./profiles/ContentHashResolver.sol";
-// TODO: Re-enable DNSResolver after DNS is integrated
-// import "./profiles/DNSResolver.sol";
 import "./profiles/InterfaceResolver.sol";
 import "./profiles/NameResolver.sol";
 import "./profiles/PubkeyResolver.sol";
@@ -15,12 +13,13 @@ import "./profiles/ExtendedResolver.sol";
 import "./Multicallable.sol";
 import "fns/wrapper/INameWrapper.sol";
 
+// TODO: Remove
+import "forge-std/console.sol";
+
 /**
  * A simple resolver anyone can use; only allows the owner of a node to set its
  * address.
  */
-    // TODO: Re-enable DNSResolver after DNS is integrated
-    // DNSResolver,
 contract PublicResolver is
     Multicallable,
     ABIResolver,
@@ -32,7 +31,7 @@ contract PublicResolver is
     TextResolver,
     ExtendedResolver
 {
-    IENS immutable ens;
+    IFNS immutable fns;
     INameWrapper immutable nameWrapper;
     address immutable trustedETHController;
     address immutable trustedReverseRegistrar;
@@ -70,12 +69,17 @@ contract PublicResolver is
     );
 
     constructor(
-        IENS _ens,
+        IFNS _ens,
         INameWrapper wrapperAddress,
         address _trustedETHController,
         address _trustedReverseRegistrar
     ) {
-        ens = _ens;
+        require(address(_ens) != address(0), "Cannot Initialize To Zero Address");
+        require(address(wrapperAddress) != address(0), "Cannot Initialize To Zero Address");
+        require(address(_trustedETHController) != address(0), "Cannot Initialize To Zero Address");
+        require(address(_trustedReverseRegistrar) != address(0), "Cannot Initialize To Zero Address");
+
+        fns = _ens;
         nameWrapper = wrapperAddress;
         trustedETHController = _trustedETHController;
         trustedReverseRegistrar = _trustedReverseRegistrar;
@@ -130,9 +134,16 @@ contract PublicResolver is
             msg.sender == trustedETHController ||
             msg.sender == trustedReverseRegistrar
         ) {
+            console.log("isAuthorised: msg.sender is trustedETHController or trustedReverseRegistrar");
             return true;
         }
-        address owner = ens.owner(node);
+
+
+        address owner = fns.owner(node);
+
+        console.log("isAuthorised: owner = %s", owner);
+        console.log("isAuthorised: msg.sender = %s", msg.sender);
+
         if (owner == address(nameWrapper)) {
             owner = nameWrapper.ownerOf(uint256(node));
         }

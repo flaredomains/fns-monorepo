@@ -1,7 +1,7 @@
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/access/Ownable.sol";
-import "fns/registry/IENS.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "fns/registry/IFNS.sol";
 import "./Controllable.sol";
 
 contract Root is Ownable, Controllable {
@@ -12,11 +12,11 @@ contract Root is Ownable, Controllable {
 
     event TLDLocked(bytes32 indexed label);
 
-    IENS public ens;
+    IFNS public fns;
     mapping(bytes32 => bool) public locked;
 
-    constructor(IENS _ens) {
-        ens = _ens;
+    constructor(IFNS _ens) {
+        fns = _ens;
     }
 
     function setSubnodeOwner(
@@ -24,11 +24,11 @@ contract Root is Ownable, Controllable {
         address owner
     ) external onlyController {
         require(!locked[label]);
-        ens.setSubnodeOwner(ROOT_NODE, label, owner);
+        fns.setSubnodeOwner(ROOT_NODE, label, owner);
     }
 
     function setResolver(address resolver) external onlyOwner {
-        ens.setResolver(ROOT_NODE, resolver);
+        fns.setResolver(ROOT_NODE, resolver);
     }
 
     function lock(bytes32 label) external onlyOwner {
