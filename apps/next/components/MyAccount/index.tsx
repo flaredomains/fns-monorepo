@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Avatar from '../../public/Avatar.svg'
 import WalletConnect from '../WalletConnect'
@@ -6,9 +6,19 @@ import Link from 'next/link'
 import AccountLine from './AccountLine'
 import Reverse_Record from './Reverse_Record'
 
+import { useAccount, useContract, useProvider, useContractRead } from 'wagmi'
+
+import BaseRegistrar from '../../src/pages/abi/BaseRegistrar.json'
+import MintedDomainNames from '../../src/pages/abi/MintedDomainNames.json'
+import FLRRegistrarController from '../../src/pages/abi/FLRRegistrarController.json'
+import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
+
+import web3 from 'web3-utils'
+import { ethers } from 'ethers'
+
 const OwnedDomains = ({ date, domain }: { date: Date; domain: string }) => {
   const day = date.getDate()
-  const month = date.getMonth()
+  const month = date.getMonth() + 1
   const year = date.getFullYear()
   return (
     <>
@@ -20,14 +30,14 @@ const OwnedDomains = ({ date, domain }: { date: Date; domain: string }) => {
           {/* Domain */}
           <Link
             href={{
-              pathname: `details/[result]`,
-              query: { result: domain },
+              pathname: `details`,
+              query: { result: domain + '.flr' },
             }}
           >
             <p
               className={`text-white font-semibold text-base cursor-pointer hover:underline hover:underline-offset-2`}
             >
-              {domain}
+              {domain}.flr
             </p>
           </Link>
         </div>
@@ -44,18 +54,61 @@ const OwnedDomains = ({ date, domain }: { date: Date; domain: string }) => {
   )
 }
 
-export default function index({
-  arrSubdomains,
-}: {
-  arrSubdomains: Array<any>
-}) {
+type Domain = {
+  label: string
+  expire: number
+}
+
+export default function MyAccount() {
+  const [isOpen, setIsOpen] = useState(false)
+  const [addressDomain, setAddressDomain] = useState<Array<Domain>>([])
+
+  const { address, isConnected } = useAccount()
+
   const date = new Date(1678273065000)
+
+  const { data } = useContractRead({
+    address: MintedDomainNames.address as `0x${string}`,
+    abi: MintedDomainNames.abi,
+    functionName: 'getAll',
+    enabled: isConnected,
+    args: [address],
+    onSuccess(data: any) {
+      console.log('Success getAll', data)
+      console.log('Get array of domains', data[0])
+      const arrDomains = data[0]
+      const ownedDomain = arrDomains.map((item: any, index: any) => {
+        return {
+          label: item.label,
+          expire: Number(item.expiry),
+        }
+      })
+      setAddressDomain(ownedDomain)
+    },
+    onError(error) {
+      console.error('Error getAll', error)
+    },
+  })
+
+  // console.log('addressDomain', addressDomain)
+
   return (
-    <div className="flex-col w-11/12 mt-6 mx-auto lg:flex lg:flex-row lg:w-full">
+    <div
+      onClick={() => {
+        isOpen && setIsOpen(false)
+      }}
+      className="flex-col w-11/12 mt-6 mx-auto lg:flex lg:flex-row lg:w-full"
+    >
       <div className="flex-col bg-gray-800 px-8 py-5 w-full rounded-md lg:w-3/4 lg:mr-2">
         <AccountLine />
 
-        <Reverse_Record />
+        {isConnected && (
+          <Reverse_Record
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            addressDomain={addressDomain}
+          />
+        )}
 
         <div className="flex-col py-4 mb-4 mt-10">
           <p className="text-white font-semibold text-lg mb-2">Owned Domains</p>
@@ -65,9 +118,14 @@ export default function index({
         </div>
 
         <div className="flex-col bg-gray-800">
-          {arrSubdomains.map((item, index) => (
-            <OwnedDomains key={index} date={date} domain={item.domain} />
-          ))}
+          {isConnected &&
+            addressDomain.map((item, index) => (
+              <OwnedDomains
+                key={index}
+                date={new Date(item.expire ? item.expire * 1000 : '')}
+                domain={item.label}
+              />
+            ))}
         </div>
       </div>
 

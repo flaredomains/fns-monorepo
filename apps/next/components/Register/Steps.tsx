@@ -35,9 +35,9 @@ const Step = ({
   stepText: string
   descriptionText: string
 }) => {
-  console.log(`Number:${number} -- number - 1 ${number - 1} <= count ${count}`)
-  console.log(`Number:${number} -- number - 1 ${number - 1} === count ${count}`)
-  console.log(`Number:${number} -- number ${number} <= count ${count}`)
+  // console.log(`Number:${number} -- number - 1 ${number - 1} <= count ${count}`)
+  // console.log(`Number:${number} -- number - 1 ${number - 1} === count ${count}`)
+  // console.log(`Number:${number} -- number ${number} <= count ${count}`)
   return (
     <>
       <div className="w-full flex-col justify-center items-center mt-4 lg:mt-0 lg:w-1/3">
@@ -77,8 +77,7 @@ const Step = ({
   )
 }
 
-export default function Steps() {
-  const [count, setCount] = useState(0)
+export default function Steps({ count }: { count: number }) {
   return (
     <>
       <div className="flex flex-col mt-10 w-full lg:flex-row">

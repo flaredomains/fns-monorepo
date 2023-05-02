@@ -54,7 +54,7 @@ const Button = ({
   return (
     <Link
       href={{
-        pathname: `${page}/[result]`,
+        pathname: `${page}`,
         query: { result: result },
       }}
     >
@@ -78,16 +78,21 @@ function Pages_buttons({ result, path }: any) {
   const handleSubmit = (e: any) => {
     e.preventDefault()
 
-    // Regular expression to validate input
-    const pattern = /\.flr$/
+    // Regular expression to validate input /^[a-zA-Z0-9\s\p{Emoji}]+\.flr$/u
+    const pattern =
+      /^[a-zA-Z0-9\s\p{Emoji}]+(\.[a-zA-Z0-9\s\p{Emoji}]+)*\.flr$/u
 
-    if (pattern.test(route)) {
+    const exception = /^0x[a-fA-F0-9]{40}$/
+
+    if (pattern.test(route) || exception.test(route)) {
       console.log('Input is valid!')
-      router.push(path.split('/')[0] + route)
+      router.push(path + '?result=' + route.toLowerCase())
     } else {
       console.log('Input is invalid!')
       const inputElement = e.target.elements['input-field'] as HTMLInputElement
-      inputElement.setCustomValidity('Should end with .flr')
+      inputElement.setCustomValidity(
+        'Should end with .flr and not contain special characters or two or more consecutive dots.'
+      )
       inputElement.reportValidity()
     }
   }
@@ -105,16 +110,10 @@ function Pages_buttons({ result, path }: any) {
               result={result}
               page={item.page}
               button_style={`${item.button_style}${
-                path === item.page + '/[result]'
-                  ? ' bg-gray-700'
-                  : ' bg-transparent'
+                path === item.page ? ' bg-gray-700' : ' bg-transparent'
               }`}
               image_style={item.image_style}
-              text_style={
-                path === item.page + '/[result]'
-                  ? ' text-white'
-                  : ' text-gray-500'
-              }
+              text_style={path === item.page ? ' text-white' : ' text-gray-500'}
               src={item.src}
             />
           ))}
@@ -131,13 +130,13 @@ function Pages_buttons({ result, path }: any) {
             name="input-field"
             value={route}
             onChange={(e) => {
-              setRoute(e.target.value)
+              setRoute(e.target.value.toLowerCase().toLowerCase())
             }}
             onInput={(event) => {
               const inputElement = event.target as HTMLInputElement
               inputElement.setCustomValidity('')
             }}
-            className="w-full bg-transparent font-normal text-base text-white border-0 focus:outline-none placeholder:text-gray-300 placeholder:font-normal"
+            className="w-full bg-transparent font-normal text-base text-white border-0 focus:outline-none placeholder:text-gray-300 placeholder:font-normal focus:bg-transparent"
             placeholder="Search New Names or Addresses"
             required
           />

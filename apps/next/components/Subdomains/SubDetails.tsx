@@ -2,6 +2,15 @@ import React, { useState, useEffect } from 'react'
 import Clipboard_copy from '../../public/Clipboard_copy.svg'
 import Image from 'next/image'
 
+import FLRRegistrarController from '../../src/pages/abi/FLRRegistrarController.json'
+import BaseRegistrar from '../../src/pages/abi/BaseRegistrar.json'
+import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
+
+import web3 from 'web3-utils'
+const namehash = require('eth-ens-namehash')
+
+import { useAccount, useContractRead } from 'wagmi'
+
 const InfoLine = ({
   leftText,
   rightText,
@@ -58,35 +67,64 @@ const InfoLine = ({
 }
 
 export default function SubDetails({
-  address,
+  data,
   date,
+  editMode,
 }: {
-  address: String
+  data: string
   date: Date
+  editMode: boolean
 }) {
   const day = date.getDate()
   const month = date.toLocaleString('en-US', { month: 'long' })
   const year = date.getFullYear()
+
+  const { data: registrant } = useContractRead({
+    address: BaseRegistrar.address as `0x${string}`,
+    abi: BaseRegistrar.abi,
+    functionName: 'ownerOf',
+    enabled: editMode,
+    args: [
+      web3.sha3(data.endsWith('.flr') ? data.slice(0, -4) : data) as string,
+    ],
+    onSuccess(data: any) {
+      console.log('Success ownerOf', data)
+    },
+    onError(error) {
+      console.error('Error ownerOf', error)
+    },
+  })
+
+  // console.log(hashHex)
+
+  const { data: controller } = useContractRead({
+    address: FLRRegistrarController.address as `0x${string}`,
+    abi: FLRRegistrarController.abi,
+    functionName: 'owner',
+    enabled: editMode,
+    onSuccess(data: any) {
+      console.log('Success controller', data)
+    },
+    onError(error) {
+      console.log('Error controller', error)
+    },
+  })
 
   return (
     <>
       <div className="flex-col bg-gray-800 px-8 py-2 md:py-10">
         {/* Details */}
         <div className="flex-col w-full pr-3">
-          <InfoLine
-            leftText="Parent"
-            rightText={'Ripple Network'}
-            alternativeText=""
-          />
+          <InfoLine leftText="Parent" rightText={'.flr'} alternativeText="" />
           <InfoLine
             leftText="Registrant"
-            rightText={'0x880426bb362Bf481d6891839f1B0dAEB57900591'}
-            alternativeText=""
+            rightText={registrant ? registrant : ''}
+            alternativeText="0x0"
           />
           <InfoLine
             leftText="Controller"
-            rightText={'0x880426bb362Bf481d6891839f1B0dAEB57900591'}
-            alternativeText=""
+            rightText={controller ? controller : ''}
+            alternativeText="Not Owned"
           />
 
           {/* Expiration Date */}

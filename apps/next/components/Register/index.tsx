@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Like from '../../public/Like.svg'
 import Dislike from '../../public/Dislike.svg'
 import WalletConnect from '../WalletConnect'
@@ -8,6 +8,22 @@ import Selector from './Selector'
 import Final_price from './Final_price'
 import Steps from './Steps'
 import Bottom from './Bottom'
+import web3 from 'web3-utils'
+
+import FLRRegistrarController from '../../src/pages/abi/FLRRegistrarController.json'
+import PublicResolver from '../../src/pages/abi/PublicResolver.json'
+
+import {
+  useFeeData,
+  useContractRead,
+  useContractWrite,
+  usePrepareContractWrite,
+  useContractEvent,
+  useContract,
+  useSigner,
+  useAccount,
+} from 'wagmi'
+import { BigNumber, ethers } from 'ethers'
 
 const Alert = ({ available }: { available: boolean }) => {
   return (
@@ -48,19 +64,137 @@ const StepTitle = () => {
   )
 }
 
-export default function Register({
-  available,
-  result,
-}: {
-  available: boolean
-  result: String
-}) {
+export default function Register({ result }: { result: string }) {
+  // For steps animation
+  const [count, setCount] = useState(0)
+
+  const [priceFLR, setPriceFLR] = useState('1')
   const [regPeriod, setRegPeriod] = useState(1)
+  const [preparedHash, setPreparedHash] = useState<boolean>(false)
+  const [hashHex, setHashHex] = useState<string>('')
+  const [filterResult, setFilterResult] = useState<string>('')
+  const [isNormalDomain, setIsNormalDomain] = useState<boolean>(true)
 
-  // Change with smart contract price
-  const [priceToPay, setPriceToPay] = useState(0.0033626233262)
+  const { address, isConnected } = useAccount()
+  const { data: signer } = useSigner()
 
-  // TODO Add useFeeData from wagmi
+  function getParentDomain(str: string) {
+    // Define a regular expression pattern that matches subdomains of a domain that ends with .flr.
+    const subdomainPattern = /^([a-z0-9][a-z0-9-]*[a-z0-9]\.)+[a-z]{2,}\.flr$/i
+
+    // Use the regular expression pattern to test whether the string matches a subdomain.
+    const isSubdomain = subdomainPattern.test(str)
+    console.log('isSubdomain', isSubdomain)
+
+    if (isSubdomain) {
+      // The input string is a subdomain, extract the parent domain.
+      const parts = str.split('.')
+      const numParts = parts.length
+      const parentDomain = parts.slice(numParts - (numParts - 1)).join('.')
+      setIsNormalDomain(false)
+      return parentDomain
+    } else {
+      return str
+    }
+  }
+
+  useEffect(() => {
+    const parent = getParentDomain(result)
+    console.log('parent', parent)
+    // Check if ethereum address
+    if (/^0x[a-fA-F0-9]{40}$/.test(result)) {
+      console.log('Ethereum address')
+      setFilterResult(result)
+      // setHashHex(hash)
+      // setPreparedHash(true)
+    } else if (result) {
+      const resultFiltered = result.endsWith('.flr')
+        ? result.slice(0, -4)
+        : result
+      const hash = web3.sha3(resultFiltered) as string
+      // console.log('hash', hash)
+      setFilterResult(resultFiltered)
+      setHashHex(hash)
+      setPreparedHash(true)
+    }
+  }, [result])
+
+  // Available READ function
+  const { data: available } = useContractRead({
+    address: FLRRegistrarController.address as `0x${string}`,
+    abi: FLRRegistrarController.abi,
+    functionName: 'available',
+    enabled: preparedHash,
+    args: [filterResult],
+    onSuccess(data: any) {
+      // console.log('Success available', data)
+    },
+    onError(error) {
+      console.log('Error available', error)
+    },
+  })
+
+  // RentPrice READ function
+  useContractRead({
+    address: FLRRegistrarController.address as `0x${string}`,
+    abi: FLRRegistrarController.abi,
+    functionName: 'rentPrice',
+    args: [filterResult as string, regPeriod * 31556952], // 31536000
+    onSuccess(data: any) {
+      // console.log('Success rentPrice', data)
+      // console.log('Base', Number(data.base))
+      // console.log('Base', ethers.utils.formatEther(data.base))
+      // console.log('Premium', Number(data.premium))
+      setPriceFLR(data.base)
+    },
+    onError(error) {
+      console.log('Error rentPrice', error)
+    },
+  })
+
+  const { data: fee } = useFeeData()
+
+  const contract = useContract({
+    address: FLRRegistrarController.address as `0x${string}`,
+    abi: FLRRegistrarController.abi,
+    signerOrProvider: signer,
+  })
+
+  // Get gas fee
+  // useEffect(() => {
+  //   const getGas = async () => {
+  //     const makeCommitment = await contract?.makeCommitment(
+  //       result as string,
+  //       address as `0x${string}`,
+  //       BigNumber.from(regPeriod).mul(31556952),
+  //       web3.sha3(address as `0x${string}`),
+  //       PublicResolver.address as `0x${string}`,
+  //       [],
+  //       false,
+  //       0
+  //     )
+  //     const gasCommit = await contract?.estimateGas.commit(makeCommitment)
+  //     // const gasRegister = await contract?.estimateGas.register(
+  //     //   result as string,
+  //     //   address as `0x${string}`,
+  //     //   BigNumber.from(regPeriod).mul(31556952),
+  //     //   web3.sha3(address as `0x${string}`),
+  //     //   PublicResolver.address as `0x${string}`,
+  //     //   [],
+  //     //   false,
+  //     //   0
+  //     // )
+  //     console.log('gasCommit', Number(gasCommit))
+  //   }
+
+  //   if (isConnected) {
+  //     getGas()
+  //   }
+  // }, [isConnected])
+
+  //0.00117262
+  //0.219
+  //0.220 * 2 = 0.44
 
   const incrementYears = () => {
     if (regPeriod >= 999) return
@@ -75,6 +209,16 @@ export default function Register({
     setRegPeriod(regPeriod - 1)
   }
 
+  console.table({
+    result: result,
+    filterResult: filterResult,
+    hashHex: hashHex,
+    priceFLR: priceFLR,
+    available: available,
+    regPeriod: regPeriod,
+    isNormalDomain: isNormalDomain,
+  })
+
   return (
     <>
       {/* Main Content / Wallet connect (hidden mobile) */}
@@ -85,27 +229,37 @@ export default function Register({
           <Domain_Select result={result} />
 
           <div className="flex-col bg-gray-800 px-8 py-12 rounded-b-md">
-            <Alert available={available} />
-            {available && (
+            <Alert available={isNormalDomain && available} />
+            {available && isNormalDomain && (
               <>
                 {/* Increment Selector */}
                 <Selector
                   regPeriod={regPeriod}
-                  priceToPay={priceToPay}
+                  priceToPay={priceFLR}
                   incrementYears={incrementYears}
                   decreaseYears={decreaseYears}
                 />
 
                 {/* Final price block */}
-                <Final_price regPeriod={regPeriod} priceToPay={priceToPay} />
+                <Final_price
+                  regPeriod={regPeriod}
+                  fee={Number(fee?.gasPrice)}
+                  priceToPay={priceFLR}
+                />
 
                 {/* Steps title mobile hidden */}
                 <StepTitle />
 
                 {/* Steps */}
-                <Steps />
+                <Steps count={count} />
 
-                <Bottom />
+                <Bottom
+                  result={filterResult}
+                  regPeriod={regPeriod}
+                  price={priceFLR}
+                  count={count}
+                  setCount={setCount}
+                />
               </>
             )}
           </div>

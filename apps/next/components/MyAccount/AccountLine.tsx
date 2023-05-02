@@ -14,15 +14,19 @@ export default function AccountLine() {
     e.preventDefault()
 
     // Regular expression to validate input
-    const pattern = /\.flr$/
+    const pattern = /^[a-zA-Z0-9\s\p{Emoji}]+\.flr$/u
 
-    if (pattern.test(route)) {
+    const exception = /^0x[a-fA-F0-9]{40}$/
+
+    if (pattern.test(route) || exception.test(route)) {
       console.log('Input is valid!')
-      router.push('register/' + route)
+      router.push('register?result=' + route.toLowerCase())
     } else {
       console.log('Input is invalid!')
       const inputElement = e.target.elements['input-field'] as HTMLInputElement
-      inputElement.setCustomValidity('Should end with .flr')
+      inputElement.setCustomValidity(
+        'Should be a name with .flr at the end or ethereum address.'
+      )
       inputElement.reportValidity()
     }
   }
@@ -57,7 +61,7 @@ export default function AccountLine() {
             name="input-field"
             value={route}
             onChange={(e) => {
-              setRoute(e.target.value)
+              setRoute(e.target.value.toLowerCase())
             }}
             onInput={(event) => {
               const inputElement = event.target as HTMLInputElement

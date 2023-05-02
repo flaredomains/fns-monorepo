@@ -5,7 +5,23 @@ import { useEffect, useState } from 'react'
 import { Web3Modal } from '@web3modal/react'
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { configureChains, createClient, WagmiConfig } from 'wagmi'
-import { goerli } from 'wagmi/chains'
+
+import { Chain } from 'wagmi'
+
+export const Flare = {
+  id: 114,
+  name: 'Coston 2',
+  network: 'Coston 2 Test Network',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'C2FLR',
+    symbol: 'C2FLR',
+  },
+  rpcUrls: {
+    public: { http: ['https://coston2-api.flare.network/ext/C/rpc'] },
+    default: { http: ['https://coston2-api.flare.network/ext/C/rpc'] },
+  },
+} as const satisfies Chain
 
 // 1. Get projectID at https://cloud.walletconnect.com
 if (!process.env.WALLET_CONNECT_PROJECT_ID) {
@@ -15,7 +31,7 @@ if (!process.env.WALLET_CONNECT_PROJECT_ID) {
 const projectId = process.env.WALLET_CONNECT_PROJECT_ID
 
 // 2. Configure wagmi client
-const chains = [goerli]
+const chains = [Flare]
 const { provider } = configureChains(chains, [w3mProvider({ projectId })])
 export const wagmiClient = createClient({
   autoConnect: true,
@@ -37,7 +53,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>FNS</title>
-        <link rel="icon" href="/flare_favicon.ico" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
       {ready ? (
         <WagmiConfig client={wagmiClient}>

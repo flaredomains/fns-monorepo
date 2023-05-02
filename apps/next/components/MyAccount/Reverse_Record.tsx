@@ -2,23 +2,21 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import ArrowDown from '../../public/ArrowDown.svg'
 
-const arrTextTest = [
-  {
-    text: 'chase',
-  },
-  {
-    text: 'ben',
-  },
-  {
-    text: 'leonardo',
-  },
-  {
-    text: 'andrew',
-  },
-  {
-    text: 'ric',
-  },
-]
+import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
+import PublicRegistrar from '../../src/pages/abi/PublicResolver.json'
+import NameResolver from '../../src/pages/abi/PublicResolver.sol/NameResolver.json'
+// import Resolver from '../../src/pages/abi/ReverseRegistrar.sol/Resolver.json'
+// import ENS from '../../src/pages/abi/ReverseRegistrar.sol/ENS.json'
+
+const namehash = require('eth-ens-namehash')
+
+import {
+  useAccount,
+  useContractRead,
+  useContractWrite,
+  usePrepareContractWrite,
+  useWaitForTransaction,
+} from 'wagmi'
 
 const Rev_Record_Line = ({
   text,
@@ -39,16 +37,26 @@ const Rev_Record_Line = ({
   )
 }
 
-const Dropdown = () => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [selectText, setSelectText] = useState('')
+const Dropdown = ({
+  isOpen,
+  setIsOpen,
+  addressDomain,
+  selectText,
+  setSelectText,
+}: {
+  isOpen: boolean
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  addressDomain: Array<Domain>
+  selectText: string
+  setSelectText: React.Dispatch<React.SetStateAction<string>>
+}) => {
   return (
     <>
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className="flex-col cursor-pointer relative"
+        className="flex-col cursor-pointer relative w-1/2"
       >
-        <div className="flex justify-between items-center p-3 w-full mt-7 bg-gray-700 rounded-lg lg:w-1/2">
+        <div className="flex justify-between items-center p-3 w-full mt-7 bg-gray-700 rounded-lg">
           <p
             className={`text-base font-medium ${
               selectText ? 'text-gray-200' : 'text-gray-400'
@@ -61,12 +69,12 @@ const Dropdown = () => {
         <div
           className={`${
             isOpen ? 'absolute' : 'hidden'
-          } bg-gray-700 w-full mt-2 rounded-lg lg:w-1/2`}
+          } bg-gray-700 w-full mt-2 rounded-lg`}
         >
-          {arrTextTest.map((item, index) => (
+          {addressDomain.map((item, index) => (
             <Rev_Record_Line
               key={index}
-              text={item.text}
+              text={item.label}
               setSelectText={setSelectText}
             />
           ))}
@@ -76,8 +84,27 @@ const Dropdown = () => {
   )
 }
 
-export default function Reverse_Record() {
+type Domain = {
+  label: string
+  expire: number
+}
+
+export default function Reverse_Record({
+  isOpen,
+  setIsOpen,
+  addressDomain,
+}: {
+  isOpen: boolean
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  addressDomain: Array<Domain>
+}) {
   const [isLarge, setisLarge] = useState(false)
+  const [selectText, setSelectText] = useState('')
+  const [prepared, setPrepared] = useState(false)
+  const [writeFuncHash, setWriteFuncHash] = useState('')
+
+  const { address, isConnected } = useAccount()
+
   useEffect(() => {
     // First render
     if (window.innerWidth >= 1024) {
@@ -94,15 +121,82 @@ export default function Reverse_Record() {
     // Remove event listener on component unmount
     return () => window.removeEventListener('resize', handleResize)
   }, [])
+
+  const { data: node, isFetched } = useContractRead({
+    address: ReverseRegistrar.address as `0x${string}`,
+    abi: ReverseRegistrar.abi,
+    functionName: 'node',
+    args: [address],
+    onSuccess(data: any) {
+      console.log('Success node: ', data)
+    },
+    onError(error) {
+      console.log('Error node', error)
+    },
+  })
+
+  // NameResolver Name
+  const { data: mainDomain, refetch: refetchMainDomain } = useContractRead({
+    address: PublicRegistrar.address as `0x${string}`,
+    abi: NameResolver.abi,
+    functionName: 'name',
+    enabled: isConnected && isFetched,
+    args: [node],
+    onSuccess(data: any) {
+      console.log('Success name: ', data)
+    },
+    onError(error) {
+      console.log('Error name', error)
+    },
+  })
+
+  //  SetName Prepare selectText + '.flr'
+  const { config: prepareSetName } = usePrepareContractWrite({
+    address: ReverseRegistrar.address as `0x${string}`,
+    abi: ReverseRegistrar.abi,
+    functionName: 'setName',
+    args: [selectText],
+    enabled: isConnected && selectText !== '',
+    onSuccess(data: any) {
+      console.log('Success prepareSetName', data)
+      // setPrepared(true)
+    },
+    onError(error) {
+      console.log('Error prepareSetName', error)
+    },
+  })
+
+  // SetName Write Func
+  const { write: setName, isSuccess } = useContractWrite({
+    ...prepareSetName,
+    onSuccess(data) {
+      console.log('Success setName', data)
+      setWriteFuncHash(data.hash)
+    },
+  }) as any
+
+  const { data } = useWaitForTransaction({
+    hash: writeFuncHash as `0x${string}`,
+    enabled: isSuccess && writeFuncHash,
+    onSuccess(data) {
+      console.log('Success setName block', data)
+      refetchMainDomain()
+    },
+  })
+
   return (
     <>
       <div className="flex justify-between mt-16">
         {/* Text */}
         <p className="text-white font-semibold text-lg">
           {isLarge ? 'Primary FNS Name (Reverse Record)' : 'Primary FNS Name'}
+          {mainDomain ? ` : ${mainDomain}.flr` : ''}
         </p>
         {/* Button */}
-        <div className="flex items-center px-3 py-1 bg-[#F97316] rounded-full cursor-pointer hover:scale-110 active:scale-125 transform transition duration-300 ease-out lg:py-2 lg:px-4">
+        <div
+          onClick={() => setName?.()}
+          className="flex items-center px-3 py-1 bg-[#F97316] rounded-full cursor-pointer hover:scale-110 active:scale-125 transform transition duration-300 ease-out lg:py-2 lg:px-4"
+        >
           <p className="text-white text-sm font-medium">Not Set</p>
         </div>
       </div>
@@ -115,7 +209,13 @@ export default function Reverse_Record() {
       </p>
 
       {/* Dropdown */}
-      <Dropdown />
+      <Dropdown
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        addressDomain={addressDomain}
+        selectText={selectText}
+        setSelectText={setSelectText}
+      />
 
       {/* Text */}
       <p className="mt-2 w-full font-normal text-sm text-gray-400 lg:w-1/2">

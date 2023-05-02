@@ -3,6 +3,17 @@ import Info from '../../public/Info.svg'
 import Plus from '../../public/Plus.svg'
 import Minus from '../../public/Minus.svg'
 import Image from 'next/image'
+import { ethers } from 'ethers'
+
+const Loading = () => {
+  return (
+    <>
+      <div className="animate-pulse mb-1 mr-4">
+        <div className="bg-slate-500 h-6 w-20 rounded"></div>
+      </div>
+    </>
+  )
+}
 
 const RegistrationPeriod = ({
   decreaseYears,
@@ -44,19 +55,25 @@ const RegistrationPeriod = ({
   )
 }
 
+// (priceToPay / 10 ** 18).toFixed(4)
 const RegPrice = ({
   regPeriod,
   priceToPay,
 }: {
   regPeriod: number
-  priceToPay: number
+  priceToPay: string
 }) => {
   return (
     <>
       <div className="flex-col mt-6 lg:mt-0">
-        <p className="text-white font-semibold text-3xl lg:text-xl xl:text-3xl">
-          {(priceToPay * regPeriod).toFixed(3)} FLR
-        </p>
+        <div className="flex items-center text-white font-semibold text-3xl lg:text-xl xl:text-3xl">
+          {priceToPay ? (
+            ethers.utils.formatEther(priceToPay).slice(0, 6)
+          ) : (
+            <Loading />
+          )}{' '}
+          FLR
+        </div>
         <p className="text-[#91A3B8] font-medium text-sm lg:text-xs xl:text-sm">
           Registration price to pay{' '}
         </p>
@@ -85,7 +102,7 @@ export default function Selector({
   decreaseYears,
 }: {
   regPeriod: number
-  priceToPay: number
+  priceToPay: string
   incrementYears: () => void
   decreaseYears: () => void
 }) {

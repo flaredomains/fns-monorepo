@@ -75,7 +75,11 @@ const Alert = ({ available }: { available: boolean }) => {
         />
         <div className="flex-col">
           <p className="text-gray-200 font-semibold text-sm">
-            This name {available ? 'is' : 'is not'} available!
+            {available
+              ? 'This name is available!'
+              : available !== undefined
+              ? 'This name is already registered'
+              : 'Error'}
           </p>
         </div>
       </div>
@@ -96,9 +100,11 @@ export default function Info({
   controller: string
   date: Date
 }) {
-  const day = date.getDate()
-  const month = date.toLocaleString('en-US', { month: 'long' })
-  const year = date.getFullYear()
+  // if (date) {
+  //   const day = date?.getDate()
+  //   const month = date?.toLocaleString('en-US', { month: 'long' })
+  //   const year = date?.getFullYear()
+  // }
 
   return (
     <>
@@ -108,7 +114,11 @@ export default function Info({
         {/* Details */}
         <div className="flex-col w-full mt-10">
           {/* Parent */}
-          <InfoLine leftText="Parent" rightText={parent} alternativeText="" />
+          <InfoLine
+            leftText="Parent"
+            rightText={parent ? parent : '.flr'}
+            alternativeText=""
+          />
 
           {/* Registrant */}
           <InfoLine
@@ -125,16 +135,20 @@ export default function Info({
           />
 
           {/* Expiration Date */}
-          <div className="flex-col items-center w-full mb-6 lg:flex lg:flex-row">
-            <p className="font-semibold text-white text-base w-32 mr-12">
-              Expiration Date
-            </p>
-            <div className="flex-col items-center mt-2 lg:mt-0 lg:flex lg:flex-row">
-              <p className="font-semibold text-white text-base mr-12">
-                {`${month} ${day}, ${year}`}
+          {date && !available && (
+            <div className="flex-col items-center w-full mb-6 lg:flex lg:flex-row">
+              <p className="font-semibold text-white text-base w-32 mr-12">
+                Expiration Date
               </p>
+              <div className="flex-col items-center mt-2 lg:mt-0 lg:flex lg:flex-row">
+                <p className="font-semibold text-white text-base mr-12">
+                  {`${date?.toLocaleString('en-US', {
+                    month: 'long',
+                  })} ${date?.getDate()}, ${date?.getFullYear()}`}
+                </p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </>
