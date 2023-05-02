@@ -87,7 +87,7 @@ abstract contract DeployFNSAbstract is Script {
         // TODO: Update this to Regular StablePriceOracle for mainnet deployment
         MockStablePriceOracle stablePriceOracle = new MockStablePriceOracle(
             0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
-            [uint256(5), 4, 3, 2, 1]);
+            [uint256(500), 350, 300, 100, 5]);
         flrRegistrarController = new FLRRegistrarController(
             baseRegistrar,
             stablePriceOracle,

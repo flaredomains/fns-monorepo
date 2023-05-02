@@ -108,8 +108,8 @@ contract MockStablePriceOracle is IPriceOracle, IERC165, Ownable {
     }
 
     function getLatestPriceDataFromOracle() internal view returns (uint256 flrPriceUSD, uint256 timestamp, uint256 decimals) {
-        // Mocked return of $0.035/FLR in the same format the Oracle would normally provide
-        return (3500, block.timestamp, 5);
+        // Mocked return of $0.02955/FLR in the same format the Oracle would normally provide
+        return (2955, block.timestamp, 5);
     }
 
     function attoUSDToWei(uint256 amount) internal view returns (uint256) {
