@@ -4,7 +4,7 @@ import WalletConnect from '../WalletConnect'
 import SubdomainContent from './SubdomainContent'
 import SubdomainEdit from './SubdomainEdit'
 
-import NameWrapper from '../../src/pages/abi/nameWrapper.json'
+import NameWrapper from '../../src/pages/abi/NameWrapper.json'
 
 import web3 from 'web3-utils'
 const namehash = require('eth-ens-namehash')
