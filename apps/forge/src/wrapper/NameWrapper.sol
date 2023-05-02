@@ -15,6 +15,9 @@ import {ERC20Recoverable} from "fns/utils/ERC20Recoverable.sol";
 import {IMintedDomainNames} from "fns/chain-state/IMintedDomainNames.sol";
 import {ISubdomainTracker} from "fns/chain-state/ISubdomainTracker.sol";
 
+// TODO: Remove
+import "forge-std/console.sol";
+
 error UnauthorisedAddr(bytes32 node, address addr);
 error IncompatibleParent();
 error IncorrectTokenType();
@@ -633,7 +636,12 @@ contract NameWrapper is
         uint32 fuses,
         uint64 expiry
     ) public onlyTokenOwner(parentNode) returns (bytes32 node) {
+        // console.log("--- setSubnodeRecord ---");
+        // console.logString(label);
+
         bytes32 labelhash = keccak256(bytes(label));
+        // console.logBytes32(labelhash);
+
         node = _makeNode(parentNode, labelhash);
         _checkCanCallSetSubnodeOwner(parentNode, node);
         _checkFusesAreSettable(node, fuses);
@@ -648,7 +656,8 @@ contract NameWrapper is
                 ttl
             );
             _storeNameAndWrap(parentNode, node, label, owner, fuses, expiry);
-            mintedDomainNamesContract.add(owner, uint256(node), fuses, expiry, label);
+            mintedDomainNamesContract.addSubdomain(
+                owner, uint256(node), fuses, expiry, uint256(parentNode), label);
             subdomainTrackerContract.add(uint256(parentNode), uint256(node), owner, label);
         } else {
             fns.setSubnodeRecord(

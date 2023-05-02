@@ -7,8 +7,8 @@ import "fns/wrapper/INameWrapper.sol";
 import "forge-std/console.sol";
 
 contract MintedDomainNames is IMintedDomainNames {
-    mapping(uint256 => string) tokenIdToName;
-    mapping(address => IMintedDomainNames.Data[]) mintedDomainNames;
+    mapping(uint256 => string) public tokenIdToName;
+    mapping(address => IMintedDomainNames.Data[]) public mintedDomainNames;
     INameWrapper immutable nameWrapper;
 
     /**
@@ -66,14 +66,43 @@ contract MintedDomainNames is IMintedDomainNames {
         (, uint256 idFromLabel) = nameWrapper.getFLRTokenId(label);
         require(id == idFromLabel, "MintedDomainNames: id & label mismatch");
 
-        // TODO: Remove this
-        console.log("MintedDomainNames::add(owner:%s, id:%s, expiry:%s, label:...)", owner, id, expiry);
-        console.logString(label);
+        // // TODO: Remove this
+        // console.log("MintedDomainNames::add(owner:%s, id:%s, expiry:%s, label:...)", owner, id, expiry);
+        // console.logString(label);
 
         // We're safe to add label here because id will always match label. At worst, we will overwrite
         tokenIdToName[id] = label;
 
         mintedDomainNames[owner].push(IMintedDomainNames.Data(id, fuses, expiry, label));
+    }
+
+    /**
+     * @dev Add a user minted subdomain, gated to the NameWrapper contract
+     * @param owner The address to add the id to
+     * @param id the id of the registered subdomain
+     * @param expiry the expiry timestamp of the registered subdomain
+     * @param parentNodeTokenId the tokenID of the parent node to the subdomain
+     * @param label the lable of the registered subdomain
+     */
+    function addSubdomain(
+        address owner,
+        uint256 id,
+        uint32 fuses,
+        uint64 expiry,
+        uint256 parentNodeTokenId,
+        string calldata label) external isNameWrapper {
+        string memory fullNameWithoutTLD = string.concat(
+            label,
+            ".",
+            tokenIdToName[parentNodeTokenId]
+        );
+        // console.log("MintedDomainNames::addSubdomain(...)");
+        // console.logString(fullNameWithoutTLD);
+
+        // We're safe to add label here because id will always match label. At worst, we will overwrite
+        tokenIdToName[id] = fullNameWithoutTLD;
+
+        mintedDomainNames[owner].push(IMintedDomainNames.Data(id, fuses, expiry, fullNameWithoutTLD));
     }
 
     /**
@@ -84,8 +113,8 @@ contract MintedDomainNames is IMintedDomainNames {
      */
     function addFromTransfer(address oldOwner, address owner, uint256 id, uint32 fuses, uint64 expiry) external isNameWrapper {
         // TODO: Remove this
-        console.log("addFromTransfer");
-        console.logString(tokenIdToName[id]);
+        // console.log("addFromTransfer");
+        // console.logString(tokenIdToName[id]);
 
         mintedDomainNames[owner].push(IMintedDomainNames.Data(id, fuses, expiry, tokenIdToName[id]));
     }

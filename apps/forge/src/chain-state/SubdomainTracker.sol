@@ -1,13 +1,14 @@
-pragma solidity >=0.8.4;
+pragma solidity >=0.8.12;
 
 import "./ISubdomainTracker.sol";
+import "./MintedDomainNames.sol";
 import "fns/wrapper/INameWrapper.sol";
 
 // TODO: Remove
 import "forge-std/console.sol";
 
 contract SubdomainTracker is ISubdomainTracker {
-    mapping(uint256 => ISubdomainTracker.Data[]) subdomains;
+    mapping(uint256 => ISubdomainTracker.Data[]) public subdomains;
     INameWrapper immutable nameWrapper;
 
     /**
@@ -34,7 +35,7 @@ contract SubdomainTracker is ISubdomainTracker {
     function getAll(uint256 parentTokenId) external view returns (ISubdomainTracker.Data[] memory data, uint256 length) {
         data = new ISubdomainTracker.Data[](subdomains[parentTokenId].length);
 
-        // Filter all records based on having an owner
+        // Filter all records based on having an owner (still valid, not burnt)
         // Ensure owner returned is always up to date, in case of transfers
         for(uint i = 0; i < subdomains[parentTokenId].length; ++i) {
             if(nameWrapper.ownerOf(subdomains[parentTokenId][i].id) != address(0)) {
@@ -53,14 +54,14 @@ contract SubdomainTracker is ISubdomainTracker {
      * @param subdomainLabel The label of the subdomain: "hi.test"
      */
     function add(uint256 parentTokenId, uint256 subdomainId, address subdomainOwner, string calldata subdomainLabel) external isNameWrapper {
-        (, uint256 idFromLabel) = nameWrapper.getFLRTokenId(subdomainLabel);
-        require(subdomainId == idFromLabel, "MintedDomainNames: id & label mismatch");
+        // (, uint256 idFromLabel) = nameWrapper.getFLRTokenId(fullLabelWithoutTLD);
+        // require(subdomainId == idFromLabel, "SubdomainTracker: id & label mismatch");
 
         // TODO: Remove this
-        console.log(
-            "SubdomainTracker::add(parentTokenId:%s, subdomainId:%s, subdomainOwner:%s, subdomainLabel:...)",
-            parentTokenId, subdomainId, subdomainOwner);
-        console.logString(subdomainLabel);
+        // console.log(
+        //     "SubdomainTracker::add(parentTokenId:%s, subdomainId:%s, subdomainOwner:%s, subdomainLabel:...)",
+        //     parentTokenId, subdomainId, subdomainOwner);
+        // console.logString(subdomainLabel);
 
         subdomains[parentTokenId].push(
             ISubdomainTracker.Data(subdomainId, subdomainOwner, subdomainLabel));
