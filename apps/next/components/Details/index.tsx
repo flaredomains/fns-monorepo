@@ -13,8 +13,10 @@ import { sha3_256 } from 'js-sha3'
 import web3 from 'web3-utils'
 const namehash = require('eth-ens-namehash')
 
-import { useAccount, useContractRead, useContract } from 'wagmi'
-import { BigNumber } from 'ethers'
+const ZERO_ADDRESS: string = "0x0000000000000000000000000000000000000000";
+
+import { useAccount, useContractRead, useContract, Address } from 'wagmi'
+import { BigNumber, ethers } from 'ethers'
 
 export default function Details({ result }: { result: string }) {
   const [prepared, setPrepared] = useState<boolean>(false)
@@ -22,28 +24,29 @@ export default function Details({ result }: { result: string }) {
   const [hashHex, setHashHex] = useState<string>('')
   const [filterResult, setFilterResult] = useState<string>('')
   const [expiredReady, setExpiredReady] = useState<boolean>(false)
-  const [tokenPrepared, setTokenPrepared] = useState(false)
+  //const [tokenPrepared, setTokenPrepared] = useState<boolean>(false)
   const [tokenId, setTokenId] = useState<BigNumber>()
-  const [isNormalDomain, setIsNormalDomain] = useState<boolean>(true)
+  const [isSubdomain, setIsSubdomain] = useState<boolean>(false)
   const [parent, setParent] = useState<string>('')
   // const [checkOwnerDomain, setCheckOwnerDomain] = useState<boolean>()
+  const [isAvailable, setIsAvailable] = useState<boolean>(true)
 
   const { address } = useAccount()
 
   function getParentDomain(str: string) {
     // Define a regular expression pattern that matches subdomains of a domain that ends with .flr.
-    const subdomainPattern = /^([a-z0-9][a-z0-9-]*[a-z0-9]\.)+[a-z]{2,}\.flr$/i
+    const subdomainPattern = /^([a-z0-9][a-z0-9-]*[a-z0-9]\.)+[a-z]{1,}\.flr$/i
 
     // Use the regular expression pattern to test whether the string matches a subdomain.
     const isSubdomain = subdomainPattern.test(str)
     console.log('isSubdomain', isSubdomain)
+    setIsSubdomain(isSubdomain);
 
     if (isSubdomain) {
       // The input string is a subdomain, extract the parent domain.
       const parts = str.split('.')
       const numParts = parts.length
       const parentDomain = parts.slice(numParts - (numParts - 1)).join('.')
-      setIsNormalDomain(false)
       return parentDomain
     } else {
       return '.flr'
@@ -61,6 +64,8 @@ export default function Details({ result }: { result: string }) {
       console.log('Ethereum address')
       setFilterResult(result)
     } else if (result) {
+      setTokenId(BigNumber.from(namehash.hash(result)));
+
       const resultFiltered = result.endsWith('.flr')
         ? result.slice(0, -4)
         : result
@@ -73,36 +78,34 @@ export default function Details({ result }: { result: string }) {
 
   // const { address } = useAccount()
 
-  // Check if the name is available -- args: filterResult
-  const { data: available } = useContractRead({
+  // Normal Domains: Is name available
+  useContractRead({
     address: FLRRegistrarController.address as `0x${string}`,
     abi: FLRRegistrarController.abi,
     functionName: 'available',
-    enabled: preparedHash,
+    enabled: preparedHash && !isSubdomain,
     args: [filterResult],
     onSuccess(data: any) {
-      // console.log('Success available', data)
       setPrepared(true)
+      setIsAvailable(data)
     },
     onError(error) {
       console.log('Error available', error)
     },
   })
 
-  // getFLRTokenId for registrant (owner)
+  // Subdomains: Is name available
   useContractRead({
     address: NameWrapper.address as `0x${string}`,
     abi: NameWrapper.abi,
-    functionName: 'getFLRTokenId',
-    enabled: !available && prepared,
-    args: [filterResult as string],
-    onSuccess(data: any) {
-      // console.log('Success getFLRTokenId', data)
-      setTokenId(data.tokenId)
-      setTokenPrepared(true)
+    functionName: 'ownerOf',
+    enabled: preparedHash && isSubdomain,
+    args: [tokenId],
+    onSuccess(data: string) {
+      setIsAvailable(data === ZERO_ADDRESS);
     },
     onError(error) {
-      console.error('Error getFLRTokenId', error)
+      console.log('Error ownerOf', error)
     },
   })
 
@@ -111,11 +114,11 @@ export default function Details({ result }: { result: string }) {
     address: NameWrapper.address as `0x${string}`,
     abi: NameWrapper.abi,
     functionName: 'ownerOf',
-    enabled: !available && prepared && tokenPrepared,
+    enabled: !isAvailable && prepared,
     args: [tokenId],
     onSuccess(data) {},
     onError(error) {
-      console.error('Error ownerOfLabel', error)
+      console.error('Error ownerOf', error)
     },
   }) as any
 
@@ -123,7 +126,7 @@ export default function Details({ result }: { result: string }) {
     address: FLRRegistrarController.address as `0x${string}`,
     abi: FLRRegistrarController.abi,
     functionName: 'owner',
-    enabled: !available && prepared,
+    enabled: !isAvailable && prepared,
     onSuccess(data: any) {
       console.log('Success controller', data)
     },
@@ -136,7 +139,7 @@ export default function Details({ result }: { result: string }) {
     address: BaseRegistrar.address as `0x${string}`,
     abi: BaseRegistrar.abi,
     functionName: 'getLabelId',
-    enabled: !available && prepared,
+    enabled: !isAvailable && prepared,
     args: [filterResult],
     onSuccess(data: any) {
       // console.log('Success getLabelId', Number(data))
@@ -161,14 +164,16 @@ export default function Details({ result }: { result: string }) {
     },
   })
 
-  console.table({
-    available: available,
-    getFLRTokenId: tokenId,
-    owner: owner,
-    controller: controller,
-    expire: Number(expire),
-    checkOwnerDomain: address === owner,
-  })
+  // console.table({
+  //   result: result,
+  //   isAvailable: isAvailable,
+  //   isSubdomain: isSubdomain,
+  //   getFLRTokenId: tokenId,
+  //   owner: owner,
+  //   controller: controller,
+  //   expire: Number(expire),
+  //   checkOwnerDomain: address === owner,
+  // })
 
   return (
     <>
@@ -181,13 +186,14 @@ export default function Details({ result }: { result: string }) {
 
           <Info
             parent={parent}
-            available={available}
-            registrant_address={available ? '' : owner ? owner : ''}
-            controller={available ? '' : controller ? controller : ''}
-            date={available ? new Date() : new Date(Number(expire) * 1000)}
+            isSubdomain={isSubdomain}
+            available={isAvailable}
+            registrant_address={isAvailable ? '' : owner ? owner : ''}
+            controller={isAvailable ? '' : controller ? controller : ''}
+            date={isAvailable ? new Date() : new Date(Number(expire) * 1000)}
           />
 
-          {!available && available !== undefined && (
+          {!isAvailable && isAvailable !== undefined && (
             <Content
               result={result}
               prepared={prepared}
