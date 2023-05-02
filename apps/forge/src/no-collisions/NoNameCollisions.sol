@@ -15,7 +15,8 @@ contract NoNameCollisions is INoNameCollisions, Ownable {
 
     /**
      * @dev Checks to see if there is a name collision for the given name between FNS Registry
-     *      and another Registry
+     *      and another Registry. getDomainHolder also intakes the label without the TLD. i.e. "a"
+     *      and not "a.flr"
      * @param name the name on TLD '.flr' to check for a name collision
      * @return true if there is a name collision, false otherwise
      */
