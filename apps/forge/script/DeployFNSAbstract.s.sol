@@ -6,7 +6,8 @@ import "forge-std/console.sol";
 import "fns/registry/FNSRegistry.sol";
 import "fns/resolvers/PublicResolver.sol";
 import "fns/flr-registrar/BaseRegistrar.sol";
-import "fns/flr-registrar/MintedDomainNames.sol";
+import "fns/chain-state/MintedDomainNames.sol";
+import "fns/chain-state/SubdomainTracker.sol";
 import "fns/registry/ReverseRegistrar.sol";
 import "fns/wrapper/NameWrapper.sol";
 import "fns/wrapper/StaticMetadataService.sol";
@@ -36,6 +37,7 @@ abstract contract DeployFNSAbstract is Script {
     PublicResolver publicResolver;
     FLRRegistrarController flrRegistrarController;
     MintedDomainNames mintedDomainNames;
+    SubdomainTracker subdomainTracker;
     NameWrapper nameWrapper;
     ReverseRegistrar reverseRegistrar;
 
@@ -70,12 +72,15 @@ abstract contract DeployFNSAbstract is Script {
         require(fnsRegistry.owner(FNSNamehash.namehash('deployer.flr')) == deployerAddress, "Owner not expected");
 
         // TODO: Update this to our own website
-        StaticMetadataService metadataService = new StaticMetadataService("https://fns.domains/");
+        StaticMetadataService metadataService = new StaticMetadataService("https://ens.domains/");
         nameWrapper = new NameWrapper(fnsRegistry, baseRegistrar, metadataService);
 
         // Deploy the mintedIds data struct contract, then update the reference within Base Registrar
         mintedDomainNames = new MintedDomainNames(nameWrapper);
+        subdomainTracker = new SubdomainTracker(nameWrapper);
+        
         nameWrapper.updateMintedDomainNamesContract(mintedDomainNames);
+        nameWrapper.updateSubdomainTrackerContract(subdomainTracker);
 
         reverseRegistrar = new ReverseRegistrar(fnsRegistry);
 

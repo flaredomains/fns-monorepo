@@ -7,6 +7,7 @@
     "test": "forge test",
     "clean": "forge clean",
     "coverage": "forge coverage",
-    "format": "forge fmt"
+    "format": "forge fmt",
+    "deploy": "forge script script/DeployFNS.s.sol --rpc-url=$CONSTON2_RPC_URL --verify --verifier=blockscout --verifier-url=\"https://coston2-explorer.flare.network/api?module=contract&action=verifysourcecode\" --retries 10 --delay 30 --broadcast -vvvvv"
   }
 }

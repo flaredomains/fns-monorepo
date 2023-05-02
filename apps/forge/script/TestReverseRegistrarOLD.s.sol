@@ -7,7 +7,7 @@ import "fns/registry/FNSRegistry.sol";
 import "fns/resolvers/PublicResolver.sol";
 import "fns/resolvers/profiles/NameResolver.sol";
 import "fns/flr-registrar/BaseRegistrar.sol";
-import "fns/flr-registrar/MintedDomainNames.sol";
+import "fns/chain-state/MintedDomainNames.sol";
 import "fns/registry/ReverseRegistrar.sol";
 import "fns/wrapper/NameWrapper.sol";
 import "fns/wrapper/StaticMetadataService.sol";

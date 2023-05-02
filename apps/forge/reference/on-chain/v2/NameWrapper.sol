@@ -683,7 +683,6 @@ contract NameWrapper is
                 ttl
             );
             _storeNameAndWrap(parentNode, node, label, owner, fuses, expiry);
-            mintedDomainNamesContract.add(owner, uint256(node), fuses, expiry, label);
         } else {
             ens.setSubnodeRecord(
                 parentNode,

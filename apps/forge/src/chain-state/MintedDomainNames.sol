@@ -55,7 +55,7 @@ contract MintedDomainNames is IMintedDomainNames {
     }
 
     /**
-     * @dev Add a user minted domain name, gated to the baseRegistrar contract
+     * @dev Add a user minted domain name, gated to the NameWrapper contract
      * @param owner The address to add the id to
      * @param id the id of the registered domain name
      * @param expiry the expiry timestamp of the registered domain name

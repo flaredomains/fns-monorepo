@@ -12,7 +12,8 @@ import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Recei
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {BytesUtils} from "./BytesUtils.sol";
 import {ERC20Recoverable} from "fns/utils/ERC20Recoverable.sol";
-import {IMintedDomainNames} from "fns/flr-registrar/IMintedDomainNames.sol";
+import {IMintedDomainNames} from "fns/chain-state/IMintedDomainNames.sol";
+import {ISubdomainTracker} from "fns/chain-state/ISubdomainTracker.sol";
 
 error UnauthorisedAddr(bytes32 node, address addr);
 error IncompatibleParent();
@@ -52,6 +53,7 @@ contract NameWrapper is
 
     INameWrapperUpgrade public upgradeContract;
     IMintedDomainNames public mintedDomainNamesContract;
+    ISubdomainTracker public subdomainTrackerContract;
 
     uint64 private constant MAX_EXPIRY = type(uint64).max;
 
@@ -101,6 +103,16 @@ contract NameWrapper is
         mintedDomainNamesContract = newContract;
     }
 
+    /**
+     * @dev Allows the owner of the contract to update the SubdomainTracker contract, in case it
+     *      needs to be updated in the future
+     * @dev This assumes that the interface remains constant
+     * @param newContract the new SubdomainTracker Contract address
+     */
+    function updateSubdomainTrackerContract(ISubdomainTracker newContract) public onlyOwner {
+        subdomainTrackerContract = newContract;
+    }
+
     /* ERC1155 Fuse */
 
     /**
@@ -119,7 +131,7 @@ contract NameWrapper is
      * @param label Label as a string of the .flr domain to wrap. For "test.flr", input "test"
      * @return owner The owner of the name
      */
-    function ownerOfLabel(string calldata label) public view returns (address owner) {
+    function ownerOf(string calldata label) public view returns (address owner) {
         return ownerOf(uint256(keccak256(abi.encodePacked(FLR_NODE, keccak256(bytes(label))))));
     }
 
@@ -636,6 +648,8 @@ contract NameWrapper is
                 ttl
             );
             _storeNameAndWrap(parentNode, node, label, owner, fuses, expiry);
+            mintedDomainNamesContract.add(owner, uint256(node), fuses, expiry, label);
+            subdomainTrackerContract.add(uint256(parentNode), uint256(node), owner, label);
         } else {
             fns.setSubnodeRecord(
                 parentNode,
