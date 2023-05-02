@@ -33,20 +33,24 @@ const AddSubdomain = ({
   const [isOpen, setIsOpen] = useState(false)
   const [input, setInput] = useState('')
 
+  // TODO: Make useEffect which ensures that input is UTS46 compliant, and disables the button if not
+  // Try isLabelValid from this package: https://www.npmjs.com/package/@ensdomains/ui
+
   const { address } = useAccount()
 
-  // ethers.utils.arrayify(keccak256(input))
   const { config: configSetSubnodeRecord } = usePrepareContractWrite({
     address: NameWrapper.address as `0x${string}`,
     abi: NameWrapper.abi,
     functionName: 'setSubnodeRecord',
     enabled: input !== '',
     args: [
-      namehash.hash(filterResult + '.flr'),
-      `0x${keccak256(input)}` as string,
-      address as `0x${string}`,
-      PublicResolver.address as `0x${string}`,
-      0,
+      namehash.hash(filterResult + '.flr'),     // bytes32:  parentNode
+      input as string,                          // string:   label
+      address as `0x${string}`,                 // address:  newOwner
+      PublicResolver.address as `0x${string}`,  // address:  resolver
+      0,                                        // uint64:   ttl
+      0,                                        // uint32:   fuses
+      0                                         // uint64:   expiry (0 because its a subdomain)
     ],
     onSuccess(data) {
       console.log('Success prepare setSubnodeRecord', data)
