@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ~0.8.17;
 
-import "fns/registry/IENS.sol";
-import "fns/ethregistrar/IBaseRegistrar.sol";
-import "@openzeppelin/token/ERC1155/IERC1155.sol";
+import "fns/registry/IFNS.sol";
+import "fns/flr-registrar/IBaseRegistrar.sol";
+import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "./IMetadataService.sol";
 import "./INameWrapperUpgrade.sol";
 
@@ -36,7 +36,7 @@ interface INameWrapper is IERC1155 {
     event FusesSet(bytes32 indexed node, uint32 fuses);
     event ExpiryExtended(bytes32 indexed node, uint64 expiry);
 
-    function ens() external view returns (IENS);
+    function fns() external view returns (IFNS);
 
     function registrar() external view returns (IBaseRegistrar);
 
@@ -140,6 +140,8 @@ interface INameWrapper is IERC1155 {
 
     function ownerOf(uint256 id) external view returns (address owner);
 
+    function ownerOf(string calldata label) external view returns (address owner);
+
     function getData(
         uint256 id
     ) external view returns (address, uint32, uint64);
@@ -158,4 +160,6 @@ interface INameWrapper is IERC1155 {
     function isWrapped(bytes32) external view returns (bool);
 
     function isWrapped(bytes32, bytes32) external view returns (bool);
+
+    function getFLRTokenId(string memory label) external pure returns (bytes32 nodeHash, uint256 tokenId);
 }

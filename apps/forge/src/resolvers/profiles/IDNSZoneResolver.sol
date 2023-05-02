@@ -11,7 +11,7 @@ interface IDNSZoneResolver {
 
     /**
      * zonehash obtains the hash for the zone.
-     * @param node The ENS node to query.
+     * @param node The FNS node to query.
      * @return The associated contenthash.
      */
     function zonehash(bytes32 node) external view returns (bytes memory);
