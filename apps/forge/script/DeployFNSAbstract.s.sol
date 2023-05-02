@@ -117,12 +117,13 @@ abstract contract DeployFNSAbstract is Script {
         console.log("2. noNameCollisions: %s", address(noNameCollisions));
         console.log("3. baseRegistrar: %s", address(baseRegistrar));
         console.log("4. mintedDomainNames: %s", address(mintedDomainNames));
-        console.log("5. metadataService: %s", address(metadataService));
-        console.log("6. nameWrapper: %s", address(nameWrapper));
-        console.log("7. reverseRegistrar: %s", address(reverseRegistrar));
-        console.log("8. stablePriceOracle: %s", address(stablePriceOracle));
-        console.log("9. flrRegistrarController: %s", address(flrRegistrarController));
-        console.log("10. publicResolver: %s", address(publicResolver));
+        console.log("5. subdomainTracker: %s", address(subdomainTracker));
+        console.log("6. metadataService: %s", address(metadataService));
+        console.log("7. nameWrapper: %s", address(nameWrapper));
+        console.log("8. reverseRegistrar: %s", address(reverseRegistrar));
+        console.log("9. stablePriceOracle: %s", address(stablePriceOracle));
+        console.log("10. flrRegistrarController: %s", address(flrRegistrarController));
+        console.log("11. publicResolver: %s", address(publicResolver));
 
         vm.stopBroadcast();
     }
