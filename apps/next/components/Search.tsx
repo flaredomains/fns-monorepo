@@ -25,7 +25,7 @@ function Main() {
       console.log('Input is invalid!')
       const inputElement = e.target.elements['input-field'] as HTMLInputElement
       inputElement.setCustomValidity(
-        'Should be a name with .flr at the end or ethereum address.'
+        'Should be a name with .flr at the end or flare wallet address.'
       )
       inputElement.reportValidity()
     }
