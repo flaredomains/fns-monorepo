@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Question from '../../public/Question.svg'
 import Plus from '../../public/Plus.svg'
 import Image from 'next/image'
 import SubdomainLine from './SubdomainLine'
 import Link from 'next/link'
+
+import { ens_normalize_fragment } from "@adraffy/ens-normalize";
 
 import NameWrapper from '../../src/pages/abi/NameWrapper.json'
 import PublicResolver from '../../src/pages/abi/PublicResolver.json'
@@ -32,9 +34,23 @@ const AddSubdomain = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [input, setInput] = useState('')
+  const [isInputValid, setIsInputValid] = useState<boolean>(false)
 
-  // TODO: Make useEffect which ensures that input is UTS46 compliant, and disables the button if not
-  // Try isLabelValid from this package: https://www.npmjs.com/package/@ensdomains/ui
+  // This effect ensures that subdomains will not contain a "." or any other illegal characters
+  // TODO: Add an "illegal character" message underneath the form input when isInputValid is false
+  useEffect(() => {
+    try{
+      if(input.includes(".")) {
+        throw Error("disallowed character: \".\"");
+      }
+
+      const result = ens_normalize_fragment(input);
+      setIsInputValid(true);
+    }
+    catch(error) {
+      setIsInputValid(false);
+    }
+  }, [input])
 
   const { address } = useAccount()
 
@@ -53,31 +69,31 @@ const AddSubdomain = ({
       0                                         // uint64:   expiry (0 because its a subdomain)
     ],
     onSuccess(data) {
-      console.log('Success prepare setSubnodeRecord', data)
+      // console.log('Success prepare setSubnodeRecord', data)
     },
     onError(error) {
-      console.log('Error prepare setSubnodeRecord', error)
+      // console.log('Error prepare setSubnodeRecord', error)
     },
   })
 
   const { write: setSubnodeRecord } = useContractWrite({
     ...configSetSubnodeRecord,
     onSuccess(data) {
-      console.log('Success setSubnodeRecord', data)
+      // console.log('Success setSubnodeRecord', data)
     },
     onError(error) {
-      console.log('Error setSubnodeRecord', error)
+      // console.log('Error setSubnodeRecord', error)
     },
   })
 
-  console.table({
-    namehash: namehash.hash(filterResult + '.flr'),
-    input: input,
-    filterResult: filterResult + '.flr',
-    PublicResolverAddress: PublicResolver.address,
-    address: address,
-    keccak: `0x${keccak256(input)}`,
-  })
+  // console.table({
+  //   namehash: namehash.hash(filterResult + '.flr'),
+  //   input: input,
+  //   filterResult: filterResult + '.flr',
+  //   PublicResolverAddress: PublicResolver.address,
+  //   address: address,
+  //   keccak: `0x${keccak256(input)}`,
+  // })
 
   // console.log(object);
 
@@ -87,8 +103,7 @@ const AddSubdomain = ({
         {isOpen ? (
           <>
             <form
-              // onSubmit={() => setSubnodeRecord?.()}
-              className="flex items-center w-3/5 py-2 px-4 h-12 rounded-md bg-gray-700 border-2 border-gray-500"
+              className={`${isInputValid ? 'border-gray-500' : 'border-red-500'} flex items-center w-3/5 py-2 px-4 h-12 rounded-md bg-gray-700 border-2`}
             >
               <input
                 type="text"
@@ -114,7 +129,7 @@ const AddSubdomain = ({
               {/* Save */}
               <button
                 onClick={() => setSubnodeRecord?.()}
-                disabled={input === ''}
+                disabled={!isInputValid || input === ""}
                 type="submit"
                 value="Submit"
                 className="flex justify-center items-center text-center bg-[#F97316] px-3 py-2 rounded-lg text-white border border-[#F97316] hover:scale-105 transform transition duration-300 ease-out lg:ml-auto disabled:border-gray-500 disabled:bg-gray-500 disabled:hover:scale-100"
