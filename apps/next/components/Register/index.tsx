@@ -209,15 +209,15 @@ export default function Register({ result }: { result: string }) {
     setRegPeriod(regPeriod - 1)
   }
 
-  console.table({
-    result: result,
-    filterResult: filterResult,
-    hashHex: hashHex,
-    priceFLR: priceFLR,
-    available: available,
-    regPeriod: regPeriod,
-    isNormalDomain: isNormalDomain,
-  })
+  // console.table({
+  //   result: result,
+  //   filterResult: filterResult,
+  //   hashHex: hashHex,
+  //   priceFLR: priceFLR,
+  //   available: available,
+  //   regPeriod: regPeriod,
+  //   isNormalDomain: isNormalDomain,
+  // })
 
   return (
     <>

@@ -314,11 +314,11 @@ export default function Content({
     },
   })
 
-  console.table({
-    addresses: addresses,
-    resolver: resolver,
-    checkOwnerDomain: checkOwnerDomain,
-  })
+  // console.table({
+  //   addresses: addresses,
+  //   resolver: resolver,
+  //   checkOwnerDomain: checkOwnerDomain,
+  // })
 
   return (
     <>

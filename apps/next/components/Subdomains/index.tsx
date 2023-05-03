@@ -78,11 +78,11 @@ export default function Subdomains({
     },
   }) as any
 
-  console.table({
-    result: result,
-    owner: owner,
-    tokenId: tokenId,
-  })
+  // console.table({
+  //   result: result,
+  //   owner: owner,
+  //   tokenId: tokenId,
+  // })
   console.log('owner === address', owner === address)
 
   return (
