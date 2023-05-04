@@ -44,7 +44,7 @@ contract TestReverseRegistrar is Test {
         publicResolver = new PublicResolver(
             fnsRegistry,
             INameWrapper(address(nameWrapper)),
-            0x0000000000000000000000000000000000000000,
+            address(nameWrapper), // This would normally be ETHController
             address(reverseRegistrar));
 
         reverseRegistrar.setDefaultResolver(address(publicResolver));
