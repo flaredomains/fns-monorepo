@@ -75,21 +75,18 @@ abstract contract DeployFNSAbstract is Script {
         baseRegistrar.register("fns-deployer", deployerAddress, 36500 days);
         require(fnsRegistry.owner(FNSNamehash.namehash("fns-deployer.flr")) == deployerAddress, "Owner not expected");
 
-        // TODO: Update this to our own website
         StaticMetadataService metadataService = new StaticMetadataService(METADATA_SERVICE_URI);
-        nameWrapper = new NameWrapper(fnsRegistry, baseRegistrar, metadataService);
 
-        // Deploy the mintedIds data struct contract, then update the reference within Base Registrar
+        nameWrapper = new NameWrapper(fnsRegistry, baseRegistrar, metadataService);
         mintedDomainNames = new MintedDomainNames(nameWrapper);
         subdomainTracker = new SubdomainTracker(nameWrapper);
-
         nameWrapper.updateMintedDomainNamesContract(mintedDomainNames);
         nameWrapper.updateSubdomainTrackerContract(subdomainTracker);
 
         reverseRegistrar = new ReverseRegistrar(fnsRegistry);
         // TODO: Transfer this to timelock at a later date (owned by Timelock on ENSv2 Deployment)
         bytes32 reverseNode = fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256("reverse"), deployerAddress);
-        // Ensure owner of 'addr.reverse' is the deployer wallet
+        // Ensure owner of 'addr.reverse' is the ReverseRegistrar Contract
         fnsRegistry.setSubnodeOwner(reverseNode, keccak256("addr"), address(reverseRegistrar));
         // Automatically claim the '<deployerAddr>.addr.reverse' node at deployment time
         reverseRegistrar.claim(deployerAddress);
@@ -117,11 +114,6 @@ abstract contract DeployFNSAbstract is Script {
         baseRegistrar.addController(address(nameWrapper));
         nameWrapper.setController(address(flrRegistrarController), true);
         reverseRegistrar.setController(address(flrRegistrarController), true);
-
-        // TODO: Should this be set to the deployer address or the reverseRegistrar contract?
-        fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256("reverse"), deployerAddress);
-        fnsRegistry.setSubnodeOwner(FNSNamehash.namehash("reverse"), keccak256("addr"), address(reverseRegistrar));
-        fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256("reverse"), address(reverseRegistrar));
 
         console.log("1. fnsRegistry: %s", address(fnsRegistry));
         console.log("2. noNameCollisions: %s", address(noNameCollisions));
