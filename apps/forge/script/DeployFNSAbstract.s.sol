@@ -68,6 +68,8 @@ abstract contract DeployFNSAbstract is Script {
         // Make BaseRegistrar the owner of the base 'flr' node
         baseRegistrar.addController(deployerAddress);
         fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256('flr'), address(baseRegistrar));
+
+        // TODO: Disable this for production deployment
         baseRegistrar.register('deployer', deployerAddress, 365 days);
         require(fnsRegistry.owner(FNSNamehash.namehash('deployer.flr')) == deployerAddress, "Owner not expected");
 
@@ -83,6 +85,10 @@ abstract contract DeployFNSAbstract is Script {
         nameWrapper.updateSubdomainTrackerContract(subdomainTracker);
 
         reverseRegistrar = new ReverseRegistrar(fnsRegistry);
+        // TODO: Transfer this to timelock at a later date (owned by Timelock on ENSv2 Deployment)
+        bytes32 reverseNode = fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256('reverse'), deployerAddress);
+        // Ensure owner of 'addr.reverse' is the deployer wallet
+        fnsRegistry.setSubnodeOwner(reverseNode, keccak256('addr'), address(reverseRegistrar));
 
         // TODO: Update this to Regular StablePriceOracle for mainnet deployment
         MockStablePriceOracle stablePriceOracle = new MockStablePriceOracle(
