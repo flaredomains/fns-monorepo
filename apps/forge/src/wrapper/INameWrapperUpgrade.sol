@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.18;
+//SPDX-License-Identifier: MIT
+pragma solidity ~0.8.17;
 
 interface INameWrapperUpgrade {
     function wrapFromUpgrade(
@@ -7,6 +7,7 @@ interface INameWrapperUpgrade {
         address wrappedOwner,
         uint32 fuses,
         uint64 expiry,
+        address approved,
         bytes calldata extraData
     ) external;
 }
