@@ -1,4 +1,4 @@
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.18;
 
 /**
  * @dev Implements a dummy NameWrapper which returns the caller's address

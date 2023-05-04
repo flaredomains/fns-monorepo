@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.4;
+pragma solidity ^0.8.18;
 
 interface IABIResolver {
     event ABIChanged(bytes32 indexed node, uint256 indexed contentType);

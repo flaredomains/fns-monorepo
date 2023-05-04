@@ -1,4 +1,4 @@
-pragma solidity ^0.8.6;
+pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "fns-test/utils/fns_strings.sol";

@@ -1,4 +1,4 @@
-pragma solidity ^0.8.6;
+pragma solidity ^0.8.18;
 
 // These are the same 20 addresses that hardhat uses as hardcoded testing addresses
 address constant address0  = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;

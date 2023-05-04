@@ -1,4 +1,4 @@
-pragma solidity ^0.8.6;
+pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "fns/root/Controllable.sol";
@@ -6,6 +6,7 @@ import "./IFNS.sol";
 import "./IReverseRegistrar.sol";
 import "fns/resolvers/profiles/NameResolver.sol";
 
+// TODO: Remove this
 import "forge-std/console.sol";
 
 /**

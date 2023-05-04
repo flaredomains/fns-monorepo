@@ -1,4 +1,4 @@
-pragma solidity >=0.8.4;
+pragma solidity ^0.8.18;
 
 import "./IMintedDomainNames.sol";
 import "fns/wrapper/INameWrapper.sol";
@@ -111,7 +111,7 @@ contract MintedDomainNames is IMintedDomainNames {
      * @param id the id of the registered domain name
      * @param expiry the expiry timestamp of the registered domain name
      */
-    function addFromTransfer(address oldOwner, address owner, uint256 id, uint32 fuses, uint64 expiry) external isNameWrapper {
+    function addFromTransfer(address /*oldOwner*/, address owner, uint256 id, uint32 fuses, uint64 expiry) external isNameWrapper {
         // TODO: Remove this
         // console.log("addFromTransfer");
         // console.logString(tokenIdToName[id]);

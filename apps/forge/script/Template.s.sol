@@ -1,4 +1,4 @@
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.18;
 
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
@@ -42,10 +42,21 @@ contract Template is Script {
 
     // Entrypoint to deploy script
     function run() external {
-        vm.startBroadcast(DEPLOYER_PRIVATE_KEY);
+        uint256 deployerPrivKey = ANVIL_DEPLOYER_PRIVATE_KEY;
+        address deployerAddress = ANVIL_DEPLOYER_ADDRESS;
+        vm.startBroadcast(deployerPrivKey);
 
         // Begin script specifics
         console.log("run()");
+
+        // console.logBytes32(FNSNamehash.namehash('reverse'));
+        // console.logBytes32(FNSNamehash.namehash('addr.reverse'));
+
+        // FNSRegistry fnsRegistry = new FNSRegistry();
+        // bytes32 reverseNode = fnsRegistry.setSubnodeOwner(0x0, keccak256('reverse'), deployerAddress);
+        // bytes32 addrReverseNode = fnsRegistry.setSubnodeOwner(reverseNode, keccak256('addr'), deployerAddress);
+        // console.log("addrReverseNode");
+        // console.logBytes32(addrReverseNode);
 
         vm.stopBroadcast();
     }
