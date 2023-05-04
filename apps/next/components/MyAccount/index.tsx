@@ -75,9 +75,11 @@ export default function MyAccount() {
     enabled: isConnected,
     args: [address],
     onSuccess(data: any) {
-      console.log('Success getAll', data)
-      console.log('Get array of domains', data[0])
-      const arrDomains = data[0]
+      //console.log('Success getAll', data)
+      // console.log('Get array of domains', data)
+
+      // Ensure we only use the length returned for still-owned domains (after a transfer)
+      const arrDomains = data.data.slice(0, data._length.toNumber())
       const ownedDomain = arrDomains.map((item: any, index: any) => {
         return {
           label: item.label,
