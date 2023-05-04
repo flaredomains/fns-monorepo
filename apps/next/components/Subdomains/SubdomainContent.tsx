@@ -27,10 +27,12 @@ const AddSubdomain = ({
   arrSubdomains,
   checkOwnerDomain,
   filterResult,
+  refetchFn
 }: {
   arrSubdomains: Array<any>
   checkOwnerDomain: boolean
   filterResult: string
+  refetchFn: any
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [input, setInput] = useState('')
@@ -78,7 +80,9 @@ const AddSubdomain = ({
 
   const { write: setSubnodeRecord } = useContractWrite({
     ...configSetSubnodeRecord,
-    onSuccess(data) {
+    async onSuccess(data) {
+      await data.wait(1);
+      refetchFn();
       // console.log('Success setSubnodeRecord', data)
     },
     onError(error) {
@@ -177,10 +181,12 @@ export default function SubdomainContent({
   arrSubdomains,
   checkOwnerDomain,
   filterResult,
+  refetchFn,
 }: {
   arrSubdomains: Array<any>
   checkOwnerDomain: boolean
   filterResult: string
+  refetchFn: any
 }) {
   return (
     <>
@@ -188,19 +194,20 @@ export default function SubdomainContent({
         arrSubdomains={arrSubdomains}
         checkOwnerDomain={checkOwnerDomain}
         filterResult={filterResult}
+        refetchFn={refetchFn}
       />
 
       {arrSubdomains.length > 0 && (
         <div className="flex-col bg-gray-800 px-8 py-5 rounded-b-md">
-          {arrSubdomains.map((item, index) => (
+          {arrSubdomains.map((item) => (
             <Link
-              key={index}
+              key={item.domain}
               href={{
                 pathname: '/details',
-                query: { result: item },
+                query: { result: item.domain },
               }}
             >
-              <SubdomainLine key={index} data={item} />
+              <SubdomainLine key={item.domain} domain={item.domain} owner={item.owner} />
             </Link>
           ))}
         </div>
