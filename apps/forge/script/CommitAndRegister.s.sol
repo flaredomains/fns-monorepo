@@ -48,7 +48,8 @@ contract Template is Script, DeployFNSAbstract {
             name, broadcastAddress, 31556952, keccak256(bytes(name)), address(publicResolver), new bytes[](0), true, 0
         );
 
-        (bytes32 nodeHash, uint256 tokenId) = nameWrapper.getFLRTokenId(name);
+        bytes32 nodeHash = FNSNamehash.namehash("test.flr");
+        uint256 tokenId = uint256(nodeHash);
         console.logBytes32(nodeHash);
         console.log("tokenId=%s", tokenId);
 

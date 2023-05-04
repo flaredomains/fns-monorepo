@@ -66,9 +66,6 @@ contract MintedDomainNames is IMintedDomainNames {
         external
         isNameWrapper
     {
-        (, uint256 idFromLabel) = nameWrapper.getFLRTokenId(label);
-        require(id == idFromLabel, "MintedDomainNames: id & label mismatch");
-
         // // TODO: Remove this
         // console.log("MintedDomainNames::add(owner:%s, id:%s, expiry:%s, label:...)", owner, id, expiry);
         // console.logString(label);
