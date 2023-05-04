@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Clipboard_copy from '../../public/Clipboard_copy.svg'
 import Image from 'next/image'
 import Plus from '../../public/Plus.svg'
@@ -8,6 +8,10 @@ import FNSRegistry from '../../src/pages/abi/FNSRegistry.json'
 import PublicResolver from '../../src/pages/abi/PublicResolver.json'
 import AddrResolver from '../../src/pages/abi/PublicResolver.sol/AddrResolver.json'
 import TextResolver from '../../src/pages/abi/PublicResolver.sol/TextResolver.json'
+
+import { formatsByName } from '@ensdomains/address-encoder'
+
+import { BigNumber, utils, Bytes } from 'ethers'
 
 import {
   useContractRead,
@@ -88,6 +92,9 @@ const Info = ({
 }) => {
   const [copied, setCopied] = useState(false)
   const [input, setInput] = useState('')
+  const [addressInputIsValid, setAddressInputValid] = useState<boolean>(false)
+  const [addressAsBytes, setAddressAsBytes] = useState<Bytes>([])
+  const [coinType, setCoinType] = useState<BigNumber>()
 
   const handleCopy = () => {
     navigator.clipboard.writeText(rightText.toString())
@@ -98,18 +105,44 @@ const Info = ({
     }, 1000)
   }
 
+  // Sets the coinType as React State, only if the entry is in the Address List
+  useEffect(() => {
+    if(isAddressList) {
+      setCoinType(BigNumber.from(formatsByName[leftText].coinType))
+    }
+  }, [leftText, isAddressList])
+
+  // Validates the input for Address List entries using @ensdomains/address-encoder
+  useEffect(() => {
+    if(isAddressList && input !== "") {
+      try {
+        // formatsByName always returns valid for ETH addresses, so use ethersjs instead
+        if(leftText === 'ETH') {
+          if (!utils.isAddress(input)) {
+            throw Error("Invalid ETH Address")
+          }
+          setAddressAsBytes(utils.arrayify(utils.getAddress(input)))
+        } else {
+          setAddressAsBytes(formatsByName[leftText].decoder(input))
+        }
+        setAddressInputValid(true)
+      }
+      catch (error) {
+        setAddressInputValid(false)
+      }
+    }
+  }, [input, isAddressList, leftText])
+
   // WAGMI TEXT RECORD WRITE FUNCTION will active if isAddressList === false
   // setText(namehash(domainName), keyString, valueString)
+  // Example Usage:
+  // To set email:
+  // setText(namehash.hash(fullDomainName), "email", "simone@gmail.com")
   const { config: prepareSetText } = usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: TextResolver.abi,
     functionName: 'setText',
     args: [namehash.hash(result), leftText.toLowerCase(), input],
-
-    // Example Usage:
-    // To set email:
-    // setText(namehash.hash(fullDomainName), "email", "simone@gmail.com")
-
     enabled: !isAddressList && input !== '',
     onSuccess(data: any) {
       console.log('Success prepareSetText', data)
@@ -137,18 +170,18 @@ const Info = ({
     address: PublicResolver.address as `0x${string}`,
     abi: AddrResolver.abi,
     functionName: 'setAddr',
-    // args: [input],   TODO: put the right args
-
-    // Example Usage:
-    // For ETH: setAddr(namehash.hash(fullDomainName), address)
-    // For Other Chains (BTC): setAddr(namehash.hash(fullDomainName), CHAIN_ID.BTC, "btc_address")
-
-    enabled: isAddressList && input !== '',
+    args: [
+      namehash.hash(result),
+      coinType,
+      addressAsBytes
+    ],
+    enabled: isAddressList && input !== '' && addressInputIsValid,
     onSuccess(data: any) {
-      console.log('Success setAddr', data)
+      console.log('Success prepareSetAddr', data)
+      console.log(namehash.hash(result), coinType, addressAsBytes)
     },
     onError(error) {
-      console.log('Error setAddr', error)
+      console.log('Error prepareSetAddr', error)
     },
   })
 
@@ -231,7 +264,8 @@ const Info = ({
                     ? () => writeSetAddr?.() // setAddr write function
                     : () => writeSetText?.() // setText write function
                 }
-                className="flex justify-center items-center text-center bg-[#F97316] px-2 py-1 rounded-lg text-white border border-[#F97316] lg:ml-auto"
+                disabled={!addressInputIsValid}
+                className="flex justify-center items-center text-center bg-[#F97316] px-2 py-1 rounded-lg text-white border border-[#F97316] lg:ml-auto disabled:border-gray-500 disabled:bg-gray-500 disabled:hover:scale-100"
               >
                 <p className="text-xs font-medium">Save</p>
               </button>
@@ -312,12 +346,16 @@ export default function Content({
     },
   })
 
+  // TODO: Read the addr(bytes32 node, uint256 coinType)
+  // TODO: Reference the useEffects and useState for coinType in the Info component
+  // TODO: Perhaps it would be best to "lift" coinType state up one level so this parent component
+  // TODO: also has access to it
   const { data: addresses } = useContractRead({
     address: PublicResolver.address as `0x${string}`,
     abi: AddrResolver.abi,
     functionName: 'addr',
     enabled: prepared && recordPrepared,
-    args: [namehash.hash(result)],
+    args: [namehash.hash(result), /*coinType*/],
     onError(error) {
       console.log('Error addr', error)
     },
