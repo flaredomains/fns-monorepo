@@ -67,7 +67,7 @@ function Main() {
       {/* Search -- Middle page */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <p className="font-bold text-5xl text-white text-center">
-          Find Your Next .flare Domain
+          Find Your Next .flr Domain
         </p>
         {/* Search Form */}
         <form
