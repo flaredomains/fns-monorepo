@@ -23,21 +23,13 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
 
     /**
      * @dev Constructor
-     * @param ensAddr The address of the FNS registry.
+     * @param fnsAddr The address of the FNS registry.
      */
-    constructor(IFNS ensAddr) {
-        fns = ensAddr;
+    constructor(IFNS fnsAddr) {
+        fns = fnsAddr;
 
-        // NOTE: This has been disabled because it pertains to migration. We will not have an owner
-        //       of the ADDR_REVERSE_NODE by default, and thus no existing ReverseRegistrar to
-        //       lookup
-        // Assign ownership of the reverse record to our deployer
-        ReverseRegistrar oldRegistrar = ReverseRegistrar(
-            ensAddr.owner(ADDR_REVERSE_NODE)
-        );
-        if (address(oldRegistrar) != address(0x0)) {
-            oldRegistrar.claim(msg.sender);
-        }
+        // Automatically claim ownership of reverse record for the deployer
+        claim(msg.sender);
     }
 
     modifier authorised(address addr) {

@@ -54,14 +54,14 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
             isApprovedForAll(owner, spender));
     }
 
-    constructor(IFNS _ens, bytes32 _baseNode, INoNameCollisions _noNameCollisionsContract) ERC721("", "") {
-        require(address(_ens) != address(0), "BaseRegistrar: ENS Contract Can Not Be Address 0");
+    constructor(IFNS _fns, bytes32 _baseNode, INoNameCollisions _noNameCollisionsContract) ERC721("", "") {
+        require(address(_fns) != address(0), "BaseRegistrar: ENS Contract Can Not Be Address 0");
         require(_baseNode != 0x0, "BaseRegistrar: BaseNode Can Not Be 0x0");
         require(
             address(_noNameCollisionsContract) != address(0),
             "BaseRegistrar: NoNameCollisions Contract Can Not Be Address 0");
 
-        fns = _ens;
+        fns = _fns;
         baseNode = _baseNode;
         noNameCollisionsContract = _noNameCollisionsContract;
     }
