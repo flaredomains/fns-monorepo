@@ -1,4 +1,5 @@
 // NOTE: Nearly identical to my version
+// NOTE: Exactly the same as ens-contract v0.1 tag
 
 
 //SPDX-License-Identifier: MIT

@@ -1,3 +1,5 @@
+// NOTES: Same as v0.1 tag ens-contracts repo
+
 //SPDX-License-Identifier: MIT
 pragma solidity ~0.8.17;
 
