@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import Search from '../public/Search.svg'
+import Search from '../public/Search.png'
 import Account from '../public/Account.png'
 import FAQ from '../public/FAQ.png'
 import Image from 'next/image'

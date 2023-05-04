@@ -25,7 +25,7 @@ const listAddresses: Array<{ leftText: string; rightText: string }> = [
   { leftText: 'DOGE', rightText: '' },
 ]
 
-const listTextRecords: Array<{ leftText: String; rightText: String }> = [
+const listTextRecords: Array<{ leftText: string; rightText: string }> = [
   {
     leftText: 'Email',
     rightText: '',
@@ -44,6 +44,7 @@ const listTextRecords: Array<{ leftText: String; rightText: String }> = [
 ]
 
 const keysTexts: Array<string> = [
+  'Email',
   'URL',
   'Avatar',
   'Description',
@@ -65,19 +66,25 @@ const enum CHAIN_ID { BTC, LTC, DOGE }
 // rightText ---> value -- ex. addrETH, addrBTC,... or simone@elevatesoftware.io,....
 // isAddressList --- if is Address field or Text Record field
 const Info = ({
+  result,
   leftText,
   rightText,
   index,
   recordsEditMode,
   isAddressList,
+  refetch,
   deleteButton,
+  setRecordsEditMode
 }: {
-  leftText: String
-  rightText: String
+  result: string
+  leftText: string
+  rightText: string
   index: number
   recordsEditMode: boolean
   isAddressList: boolean
+  refetch: any
   deleteButton: (isAddressList: boolean, index: number) => void
+  setRecordsEditMode: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const [copied, setCopied] = useState(false)
   const [input, setInput] = useState('')
@@ -97,7 +104,7 @@ const Info = ({
     address: PublicResolver.address as `0x${string}`,
     abi: TextResolver.abi,
     functionName: 'setText',
-    // args: [input],   TODO: put the right args
+    args: [namehash.hash(result), leftText.toLowerCase(), input],
 
     // Example Usage:
     // To set email:
@@ -115,9 +122,12 @@ const Info = ({
   // SetName Write Func
   const { write: writeSetText } = useContractWrite({
     ...prepareSetText,
-    onSuccess(data) {
+    async onSuccess(data) {
       console.log('Success writeSetText', data)
-      // setWriteFuncHash(data.hash)
+      await data.wait(1);
+      refetch()
+      setRecordsEditMode(false)
+      setInput('')
     },
   }) as any
 
@@ -149,6 +159,13 @@ const Info = ({
       console.log('Success writeSetAddr', data)
     },
   }) as any
+
+  // console.table({
+  //   result: result,
+  //   nameHash: namehash.hash(result),
+  //   leftText: leftText.toLowerCase(),
+  //   input: input,
+  // });
 
   return (
     <>
@@ -231,7 +248,7 @@ export default function Content({
   prepared,
   checkOwnerDomain,
 }: {
-  result: String
+  result: string
   prepared: boolean
   checkOwnerDomain: boolean
 }) {
@@ -239,13 +256,13 @@ export default function Content({
 
   const [recordsEditMode, setRecordsEditMode] = useState<boolean>(false)
   const [arrAddresses, setArrAddresses] =
-    useState<Array<{ leftText: String; rightText: String }>>(listAddresses)
+    useState<Array<{ leftText: string; rightText: string }>>(listAddresses)
   const [arrTextRecords, setArrTextRecords] =
-    useState<Array<{ leftText: String; rightText: String }>>(listTextRecords)
+    useState<Array<{ leftText: string; rightText: string }>>(listTextRecords)
   const [copyArrAddr, setCopyArrAddr] =
-    useState<Array<{ leftText: String; rightText: String }>>(listAddresses)
+    useState<Array<{ leftText: string; rightText: string }>>(listAddresses)
   const [copyArrTextRecords, setCopyArrTextRecords] =
-    useState<Array<{ leftText: String; rightText: String }>>(listTextRecords)
+    useState<Array<{ leftText: string; rightText: string }>>(listTextRecords)
 
   // console.log('namehash.hash(result)', namehash.hash(result))
 
@@ -312,10 +329,10 @@ export default function Content({
     address: PublicResolver.address as `0x${string}`,
     abi: TextResolver.abi,
     functionName: 'text',
-    args: [namehash.hash(result), item],
+    args: [namehash.hash(result), item.toLowerCase()],
   }))
 
-  const { data: arrTextsField } = useContractReads({
+  const { data: arrTextsField, refetch: refetchText, isFetched } = useContractReads({
     contracts: textsPrepare as any,
     enabled: prepared && recordPrepared,
     onSuccess(data: any) {
@@ -384,11 +401,14 @@ export default function Content({
               {copyArrAddr.map((item, index) => (
                 <Info
                   key={index}
+                  result={result}
                   leftText={item.leftText}
                   rightText={item.rightText}
                   index={index}
                   recordsEditMode={recordsEditMode}
                   isAddressList={true}
+                  refetch={refetchText}
+                  setRecordsEditMode={setRecordsEditMode}
                   deleteButton={deleteButton}
                 />
               ))}
@@ -403,14 +423,17 @@ export default function Content({
                 Text Records
               </h2>
               <div className="flex-col items-center">
-                {copyArrTextRecords.map((item, index) => (
+                {isFetched && copyArrTextRecords.map((item, index) => (
                   <Info
                     key={index}
+                    result={result}
                     leftText={item.leftText}
-                    rightText={item.rightText}
+                    rightText={arrTextsField[index]}
                     index={index}
                     recordsEditMode={recordsEditMode}
                     isAddressList={false}
+                    refetch={refetchText}
+                    setRecordsEditMode={setRecordsEditMode}
                     deleteButton={deleteButton}
                   />
                 ))}

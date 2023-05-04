@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import MyAccount from '../../public/MyAccount.svg'
-import Search from '../../public/Search.svg'
+import Search from '../../public/Search.png'
 import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import Logo from '../public/Logo.png'
-import Search from '../public/Search.svg'
+import Search from '../public/Search.png'
 import Image from 'next/image'
 import styles from '../src/styles/Main.module.css'
 import Link from 'next/link'
