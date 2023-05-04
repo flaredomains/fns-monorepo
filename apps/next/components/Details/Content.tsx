@@ -59,6 +59,8 @@ const keysTexts: Array<string> = [
 
 const keysAddr: Array<string> = ['XTP', 'BTC', 'LTC', 'DOGE']
 
+const enum CHAIN_ID { BTC, LTC, DOGE }
+
 // leftText ---> key -- ex. ETH,BTC,... or email,URL
 // rightText ---> value -- ex. addrETH, addrBTC,... or simone@elevatesoftware.io,....
 // isAddressList --- if is Address field or Text Record field
@@ -128,10 +130,8 @@ const Info = ({
     // args: [input],   TODO: put the right args
 
     // Example Usage:
-    // For EVM Chains Only: setAddr(namehash.hash(fullDomainName), address)
-    // TODO: Create fake enum for now:
-    // enum CHAIN_ID { BTC_ID, LTC_ID, DOGE_ID }
-    // For Non-EVM Chains Only (BTC): setAddr(namehash.hash(fullDomainName), CHAIN_ID.BTC_ID, "btc_address")
+    // For ETH: setAddr(namehash.hash(fullDomainName), address)
+    // For Other Chains (BTC): setAddr(namehash.hash(fullDomainName), CHAIN_ID.BTC, "btc_address")
 
     enabled: isAddressList && input !== '',
     onSuccess(data: any) {
