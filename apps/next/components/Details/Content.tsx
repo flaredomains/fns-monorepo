@@ -118,7 +118,7 @@ const Info = ({
   // setAddr(bytes32 node, uint256 coinType, bytes a)
   const { config: prepareSetAddr } = usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
-    abi: prepareSetText.abi,
+    abi: AddrResolver.abi,
     functionName: 'setAddr',
     // args: [input],   TODO: put the right args
     enabled: isAddressList && input !== '',
