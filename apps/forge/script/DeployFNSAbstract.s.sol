@@ -22,6 +22,8 @@ import "fns-test/utils/FNSNamehash.sol";
 bytes32 constant ROOT_NODE = 0x0;
 
 abstract contract DeployFNSAbstract is Script {
+    string constant METADATA_SERVICE_URI = "https://fns.infura-ipfs.io/ipfs/QmSmtZszSZPfHokzKzcvaWxBbrnduiVCho6fDkaVjFPM4x";
+
     // Anvil Wallets
     address immutable ANVIL_DEPLOYER_ADDRESS = vm.envAddress("ANVIL_DEPLOYER_ADDRESS");
     uint256 immutable ANVIL_DEPLOYER_PRIVATE_KEY = vm.envUint("ANVIL_DEPLOYER_PRIVATE_KEY");
@@ -43,10 +45,10 @@ abstract contract DeployFNSAbstract is Script {
 
     // Entrypoint to deploy script
     function setUp() external {
-        // uint256 deployerPrivKey = ANVIL_DEPLOYER_PRIVATE_KEY;
-        // address deployerAddress = ANVIL_DEPLOYER_ADDRESS;
-        uint256 deployerPrivKey = DEPLOYER_PRIVATE_KEY;
-        address deployerAddress = DEPLOYER_ADDRESS;
+        uint256 deployerPrivKey = ANVIL_DEPLOYER_PRIVATE_KEY;
+        address deployerAddress = ANVIL_DEPLOYER_ADDRESS;
+        // uint256 deployerPrivKey = DEPLOYER_PRIVATE_KEY;
+        // address deployerAddress = DEPLOYER_ADDRESS;
 
         vm.startBroadcast(deployerPrivKey);
 
@@ -69,12 +71,12 @@ abstract contract DeployFNSAbstract is Script {
         baseRegistrar.addController(deployerAddress);
         fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256("flr"), address(baseRegistrar));
 
-        // TODO: Disable this for production deployment
-        baseRegistrar.register("deployer", deployerAddress, 365 days);
-        require(fnsRegistry.owner(FNSNamehash.namehash("deployer.flr")) == deployerAddress, "Owner not expected");
+        // TODO: Should we auto-mint a domain name for the deployer address?
+        baseRegistrar.register("fns-deployer", deployerAddress, 36500 days);
+        require(fnsRegistry.owner(FNSNamehash.namehash("fns-deployer.flr")) == deployerAddress, "Owner not expected");
 
         // TODO: Update this to our own website
-        StaticMetadataService metadataService = new StaticMetadataService("https://ens.domains/");
+        StaticMetadataService metadataService = new StaticMetadataService(METADATA_SERVICE_URI);
         nameWrapper = new NameWrapper(fnsRegistry, baseRegistrar, metadataService);
 
         // Deploy the mintedIds data struct contract, then update the reference within Base Registrar
@@ -89,11 +91,14 @@ abstract contract DeployFNSAbstract is Script {
         bytes32 reverseNode = fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256("reverse"), deployerAddress);
         // Ensure owner of 'addr.reverse' is the deployer wallet
         fnsRegistry.setSubnodeOwner(reverseNode, keccak256("addr"), address(reverseRegistrar));
+        // Automatically claim the '<deployerAddr>.addr.reverse' node at deployment time
+        reverseRegistrar.claim(deployerAddress);
 
         // TODO: Update this to Regular StablePriceOracle for mainnet deployment
         MockStablePriceOracle stablePriceOracle = new MockStablePriceOracle(
             0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
-            [uint256(500), 350, 300, 100, 5]);
+            // [uint256(500), 350, 300, 100, 5]);
+            [uint256(5), 4, 3, 2, 1]);
         flrRegistrarController = new FLRRegistrarController(
             baseRegistrar,
             stablePriceOracle,
