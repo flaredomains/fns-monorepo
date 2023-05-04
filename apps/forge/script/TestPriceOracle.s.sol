@@ -25,17 +25,16 @@ contract TestPriceOracle is Script {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        FLRRegistrarController flrRegistrarController = FLRRegistrarController(0x57798c5b167386fEbc0fC7C7ad5Da41aD1a2a238);
+        FLRRegistrarController flrRegistrarController =
+            FLRRegistrarController(0x57798c5b167386fEbc0fC7C7ad5Da41aD1a2a238);
         MockStablePriceOracle stablePriceOracle = MockStablePriceOracle(0xB6CF79583256858c385FD56bFC7210bf1ade05a0);
 
-        IPriceOracle.Price memory price = flrRegistrarController.rentPrice(
-            "a", stablePriceOracle.secondsPerYear());
+        IPriceOracle.Price memory price = flrRegistrarController.rentPrice("a", stablePriceOracle.secondsPerYear());
         console.log("Price for 'a'");
         console.logUint(price.base);
         console.logUint(price.premium);
 
-        price = flrRegistrarController.rentPrice(
-            "simone", stablePriceOracle.secondsPerYear());
+        price = flrRegistrarController.rentPrice("simone", stablePriceOracle.secondsPerYear());
         console.log("Price for 'simone'");
         console.logUint(price.base);
         console.logUint(price.premium);

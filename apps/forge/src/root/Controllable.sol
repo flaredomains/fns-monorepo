@@ -14,10 +14,7 @@ contract Controllable is Ownable {
     }
 
     modifier onlyController() {
-        require(
-            controllers[msg.sender],
-            "Controllable: Caller is not a controller"
-        );
+        require(controllers[msg.sender], "Controllable: Caller is not a controller");
         _;
     }
 }

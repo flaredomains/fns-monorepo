@@ -23,7 +23,8 @@ contract TestScript is Script {
     ReverseRegistrar public reverseRegistrar = ReverseRegistrar(0x4B295988f67C0a7E0ed2c3FD2A210c6147632b7e);
     DummyOracle public dummyOracle = DummyOracle(0x54c2cB6eEe2b4B0EEBd0AC750d8399C3626bBdDE);
     StablePriceOracle public stablePriceOracle = StablePriceOracle(0x6a464936FF34A47bd0a7A62191Da75E0ebD65E3c);
-    FLRRegistrarController public flrRegistrarController = FLRRegistrarController(0x5b4E0C64f0e5924727A5608374cCFDFDB4D318B6);
+    FLRRegistrarController public flrRegistrarController =
+        FLRRegistrarController(0x5b4E0C64f0e5924727A5608374cCFDFDB4D318B6);
     PublicResolver public publicResolver = PublicResolver(0x68470b26610348472dE725E307b10D61EF6368b8);
 
     address owner = 0x09Ec74F54dc4b316D8cd6DFBeB91263fB20E19d2; // public key of metamask wallet
@@ -33,10 +34,8 @@ contract TestScript is Script {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        console.log(baseRegistrar.ownerOf(uint256(keccak256('deployer'))));
+        console.log(baseRegistrar.ownerOf(uint256(keccak256("deployer"))));
 
         vm.stopBroadcast();
     }
 }
-
-

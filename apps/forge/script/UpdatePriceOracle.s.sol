@@ -27,7 +27,8 @@ contract UpdatePriceOracle is Script {
 
         // FNSRegistry fnsRegistry = FNSRegistry(0x8E60eEeB7634930bba7a9d74f01Af9c9e78c9063);
         // BaseRegistrar baseRegistrar = BaseRegistrar(0x7113e298973444eCC1c52bDdA92B2Ad5d5399426);
-        FLRRegistrarController flrRegistrarController = FLRRegistrarController(0x57798c5b167386fEbc0fC7C7ad5Da41aD1a2a238);
+        FLRRegistrarController flrRegistrarController =
+            FLRRegistrarController(0x57798c5b167386fEbc0fC7C7ad5Da41aD1a2a238);
 
         console.log(flrRegistrarController.owner());
         flrRegistrarController.transferOwnership(owner);
@@ -41,9 +42,8 @@ contract UpdatePriceOracle is Script {
 
         flrRegistrarController.setPriceOracle(IPriceOracle(stablePriceOracle));
 
-        IPriceOracle.Price memory price = flrRegistrarController.rentPrice(
-            "a", stablePriceOracle.secondsPerYear());
-        
+        IPriceOracle.Price memory price = flrRegistrarController.rentPrice("a", stablePriceOracle.secondsPerYear());
+
         console.log("Price for 'a'");
         console.logUint(price.base);
         console.logUint(price.premium);

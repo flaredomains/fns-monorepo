@@ -9,11 +9,7 @@ library BytesUtils {
      * @param len The number of bytes to hash.
      * @return The hash of the byte range.
      */
-    function keccak(
-        bytes memory self,
-        uint256 offset,
-        uint256 len
-    ) internal pure returns (bytes32 ret) {
+    function keccak(bytes memory self, uint256 offset, uint256 len) internal pure returns (bytes32 ret) {
         require(offset + len <= self.length);
         assembly {
             ret := keccak256(add(add(self, 32), offset), len)
@@ -26,17 +22,13 @@ library BytesUtils {
      * @param offset The offset at which to start hashing.
      * @return The namehash of the name.
      */
-    function namehash(
-        bytes memory self,
-        uint256 offset
-    ) internal pure returns (bytes32) {
+    function namehash(bytes memory self, uint256 offset) internal pure returns (bytes32) {
         (bytes32 labelhash, uint256 newOffset) = readLabel(self, offset);
         if (labelhash == bytes32(0)) {
             require(offset == self.length - 1, "namehash: Junk at end of name");
             return bytes32(0);
         }
-        return
-            keccak256(abi.encodePacked(namehash(self, newOffset), labelhash));
+        return keccak256(abi.encodePacked(namehash(self, newOffset), labelhash));
     }
 
     /**
@@ -46,10 +38,7 @@ library BytesUtils {
      * @return labelhash The hash of the label at the specified index, or 0 if it is the last label.
      * @return newIdx The index of the start of the next label.
      */
-    function readLabel(
-        bytes memory self,
-        uint256 idx
-    ) internal pure returns (bytes32 labelhash, uint256 newIdx) {
+    function readLabel(bytes memory self, uint256 idx) internal pure returns (bytes32 labelhash, uint256 newIdx) {
         require(idx < self.length, "readLabel: Index out of bounds");
         uint256 len = uint256(uint8(self[idx]));
         if (len > 0) {

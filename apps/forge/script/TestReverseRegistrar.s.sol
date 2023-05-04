@@ -49,9 +49,9 @@ contract Go is Script {
 
             // Make BaseRegistrar the owner of the base 'flr' node
             baseRegistrar.addController(ANVIL_DEPLOYER);
-            fnsRegistry.setSubnodeOwner(rootNode, keccak256('flr'), address(baseRegistrar));
-            baseRegistrar.register('deployer', ANVIL_DEPLOYER, 365 days);
-            require(fnsRegistry.owner(FNSNamehash.namehash('deployer.flr')) == ANVIL_DEPLOYER, "Owner not expected");
+            fnsRegistry.setSubnodeOwner(rootNode, keccak256("flr"), address(baseRegistrar));
+            baseRegistrar.register("deployer", ANVIL_DEPLOYER, 365 days);
+            require(fnsRegistry.owner(FNSNamehash.namehash("deployer.flr")) == ANVIL_DEPLOYER, "Owner not expected");
 
             // TODO: Update this to our own website
             StaticMetadataService metadataService = new StaticMetadataService("https://fns.domains/");
@@ -87,24 +87,23 @@ contract Go is Script {
             reverseRegistrar.setController(address(flrRegistrarController), true);
 
             // TODO: Should this be set to the deployer address or the reverseRegistrar contract?
-            fnsRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), ANVIL_DEPLOYER);
-            fnsRegistry.setSubnodeOwner(
-                FNSNamehash.namehash('reverse'), keccak256('addr'), address(reverseRegistrar));
-            fnsRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), address(reverseRegistrar));
+            fnsRegistry.setSubnodeOwner(rootNode, keccak256("reverse"), ANVIL_DEPLOYER);
+            fnsRegistry.setSubnodeOwner(FNSNamehash.namehash("reverse"), keccak256("addr"), address(reverseRegistrar));
+            fnsRegistry.setSubnodeOwner(rootNode, keccak256("reverse"), address(reverseRegistrar));
         }
 
         // Test Deployer ReverseRegistrar
-        baseRegistrar.register('reverseDeployer', ANVIL_DEPLOYER, 365 days);
-        bytes32 nodeHash = reverseRegistrar.setName('reverseDeployer');
+        baseRegistrar.register("reverseDeployer", ANVIL_DEPLOYER, 365 days);
+        bytes32 nodeHash = reverseRegistrar.setName("reverseDeployer");
         console.log(nameResolver.name(nodeHash));
 
-        baseRegistrar.register('reverseOwner', ANVIL_OWNER, 365 days);
+        baseRegistrar.register("reverseOwner", ANVIL_OWNER, 365 days);
         vm.stopBroadcast();
 
         // vm.startBroadcast(ANVIL_OWNER_PRIVATE_KEY);
         vm.startBroadcast(0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6);
         // Test Owner ReverseRegistrar
-        nodeHash = reverseRegistrar.setName('reverseOwner2');
+        nodeHash = reverseRegistrar.setName("reverseOwner2");
         console.log(nameResolver.name(nodeHash));
         vm.stopBroadcast();
     }

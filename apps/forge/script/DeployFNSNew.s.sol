@@ -43,7 +43,7 @@ contract Go is Script {
         // Begin script specifics
         // The root owner will be the msg.sender, which should be the private key owner
         FNSRegistry fnsRegistry = new FNSRegistry();
-        
+
         // TODO: Swap to this on testnet
         // NOTE: mockPunkTLD doesn't verify for some reason due to injection protection, so hardcode false
         //       in NoNameCollisions
@@ -57,9 +57,9 @@ contract Go is Script {
 
         // Make BaseRegistrar the owner of the base 'flr' node
         baseRegistrar.addController(deployerAddress);
-        fnsRegistry.setSubnodeOwner(rootNode, keccak256('flr'), address(baseRegistrar));
-        baseRegistrar.register('deployer', deployerAddress, 365 days);
-        require(fnsRegistry.owner(FNSNamehash.namehash('deployer.flr')) == deployerAddress, "Owner not expected");
+        fnsRegistry.setSubnodeOwner(rootNode, keccak256("flr"), address(baseRegistrar));
+        baseRegistrar.register("deployer", deployerAddress, 365 days);
+        require(fnsRegistry.owner(FNSNamehash.namehash("deployer.flr")) == deployerAddress, "Owner not expected");
 
         // TODO: Update this to our own website
         StaticMetadataService metadataService = new StaticMetadataService("https://fns.domains/");
@@ -95,10 +95,9 @@ contract Go is Script {
         reverseRegistrar.setController(address(flrRegistrarController), true);
 
         // TODO: Should this be set to the deployer address or the reverseRegistrar contract?
-        fnsRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), deployerAddress);
-        fnsRegistry.setSubnodeOwner(
-            FNSNamehash.namehash('reverse'), keccak256('addr'), address(reverseRegistrar));
-        fnsRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), address(reverseRegistrar));
+        fnsRegistry.setSubnodeOwner(rootNode, keccak256("reverse"), deployerAddress);
+        fnsRegistry.setSubnodeOwner(FNSNamehash.namehash("reverse"), keccak256("addr"), address(reverseRegistrar));
+        fnsRegistry.setSubnodeOwner(rootNode, keccak256("reverse"), address(reverseRegistrar));
 
         console.log("1. fnsRegistry: %s", address(fnsRegistry));
         console.log("2. noNameCollisions: %s", address(noNameCollisions));

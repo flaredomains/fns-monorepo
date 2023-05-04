@@ -2,8 +2,5 @@
 pragma solidity ^0.8.18;
 
 interface ILinearPremiumPriceOracle {
-    function timeUntilPremium(
-        uint256 expires,
-        uint256 amount
-    ) external view returns (uint256);
+    function timeUntilPremium(uint256 expires, uint256 amount) external view returns (uint256);
 }

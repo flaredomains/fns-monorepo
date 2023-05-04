@@ -33,7 +33,7 @@ contract MintedDomainNames is IMintedDomainNames {
      * @param owner The address to return the length of minted ids of
      * @return the number of minted ids for the provided address
      */
-    function getLength(address owner) external view returns (uint) {
+    function getLength(address owner) external view returns (uint256) {
         return mintedDomainNames[owner].length;
     }
 
@@ -47,8 +47,8 @@ contract MintedDomainNames is IMintedDomainNames {
 
         // Filter all records based on the current owner. This handles transfers without increasing gas costs on
         // FNS users
-        for(uint i = 0; i < mintedDomainNames[owner].length; ++i) {
-            if(nameWrapper.ownerOf(mintedDomainNames[owner][i].id) == owner) {
+        for (uint256 i = 0; i < mintedDomainNames[owner].length; ++i) {
+            if (nameWrapper.ownerOf(mintedDomainNames[owner][i].id) == owner) {
                 data[length] = mintedDomainNames[owner][i];
                 ++length;
             }
@@ -62,8 +62,10 @@ contract MintedDomainNames is IMintedDomainNames {
      * @param expiry the expiry timestamp of the registered domain name
      * @param label the lable of the registered domain name
      */
-    function add(
-        address owner, uint256 id, uint32 fuses, uint64 expiry, string calldata label) external isNameWrapper {
+    function add(address owner, uint256 id, uint32 fuses, uint64 expiry, string calldata label)
+        external
+        isNameWrapper
+    {
         (, uint256 idFromLabel) = nameWrapper.getFLRTokenId(label);
         require(id == idFromLabel, "MintedDomainNames: id & label mismatch");
 
@@ -91,12 +93,9 @@ contract MintedDomainNames is IMintedDomainNames {
         uint32 fuses,
         uint64 expiry,
         uint256 parentNodeTokenId,
-        string calldata label) external isNameWrapper {
-        string memory fullNameWithoutTLD = string.concat(
-            label,
-            ".",
-            tokenIdToName[parentNodeTokenId]
-        );
+        string calldata label
+    ) external isNameWrapper {
+        string memory fullNameWithoutTLD = string.concat(label, ".", tokenIdToName[parentNodeTokenId]);
         // console.log("MintedDomainNames::addSubdomain(...)");
         // console.logString(fullNameWithoutTLD);
 
@@ -112,7 +111,10 @@ contract MintedDomainNames is IMintedDomainNames {
      * @param id the id of the registered domain name
      * @param expiry the expiry timestamp of the registered domain name
      */
-    function addFromTransfer(address /*oldOwner*/, address owner, uint256 id, uint32 fuses, uint64 expiry) external isNameWrapper {
+    function addFromTransfer(address, /*oldOwner*/ address owner, uint256 id, uint32 fuses, uint64 expiry)
+        external
+        isNameWrapper
+    {
         // TODO: Remove this
         // console.log("addFromTransfer");
         // console.logString(tokenIdToName[id]);

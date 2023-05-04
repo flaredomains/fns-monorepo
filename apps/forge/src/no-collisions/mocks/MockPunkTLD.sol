@@ -13,9 +13,9 @@ contract MockPunkTLD {
         string data; // stringified JSON object, example: {"description": "Some text", "twitter": "@techie1239", "friends": ["0x123..."], "url": "https://punk.domains"}
     }
 
-    mapping (string => Domain) public domains;
+    mapping(string => Domain) public domains;
 
-    function getDomainHolder(string calldata _domainName) external view returns(address) {
+    function getDomainHolder(string calldata _domainName) external view returns (address) {
         return domains[strings.lower(_domainName)].holder;
     }
 }

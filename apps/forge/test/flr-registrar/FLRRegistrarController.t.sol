@@ -11,6 +11,4 @@ import "fns/registry/FNSRegistry.sol";
 import "fns-test/utils/HardhatAddresses.sol";
 import "fns-test/utils/FNSNamehash.sol";
 
-contract TestFLRRegistrarController is Test {
-
-}
+contract TestFLRRegistrarController is Test {}

@@ -53,7 +53,7 @@ abstract contract DeployFNSAbstract is Script {
         // Begin script specifics
         // The root owner will be the msg.sender, which should be the private key owner
         FNSRegistry fnsRegistry = new FNSRegistry();
-        
+
         // TODO: Swap to this on testnet
         // NOTE: mockPunkTLD doesn't verify for some reason due to injection protection, so hardcode false
         //       in NoNameCollisions
@@ -67,11 +67,11 @@ abstract contract DeployFNSAbstract is Script {
 
         // Make BaseRegistrar the owner of the base 'flr' node
         baseRegistrar.addController(deployerAddress);
-        fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256('flr'), address(baseRegistrar));
+        fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256("flr"), address(baseRegistrar));
 
         // TODO: Disable this for production deployment
-        baseRegistrar.register('deployer', deployerAddress, 365 days);
-        require(fnsRegistry.owner(FNSNamehash.namehash('deployer.flr')) == deployerAddress, "Owner not expected");
+        baseRegistrar.register("deployer", deployerAddress, 365 days);
+        require(fnsRegistry.owner(FNSNamehash.namehash("deployer.flr")) == deployerAddress, "Owner not expected");
 
         // TODO: Update this to our own website
         StaticMetadataService metadataService = new StaticMetadataService("https://ens.domains/");
@@ -80,15 +80,15 @@ abstract contract DeployFNSAbstract is Script {
         // Deploy the mintedIds data struct contract, then update the reference within Base Registrar
         mintedDomainNames = new MintedDomainNames(nameWrapper);
         subdomainTracker = new SubdomainTracker(nameWrapper);
-        
+
         nameWrapper.updateMintedDomainNamesContract(mintedDomainNames);
         nameWrapper.updateSubdomainTrackerContract(subdomainTracker);
 
         reverseRegistrar = new ReverseRegistrar(fnsRegistry);
         // TODO: Transfer this to timelock at a later date (owned by Timelock on ENSv2 Deployment)
-        bytes32 reverseNode = fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256('reverse'), deployerAddress);
+        bytes32 reverseNode = fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256("reverse"), deployerAddress);
         // Ensure owner of 'addr.reverse' is the deployer wallet
-        fnsRegistry.setSubnodeOwner(reverseNode, keccak256('addr'), address(reverseRegistrar));
+        fnsRegistry.setSubnodeOwner(reverseNode, keccak256("addr"), address(reverseRegistrar));
 
         // TODO: Update this to Regular StablePriceOracle for mainnet deployment
         MockStablePriceOracle stablePriceOracle = new MockStablePriceOracle(
@@ -114,10 +114,9 @@ abstract contract DeployFNSAbstract is Script {
         reverseRegistrar.setController(address(flrRegistrarController), true);
 
         // TODO: Should this be set to the deployer address or the reverseRegistrar contract?
-        fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256('reverse'), deployerAddress);
-        fnsRegistry.setSubnodeOwner(
-            FNSNamehash.namehash('reverse'), keccak256('addr'), address(reverseRegistrar));
-        fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256('reverse'), address(reverseRegistrar));
+        fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256("reverse"), deployerAddress);
+        fnsRegistry.setSubnodeOwner(FNSNamehash.namehash("reverse"), keccak256("addr"), address(reverseRegistrar));
+        fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256("reverse"), address(reverseRegistrar));
 
         console.log("1. fnsRegistry: %s", address(fnsRegistry));
         console.log("2. noNameCollisions: %s", address(noNameCollisions));

@@ -50,14 +50,11 @@ contract TestReverseRegistrar is Test {
         reverseRegistrar.setDefaultResolver(address(publicResolver));
 
         // TODO: Why is it necessary to own the 'reverse' subnode here?
-        fnsRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), address(this));
+        fnsRegistry.setSubnodeOwner(rootNode, keccak256("reverse"), address(this));
 
         // This makes sense to own, because the reverseRegistrar should control that node
-        fnsRegistry.setSubnodeOwner(
-            FNSNamehash.namehash('reverse'),
-            keccak256('addr'),
-            address(reverseRegistrar));
-        
+        fnsRegistry.setSubnodeOwner(FNSNamehash.namehash("reverse"), keccak256("addr"), address(reverseRegistrar));
+
         console.log("Pre-computed reverseNodes");
         console.logBytes32(thisReverseNode);
         console.logBytes32(addr0ReverseNode);
@@ -82,11 +79,12 @@ contract TestReverseRegistrar is Test {
 
     // Original Test: 'claim'::'event ReverseClaimed is emitted'
     event ReverseClaimed(address indexed addr, bytes32 indexed node);
+
     function testClaimEventReverseClaimedIsEmitted() public {
         vm.expectEmit(true, true, false, true, address(reverseRegistrar));
 
         // We emit the event that we expect to see
-        // NOTE: The event emitted will be the reverse being claimed for the caller, 
+        // NOTE: The event emitted will be the reverse being claimed for the caller,
         //       not the new owner
         emit ReverseClaimed(address(this), thisReverseNode);
 
@@ -106,12 +104,12 @@ contract TestReverseRegistrar is Test {
         vm.expectEmit(true, true, false, true, address(reverseRegistrar));
 
         // We emit the event that we expect to see
-        // NOTE: The event emitted will be the reverse being claimed for the caller, 
+        // NOTE: The event emitted will be the reverse being claimed for the caller,
         //       not the new owner
         emit ReverseClaimed(address(this), thisReverseNode);
 
         // Then we perform the call
-        reverseRegistrar.claimForAddr(address(this), address1, address(publicResolver)); 
+        reverseRegistrar.claimForAddr(address(this), address1, address(publicResolver));
     }
 
     // Original Test: 'claimForAddr'::'forbids an account to claim another address'
@@ -129,7 +127,7 @@ contract TestReverseRegistrar is Test {
         reverseRegistrar.claimForAddr(address1, address2, address(publicResolver));
         assertEq(fnsRegistry.owner(addr1ReverseNode), address2);
     }
-    
+
     // Original Test: 'claimForAddr'::'allows a controller to claim a different address'
     function testClaimForAddrAllowsControllerClaimDifferentAddress() public {
         reverseRegistrar.setController(address(this), true);
@@ -156,7 +154,7 @@ contract TestReverseRegistrar is Test {
         vm.expectEmit(true, true, false, true, address(reverseRegistrar));
 
         // We emit the event that we expect to see
-        // NOTE: The event emitted will be the reverse being claimed for the caller, 
+        // NOTE: The event emitted will be the reverse being claimed for the caller,
         //       not the new owner
         emit ReverseClaimed(address(this), thisReverseNode);
 
@@ -165,9 +163,9 @@ contract TestReverseRegistrar is Test {
 
     // Original Test: 'setName'::'sets name records'
     function testSetNameSetsNameRecords() public {
-        reverseRegistrar.setName('testname');
+        reverseRegistrar.setName("testname");
         assertEq(fnsRegistry.resolver(thisReverseNode), address(publicResolver));
-        assertEq(publicResolver.name(thisReverseNode), 'testname');
+        assertEq(publicResolver.name(thisReverseNode), "testname");
     }
 
     // Original Test: 'setName'::'event ReverseClaimed is emitted'
@@ -175,52 +173,52 @@ contract TestReverseRegistrar is Test {
         vm.expectEmit(true, true, false, true, address(reverseRegistrar));
 
         // We emit the event that we expect to see
-        // NOTE: The event emitted will be the reverse being claimed for the caller, 
+        // NOTE: The event emitted will be the reverse being claimed for the caller,
         //       not the new owner
         emit ReverseClaimed(address(this), thisReverseNode);
 
-        reverseRegistrar.setName('testname');
+        reverseRegistrar.setName("testname");
     }
 
     // Original Test: 'setNameForAddr'::'allows controller to set name records for other accounts'
     function testSetNameForAddrAllowControllerToSetNameRecordsOnOtherAccounts() public {
         reverseRegistrar.setController(address(this), true);
-        reverseRegistrar.setNameForAddr(address1, address(this), address(publicResolver), 'testname');
+        reverseRegistrar.setNameForAddr(address1, address(this), address(publicResolver), "testname");
         assertEq(fnsRegistry.resolver(addr1ReverseNode), address(publicResolver));
-        assertEq(publicResolver.name(addr1ReverseNode), 'testname');
+        assertEq(publicResolver.name(addr1ReverseNode), "testname");
     }
 
     // Original Test: 'setNameForAddr'::'event ReverseClaimed is emitted'
     function testSetNameForAddrEventReverseClaimedIsEmitted() public {
         vm.expectEmit(true, true, false, true, address(reverseRegistrar));
         emit ReverseClaimed(address(this), thisReverseNode);
-        reverseRegistrar.setNameForAddr(address(this), address(this), address(publicResolver), 'testname');
+        reverseRegistrar.setNameForAddr(address(this), address(this), address(publicResolver), "testname");
     }
 
     // Original Test: 'setNameForAddr'::'forbids non-controller if address is different from sender and not authorised'
     function testSetNameForAddrForbidsNonControllerIfNonSenderAddressAndNotAuthorised() public {
         vm.expectRevert();
-        reverseRegistrar.setNameForAddr(address1, address(this), address(publicResolver), 'testname');
+        reverseRegistrar.setNameForAddr(address1, address(this), address(publicResolver), "testname");
     }
-    
+
     // Original Test: 'setNameForAddr'::'allows name to be set for an address if the sender is the address'
     function testSetNameForAddrAllowsSettingNameForAnAddressIfSenderIsTheAddress() public {
-        reverseRegistrar.setNameForAddr(address(this), address(this), address(publicResolver), 'testname');
+        reverseRegistrar.setNameForAddr(address(this), address(this), address(publicResolver), "testname");
         assertEq(fnsRegistry.resolver(thisReverseNode), address(publicResolver));
-        assertEq(publicResolver.name(thisReverseNode), 'testname');
+        assertEq(publicResolver.name(thisReverseNode), "testname");
     }
-    
+
     // Original Test: 'setNameForAddr'::'allows name to be set for an address if the sender is authorised'
     function testSetNameForAddrAllowSettingNameForAnAddressIfSenderIsAuthorised() public {
         fnsRegistry.setApprovalForAll(address1, true);
-        reverseRegistrar.setNameForAddr(address(this), address(this), address(publicResolver), 'testname');
+        reverseRegistrar.setNameForAddr(address(this), address(this), address(publicResolver), "testname");
         assertEq(fnsRegistry.resolver(thisReverseNode), address(publicResolver));
-        assertEq(publicResolver.name(thisReverseNode), 'testname');
+        assertEq(publicResolver.name(thisReverseNode), "testname");
     }
-    
+
     // Original Test: 'setNameForAddr'::'allows an owner() of a contract to claimWithResolverForAddr on behalf of the contract'
     function testSetNameForAddrAllowOwnerOfContractToClaimWithResolverForAddrOnBehalfOfContract() public {
-        string memory name = 'dummyownable.flr';
+        string memory name = "dummyownable.flr";
         reverseRegistrar.setNameForAddr(address(dummyOwnableContract), address(this), address(publicResolver), name);
         assertEq(fnsRegistry.owner(dummyOwnableReverseNode), address(this));
         assertEq(publicResolver.name(dummyOwnableReverseNode), name);

@@ -61,22 +61,22 @@ contract TestStablePriceOracle is Test {
         vm.prank(address0);
         stablePriceOracle.setPrices(
             [
-                uint256(2000),  // 1-letter name price (attoUSD)
-                500,            // 2-letter name price (attoUSD)
-                250,            // 3-letter name price (attoUSD)
-                125,            // 4-letter name price (attoUSD)
-                75              // 5-letter name price (attoUSD)
+                uint256(2000), // 1-letter name price (attoUSD)
+                500, // 2-letter name price (attoUSD)
+                250, // 3-letter name price (attoUSD)
+                125, // 4-letter name price (attoUSD)
+                75 // 5-letter name price (attoUSD)
             ]
         );
     }
 
     function test_ownerCanCallSetPricesAndEventEmits() public {
         uint256[5] memory annualRentPricesUSD = [
-            uint256(2000),  // 1-letter name price (attoUSD)
-            500,            // 2-letter name price (attoUSD)
-            250,            // 3-letter name price (attoUSD)
-            125,            // 4-letter name price (attoUSD)
-            75              // 5-letter name price (attoUSD)
+            uint256(2000), // 1-letter name price (attoUSD)
+            500, // 2-letter name price (attoUSD)
+            250, // 3-letter name price (attoUSD)
+            125, // 4-letter name price (attoUSD)
+            75 // 5-letter name price (attoUSD)
         ];
 
         vm.expectEmit(true, false, false, false);
@@ -90,7 +90,8 @@ contract TestStablePriceOracle is Test {
         uint256 oneLetterPriceAttoUSDPerSec = oneLetterPriceAttoUSDAnnual / stablePriceOracle.secondsPerYear();
         uint256 numYearsToPrice = 1;
         uint256 numSecondsToPrice = numYearsToPrice * stablePriceOracle.secondsPerYear();
-        uint256 expectedPrice = (oneLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ** staticDecimalsFLRPrice))) / staticPricePerFLR;
+        uint256 expectedPrice =
+            (oneLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ** staticDecimalsFLRPrice))) / staticPricePerFLR;
 
         assertEq(stablePriceOracle.price("a", 0, numSecondsToPrice).base, expectedPrice);
     }
@@ -100,7 +101,8 @@ contract TestStablePriceOracle is Test {
         uint256 twoLetterPriceAttoUSDPerSec = twoLetterPriceAttoUSDAnnual / stablePriceOracle.secondsPerYear();
         uint256 numYearsToPrice = 1;
         uint256 numSecondsToPrice = numYearsToPrice * stablePriceOracle.secondsPerYear();
-        uint256 expectedPrice = (twoLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ** staticDecimalsFLRPrice))) / staticPricePerFLR;
+        uint256 expectedPrice =
+            (twoLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ** staticDecimalsFLRPrice))) / staticPricePerFLR;
 
         assertEq(stablePriceOracle.price("yo", 0, numSecondsToPrice).base, expectedPrice);
     }
@@ -110,7 +112,9 @@ contract TestStablePriceOracle is Test {
         uint256 threeLetterPriceAttoUSDPerSec = threeLetterPriceAttoUSDAnnual / stablePriceOracle.secondsPerYear();
         uint256 numYearsToPrice = 1;
         uint256 numSecondsToPrice = numYearsToPrice * stablePriceOracle.secondsPerYear();
-        uint256 expectedPrice = (threeLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ** staticDecimalsFLRPrice))) / staticPricePerFLR;
+        uint256 expectedPrice = (
+            threeLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ** staticDecimalsFLRPrice))
+        ) / staticPricePerFLR;
 
         assertEq(stablePriceOracle.price("wee", 0, numSecondsToPrice).base, expectedPrice);
     }
@@ -120,7 +124,9 @@ contract TestStablePriceOracle is Test {
         uint256 fourLetterPriceAttoUSDPerSec = fourLetterPriceAttoUSDAnnual / stablePriceOracle.secondsPerYear();
         uint256 numYearsToPrice = 1;
         uint256 numSecondsToPrice = numYearsToPrice * stablePriceOracle.secondsPerYear();
-        uint256 expectedPrice = (fourLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ** staticDecimalsFLRPrice))) / staticPricePerFLR;
+        uint256 expectedPrice = (
+            fourLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ** staticDecimalsFLRPrice))
+        ) / staticPricePerFLR;
 
         assertEq(stablePriceOracle.price("four", 0, numSecondsToPrice).base, expectedPrice);
     }
@@ -130,7 +136,9 @@ contract TestStablePriceOracle is Test {
         uint256 fiveLetterPriceAttoUSDPerSec = fiveLetterPriceAttoUSDAnnual / stablePriceOracle.secondsPerYear();
         uint256 numYearsToPrice = 1;
         uint256 numSecondsToPrice = numYearsToPrice * stablePriceOracle.secondsPerYear();
-        uint256 expectedPrice = (fiveLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ** staticDecimalsFLRPrice))) / staticPricePerFLR;
+        uint256 expectedPrice = (
+            fiveLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ** staticDecimalsFLRPrice))
+        ) / staticPricePerFLR;
 
         assertEq(stablePriceOracle.price("ricky", 0, numSecondsToPrice).base, expectedPrice);
     }
@@ -140,7 +148,9 @@ contract TestStablePriceOracle is Test {
         uint256 fiveLetterPriceAttoUSDPerSec = fiveLetterPriceAttoUSDAnnual / stablePriceOracle.secondsPerYear();
         uint256 numYearsToPrice = 1;
         uint256 numSecondsToPrice = numYearsToPrice * stablePriceOracle.secondsPerYear();
-        uint256 expectedPrice = (fiveLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ** staticDecimalsFLRPrice))) / staticPricePerFLR;
+        uint256 expectedPrice = (
+            fiveLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ** staticDecimalsFLRPrice))
+        ) / staticPricePerFLR;
 
         assertEq(stablePriceOracle.price("amuchlongernamethanfiveletters", 0, numSecondsToPrice).base, expectedPrice);
     }

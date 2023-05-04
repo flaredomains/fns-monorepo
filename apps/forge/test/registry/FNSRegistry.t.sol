@@ -50,21 +50,21 @@ contract TestFNSRegistry is Test {
     // Original FNS test: 'should prevent setting the TTL by non-owners'
     function testCannotSetTTLAsNonOwner() public {
         vm.expectRevert();
-        fnsRegistry.setTTL('0x1', 3600);
+        fnsRegistry.setTTL("0x1", 3600);
     }
 
     // Original FNS test: 'should allow the creation of subnodes'
     function testAllowCreatingSubnodes() public {
-        fnsRegistry.setSubnodeOwner(rootNode, sha256('label'), addr);
+        fnsRegistry.setSubnodeOwner(rootNode, sha256("label"), addr);
 
         // Manually perform the same hashing alg that setSubnodeOwner performs (namehash?)
-        bytes32 subnode = keccak256(abi.encodePacked(rootNode, sha256('label')));
+        bytes32 subnode = keccak256(abi.encodePacked(rootNode, sha256("label")));
         assertEq(fnsRegistry.owner(subnode), addr);
     }
 
     // Original FNS test: 'should prohibit subnode creation by non-owners'
     function testCannotCreateSubnodesAsNonOwner() public {
-        bytes32 label = sha256('label'); // must be done early to avoid expectRevert on sha256
+        bytes32 label = sha256("label"); // must be done early to avoid expectRevert on sha256
         vm.expectRevert();
         vm.prank(address(0));
         fnsRegistry.setSubnodeOwner(rootNode, label, addr);
@@ -84,7 +84,7 @@ contract TestFNSRegistry is Test {
 
     // Original FNS test: 'should allow setting subnode records' in ENSRegistryWithFallback
     function testAllowSettingSubnodeRecords() public {
-        bytes32 subnodeLabel = sha256('label');
+        bytes32 subnodeLabel = sha256("label");
         address newOwner = address(1);
         address newResolver = address(2);
         uint64 newTTL = 3600;
@@ -92,7 +92,7 @@ contract TestFNSRegistry is Test {
         fnsRegistry.setSubnodeRecord(rootNode, subnodeLabel, newOwner, newResolver, newTTL);
 
         // Manually perform the same hashing alg that setSubnodeOwner performs (namehash?)
-        bytes32 subnode = keccak256(abi.encodePacked(rootNode, sha256('label')));
+        bytes32 subnode = keccak256(abi.encodePacked(rootNode, sha256("label")));
 
         assertEq(fnsRegistry.owner(subnode), newOwner);
         assertEq(fnsRegistry.resolver(subnode), newResolver);

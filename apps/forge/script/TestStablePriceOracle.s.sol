@@ -19,79 +19,68 @@ contract TestStablePriceOracle is Script {
         //     0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
         //     [uint256(5), 4, 3, 2, 1]);
 
-        MockStablePriceOracle stablePriceOracle = MockStablePriceOracle(0xB6CF79583256858c385FD56bFC7210bf1ade05a0);      
-        FLRRegistrarController flrRegistrarController = FLRRegistrarController(0x57798c5b167386fEbc0fC7C7ad5Da41aD1a2a238);
+        MockStablePriceOracle stablePriceOracle = MockStablePriceOracle(0xB6CF79583256858c385FD56bFC7210bf1ade05a0);
+        FLRRegistrarController flrRegistrarController =
+            FLRRegistrarController(0x57798c5b167386fEbc0fC7C7ad5Da41aD1a2a238);
 
-        IPriceOracle.Price memory price = stablePriceOracle.price(
-            "a", 0, stablePriceOracle.secondsPerYear());
+        IPriceOracle.Price memory price = stablePriceOracle.price("a", 0, stablePriceOracle.secondsPerYear());
         console.log("Price for 'a'");
         console.logUint(price.base);
         console.logUint(price.base / (10 ** 18));
 
-        price = stablePriceOracle.price(
-            "ab", 0, stablePriceOracle.secondsPerYear());
+        price = stablePriceOracle.price("ab", 0, stablePriceOracle.secondsPerYear());
         console.log("Price for 'ab'");
         console.logUint(price.base);
         console.logUint(price.base / (10 ** 18));
 
-        price = stablePriceOracle.price(
-            "abc", 0, stablePriceOracle.secondsPerYear());
+        price = stablePriceOracle.price("abc", 0, stablePriceOracle.secondsPerYear());
         console.log("Price for 'abc'");
         console.logUint(price.base);
         console.logUint(price.base / (10 ** 18));
 
-        price = stablePriceOracle.price(
-            "abcd", 0, stablePriceOracle.secondsPerYear());
+        price = stablePriceOracle.price("abcd", 0, stablePriceOracle.secondsPerYear());
         console.log("Price for 'abcd'");
         console.logUint(price.base);
         console.logUint(price.base / (10 ** 18));
 
-        price = stablePriceOracle.price(
-            "abcde", 0, stablePriceOracle.secondsPerYear());
+        price = stablePriceOracle.price("abcde", 0, stablePriceOracle.secondsPerYear());
         console.log("Price for 'abcde'");
         console.logUint(price.base);
         console.logUint(price.base / (10 ** 18));
 
-        price = stablePriceOracle.price(
-            "abcdef", 0, stablePriceOracle.secondsPerYear());
+        price = stablePriceOracle.price("abcdef", 0, stablePriceOracle.secondsPerYear());
         console.log("Price for 'abcdef'");
         console.logUint(price.base);
         console.logUint(price.base / (10 ** 18));
 
         console.log("============");
 
-        price = flrRegistrarController.rentPrice(
-            "a", stablePriceOracle.secondsPerYear());
+        price = flrRegistrarController.rentPrice("a", stablePriceOracle.secondsPerYear());
         console.log("Price for 'a'");
         console.logUint(price.base);
         console.logUint(price.base / (10 ** 18));
 
-        price = flrRegistrarController.rentPrice(
-            "ab", stablePriceOracle.secondsPerYear());
+        price = flrRegistrarController.rentPrice("ab", stablePriceOracle.secondsPerYear());
         console.log("Price for 'ab'");
         console.logUint(price.base);
         console.logUint(price.base / (10 ** 18));
 
-        price = flrRegistrarController.rentPrice(
-            "abc", stablePriceOracle.secondsPerYear());
+        price = flrRegistrarController.rentPrice("abc", stablePriceOracle.secondsPerYear());
         console.log("Price for 'abc'");
         console.logUint(price.base);
         console.logUint(price.base / (10 ** 18));
 
-        price = flrRegistrarController.rentPrice(
-            "abcd", stablePriceOracle.secondsPerYear());
+        price = flrRegistrarController.rentPrice("abcd", stablePriceOracle.secondsPerYear());
         console.log("Price for 'abcd'");
         console.logUint(price.base);
         console.logUint(price.base / (10 ** 18));
 
-        price = flrRegistrarController.rentPrice(
-            "abcde", stablePriceOracle.secondsPerYear());
+        price = flrRegistrarController.rentPrice("abcde", stablePriceOracle.secondsPerYear());
         console.log("Price for 'abcde'");
         console.logUint(price.base);
         console.logUint(price.base / (10 ** 18));
 
-        price = flrRegistrarController.rentPrice(
-            "abcdef", stablePriceOracle.secondsPerYear());
+        price = flrRegistrarController.rentPrice("abcdef", stablePriceOracle.secondsPerYear());
         console.log("Price for 'abcdef'");
         console.logUint(price.base);
         console.logUint(price.base / (10 ** 18));

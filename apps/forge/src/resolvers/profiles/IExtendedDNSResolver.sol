@@ -2,9 +2,5 @@
 pragma solidity ^0.8.18;
 
 interface IExtendedDNSResolver {
-    function resolve(
-        bytes memory name,
-        bytes memory data,
-        bytes memory context
-    ) external view returns (bytes memory);
+    function resolve(bytes memory name, bytes memory data, bytes memory context) external view returns (bytes memory);
 }

@@ -43,11 +43,10 @@ contract MockStablePriceOracle is IPriceOracle, IERC165, Ownable {
         require(_annualRentPricesUSD[3] > 0, "Input 4 Letter Price is too small");
         require(_annualRentPricesUSD[4] > 0, "Input 5+ Letter Price is too small");
         require(
-            _annualRentPricesUSD[0] > _annualRentPricesUSD[1] &&
-            _annualRentPricesUSD[1] > _annualRentPricesUSD[2] &&
-            _annualRentPricesUSD[2] > _annualRentPricesUSD[3] &&
-            _annualRentPricesUSD[3] > _annualRentPricesUSD[4],
-            "Price ordering not valid");
+            _annualRentPricesUSD[0] > _annualRentPricesUSD[1] && _annualRentPricesUSD[1] > _annualRentPricesUSD[2]
+                && _annualRentPricesUSD[2] > _annualRentPricesUSD[3] && _annualRentPricesUSD[3] > _annualRentPricesUSD[4],
+            "Price ordering not valid"
+        );
 
         price1LetterAttoUSDPerSec = (_annualRentPricesUSD[0] * 1e18) / secondsPerYear;
         price2LetterAttoUSDPerSec = (_annualRentPricesUSD[1] * 1e18) / secondsPerYear;
@@ -58,11 +57,12 @@ contract MockStablePriceOracle is IPriceOracle, IERC165, Ownable {
         emit RentPriceChanged(_annualRentPricesUSD);
     }
 
-    function price(
-        string calldata name,
-        uint256 expires,
-        uint256 duration
-    ) external view override returns (IPriceOracle.Price memory) {
+    function price(string calldata name, uint256 expires, uint256 duration)
+        external
+        view
+        override
+        returns (IPriceOracle.Price memory)
+    {
         uint256 len = name.strlen();
         uint256 basePrice;
 
@@ -78,36 +78,36 @@ contract MockStablePriceOracle is IPriceOracle, IERC165, Ownable {
             basePrice = price1LetterAttoUSDPerSec * duration;
         }
 
-        return
-            IPriceOracle.Price({
-                base: attoUSDToWei(basePrice),
-                premium: attoUSDToWei(_premium(name, expires, duration))
-            });
+        return IPriceOracle.Price({
+            base: attoUSDToWei(basePrice),
+            premium: attoUSDToWei(_premium(name, expires, duration))
+        });
     }
 
     /**
      * @dev Returns the pricing premium in wei.
      */
-    function premium(
-        string calldata name,
-        uint256 expires,
-        uint256 duration
-    ) external view returns (uint256) {
+    function premium(string calldata name, uint256 expires, uint256 duration) external view returns (uint256) {
         return attoUSDToWei(_premium(name, expires, duration));
     }
 
     /**
      * @dev Returns the pricing premium in internal base units.
      */
-    function _premium(
-        string memory /* name */,
-        uint256 /* expires */,
-        uint256 /* duration */
-    ) internal view virtual returns (uint256) {
+    function _premium(string memory, /* name */ uint256, /* expires */ uint256 /* duration */ )
+        internal
+        view
+        virtual
+        returns (uint256)
+    {
         return 0;
     }
 
-    function getLatestPriceDataFromOracle() internal view returns (uint256 flrPriceUSD, uint256 timestamp, uint256 decimals) {
+    function getLatestPriceDataFromOracle()
+        internal
+        view
+        returns (uint256 flrPriceUSD, uint256 timestamp, uint256 decimals)
+    {
         // Mocked return of $0.02955/FLR in the same format the Oracle would normally provide
         return (2955, block.timestamp, 5);
     }
@@ -122,11 +122,7 @@ contract MockStablePriceOracle is IPriceOracle, IERC165, Ownable {
         return (amount * flrPriceUSD) / (1 * (10 ** decimals));
     }
 
-    function supportsInterface(
-        bytes4 interfaceID
-    ) public view virtual returns (bool) {
-        return
-            interfaceID == type(IERC165).interfaceId ||
-            interfaceID == type(IPriceOracle).interfaceId;
+    function supportsInterface(bytes4 interfaceID) public view virtual returns (bool) {
+        return interfaceID == type(IERC165).interfaceId || interfaceID == type(IPriceOracle).interfaceId;
     }
 }

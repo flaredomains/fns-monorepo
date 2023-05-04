@@ -17,23 +17,16 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     // A map of addresses that are authorised to register and renew names.
     mapping(address => bool) public controllers;
     uint256 public constant GRACE_PERIOD = 90 days;
-    bytes4 private constant INTERFACE_META_ID =
-        bytes4(keccak256("supportsInterface(bytes4)"));
-    bytes4 private constant ERC721_ID =
-        bytes4(
-            keccak256("balanceOf(address)") ^
-                keccak256("ownerOf(uint256)") ^
-                keccak256("approve(address,uint256)") ^
-                keccak256("getApproved(uint256)") ^
-                keccak256("setApprovalForAll(address,bool)") ^
-                keccak256("isApprovedForAll(address,address)") ^
-                keccak256("transferFrom(address,address,uint256)") ^
-                keccak256("safeTransferFrom(address,address,uint256)") ^
-                keccak256("safeTransferFrom(address,address,uint256,bytes)")
-        );
-    bytes4 private constant RECLAIM_ID =
-        bytes4(keccak256("reclaim(uint256,address)"));
-    
+    bytes4 private constant INTERFACE_META_ID = bytes4(keccak256("supportsInterface(bytes4)"));
+    bytes4 private constant ERC721_ID = bytes4(
+        keccak256("balanceOf(address)") ^ keccak256("ownerOf(uint256)") ^ keccak256("approve(address,uint256)")
+            ^ keccak256("getApproved(uint256)") ^ keccak256("setApprovalForAll(address,bool)")
+            ^ keccak256("isApprovedForAll(address,address)") ^ keccak256("transferFrom(address,address,uint256)")
+            ^ keccak256("safeTransferFrom(address,address,uint256)")
+            ^ keccak256("safeTransferFrom(address,address,uint256,bytes)")
+    );
+    bytes4 private constant RECLAIM_ID = bytes4(keccak256("reclaim(uint256,address)"));
+
     INoNameCollisions public noNameCollisionsContract;
 
     /**
@@ -45,14 +38,9 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
      * @return bool whether the msg.sender is approved for the given token ID,
      *    is an operator of the owner, or is the owner of the token
      */
-    function _isApprovedOrOwner(
-        address spender,
-        uint256 tokenId
-    ) internal view override returns (bool) {
+    function _isApprovedOrOwner(address spender, uint256 tokenId) internal view override returns (bool) {
         address owner = ownerOf(tokenId);
-        return (spender == owner ||
-            getApproved(tokenId) == spender ||
-            isApprovedForAll(owner, spender));
+        return (spender == owner || getApproved(tokenId) == spender || isApprovedForAll(owner, spender));
     }
 
     constructor(IFNS _fns, bytes32 _baseNode, INoNameCollisions _noNameCollisionsContract) ERC721("", "") {
@@ -60,7 +48,8 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
         require(_baseNode != 0x0, "BaseRegistrar: BaseNode Can Not Be 0x0");
         require(
             address(_noNameCollisionsContract) != address(0),
-            "BaseRegistrar: NoNameCollisions Contract Can Not Be Address 0");
+            "BaseRegistrar: NoNameCollisions Contract Can Not Be Address 0"
+        );
 
         fns = _fns;
         baseNode = _baseNode;
@@ -95,9 +84,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
      * @param tokenId uint256 ID of the token to query the owner of
      * @return address currently marked as the owner of the given token ID
      */
-    function ownerOf(
-        uint256 tokenId
-    ) public view override(IERC721, ERC721) returns (address) {
+    function ownerOf(uint256 tokenId) public view override(IERC721, ERC721) returns (address) {
         require(expiries[tokenId] > block.timestamp, "BaseRegistrar: Token Id Expired");
         return super.ownerOf(tokenId);
     }
@@ -135,7 +122,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
      * @dev Returns true iff the specified name is not already minted by the referenced registry
      * @param name the string of the base name for TLD ".flr". ex: 'based' for 'based.flr'
      */
-    function isNotCollision(string calldata name) public view returns (bool){
+    function isNotCollision(string calldata name) public view returns (bool) {
         return !noNameCollisionsContract.isNameCollision(name);
     }
 
@@ -145,11 +132,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
      * @param owner The address that should own the registration.
      * @param duration Duration in seconds for the registration.
      */
-    function register(
-        string calldata label,
-        address owner,
-        uint256 duration
-    ) external override returns (uint256) {
+    function register(string calldata label, address owner, uint256 duration) external override returns (uint256) {
         return _register(label, owner, duration, true);
     }
 
@@ -159,11 +142,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
      * @param owner The address that should own the registration.
      * @param duration Duration in seconds for the registration.
      */
-    function registerOnly(
-        string calldata label,
-        address owner,
-        uint256 duration
-    ) external returns (uint256) {
+    function registerOnly(string calldata label, address owner, uint256 duration) external returns (uint256) {
         return _register(label, owner, duration, false);
     }
 
@@ -171,12 +150,12 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
         return uint256(keccak256(bytes(label)));
     }
 
-    function _register(
-        string calldata label,
-        address owner,
-        uint256 duration,
-        bool updateRegistry
-    ) internal live onlyController returns (uint256) {
+    function _register(string calldata label, address owner, uint256 duration, bool updateRegistry)
+        internal
+        live
+        onlyController
+        returns (uint256)
+    {
         uint256 id = uint256(keccak256(bytes(label)));
         uint256 expiry = block.timestamp + duration;
 
@@ -190,7 +169,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
             _burn(id);
         }
         _mint(owner, id);
-        
+
         emit NameRegistered(label, id, owner, expiry);
 
         if (updateRegistry) {
@@ -200,15 +179,9 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
         return expiry;
     }
 
-    function renew(
-        uint256 id,
-        uint256 duration
-    ) external override live onlyController returns (uint256) {
+    function renew(uint256 id, uint256 duration) external override live onlyController returns (uint256) {
         require(expiries[id] + GRACE_PERIOD >= block.timestamp, "BaseRegistrar: Name has expired"); // Name must be registered here or in grace period
-        require(
-            expiries[id] + duration + GRACE_PERIOD > duration + GRACE_PERIOD,
-            "BaseRegistrar: Expiry Overflow"
-        ); // Prevent future overflow
+        require(expiries[id] + duration + GRACE_PERIOD > duration + GRACE_PERIOD, "BaseRegistrar: Expiry Overflow"); // Prevent future overflow
 
         expiries[id] += duration;
         emit NameRenewed(id, expiries[id]);
@@ -223,12 +196,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
         fns.setSubnodeOwner(baseNode, bytes32(id), owner);
     }
 
-    function supportsInterface(
-        bytes4 interfaceID
-    ) public pure override(ERC721, IERC165) returns (bool) {
-        return
-            interfaceID == INTERFACE_META_ID ||
-            interfaceID == ERC721_ID ||
-            interfaceID == RECLAIM_ID;
+    function supportsInterface(bytes4 interfaceID) public pure override(ERC721, IERC165) returns (bool) {
+        return interfaceID == INTERFACE_META_ID || interfaceID == ERC721_ID || interfaceID == RECLAIM_ID;
     }
 }

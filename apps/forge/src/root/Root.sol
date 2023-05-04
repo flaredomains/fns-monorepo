@@ -8,8 +8,7 @@ import "./Controllable.sol";
 contract Root is Ownable, Controllable {
     bytes32 private constant ROOT_NODE = bytes32(0);
 
-    bytes4 private constant INTERFACE_META_ID =
-        bytes4(keccak256("supportsInterface(bytes4)"));
+    bytes4 private constant INTERFACE_META_ID = bytes4(keccak256("supportsInterface(bytes4)"));
 
     event TLDLocked(bytes32 indexed label);
 
@@ -20,10 +19,7 @@ contract Root is Ownable, Controllable {
         fns = _ens;
     }
 
-    function setSubnodeOwner(
-        bytes32 label,
-        address owner
-    ) external onlyController {
+    function setSubnodeOwner(bytes32 label, address owner) external onlyController {
         require(!locked[label]);
         fns.setSubnodeOwner(ROOT_NODE, label, owner);
     }
@@ -37,9 +33,7 @@ contract Root is Ownable, Controllable {
         locked[label] = true;
     }
 
-    function supportsInterface(
-        bytes4 interfaceID
-    ) external pure returns (bool) {
+    function supportsInterface(bytes4 interfaceID) external pure returns (bool) {
         return interfaceID == INTERFACE_META_ID;
     }
 }

@@ -15,11 +15,7 @@ abstract contract ABIResolver is IABIResolver, ResolverBase {
      * @param contentType The content type of the ABI
      * @param data The ABI data.
      */
-    function setABI(
-        bytes32 node,
-        uint256 contentType,
-        bytes calldata data
-    ) external virtual authorised(node) {
+    function setABI(bytes32 node, uint256 contentType, bytes calldata data) external virtual authorised(node) {
         // Content types must be powers of 2
         require(((contentType - 1) & contentType) == 0);
 
@@ -35,23 +31,11 @@ abstract contract ABIResolver is IABIResolver, ResolverBase {
      * @return contentType The content type of the return value
      * @return data The ABI data
      */
-    function ABI(
-        bytes32 node,
-        uint256 contentTypes
-    ) external view virtual override returns (uint256, bytes memory) {
-        mapping(uint256 => bytes) storage abiset = versionable_abis[
-            recordVersions[node]
-        ][node];
+    function ABI(bytes32 node, uint256 contentTypes) external view virtual override returns (uint256, bytes memory) {
+        mapping(uint256 => bytes) storage abiset = versionable_abis[recordVersions[node]][node];
 
-        for (
-            uint256 contentType = 1;
-            contentType <= contentTypes;
-            contentType <<= 1
-        ) {
-            if (
-                (contentType & contentTypes) != 0 &&
-                abiset[contentType].length > 0
-            ) {
+        for (uint256 contentType = 1; contentType <= contentTypes; contentType <<= 1) {
+            if ((contentType & contentTypes) != 0 && abiset[contentType].length > 0) {
                 return (contentType, abiset[contentType]);
             }
         }
@@ -59,11 +43,7 @@ abstract contract ABIResolver is IABIResolver, ResolverBase {
         return (0, bytes(""));
     }
 
-    function supportsInterface(
-        bytes4 interfaceID
-    ) public view virtual override returns (bool) {
-        return
-            interfaceID == type(IABIResolver).interfaceId ||
-            super.supportsInterface(interfaceID);
+    function supportsInterface(bytes4 interfaceID) public view virtual override returns (bool) {
+        return interfaceID == type(IABIResolver).interfaceId || super.supportsInterface(interfaceID);
     }
 }

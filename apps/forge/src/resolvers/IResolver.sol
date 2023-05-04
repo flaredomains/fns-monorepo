@@ -34,11 +34,7 @@ interface IResolver is
     /* Deprecated events */
     event ContentChanged(bytes32 indexed node, bytes32 hash);
 
-    function setABI(
-        bytes32 node,
-        uint256 contentType,
-        bytes calldata data
-    ) external;
+    function setABI(bytes32 node, uint256 contentType, bytes calldata data) external;
 
     function setAddr(bytes32 node, address addr) external;
 
@@ -52,26 +48,15 @@ interface IResolver is
 
     function setPubkey(bytes32 node, bytes32 x, bytes32 y) external;
 
-    function setText(
-        bytes32 node,
-        string calldata key,
-        string calldata value
-    ) external;
+    function setText(bytes32 node, string calldata key, string calldata value) external;
 
-    function setInterface(
-        bytes32 node,
-        bytes4 interfaceID,
-        address implementer
-    ) external;
+    function setInterface(bytes32 node, bytes4 interfaceID, address implementer) external;
 
-    function multicall(
-        bytes[] calldata data
-    ) external returns (bytes[] memory results);
+    function multicall(bytes[] calldata data) external returns (bytes[] memory results);
 
-    function multicallWithNodeCheck(
-        bytes32 nodehash,
-        bytes[] calldata data
-    ) external returns (bytes[] memory results);
+    function multicallWithNodeCheck(bytes32 nodehash, bytes[] calldata data)
+        external
+        returns (bytes[] memory results);
 
     /* Deprecated functions */
     function content(bytes32 node) external view returns (bytes32);

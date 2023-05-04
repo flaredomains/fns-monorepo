@@ -14,11 +14,7 @@ abstract contract TextResolver is ITextResolver, ResolverBase {
      * @param key The key to set.
      * @param value The text data value to set.
      */
-    function setText(
-        bytes32 node,
-        string calldata key,
-        string calldata value
-    ) external virtual authorised(node) {
+    function setText(bytes32 node, string calldata key, string calldata value) external virtual authorised(node) {
         versionable_texts[recordVersions[node]][node][key] = value;
         emit TextChanged(node, key, key, value);
     }
@@ -29,18 +25,11 @@ abstract contract TextResolver is ITextResolver, ResolverBase {
      * @param key The text data key to query.
      * @return The associated text data.
      */
-    function text(
-        bytes32 node,
-        string calldata key
-    ) external view virtual override returns (string memory) {
+    function text(bytes32 node, string calldata key) external view virtual override returns (string memory) {
         return versionable_texts[recordVersions[node]][node][key];
     }
 
-    function supportsInterface(
-        bytes4 interfaceID
-    ) public view virtual override returns (bool) {
-        return
-            interfaceID == type(ITextResolver).interfaceId ||
-            super.supportsInterface(interfaceID);
+    function supportsInterface(bytes4 interfaceID) public view virtual override returns (bool) {
+        return interfaceID == type(ITextResolver).interfaceId || super.supportsInterface(interfaceID);
     }
 }
