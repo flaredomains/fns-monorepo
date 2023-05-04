@@ -29,9 +29,6 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
      */
     constructor(IFNS fnsAddr) {
         fns = fnsAddr;
-
-        // Automatically claim ownership of reverse record for the deployer
-        claim(msg.sender);
     }
 
     modifier authorised(address addr) {
