@@ -57,6 +57,7 @@ const OwnedDomains = ({ date, domain, isSubdomain }: { date: Date; domain: strin
 type Domain = {
   label: string
   expire: number
+  isSubdomain: boolean
 }
 
 export default function MyAccount() {

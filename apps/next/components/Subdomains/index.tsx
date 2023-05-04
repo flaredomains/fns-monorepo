@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Domain_Select from '../Domain_Select'
 import WalletConnect from '../WalletConnect'
 import SubdomainContent from './SubdomainContent'
-import SubdomainEdit from './SubdomainEdit'
+//import SubdomainEdit from './SubdomainEdit'
 
 import NameWrapper from '../../src/pages/abi/NameWrapper.json'
 import SubdomainTracker from '../../src/pages/abi/SubdomainTracker.json'
