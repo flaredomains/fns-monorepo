@@ -96,6 +96,11 @@ const Info = ({
     abi: TextResolver.abi,
     functionName: 'setText',
     // args: [input],   TODO: put the right args
+
+    // Example Usage:
+    // To set email:
+    // setText(namehash.hash(fullDomainName), "email", "simone@gmail.com")
+
     enabled: !isAddressList && input !== '',
     onSuccess(data: any) {
       console.log('Success prepareSetText', data)
@@ -121,6 +126,13 @@ const Info = ({
     abi: AddrResolver.abi,
     functionName: 'setAddr',
     // args: [input],   TODO: put the right args
+
+    // Example Usage:
+    // For EVM Chains Only: setAddr(namehash.hash(fullDomainName), address)
+    // TODO: Create fake enum for now:
+    // enum CHAIN_ID { BTC_ID, LTC_ID, DOGE_ID }
+    // For Non-EVM Chains Only (BTC): setAddr(namehash.hash(fullDomainName), CHAIN_ID.BTC_ID, "btc_address")
+
     enabled: isAddressList && input !== '',
     onSuccess(data: any) {
       console.log('Success setAddr', data)
