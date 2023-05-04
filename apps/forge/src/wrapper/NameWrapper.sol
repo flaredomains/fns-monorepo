@@ -13,7 +13,7 @@ import {
     CANNOT_CREATE_SUBDOMAIN,
     PARENT_CANNOT_CONTROL,
     CAN_DO_EVERYTHING,
-    IS_DOT_ETH,
+    IS_DOT_FLR,
     CAN_EXTEND_EXPIRY,
     PARENT_CONTROLLED_FUSES,
     USER_SETTABLE_FUSES
@@ -65,8 +65,8 @@ contract NameWrapper is Ownable, ERC1155Fuse, INameWrapper, Controllable, IERC72
 
     uint64 private constant MAX_EXPIRY = type(uint64).max;
 
-    constructor(IFNS _ens, IBaseRegistrar _registrar, IMetadataService _metadataService) {
-        fns = _ens;
+    constructor(IFNS _fns, IBaseRegistrar _registrar, IMetadataService _metadataService) {
+        fns = _fns;
         registrar = _registrar;
         metadataService = _metadataService;
 
@@ -118,15 +118,6 @@ contract NameWrapper is Ownable, ERC1155Fuse, INameWrapper, Controllable, IERC72
      */
     function ownerOf(uint256 id) public view override(ERC1155Fuse, INameWrapper) returns (address owner) {
         return super.ownerOf(id);
-    }
-
-    /**
-     * @notice Gets the owner of a name
-     * @param label Label as a string of the .flr domain to wrap. For "test.flr", input "test"
-     * @return owner The owner of the name
-     */
-    function ownerOf(string calldata label) public view returns (address owner) {
-        return ownerOf(uint256(keccak256(abi.encodePacked(FLR_NODE, keccak256(bytes(label))))));
     }
 
     /**
@@ -213,7 +204,7 @@ contract NameWrapper is Ownable, ERC1155Fuse, INameWrapper, Controllable, IERC72
     function canModifyName(bytes32 node, address addr) public view returns (bool) {
         (address owner, uint32 fuses, uint64 expiry) = getData(uint256(node));
         return (owner == addr || isApprovedForAll(owner, addr))
-            && (fuses & IS_DOT_ETH == 0 || expiry - GRACE_PERIOD >= block.timestamp);
+            && (fuses & IS_DOT_FLR == 0 || expiry - GRACE_PERIOD >= block.timestamp);
     }
 
     /**
@@ -579,7 +570,7 @@ contract NameWrapper is Ownable, ERC1155Fuse, INameWrapper, Controllable, IERC72
         fns.setRecord(node, address(this), resolver, ttl);
         if (owner == address(0)) {
             (, uint32 fuses,) = getData(uint256(node));
-            if (fuses & IS_DOT_ETH == IS_DOT_ETH) {
+            if (fuses & IS_DOT_FLR == IS_DOT_FLR) {
                 revert IncorrectTargetOwner(owner);
             }
             _unwrap(node, address(0));
@@ -739,17 +730,6 @@ contract NameWrapper is Ownable, ERC1155Fuse, INameWrapper, Controllable, IERC72
     }
 
     /**
-     * @dev Helper pure function to easily generate the node (FNSRegistry) and id (NameWrapper tokenId)
-     * @param label - the input name excluding ".flr"
-     * @param nodeHash - The node hash that is used in the FNSRegistry
-     * @param tokenId - The tokenId used to mint the NameWrapper ERC1155 Token
-     */
-    function getFLRTokenId(string memory label) external pure returns (bytes32 nodeHash, uint256 tokenId) {
-        nodeHash = keccak256(abi.encodePacked(FLR_NODE, keccak256(bytes(label))));
-        tokenId = uint256(nodeHash);
-    }
-
-    /**
      * Internal functions
      */
     function _postTransferAction(address from, address to, uint256 id, uint32 fuses, uint64 expiry) internal override {
@@ -758,7 +738,7 @@ contract NameWrapper is Ownable, ERC1155Fuse, INameWrapper, Controllable, IERC72
 
     function _preTransferCheck(uint256 id, uint32 fuses, uint64 expiry) internal view override returns (bool) {
         // For this check, treat .flr 2LDs as expiring at the start of the grace period.
-        if (fuses & IS_DOT_ETH == IS_DOT_ETH) {
+        if (fuses & IS_DOT_FLR == IS_DOT_FLR) {
             expiry -= GRACE_PERIOD;
         }
 
@@ -910,7 +890,7 @@ contract NameWrapper is Ownable, ERC1155Fuse, INameWrapper, Controllable, IERC72
         // uint256(node) is the tokenId when mint is called
         mintedDomainNamesContract.add(wrappedOwner, uint256(node), fuses, expiry, label);
 
-        _wrap(node, _name, wrappedOwner, fuses | PARENT_CANNOT_CONTROL | IS_DOT_ETH, expiry);
+        _wrap(node, _name, wrappedOwner, fuses | PARENT_CANNOT_CONTROL | IS_DOT_FLR, expiry);
 
         if (resolver != address(0)) {
             fns.setResolver(node, resolver);
