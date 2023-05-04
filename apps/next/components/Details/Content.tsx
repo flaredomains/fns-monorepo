@@ -157,7 +157,10 @@ const Info = ({
     ...prepareSetText,
     async onSuccess(data) {
       console.log('Success writeSetText', data)
+
+      // Waits for 1 txn confirmation (block confirmation)
       await data.wait(1);
+      
       refetch()
       setRecordsEditMode(false)
       setInput('')
@@ -264,7 +267,7 @@ const Info = ({
                     ? () => writeSetAddr?.() // setAddr write function
                     : () => writeSetText?.() // setText write function
                 }
-                disabled={!addressInputIsValid}
+                disabled={isAddressList && !addressInputIsValid}
                 className="flex justify-center items-center text-center bg-[#F97316] px-2 py-1 rounded-lg text-white border border-[#F97316] lg:ml-auto disabled:border-gray-500 disabled:bg-gray-500 disabled:hover:scale-100"
               >
                 <p className="text-xs font-medium">Save</p>
@@ -347,6 +350,7 @@ export default function Content({
   })
 
   // TODO: Read the addr(bytes32 node, uint256 coinType)
+  // TODO: coinType can be retrieved using: formatsByName[leftText].coinType, where leftText == 'BTC', 'LTC', etc
   // TODO: Reference the useEffects and useState for coinType in the Info component
   // TODO: Perhaps it would be best to "lift" coinType state up one level so this parent component
   // TODO: also has access to it
@@ -355,7 +359,7 @@ export default function Content({
     abi: AddrResolver.abi,
     functionName: 'addr',
     enabled: prepared && recordPrepared,
-    args: [namehash.hash(result), /*coinType*/],
+    args: [namehash.hash(result), /*formatsByName[leftText].coinType*/],
     onError(error) {
       console.log('Error addr', error)
     },
