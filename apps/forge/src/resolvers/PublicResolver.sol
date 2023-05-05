@@ -13,9 +13,6 @@ import "./profiles/ExtendedResolver.sol";
 import "./Multicallable.sol";
 import "fns/wrapper/INameWrapper.sol";
 
-// TODO: Remove
-import "forge-std/console.sol";
-
 /**
  * A simple resolver anyone can use; only allows the owner of a node to set its
  * address.
@@ -111,14 +108,10 @@ contract PublicResolver is
 
     function isAuthorised(bytes32 node) internal view override returns (bool) {
         if (msg.sender == trustedETHController || msg.sender == trustedReverseRegistrar) {
-            console.log("isAuthorised: msg.sender is trustedETHController or trustedReverseRegistrar");
             return true;
         }
 
         address owner = fns.owner(node);
-
-        console.log("isAuthorised: owner = %s", owner);
-        console.log("isAuthorised: msg.sender = %s", msg.sender);
 
         if (owner == address(nameWrapper)) {
             owner = nameWrapper.ownerOf(uint256(node));

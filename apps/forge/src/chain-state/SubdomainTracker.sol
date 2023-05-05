@@ -5,9 +5,6 @@ import "./ISubdomainTracker.sol";
 import "./MintedDomainNames.sol";
 import "fns/wrapper/INameWrapper.sol";
 
-// TODO: Remove
-import "forge-std/console.sol";
-
 contract SubdomainTracker is ISubdomainTracker {
     mapping(uint256 => ISubdomainTracker.Data[]) public subdomains;
     INameWrapper immutable nameWrapper;
@@ -62,15 +59,6 @@ contract SubdomainTracker is ISubdomainTracker {
         external
         isNameWrapper
     {
-        // (, uint256 idFromLabel) = nameWrapper.getFLRTokenId(fullLabelWithoutTLD);
-        // require(subdomainId == idFromLabel, "SubdomainTracker: id & label mismatch");
-
-        // TODO: Remove this
-        // console.log(
-        //     "SubdomainTracker::add(parentTokenId:%s, subdomainId:%s, subdomainOwner:%s, subdomainLabel:...)",
-        //     parentTokenId, subdomainId, subdomainOwner);
-        // console.logString(subdomainLabel);
-
         subdomains[parentTokenId].push(ISubdomainTracker.Data(subdomainId, subdomainOwner, subdomainLabel));
     }
 }

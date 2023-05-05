@@ -30,9 +30,6 @@ import {ERC20Recoverable} from "fns/utils/ERC20Recoverable.sol";
 import {IMintedDomainNames} from "fns/chain-state/IMintedDomainNames.sol";
 import {ISubdomainTracker} from "fns/chain-state/ISubdomainTracker.sol";
 
-// TODO: Remove
-import "forge-std/console.sol";
-
 error UnauthorisedAddr(bytes32 node, address addr);
 error IncompatibleParent();
 error IncorrectTokenType();
