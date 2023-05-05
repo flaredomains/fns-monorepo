@@ -6,12 +6,11 @@ import Delete from '../../public/Delete.svg'
 
 import FNSRegistry from '../../src/pages/abi/FNSRegistry.json'
 import PublicResolver from '../../src/pages/abi/PublicResolver.json'
-import AddrResolver from '../../src/pages/abi/PublicResolver.sol/AddrResolver.json'
-import TextResolver from '../../src/pages/abi/PublicResolver.sol/TextResolver.json'
 
 import { formatsByName } from '@ensdomains/address-encoder'
 
-import { BigNumber, utils, Bytes } from 'ethers'
+// namehash is available as an ethers utility!
+import { utils, Bytes } from 'ethers'
 
 import {
   useContractRead,
@@ -20,7 +19,7 @@ import {
   useContractWrite,
 } from 'wagmi'
 
-const namehash = require('eth-ens-namehash')
+// utils.namehash(richard.flr) = 0xc8d20c7e2a8b02d98d5b47f6edefe94d581bcf829d44172f9f449aaa00e952b2
 
 const listAddresses: Array<{ leftText: string; rightText: string }> = [
   { leftText: 'ETH', rightText: '' },
@@ -30,10 +29,7 @@ const listAddresses: Array<{ leftText: string; rightText: string }> = [
 ]
 
 const listTextRecords: Array<{ leftText: string; rightText: string }> = [
-  {
-    leftText: 'Email',
-    rightText: '',
-  },
+  { leftText: 'Email', rightText: '' },
   { leftText: 'URL', rightText: '' },
   { leftText: 'Avatar', rightText: '' },
   { leftText: 'Description', rightText: '' },
@@ -47,7 +43,7 @@ const listTextRecords: Array<{ leftText: string; rightText: string }> = [
   { leftText: 'org.telegram', rightText: '' },
 ]
 
-const keysTexts: Array<string> = [
+const textKeys: Array<string> = [
   'Email',
   'URL',
   'Avatar',
@@ -62,39 +58,50 @@ const keysTexts: Array<string> = [
   'org.telegram',
 ]
 
-const keysAddr: Array<string> = ['XTP', 'BTC', 'LTC', 'DOGE']
+// Mock address data for various chains here:
+// https://docs.ens.domains/ens-improvement-proposals/ensip-9-multichain-address-resolution
+const addressKeys: Array<string> = [
+  "ETH",
+  "BTC",
+  "LTC",
+  "DOGE"
+]
 
-const enum CHAIN_ID { BTC, LTC, DOGE }
+// Regular expression that matches for any text or address record 
+// that has been set! ie any record that is not "" or "0x"
+const recordIsSet = /[^(^0x$|^$)]/;
 
 // leftText ---> key -- ex. ETH,BTC,... or email,URL
 // rightText ---> value -- ex. addrETH, addrBTC,... or simone@elevatesoftware.io,....
-// isAddressList --- if is Address field or Text Record field
+// addressRecord --- if is Address field or Text Record field
 const Info = ({
-  result,
+  namehash,
   leftText,
   rightText,
   index,
   recordsEditMode,
-  isAddressList,
+  addressRecord,
+  coinType,
   refetch,
   deleteButton,
   setRecordsEditMode
 }: {
-  result: string
+  namehash: string
   leftText: string
   rightText: string
   index: number
   recordsEditMode: boolean
-  isAddressList: boolean
+  addressRecord: boolean
+  coinType?: number
   refetch: any
-  deleteButton: (isAddressList: boolean, index: number) => void
+  deleteButton: (addressRecord: boolean, index: number) => void
   setRecordsEditMode: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const [copied, setCopied] = useState(false)
   const [input, setInput] = useState('')
   const [addressInputIsValid, setAddressInputValid] = useState<boolean>(false)
   const [addressAsBytes, setAddressAsBytes] = useState<Bytes>([])
-  const [coinType, setCoinType] = useState<BigNumber>()
+  // const [coinType, setCoinType] = useState<BigNumber>()
 
   const handleCopy = () => {
     navigator.clipboard.writeText(rightText.toString())
@@ -105,16 +112,16 @@ const Info = ({
     }, 1000)
   }
 
-  // Sets the coinType as React State, only if the entry is in the Address List
-  useEffect(() => {
-    if(isAddressList) {
-      setCoinType(BigNumber.from(formatsByName[leftText].coinType))
-    }
-  }, [leftText, isAddressList])
+  // // Sets the coinType as React State, only if the entry is in the Address List
+  // useEffect(() => {
+  //   if(addressRecord) {
+  //     setCoinType(BigNumber.from(formatsByName[leftText].coinType))
+  //   }
+  // })
 
   // Validates the input for Address List entries using @ensdomains/address-encoder
   useEffect(() => {
-    if(isAddressList && input !== "") {
+    if(addressRecord) {
       try {
         // formatsByName always returns valid for ETH addresses, so use ethersjs instead
         if(leftText === 'ETH') {
@@ -131,19 +138,19 @@ const Info = ({
         setAddressInputValid(false)
       }
     }
-  }, [input, isAddressList, leftText])
+  }, [input])
 
-  // WAGMI TEXT RECORD WRITE FUNCTION will active if isAddressList === false
+  // WAGMI TEXT RECORD WRITE FUNCTION will active if addressRecord === false
   // setText(namehash(domainName), keyString, valueString)
   // Example Usage:
   // To set email:
-  // setText(namehash.hash(fullDomainName), "email", "simone@gmail.com")
+  // setText(namehash, "email", "simone@gmail.com")
   const { config: prepareSetText } = usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: 'setText',
-    args: [namehash.hash(result), leftText.toLowerCase(), input],
-    enabled: !isAddressList && input !== '',
+    args: [namehash, leftText.toLowerCase(), input],
+    enabled: !addressRecord && recordIsSet.test(input),
     onSuccess(data: any) {
       console.log('Success prepareSetText', data)
     },
@@ -167,28 +174,27 @@ const Info = ({
     },
   }) as any
 
-  // WAGMI ADDRESSES WRITE FUNCTION will active if isAddressList === true
+  // WAGMI ADDRESSES WRITE FUNCTION will active if addressRecord === true
   // setAddr(bytes32 node, uint256 coinType, bytes a)
   const { config: prepareSetAddr } = usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: 'setAddr',
     args: [
-      namehash.hash(result),
+      namehash,
       coinType,
       addressAsBytes
     ],
-    enabled: isAddressList && input !== '' && addressInputIsValid,
+    enabled: coinType !== undefined && addressInputIsValid,
     onSuccess(data: any) {
       console.log('Success prepareSetAddr', data)
-      console.log(namehash.hash(result), coinType, addressAsBytes)
+      console.log(namehash, coinType, addressAsBytes)
     },
     onError(error) {
       console.log('Error prepareSetAddr', error)
     },
   })
 
-  // SetName Write Func
   const { write: writeSetAddr } = useContractWrite({
     ...prepareSetAddr,
     onSuccess(data) {
@@ -196,12 +202,25 @@ const Info = ({
     },
   }) as any
 
-  // console.table({
-  //   result: result,
-  //   nameHash: namehash.hash(result),
-  //   leftText: leftText.toLowerCase(),
-  //   input: input,
-  // });
+
+  // Returns the string version of any text or address record type
+  // that has been set and returns "Not Set" otherwise.
+  const formattedRecord = () => {
+    // if a text or address record is not set, return not set
+    if(recordIsSet.test(rightText)) {
+      console.log(rightText)
+      // address record
+      if(addressRecord) {
+          // https://docs.ens.domains/dapp-developer-guide/resolving-names#listing-cryptocurrency-addresses-and-text-records
+          return formatsByName[leftText].encoder(Buffer.from(utils.arrayify(rightText)))
+      }
+      // text record
+      else {
+        return rightText;
+      }
+    }
+    return "Not Set"
+  }
 
   return (
     <>
@@ -212,16 +231,11 @@ const Info = ({
           <>
             <p
               className={`${
-                rightText ? 'text-[#F97316]' : 'text-gray-400'
+                // if a text or address record are not set, set text color to gray!
+                recordIsSet.test(rightText) ? 'text-[#F97316]' : 'text-gray-400'
               } font-medium text-xs mr-3 mt-2 lg:mt-0`}
             >
-              {rightText
-                ? `${
-                    /^0x/.test(rightText.toString())
-                      ? `${rightText.slice(0, 6)}...${rightText.slice(-4)}`
-                      : rightText
-                  }`
-                : 'Not Set'}
+              { formattedRecord() }
             </p>
             {copied ? (
               <>
@@ -259,15 +273,15 @@ const Info = ({
               src={Delete}
               alt="FNS"
             />
-            {/* Save -- setText or setAddr (based on isAddressList variable) */}
+            {/* Save -- setText or setAddr (based on addressRecord variable) */}
             {input !== '' && (
               <button
                 onClick={
-                  isAddressList
+                  addressRecord
                     ? () => writeSetAddr?.() // setAddr write function
                     : () => writeSetText?.() // setText write function
                 }
-                disabled={isAddressList && !addressInputIsValid}
+                disabled={addressRecord && !addressInputIsValid}
                 className="flex justify-center items-center text-center bg-[#F97316] px-2 py-1 rounded-lg text-white border border-[#F97316] lg:ml-auto disabled:border-gray-500 disabled:bg-gray-500 disabled:hover:scale-100"
               >
                 <p className="text-xs font-medium">Save</p>
@@ -301,7 +315,6 @@ export default function Content({
   const [copyArrTextRecords, setCopyArrTextRecords] =
     useState<Array<{ leftText: string; rightText: string }>>(listTextRecords)
 
-  // console.log('namehash.hash(result)', namehash.hash(result))
 
   // TO CHANGE WITH WAGMI READ/WRITE FUNCTION
   // Save the REAL array in a copy
@@ -326,8 +339,8 @@ export default function Content({
   }
 
   // Delete the element from list
-  function deleteButton(isAddressList: boolean, index: number) {
-    if (isAddressList) {
+  function deleteButton(addressRecord: boolean, index: number) {
+    if (addressRecord) {
       setCopyArrAddr(copyArrAddr.filter((_, i) => i !== index))
     } else {
       setCopyArrTextRecords(copyArrTextRecords.filter((_, i) => i !== index))
@@ -339,9 +352,9 @@ export default function Content({
     abi: FNSRegistry.abi,
     functionName: 'resolver',
     enabled: prepared,
-    args: [namehash.hash(result)],
+    args: [utils.namehash(result)],
     onSuccess(data: any) {
-      // console.log('Success resolver', data)
+      console.log('Success resolver', data)
       setRecordPrepared(true)
     },
     onError(error) {
@@ -354,28 +367,36 @@ export default function Content({
   // TODO: Reference the useEffects and useState for coinType in the Info component
   // TODO: Perhaps it would be best to "lift" coinType state up one level so this parent component
   // TODO: also has access to it
-  const { data: addresses } = useContractRead({
+
+  // Prepares an array of read objects on the PublicResolver contract
+  // for every available address record type defined in `addressKeys`.
+  const addressRecordReads = addressKeys.map((coin,) => ({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: 'addr',
+    args: [utils.namehash(result), formatsByName[coin].coinType]
+  }))
+
+  // Performs all of the reads for the address record types and 
+  // returns an array of "hex" strings corresponding to each type.
+  const { data: addressRecords } = useContractReads({
+    contracts: addressRecordReads as [{address?: `0x${string}`, abi?: any, functionName?: string, args?:[any, number]}],
     enabled: prepared && recordPrepared,
-    args: [namehash.hash(result), /*formatsByName[leftText].coinType*/],
-    onError(error) {
-      console.log('Error addr', error)
-    },
   })
 
-  // console.log('namehash.hash(result)', namehash.hash(result))
-
-  const textsPrepare = keysTexts.map((item, index) => ({
+  // Prepares an array of read objects on the PublicResolver contract
+  // for every available text record type defined in `addressKeys`.
+  const textRecordReads = textKeys.map((item, index) => ({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: 'text',
-    args: [namehash.hash(result), item.toLowerCase()],
+    args: [utils.namehash(result), item.toLowerCase()],
   }))
 
-  const { data: arrTextsField, refetch: refetchText, isFetched } = useContractReads({
-    contracts: textsPrepare as any,
+  // Performs all of the reads for the text record types and 
+  // returns an array of strings corresponding to each type.
+  const { data: textRecords, refetch: refetchText } = useContractReads({
+    contracts: textRecordReads as [{address?: `0x${string}`, abi?: any, functionName?: string, args?:[any, number]}],
     enabled: prepared && recordPrepared,
     onSuccess(data: any) {
       console.log('Success texts', data)
@@ -385,11 +406,6 @@ export default function Content({
     },
   })
 
-  // console.table({
-  //   addresses: addresses,
-  //   resolver: resolver,
-  //   checkOwnerDomain: checkOwnerDomain,
-  // })
 
   return (
     <>
@@ -440,20 +456,24 @@ export default function Content({
               Addresses
             </h2>
             <div className="flex-col items-center">
-              {copyArrAddr.map((item, index) => (
+              { addressRecords ? copyArrAddr.map((item, index) => (
                 <Info
                   key={index}
-                  result={result}
+                  namehash={utils.namehash(result)}
                   leftText={item.leftText}
-                  rightText={item.rightText}
+                  // rightText={addressRecords ? addressRecords[index] as string : ''}
+                  rightText={addressRecords[index] as string}
                   index={index}
                   recordsEditMode={recordsEditMode}
-                  isAddressList={true}
+                  addressRecord={true}
+                  coinType={formatsByName[item.leftText].coinType}
                   refetch={refetchText}
                   setRecordsEditMode={setRecordsEditMode}
                   deleteButton={deleteButton}
-                />
-              ))}
+                />))
+                 :
+                (<></>)
+              }
             </div>
           </div>
 
@@ -465,15 +485,15 @@ export default function Content({
                 Text Records
               </h2>
               <div className="flex-col items-center">
-                {isFetched && copyArrTextRecords.map((item, index) => (
+                {textRecords && copyArrTextRecords.map((item, index) => (
                   <Info
                     key={index}
-                    result={result}
+                    namehash={utils.namehash(result)}
                     leftText={item.leftText}
-                    rightText={arrTextsField[index]}
+                    rightText={textRecords ? textRecords[index] as string : ""}
                     index={index}
                     recordsEditMode={recordsEditMode}
-                    isAddressList={false}
+                    addressRecord={false}
                     refetch={refetchText}
                     setRecordsEditMode={setRecordsEditMode}
                     deleteButton={deleteButton}
@@ -548,10 +568,10 @@ export default function Content({
             Text Records
           </h2>
           <div className="flex-col items-center">
-            {arrTextsField?.map((item: any, index: any) => (
+            {textRecords?.map((item: any, index: any) => (
               <RecordSection
                 key={index}
-                leftText={keysTexts[index]}
+                leftText={textKeys[index]}
                 rightText={item}
               />
             ))}
