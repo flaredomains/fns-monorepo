@@ -39,7 +39,8 @@ contract TestStablePriceOracle is Test {
                 threeLetterAnnualPriceUSD,
                 fourLetterAnnualPriceUSD,
                 fiveLetterAnnualPriceUSD
-            ]
+            ],
+            "MOCK_FLR"
         );
     }
 
@@ -53,7 +54,8 @@ contract TestStablePriceOracle is Test {
                 0,          // 3-letter name price (attoUSD)
                 1,          // 4-letter name price (attoUSD)
                 2           // 5-letter name price (attoUSD)
-            ]
+            ],
+            "TEST_FLR"
         );
     }
 
