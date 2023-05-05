@@ -4,6 +4,7 @@ No files changed, compilation skipped
 == Logs ==
   1. fnsRegistry: 0x7EFd59E0Cd291c1B5Dca77a9862A8943C1445726
   2. noNameCollisions: 0x1AED499900376987b9e5C27EA196f3507cBF7914
+             (update): 0x65748B0eBfFF46f6d1f64468E5746175120c4C14
   3. baseRegistrar: 0x570F7b5F751B50b5B2DFF35d553cE05cB27697a7
   4. mintedDomainNames: 0x5D09A2b2E29d5cB160f78EfA941Ad937BAC6De86
   5. subdomainTracker: 0x0Fd7cC33C19881A39467A3A4f46e42c8fa0C7112
