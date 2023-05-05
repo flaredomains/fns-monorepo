@@ -8,7 +8,7 @@ import { configureChains, createClient, WagmiConfig } from 'wagmi'
 
 import { Chain } from 'wagmi'
 
-export const Flare = {
+export const Coston2 = {
   id: 114,
   name: 'Coston 2',
   network: 'Coston 2 Test Network',
@@ -23,6 +23,36 @@ export const Flare = {
   },
 } as const satisfies Chain
 
+export const Songbird = {
+  id: 19,
+  name: 'Songbird',
+  network: 'Songbird Canary Network',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'SGB',
+    symbol: 'SGB',
+  },
+  rpcUrls: {
+    public: { http: ['https://songbird-api.flare.network/ext/C/rpc'] },
+    default: { http: ['https://songbird-api.flare.network/ext/C/rpc'] },
+  },
+} as const satisfies Chain
+
+export const Flare = {
+  id: 14,
+  name: 'Flare',
+  network: 'Flare Network',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'FLR',
+    symbol: 'FLR',
+  },
+  rpcUrls: {
+    public: { http: ['https://flare-api.flare.network/ext/C/rpc'] },
+    default: { http: ['https://flare-api.flare.network/ext/C/rpc'] },
+  },
+} as const satisfies Chain
+
 // 1. Get projectID at https://cloud.walletconnect.com
 if (!process.env.WALLET_CONNECT_PROJECT_ID) {
   throw new Error('You need to provide WALLET_CONNECT_PROJECT_ID env variable')
@@ -31,7 +61,7 @@ if (!process.env.WALLET_CONNECT_PROJECT_ID) {
 const projectId = process.env.WALLET_CONNECT_PROJECT_ID
 
 // 2. Configure wagmi client
-const chains = [Flare]
+const chains = [Coston2, Songbird, Flare]
 const { provider } = configureChains(chains, [w3mProvider({ projectId })])
 export const wagmiClient = createClient({
   autoConnect: true,
