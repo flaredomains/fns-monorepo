@@ -32,8 +32,7 @@ contract UpdatePriceOracle is Script {
 
         StablePriceOracle stablePriceOracle = new StablePriceOracle(
             0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
-            [uint256(5), 4, 3, 2, 1],
-            "C2FLR");
+            [uint256(5), 4, 3, 2, 1]);
 
         console.log("Stable Price Oracle Deployed to: %s", address(stablePriceOracle));
 

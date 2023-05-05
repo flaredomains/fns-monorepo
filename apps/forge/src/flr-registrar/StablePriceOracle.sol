@@ -28,12 +28,9 @@ contract StablePriceOracle is IPriceOracle, IERC165, Ownable {
     uint256 public price4LetterAttoUSDPerSec;
     uint256 public price5LetterAttoUSDPerSec;
 
-    string public nativeTokenTicker;
-
     event RentPriceChanged(uint256[5] prices);
 
-    constructor(address _flareContractRegistry, uint256[5] memory _annualRentPricesUSD, string memory _nativeTokenTicker) {
-        nativeTokenTicker = _nativeTokenTicker;
+    constructor(address _flareContractRegistry, uint256[5] memory _annualRentPricesUSD) {
         flareContractRegistry = IFlareContractRegistry(_flareContractRegistry);
         setPrices(_annualRentPricesUSD);
     }
@@ -115,7 +112,9 @@ contract StablePriceOracle is IPriceOracle, IERC165, Ownable {
         IFtsoRegistry ftsoRegistry = IFtsoRegistry(flareContractRegistry.getContractAddressByName("FtsoRegistry"));
 
         // Now, grab the pricing data from the on-chain Oracle Contract
-        (flrPriceUSD, timestamp, decimals) = ftsoRegistry.getCurrentPriceWithDecimals(nativeTokenTicker);
+        (flrPriceUSD, timestamp, decimals) = ftsoRegistry.getCurrentPriceWithDecimals("C2FLR");
+        // (flrPriceUSD, timestamp, decimals) = ftsoRegistry.getCurrentPriceWithDecimals("SGB");
+        // (flrPriceUSD, timestamp, decimals) = ftsoRegistry.getCurrentPriceWithDecimals("FLR");
     }
 
     function attoUSDToWei(uint256 amount) internal view returns (uint256) {
