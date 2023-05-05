@@ -72,7 +72,7 @@ export default function Details({ result }: { result: string }) {
       const hash = web3.sha3(resultFiltered) as string
       setFilterResult(resultFiltered)
       setHashHex(hash)
-      setPreparedHash(true)
+      setPreparedHash(true);
     }
   }, [result])
 
