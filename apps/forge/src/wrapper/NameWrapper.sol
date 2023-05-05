@@ -98,6 +98,7 @@ contract NameWrapper is Ownable, ERC1155Fuse, INameWrapper, Controllable, IERC72
      */
     function updateMintedDomainNamesContract(IMintedDomainNames newContract) public onlyOwner {
         mintedDomainNamesContract = newContract;
+        emit NewMintedDomainNames(address(newContract));
     }
 
     /**
@@ -108,6 +109,7 @@ contract NameWrapper is Ownable, ERC1155Fuse, INameWrapper, Controllable, IERC72
      */
     function updateSubdomainTrackerContract(ISubdomainTracker newContract) public onlyOwner {
         subdomainTrackerContract = newContract;
+        emit NewSubdomainTracker(address(newContract));
     }
 
     /* ERC1155 Fuse */
@@ -173,6 +175,7 @@ contract NameWrapper is Ownable, ERC1155Fuse, INameWrapper, Controllable, IERC72
      */
     function setMetadataService(IMetadataService _metadataService) public onlyOwner {
         metadataService = _metadataService;
+        emit NewMetadataService(address(_metadataService));
     }
 
     /**
@@ -202,6 +205,8 @@ contract NameWrapper is Ownable, ERC1155Fuse, INameWrapper, Controllable, IERC72
             registrar.setApprovalForAll(address(upgradeContract), true);
             fns.setApprovalForAll(address(upgradeContract), true);
         }
+
+        emit NewNameWrapperUpgrade(address(_upgradeAddress));
     }
 
     /**

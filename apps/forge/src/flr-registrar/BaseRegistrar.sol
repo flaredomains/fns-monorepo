@@ -75,7 +75,7 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     function updateNoNameCollisionContract(INoNameCollisions newContract) public onlyOwner {
         require(address(newContract) != address(0), "BaseRegistrar: Cannot update NoCollisions to Address 0");
         noNameCollisionsContract = newContract;
-        emit NoNameCollisionsSet(address(newContract));
+        emit NewNoNameCollisions(address(newContract));
     }
 
     /**

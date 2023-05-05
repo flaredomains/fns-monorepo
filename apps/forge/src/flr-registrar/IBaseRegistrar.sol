@@ -6,7 +6,7 @@ import "./IBaseRegistrar.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 interface IBaseRegistrar is IERC721 {
-    event NoNameCollisionsSet(address indexed noNameCollisions);
+    event NewNoNameCollisions(address indexed noNameCollisions);
     event ControllerAdded(address indexed controller);
     event ControllerRemoved(address indexed controller);
     event ResolverSet(address indexed resolver);

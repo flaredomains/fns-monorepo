@@ -26,8 +26,12 @@ uint32 constant PARENT_CONTROLLED_FUSES = 0xFFFF0000;
 uint32 constant USER_SETTABLE_FUSES = 0xFFFDFFFF;
 
 interface INameWrapper is IERC1155 {
-    event NameWrapped(bytes32 indexed node, bytes name, address owner, uint32 fuses, uint64 expiry);
+    event NewMintedDomainNames(address indexed mintedDomainNames);
+    event NewSubdomainTracker(address indexed subdomainTracker);
+    event NewMetadataService(address indexed metadataService);
+    event NewNameWrapperUpgrade(address indexed nameWrapperUpgrade);
 
+    event NameWrapped(bytes32 indexed node, bytes name, address owner, uint32 fuses, uint64 expiry);
     event NameUnwrapped(bytes32 indexed node, address owner);
 
     event FusesSet(bytes32 indexed node, uint32 fuses);
