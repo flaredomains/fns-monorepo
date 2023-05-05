@@ -43,12 +43,12 @@ export default function SubdomainEdit({
     <>
       {/* Subdomain Line */}
       <div className="flex-col bg-gray-800 px-8 pb-5 pt-11">
-        <SubdomainLine
+        {/* <SubdomainLine
           data={data}
           editMode={editMode}
           setEditMode={setEditMode}
           setDataEdit={setDataEdit}
-        />
+        /> */}
       </div>
       {/* Details */}
       <SubDetails

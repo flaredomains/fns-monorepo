@@ -1,4 +1,4 @@
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.18;
 
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
@@ -31,16 +31,8 @@ contract SetResolver is Script {
         ReverseRegistrar reverseRegistrar = ReverseRegistrar(0x7E0079327c621Ff30F40800f21BCeC2B0eFbAC6E);
         reverseRegistrar.setDefaultResolver(publicResolver);
 
-        reverseRegistrar.claimForAddr(
-            simoneWallet,
-            simoneWallet,
-            publicResolver);
-        reverseRegistrar.setNameForAddr(
-            simoneWallet,
-            simoneWallet,
-            publicResolver,
-            "simone"
-        );
+        reverseRegistrar.claimForAddr(simoneWallet, simoneWallet, publicResolver);
+        reverseRegistrar.setNameForAddr(simoneWallet, simoneWallet, publicResolver, "simone");
 
         vm.stopBroadcast();
     }

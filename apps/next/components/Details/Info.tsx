@@ -89,12 +89,14 @@ const Alert = ({ available }: { available: boolean }) => {
 
 export default function Info({
   available,
+  isSubdomain,
   parent,
   registrant_address,
   controller,
   date,
 }: {
   available: boolean
+  isSubdomain: boolean
   parent: string
   registrant_address: string
   controller: string
@@ -122,17 +124,17 @@ export default function Info({
 
           {/* Registrant */}
           <InfoLine
-            leftText="Registrant"
+            leftText={isSubdomain ? "Owner" : "Registrant"}
             rightText={registrant_address}
             alternativeText="0x0"
           />
 
           {/* Controller */}
-          <InfoLine
+          {!isSubdomain && <InfoLine
             leftText="Controller"
             rightText={controller}
             alternativeText="Not Owned"
-          />
+          />}
 
           {/* Expiration Date */}
           {date && !available && (
@@ -142,7 +144,7 @@ export default function Info({
               </p>
               <div className="flex-col items-center mt-2 lg:mt-0 lg:flex lg:flex-row">
                 <p className="font-semibold text-white text-base mr-12">
-                  {`${date?.toLocaleString('en-US', {
+                  {isSubdomain ? 'No Expiry' : `${date?.toLocaleString('en-US', {
                     month: 'long',
                   })} ${date?.getDate()}, ${date?.getFullYear()}`}
                 </p>

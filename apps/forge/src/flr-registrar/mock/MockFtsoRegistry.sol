@@ -1,9 +1,11 @@
-//SPDX-License-Identifier: MIT
-pragma solidity >=0.8.4;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
 
 interface IMockFtsoRegistry {
-    function getCurrentPriceWithDecimals(string memory _symbol) external view
-        returns(uint256 _price, uint256 _timestamp, uint256 _assetPriceUsdDecimals);
+    function getCurrentPriceWithDecimals(string memory _symbol)
+        external
+        view
+        returns (uint256 _price, uint256 _timestamp, uint256 _assetPriceUsdDecimals);
 }
 
 contract MockFtsoRegistry is IMockFtsoRegistry {
@@ -17,10 +19,10 @@ contract MockFtsoRegistry is IMockFtsoRegistry {
         staticDecimals = _staticDecimals;
     }
 
-    function getCurrentPriceWithDecimals(string memory /* _symbol */)
+    function getCurrentPriceWithDecimals(string memory /* _symbol */ )
         external
         view
-        returns(uint256 _price, uint256 _timestamp, uint256 _assetPriceUsdDecimals)
+        returns (uint256 _price, uint256 _timestamp, uint256 _assetPriceUsdDecimals)
     {
         return (staticPrice, staticTimestamp, staticDecimals);
     }

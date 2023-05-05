@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import Logo from '../public/Logo.png'
-import Search from '../public/Search.svg'
+import Search from '../public/Search.png'
 import Image from 'next/image'
 import styles from '../src/styles/Main.module.css'
 import Link from 'next/link'
@@ -14,7 +14,7 @@ function Main() {
     e.preventDefault()
 
     // Regular expression to validate input
-    const pattern = /^[a-zA-Z0-9\s\p{Emoji}]+\.flr$/u
+    const pattern = /^[a-zA-Z0-9\s\p{Emoji}]+(\.[a-zA-Z0-9\s\p{Emoji}]+)*\.flr$/u
 
     const exception = /^0x[a-fA-F0-9]{40}$/
 
@@ -25,7 +25,7 @@ function Main() {
       console.log('Input is invalid!')
       const inputElement = e.target.elements['input-field'] as HTMLInputElement
       inputElement.setCustomValidity(
-        'Should be a name with .flr at the end or ethereum address.'
+        'Should be a name with .flr at the end or flare wallet address.'
       )
       inputElement.reportValidity()
     }
@@ -67,7 +67,7 @@ function Main() {
       {/* Search -- Middle page */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <p className="font-bold text-5xl text-white text-center">
-          Find Your Next .flare Domain
+          Find Your Next .flr Domain
         </p>
         {/* Search Form */}
         <form

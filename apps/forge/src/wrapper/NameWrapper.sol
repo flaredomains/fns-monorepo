@@ -3,7 +3,22 @@ pragma solidity ~0.8.17;
 
 import {ERC1155Fuse, IERC165, IERC1155MetadataURI} from "./ERC1155Fuse.sol";
 import {Controllable} from "fns/root/Controllable.sol";
-import {INameWrapper, CANNOT_UNWRAP, CANNOT_BURN_FUSES, CANNOT_TRANSFER, CANNOT_SET_RESOLVER, CANNOT_SET_TTL, CANNOT_CREATE_SUBDOMAIN, PARENT_CANNOT_CONTROL, CAN_DO_EVERYTHING, IS_DOT_ETH, CAN_EXTEND_EXPIRY, PARENT_CONTROLLED_FUSES, USER_SETTABLE_FUSES} from "./INameWrapper.sol";
+import {
+    INameWrapper,
+    CANNOT_UNWRAP,
+    CANNOT_BURN_FUSES,
+    CANNOT_TRANSFER,
+    CANNOT_SET_RESOLVER,
+    CANNOT_SET_TTL,
+    CANNOT_CREATE_SUBDOMAIN,
+    CANNOT_APPROVE,
+    PARENT_CANNOT_CONTROL,
+    CAN_DO_EVERYTHING,
+    IS_DOT_FLR,
+    CAN_EXTEND_EXPIRY,
+    PARENT_CONTROLLED_FUSES,
+    USER_SETTABLE_FUSES
+} from "./INameWrapper.sol";
 import {INameWrapperUpgrade} from "./INameWrapperUpgrade.sol";
 import {IMetadataService} from "./IMetadataService.sol";
 import {IFNS} from "fns/registry/IFNS.sol";
@@ -14,6 +29,9 @@ import {BytesUtils} from "./BytesUtils.sol";
 import {ERC20Recoverable} from "fns/utils/ERC20Recoverable.sol";
 import {IMintedDomainNames} from "fns/chain-state/IMintedDomainNames.sol";
 import {ISubdomainTracker} from "fns/chain-state/ISubdomainTracker.sol";
+
+// TODO: Remove
+import "forge-std/console.sol";
 
 error UnauthorisedAddr(bytes32 node, address addr);
 error IncompatibleParent();
@@ -27,14 +45,7 @@ error OperationProhibited(bytes32 node);
 error NameIsNotWrapped();
 error NameIsStillExpired();
 
-contract NameWrapper is
-    Ownable,
-    ERC1155Fuse,
-    INameWrapper,
-    Controllable,
-    IERC721Receiver,
-    ERC20Recoverable
-{
+contract NameWrapper is Ownable, ERC1155Fuse, INameWrapper, Controllable, IERC721Receiver, ERC20Recoverable {
     using BytesUtils for bytes;
 
     IFNS public immutable fns;
@@ -44,12 +55,10 @@ contract NameWrapper is
     string public constant name = "NameWrapper";
 
     uint64 private constant GRACE_PERIOD = 90 days;
-    bytes32 private constant FLR_NODE =
-        0xfd9ed02f44147ba87d942b154c98562d831e3a24daea862ee12868ac20f7bcc3;
+    bytes32 private constant FLR_NODE = 0xfd9ed02f44147ba87d942b154c98562d831e3a24daea862ee12868ac20f7bcc3;
     // Labelhash is just the keccak of "flr", sometimes represented as a uint256
     bytes32 private constant FLR_LABELHASH = 0x848313180a0fba6baf0d056afcae526bd33cc52dc58a1a864e1906017cb3ceaf;
-    bytes32 private constant ROOT_NODE =
-        0x0000000000000000000000000000000000000000000000000000000000000000;
+    bytes32 private constant ROOT_NODE = 0x0000000000000000000000000000000000000000000000000000000000000000;
 
     INameWrapperUpgrade public upgradeContract;
     IMintedDomainNames public mintedDomainNamesContract;
@@ -57,40 +66,28 @@ contract NameWrapper is
 
     uint64 private constant MAX_EXPIRY = type(uint64).max;
 
-    constructor(
-        IFNS _ens,
-        IBaseRegistrar _registrar,
-        IMetadataService _metadataService
-    ) {
-        fns = _ens;
+    constructor(IFNS _fns, IBaseRegistrar _registrar, IMetadataService _metadataService) {
+        fns = _fns;
         registrar = _registrar;
         metadataService = _metadataService;
 
-        /* Burn PARENT_CANNOT_CONTROL and CANNOT_UNWRAP fuses for ROOT_NODE and FLR_NODE */
+        /* Burn PARENT_CANNOT_CONTROL and CANNOT_UNWRAP fuses for ROOT_NODE and FLR_NODE and set expiry to max */
 
-        _setData(
-            uint256(FLR_NODE),
-            address(0),
-            uint32(PARENT_CANNOT_CONTROL | CANNOT_UNWRAP),
-            MAX_EXPIRY
-        );
-        _setData(
-            uint256(ROOT_NODE),
-            address(0),
-            uint32(PARENT_CANNOT_CONTROL | CANNOT_UNWRAP),
-            MAX_EXPIRY
-        );
+        _setData(uint256(FLR_NODE), address(0), uint32(PARENT_CANNOT_CONTROL | CANNOT_UNWRAP), MAX_EXPIRY);
+        _setData(uint256(ROOT_NODE), address(0), uint32(PARENT_CANNOT_CONTROL | CANNOT_UNWRAP), MAX_EXPIRY);
         names[ROOT_NODE] = "\x00";
         names[FLR_NODE] = "\x03flr\x00";
     }
 
-    function supportsInterface(
-        bytes4 interfaceId
-    ) public view virtual override(ERC1155Fuse, INameWrapper) returns (bool) {
-        return
-            interfaceId == type(INameWrapper).interfaceId ||
-            interfaceId == type(IERC721Receiver).interfaceId ||
-            super.supportsInterface(interfaceId);
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC1155Fuse, INameWrapper)
+        returns (bool)
+    {
+        return interfaceId == type(INameWrapper).interfaceId || interfaceId == type(IERC721Receiver).interfaceId
+            || super.supportsInterface(interfaceId);
     }
 
     /**
@@ -117,22 +114,37 @@ contract NameWrapper is
 
     /**
      * @notice Gets the owner of a name
-     * @param id The tokenId associated with the namehash of the domain label
+     * @param id The tokenId associated with the namehash of the full domain string
      * @return owner The owner of the name
      */
-    function ownerOf(
-        uint256 id
-    ) public view override(ERC1155Fuse, INameWrapper) returns (address owner) {
+    function ownerOf(uint256 id) public view override(ERC1155Fuse, INameWrapper) returns (address owner) {
         return super.ownerOf(id);
     }
 
     /**
      * @notice Gets the owner of a name
-     * @param label Label as a string of the .flr domain to wrap. For "test.flr", input "test"
-     * @return owner The owner of the name
+     * @param id Namehash of the name
+     * @return operator Approved operator of a name
      */
-    function ownerOf(string calldata label) public view returns (address owner) {
-        return ownerOf(uint256(keccak256(abi.encodePacked(FLR_NODE, keccak256(bytes(label))))));
+    function getApproved(uint256 id) public view override(ERC1155Fuse, INameWrapper) returns (address operator) {
+        address owner = ownerOf(id);
+        if (owner == address(0)) {
+            return address(0);
+        }
+        return super.getApproved(id);
+    }
+
+    /**
+     * @notice Approves an address for a name
+     * @param to address to approve
+     * @param tokenId name to approve
+     */
+    function approve(address to, uint256 tokenId) public override(ERC1155Fuse, INameWrapper) {
+        (, uint32 fuses,) = getData(tokenId);
+        if (fuses & CANNOT_APPROVE == CANNOT_APPROVE) {
+            revert OperationProhibited(bytes32(tokenId));
+        }
+        super.approve(to, tokenId);
     }
 
     /**
@@ -142,10 +154,7 @@ contract NameWrapper is
      * @return fuses Fuses of the name
      * @return expiry Expiry of the name
      */
-
-    function getData(
-        uint256 id
-    )
+    function getData(uint256 id)
         public
         view
         override(ERC1155Fuse, INameWrapper)
@@ -162,10 +171,7 @@ contract NameWrapper is
      * @notice Set the metadata service. Only the owner can do this
      * @param _metadataService The new metadata service
      */
-
-    function setMetadataService(
-        IMetadataService _metadataService
-    ) public onlyOwner {
+    function setMetadataService(IMetadataService _metadataService) public onlyOwner {
         metadataService = _metadataService;
     }
 
@@ -174,15 +180,7 @@ contract NameWrapper is
      * @param tokenId The id of the token
      * @return string uri of the metadata service
      */
-
-    function uri(
-        uint256 tokenId
-    )
-        public
-        view
-        override(INameWrapper, IERC1155MetadataURI)
-        returns (string memory)
-    {
+    function uri(uint256 tokenId) public view override(INameWrapper, IERC1155MetadataURI) returns (string memory) {
         return metadataService.uri(tokenId);
     }
 
@@ -192,10 +190,7 @@ contract NameWrapper is
      * to make the contract not upgradable.
      * @param _upgradeAddress address of an upgraded contract
      */
-
-    function setUpgradeContract(
-        INameWrapperUpgrade _upgradeAddress
-    ) public onlyOwner {
+    function setUpgradeContract(INameWrapperUpgrade _upgradeAddress) public onlyOwner {
         if (address(upgradeContract) != address(0)) {
             registrar.setApprovalForAll(address(upgradeContract), false);
             fns.setApprovalForAll(address(upgradeContract), false);
@@ -210,10 +205,9 @@ contract NameWrapper is
     }
 
     /**
-     * @notice Checks if msg.sender is the owner or approved by the owner of a name
+     * @notice Checks if msg.sender is the owner or operator of the owner of a name
      * @param node namehash of the name to check
      */
-
     modifier onlyTokenOwner(bytes32 node) {
         if (!canModifyName(node, msg.sender)) {
             revert UnauthorisedAddr(node, msg.sender);
@@ -223,21 +217,26 @@ contract NameWrapper is
     }
 
     /**
-     * @notice Checks if owner or approved by owner
+     * @notice Checks if owner or operator of the owner
      * @param node namehash of the name to check
      * @param addr which address to check permissions for
-     * @return whether or not is owner or approved
+     * @return whether or not is owner or operator
      */
-
-    function canModifyName(
-        bytes32 node,
-        address addr
-    ) public view returns (bool) {
+    function canModifyName(bytes32 node, address addr) public view returns (bool) {
         (address owner, uint32 fuses, uint64 expiry) = getData(uint256(node));
-        return
-            (owner == addr || isApprovedForAll(owner, addr)) &&
-            (fuses & IS_DOT_ETH == 0 ||
-                expiry - GRACE_PERIOD >= block.timestamp);
+        return (owner == addr || isApprovedForAll(owner, addr)) && !_isETH2LDInGracePeriod(fuses, expiry);
+    }
+
+    /**
+     * @notice Checks if owner/operator or approved by owner
+     * @param node namehash of the name to check
+     * @param addr which address to check permissions for
+     * @return whether or not is owner/operator or approved
+     */
+    function canExtendSubnames(bytes32 node, address addr) public view returns (bool) {
+        (address owner, uint32 fuses, uint64 expiry) = getData(uint256(node));
+        return (owner == addr || isApprovedForAll(owner, addr) || getApproved(uint256(node)) == addr)
+            && !_isETH2LDInGracePeriod(fuses, expiry);
     }
 
     /**
@@ -248,23 +247,14 @@ contract NameWrapper is
      * @param ownerControlledFuses Initial owner-controlled fuses to set
      * @param resolver Resolver contract address
      */
-
-    function wrapETH2LD(
-        string calldata label,
-        address wrappedOwner,
-        uint16 ownerControlledFuses,
-        address resolver
-    ) public {
+    function wrapETH2LD(string calldata label, address wrappedOwner, uint16 ownerControlledFuses, address resolver)
+        public
+        returns (uint64 expiry)
+    {
         uint256 tokenId = uint256(keccak256(bytes(label)));
         address registrant = registrar.ownerOf(tokenId);
-        if (
-            registrant != msg.sender &&
-            !registrar.isApprovedForAll(registrant, msg.sender)
-        ) {
-            revert UnauthorisedAddr(
-                _makeNode(FLR_NODE, bytes32(tokenId)),
-                msg.sender
-            );
+        if (registrant != msg.sender && !registrar.isApprovedForAll(registrant, msg.sender)) {
+            revert UnauthorisedAddr(_makeNode(FLR_NODE, bytes32(tokenId)), msg.sender);
         }
 
         // transfer the token from the user to this contract
@@ -273,15 +263,9 @@ contract NameWrapper is
         // transfer the fns record back to the new owner (this contract)
         registrar.reclaim(tokenId, address(this));
 
-        uint64 expiry = uint64(registrar.nameExpires(tokenId)) + GRACE_PERIOD;
+        expiry = uint64(registrar.nameExpires(tokenId)) + GRACE_PERIOD;
 
-        _wrapETH2LD(
-            label,
-            wrappedOwner,
-            ownerControlledFuses,
-            expiry,
-            resolver
-        );
+        _wrapETH2LD(label, wrappedOwner, ownerControlledFuses, expiry, resolver);
     }
 
     /**
@@ -294,7 +278,6 @@ contract NameWrapper is
      * @param ownerControlledFuses Initial owner-controlled fuses to set
      * @return registrarExpiry The expiry date of the new name on the .flr registrar, in seconds since the Unix epoch.
      */
-
     function registerAndWrapETH2LD(
         string calldata label,
         address wrappedOwner,
@@ -303,13 +286,7 @@ contract NameWrapper is
         uint16 ownerControlledFuses
     ) external onlyController returns (uint256 registrarExpiry) {
         registrarExpiry = registrar.register(label, address(this), duration);
-        _wrapETH2LD(
-            label,
-            wrappedOwner,
-            ownerControlledFuses,
-            uint64(registrarExpiry) + GRACE_PERIOD,
-            resolver
-        );
+        _wrapETH2LD(label, wrappedOwner, ownerControlledFuses, uint64(registrarExpiry) + GRACE_PERIOD, resolver);
     }
 
     /**
@@ -319,32 +296,25 @@ contract NameWrapper is
      * @param duration The number of seconds to renew the name for.
      * @return expires The expiry date of the name on the .flr registrar, in seconds since the Unix epoch.
      */
-
-    function renew(
-        uint256 tokenId,
-        uint256 duration
-    ) external onlyController returns (uint256 expires) {
+    function renew(uint256 tokenId, uint256 duration) external onlyController returns (uint256 expires) {
         bytes32 node = _makeNode(FLR_NODE, bytes32(tokenId));
 
         uint256 registrarExpiry = registrar.renew(tokenId, duration);
 
         // Do not set anything in wrapper if name is not wrapped
         try registrar.ownerOf(tokenId) returns (address registrarOwner) {
-            if (
-                registrarOwner != address(this) ||
-                fns.owner(node) != address(this)
-            ) {
+            if (registrarOwner != address(this) || fns.owner(node) != address(this)) {
                 return registrarExpiry;
             }
         } catch {
             return registrarExpiry;
         }
 
-        // set expiry in Wrapper
+        // Set expiry in Wrapper
         uint64 expiry = uint64(registrarExpiry) + GRACE_PERIOD;
 
-        //use super to allow names expired on the wrapper, but not expired on the registrar to renew()
-        (address owner, uint32 fuses, ) = super.getData(uint256(node));
+        // Use super to allow names expired on the wrapper, but not expired on the registrar to renew()
+        (address owner, uint32 fuses,) = super.getData(uint256(node));
         _setData(node, owner, fuses, expiry);
 
         return registrarExpiry;
@@ -353,21 +323,16 @@ contract NameWrapper is
     /**
      * @notice Wraps a non .flr domain, of any kind. Could be a DNSSEC name vitalik.xyz or a subdomain
      * @dev Can be called by the owner in the registry or an authorised caller in the registry
-     * @param _name The name to wrap, in DNS format
+     * @param name The name to wrap, in DNS format
      * @param wrappedOwner Owner of the name in this contract
      * @param resolver Resolver contract
      */
-
-    function wrap(
-        bytes calldata _name,
-        address wrappedOwner,
-        address resolver
-    ) public {
-        (bytes32 labelhash, uint256 offset) = _name.readLabel(0);
-        bytes32 parentNode = _name.namehash(offset);
+    function wrap(bytes calldata name, address wrappedOwner, address resolver) public {
+        (bytes32 labelhash, uint256 offset) = name.readLabel(0);
+        bytes32 parentNode = name.namehash(offset);
         bytes32 node = _makeNode(parentNode, labelhash);
 
-        names[node] = _name;
+        names[node] = name;
 
         if (parentNode == FLR_NODE) {
             revert IncompatibleParent();
@@ -385,7 +350,7 @@ contract NameWrapper is
 
         fns.setOwner(node, address(this));
 
-        _wrap(node, _name, wrappedOwner, 0, 0);
+        _wrap(node, name, wrappedOwner, 0, 0);
     }
 
     /**
@@ -395,21 +360,15 @@ contract NameWrapper is
      * @param registrant Sets the owner in the .flr registrar to this address
      * @param controller Sets the owner in the registry to this address
      */
-
-    function unwrapETH2LD(
-        bytes32 labelhash,
-        address registrant,
-        address controller
-    ) public onlyTokenOwner(_makeNode(FLR_NODE, labelhash)) {
+    function unwrapETH2LD(bytes32 labelhash, address registrant, address controller)
+        public
+        onlyTokenOwner(_makeNode(FLR_NODE, labelhash))
+    {
         if (registrant == address(this)) {
             revert IncorrectTargetOwner(registrant);
         }
         _unwrap(_makeNode(FLR_NODE, labelhash), controller);
-        registrar.safeTransferFrom(
-            address(this),
-            registrant,
-            uint256(labelhash)
-        );
+        registrar.safeTransferFrom(address(this), registrant, uint256(labelhash));
     }
 
     /**
@@ -419,12 +378,10 @@ contract NameWrapper is
      * @param labelhash Labelhash of the name, e.g. vitalik.xyz would be keccak256('vitalik')
      * @param controller Sets the owner in the registry to this address
      */
-
-    function unwrap(
-        bytes32 parentNode,
-        bytes32 labelhash,
-        address controller
-    ) public onlyTokenOwner(_makeNode(parentNode, labelhash)) {
+    function unwrap(bytes32 parentNode, bytes32 labelhash, address controller)
+        public
+        onlyTokenOwner(_makeNode(parentNode, labelhash))
+    {
         if (parentNode == FLR_NODE) {
             revert IncompatibleParent();
         }
@@ -440,20 +397,14 @@ contract NameWrapper is
      * @param ownerControlledFuses Owner-controlled fuses to burn
      * @return Old fuses
      */
-
-    function setFuses(
-        bytes32 node,
-        uint16 ownerControlledFuses
-    )
+    function setFuses(bytes32 node, uint16 ownerControlledFuses)
         public
         onlyTokenOwner(node)
         operationAllowed(node, CANNOT_BURN_FUSES)
         returns (uint32)
     {
         // owner protected by onlyTokenOwner
-        (address owner, uint32 oldFuses, uint64 expiry) = getData(
-            uint256(node)
-        );
+        (address owner, uint32 oldFuses, uint64 expiry) = getData(uint256(node));
         _setFuses(node, owner, ownerControlledFuses | oldFuses, expiry, expiry);
         return oldFuses;
     }
@@ -465,32 +416,29 @@ contract NameWrapper is
      * @param expiry When the name will expire in seconds since the Unix epoch
      * @return New expiry
      */
-
-    function extendExpiry(
-        bytes32 parentNode,
-        bytes32 labelhash,
-        uint64 expiry
-    ) public returns (uint64) {
+    function extendExpiry(bytes32 parentNode, bytes32 labelhash, uint64 expiry) public returns (uint64) {
         bytes32 node = _makeNode(parentNode, labelhash);
 
+        if (!_isWrapped(node)) {
+            revert NameIsNotWrapped();
+        }
+
         // this flag is used later, when checking fuses
-        bool canModifyParentName = canModifyName(parentNode, msg.sender);
+        bool canExtendSubname = canExtendSubnames(parentNode, msg.sender);
         // only allow the owner of the name or owner of the parent name
-        if (!canModifyParentName && !canModifyName(node, msg.sender)) {
+        if (!canExtendSubname && !canModifyName(node, msg.sender)) {
             revert UnauthorisedAddr(node, msg.sender);
         }
 
-        (address owner, uint32 fuses, uint64 oldExpiry) = getData(
-            uint256(node)
-        );
+        (address owner, uint32 fuses, uint64 oldExpiry) = getData(uint256(node));
 
         // Either CAN_EXTEND_EXPIRY must be set, or the caller must have permission to modify the parent name
-        if (!canModifyParentName && fuses & CAN_EXTEND_EXPIRY == 0) {
+        if (!canExtendSubname && fuses & CAN_EXTEND_EXPIRY == 0) {
             revert OperationProhibited(node);
         }
 
-        // max expiry is set to the expiry of the parent
-        (, , uint64 maxExpiry) = getData(uint256(parentNode));
+        // Max expiry is set to the expiry of the parent
+        (,, uint64 maxExpiry) = getData(uint256(parentNode));
         expiry = _normaliseExpiry(expiry, oldExpiry, maxExpiry);
 
         _setData(node, owner, fuses, expiry);
@@ -501,12 +449,11 @@ contract NameWrapper is
     /**
      * @notice Upgrades a domain of any kind. Could be a .flr name vitalik.flr, a DNSSEC name vitalik.xyz, or a subdomain
      * @dev Can be called by the owner or an authorised caller
-     * @param _name The name to upgrade, in DNS format
+     * @param name The name to upgrade, in DNS format
      * @param extraData Extra data to pass to the upgrade contract
      */
-
-    function upgrade(bytes calldata _name, bytes calldata extraData) public {
-        bytes32 node = _name.namehash(0);
+    function upgrade(bytes calldata name, bytes calldata extraData) public {
+        bytes32 node = name.namehash(0);
 
         if (address(upgradeContract) == address(0)) {
             revert CannotUpgrade();
@@ -516,40 +463,26 @@ contract NameWrapper is
             revert UnauthorisedAddr(node, msg.sender);
         }
 
-        (address currentOwner, uint32 fuses, uint64 expiry) = getData(
-            uint256(node)
-        );
+        (address currentOwner, uint32 fuses, uint64 expiry) = getData(uint256(node));
+
+        address approved = getApproved(uint256(node));
 
         _burn(uint256(node));
 
-        upgradeContract.wrapFromUpgrade(
-            _name,
-            currentOwner,
-            fuses,
-            expiry,
-            extraData
-        );
+        upgradeContract.wrapFromUpgrade(name, currentOwner, fuses, expiry, approved, extraData);
     }
 
-    /** 
-    /* @notice Sets fuses of a name that you own the parent of. Can also be called by the owner of a .flr name
+    /**
+     * /* @notice Sets fuses of a name that you own the parent of
      * @param parentNode Parent namehash of the name e.g. vitalik.xyz would be namehash('xyz')
      * @param labelhash Labelhash of the name, e.g. vitalik.xyz would be keccak256('vitalik')
      * @param fuses Fuses to burn
      * @param expiry When the name will expire in seconds since the Unix epoch
      */
-
-    function setChildFuses(
-        bytes32 parentNode,
-        bytes32 labelhash,
-        uint32 fuses,
-        uint64 expiry
-    ) public {
+    function setChildFuses(bytes32 parentNode, bytes32 labelhash, uint32 fuses, uint64 expiry) public {
         bytes32 node = _makeNode(parentNode, labelhash);
         _checkFusesAreSettable(node, fuses);
-        (address owner, uint32 oldFuses, uint64 oldExpiry) = getData(
-            uint256(node)
-        );
+        (address owner, uint32 oldFuses, uint64 oldExpiry) = getData(uint256(node));
         if (owner == address(0) || fns.owner(node) != address(this)) {
             revert NameIsNotWrapped();
         }
@@ -561,7 +494,7 @@ contract NameWrapper is
             }
         } else {
             if (!canModifyName(parentNode, msg.sender)) {
-                revert UnauthorisedAddr(node, msg.sender);
+                revert UnauthorisedAddr(parentNode, msg.sender);
             }
         }
 
@@ -570,10 +503,7 @@ contract NameWrapper is
         expiry = _normaliseExpiry(expiry, oldExpiry, maxExpiry);
 
         // if PARENT_CANNOT_CONTROL has been burned and fuses have changed
-        if (
-            oldFuses & PARENT_CANNOT_CONTROL != 0 &&
-            oldFuses | fuses != oldFuses
-        ) {
+        if (oldFuses & PARENT_CANNOT_CONTROL != 0 && oldFuses | fuses != oldFuses) {
             revert OperationProhibited(node);
         }
         fuses |= oldFuses;
@@ -589,24 +519,21 @@ contract NameWrapper is
      * @param expiry When the name will expire in seconds since the Unix epoch
      * @return node Namehash of the subdomain
      */
-
-    function setSubnodeOwner(
-        bytes32 parentNode,
-        string calldata label,
-        address owner,
-        uint32 fuses,
-        uint64 expiry
-    ) public onlyTokenOwner(parentNode) returns (bytes32 node) {
+    function setSubnodeOwner(bytes32 parentNode, string calldata label, address owner, uint32 fuses, uint64 expiry)
+        public
+        onlyTokenOwner(parentNode)
+        returns (bytes32 node)
+    {
         bytes32 labelhash = keccak256(bytes(label));
         node = _makeNode(parentNode, labelhash);
         _checkCanCallSetSubnodeOwner(parentNode, node);
         _checkFusesAreSettable(node, fuses);
-        bytes memory _name = _saveLabel(parentNode, node, label);
+        bytes memory name = _saveLabel(parentNode, node, label);
         expiry = _checkParentFusesAndExpiry(parentNode, node, fuses, expiry);
 
         if (!_isWrapped(node)) {
             fns.setSubnodeOwner(parentNode, labelhash, address(this));
-            _wrap(node, _name, owner, fuses, expiry);
+            _wrap(node, name, owner, fuses, expiry);
         } else {
             _updateName(parentNode, node, label, owner, fuses, expiry);
         }
@@ -623,7 +550,6 @@ contract NameWrapper is
      * @param expiry When the name will expire in seconds since the Unix epoch
      * @return node Namehash of the subdomain
      */
-
     function setSubnodeRecord(
         bytes32 parentNode,
         string memory label,
@@ -640,24 +566,12 @@ contract NameWrapper is
         _saveLabel(parentNode, node, label);
         expiry = _checkParentFusesAndExpiry(parentNode, node, fuses, expiry);
         if (!_isWrapped(node)) {
-            fns.setSubnodeRecord(
-                parentNode,
-                labelhash,
-                address(this),
-                resolver,
-                ttl
-            );
+            fns.setSubnodeRecord(parentNode, labelhash, address(this), resolver, ttl);
             _storeNameAndWrap(parentNode, node, label, owner, fuses, expiry);
-            mintedDomainNamesContract.add(owner, uint256(node), fuses, expiry, label);
+            mintedDomainNamesContract.addSubdomain(owner, uint256(node), fuses, expiry, uint256(parentNode), label);
             subdomainTrackerContract.add(uint256(parentNode), uint256(node), owner, label);
         } else {
-            fns.setSubnodeRecord(
-                parentNode,
-                labelhash,
-                address(this),
-                resolver,
-                ttl
-            );
+            fns.setSubnodeRecord(parentNode, labelhash, address(this), resolver, ttl);
             _updateName(parentNode, node, label, owner, fuses, expiry);
         }
     }
@@ -669,24 +583,15 @@ contract NameWrapper is
      * @param resolver Resolver contract
      * @param ttl Time to live in the registry
      */
-
-    function setRecord(
-        bytes32 node,
-        address owner,
-        address resolver,
-        uint64 ttl
-    )
+    function setRecord(bytes32 node, address owner, address resolver, uint64 ttl)
         public
         onlyTokenOwner(node)
-        operationAllowed(
-            node,
-            CANNOT_TRANSFER | CANNOT_SET_RESOLVER | CANNOT_SET_TTL
-        )
+        operationAllowed(node, CANNOT_TRANSFER | CANNOT_SET_RESOLVER | CANNOT_SET_TTL)
     {
         fns.setRecord(node, address(this), resolver, ttl);
         if (owner == address(0)) {
-            (, uint32 fuses, ) = getData(uint256(node));
-            if (fuses & IS_DOT_ETH == IS_DOT_ETH) {
+            (, uint32 fuses,) = getData(uint256(node));
+            if (fuses & IS_DOT_FLR == IS_DOT_FLR) {
                 revert IncorrectTargetOwner(owner);
             }
             _unwrap(node, address(0));
@@ -701,11 +606,11 @@ contract NameWrapper is
      * @param node namehash of the name
      * @param resolver the resolver contract
      */
-
-    function setResolver(
-        bytes32 node,
-        address resolver
-    ) public onlyTokenOwner(node) operationAllowed(node, CANNOT_SET_RESOLVER) {
+    function setResolver(bytes32 node, address resolver)
+        public
+        onlyTokenOwner(node)
+        operationAllowed(node, CANNOT_SET_RESOLVER)
+    {
         fns.setResolver(node, resolver);
     }
 
@@ -714,11 +619,7 @@ contract NameWrapper is
      * @param node Namehash of the name
      * @param ttl TTL in the registry
      */
-
-    function setTTL(
-        bytes32 node,
-        uint64 ttl
-    ) public onlyTokenOwner(node) operationAllowed(node, CANNOT_SET_TTL) {
+    function setTTL(bytes32 node, uint64 ttl) public onlyTokenOwner(node) operationAllowed(node, CANNOT_SET_TTL) {
         fns.setTTL(node, ttl);
     }
 
@@ -727,9 +628,8 @@ contract NameWrapper is
      * @param node The namehash of the name to check fuses on.
      * @param fuseMask A bitmask of fuses that must not be burned.
      */
-
     modifier operationAllowed(bytes32 node, uint32 fuseMask) {
-        (, uint32 fuses, ) = getData(uint256(node));
+        (, uint32 fuses,) = getData(uint256(node));
         if (fuses & fuseMask != 0) {
             revert OperationProhibited(node);
         }
@@ -745,29 +645,23 @@ contract NameWrapper is
      * @param parentNode Namehash of the parent name to check
      * @param subnode Namehash of the subname to check
      */
-
-    function _checkCanCallSetSubnodeOwner(
-        bytes32 parentNode,
-        bytes32 subnode
-    ) internal view {
-        (
-            address subnodeOwner,
-            uint32 subnodeFuses,
-            uint64 subnodeExpiry
-        ) = getData(uint256(subnode));
+    function _checkCanCallSetSubnodeOwner(bytes32 parentNode, bytes32 subnode) internal view {
+        (address subnodeOwner, uint32 subnodeFuses, uint64 subnodeExpiry) = getData(uint256(subnode));
 
         // check if the registry owner is 0 and expired
         // check if the wrapper owner is 0 and expired
         // If either, then check parent fuses for CANNOT_CREATE_SUBDOMAIN
         bool expired = subnodeExpiry < block.timestamp;
         if (
-            expired &&
+            expired
             // protects a name that has been unwrapped with PCC and doesn't allow the parent to take control by recreating it if unexpired
-            (subnodeOwner == address(0) ||
+            && (
+                subnodeOwner == address(0)
                 // protects a name that has been burnt and doesn't allow the parent to take control by recreating it if unexpired
-                fns.owner(subnode) == address(0))
+                || fns.owner(subnode) == address(0)
+            )
         ) {
-            (, uint32 parentFuses, ) = getData(uint256(parentNode));
+            (, uint32 parentFuses,) = getData(uint256(parentNode));
             if (parentFuses & CANNOT_CREATE_SUBDOMAIN != 0) {
                 revert OperationProhibited(subnode);
             }
@@ -784,12 +678,8 @@ contract NameWrapper is
      * @param fuseMask The fuses you want to check
      * @return Boolean of whether or not all the selected fuses are burned
      */
-
-    function allFusesBurned(
-        bytes32 node,
-        uint32 fuseMask
-    ) public view returns (bool) {
-        (, uint32 fuses, ) = getData(uint256(node));
+    function allFusesBurned(bytes32 node, uint32 fuseMask) public view returns (bool) {
+        (, uint32 fuses,) = getData(uint256(node));
         return fuses & fuseMask == fuseMask;
     }
 
@@ -798,14 +688,13 @@ contract NameWrapper is
      * @param node Namehash of the name
      * @return Boolean of whether or not the name is wrapped
      */
-
     function isWrapped(bytes32 node) public view returns (bool) {
-        bytes memory _name = names[node];
-        if (_name.length == 0) {
+        bytes memory name = names[node];
+        if (name.length == 0) {
             return false;
         }
-        (bytes32 labelhash, uint256 offset) = _name.readLabel(0);
-        bytes32 parentNode = _name.namehash(offset);
+        (bytes32 labelhash, uint256 offset) = name.readLabel(0);
+        bytes32 parentNode = name.namehash(offset);
         return isWrapped(parentNode, labelhash);
     }
 
@@ -815,11 +704,7 @@ contract NameWrapper is
      * @param labelhash Namehash of the name
      * @return Boolean of whether or not the name is wrapped
      */
-
-    function isWrapped(
-        bytes32 parentNode,
-        bytes32 labelhash
-    ) public view returns (bool) {
+    function isWrapped(bytes32 parentNode, bytes32 labelhash) public view returns (bool) {
         bytes32 node = _makeNode(parentNode, labelhash);
         bool wrapped = _isWrapped(node);
         if (parentNode != FLR_NODE) {
@@ -832,23 +717,14 @@ contract NameWrapper is
         }
     }
 
-    function onERC721Received(
-        address to,
-        address,
-        uint256 tokenId,
-        bytes calldata data
-    ) public returns (bytes4) {
+    function onERC721Received(address to, address, uint256 tokenId, bytes calldata data) public returns (bytes4) {
         //check if it's the flr registrar ERC721
         if (msg.sender != address(registrar)) {
             revert IncorrectTokenType();
         }
 
-        (
-            string memory label,
-            address owner,
-            uint16 ownerControlledFuses,
-            address resolver
-        ) = abi.decode(data, (string, address, uint16, address));
+        (string memory label, address owner, uint16 ownerControlledFuses, address resolver) =
+            abi.decode(data, (string, address, uint16, address));
 
         bytes32 labelhash = bytes32(tokenId);
         bytes32 labelhashFromData = keccak256(bytes(label));
@@ -868,34 +744,15 @@ contract NameWrapper is
     }
 
     /**
-     * @dev Helper pure function to easily generate the node (FNSRegistry) and id (NameWrapper tokenId)
-     * @param label - the input name excluding ".flr"
-     * @param nodeHash - The node hash that is used in the FNSRegistry
-     * @param tokenId - The tokenId used to mint the NameWrapper ERC1155 Token
+     * Internal functions
      */
-    function getFLRTokenId(string memory label) external pure returns (bytes32 nodeHash, uint256 tokenId) {
-        nodeHash = keccak256(abi.encodePacked(FLR_NODE, keccak256(bytes(label))));
-        tokenId = uint256(nodeHash);
-    }
-
-    /***** Internal functions */
-    function _postTransferAction(
-        address from,
-        address to,
-        uint256 id,
-        uint32 fuses,
-        uint64 expiry
-    ) internal override {
+    function _afterTransfer(address from, address to, uint256 id, uint32 fuses, uint64 expiry) internal override {
         mintedDomainNamesContract.addFromTransfer(from, to, id, fuses, expiry);
     }
 
-    function _preTransferCheck(
-        uint256 id,
-        uint32 fuses,
-        uint64 expiry
-    ) internal view override returns (bool) {
+    function _beforeTransfer(uint256 id, uint32 fuses, uint64 expiry) internal override {
         // For this check, treat .flr 2LDs as expiring at the start of the grace period.
-        if (fuses & IS_DOT_ETH == IS_DOT_ETH) {
+        if (fuses & IS_DOT_FLR == IS_DOT_FLR) {
             expiry -= GRACE_PERIOD;
         }
 
@@ -911,14 +768,18 @@ contract NameWrapper is
             }
         }
 
-        return true;
+        // delete token approval if CANNOT_APPROVE has not been burnt
+        if (fuses & CANNOT_APPROVE == 0) {
+            delete _tokenApprovals[id];
+        }
     }
 
-    function _clearOwnerAndFuses(
-        address owner,
-        uint32 fuses,
-        uint64 expiry
-    ) internal view override returns (address, uint32) {
+    function _clearOwnerAndFuses(address owner, uint32 fuses, uint64 expiry)
+        internal
+        view
+        override
+        returns (address, uint32)
+    {
         if (expiry < block.timestamp) {
             if (fuses & PARENT_CANNOT_CONTROL == PARENT_CANNOT_CONTROL) {
                 owner = address(0);
@@ -929,34 +790,23 @@ contract NameWrapper is
         return (owner, fuses);
     }
 
-    function _makeNode(
-        bytes32 node,
-        bytes32 labelhash
-    ) private pure returns (bytes32) {
+    function _makeNode(bytes32 node, bytes32 labelhash) private pure returns (bytes32) {
         return keccak256(abi.encodePacked(node, labelhash));
     }
 
-    function _addLabel(
-        string memory label,
-        bytes memory _name
-    ) internal pure returns (bytes memory ret) {
+    function _addLabel(string memory label, bytes memory name) internal pure returns (bytes memory ret) {
         if (bytes(label).length < 1) {
             revert LabelTooShort();
         }
         if (bytes(label).length > 255) {
             revert LabelTooLong(label);
         }
-        return abi.encodePacked(uint8(bytes(label).length), label, _name);
+        return abi.encodePacked(uint8(bytes(label).length), label, name);
     }
 
-    function _mint(
-        bytes32 node,
-        address owner,
-        uint32 fuses,
-        uint64 expiry
-    ) internal override {
+    function _mint(bytes32 node, address owner, uint32 fuses, uint64 expiry) internal override {
         _canFusesBeBurned(node, fuses);
-        (address oldOwner, , ) = super.getData(uint256(node));
+        (address oldOwner,,) = super.getData(uint256(node));
         if (oldOwner != address(0)) {
             // burn and unwrap old token of old owner
             _burn(uint256(node));
@@ -965,15 +815,9 @@ contract NameWrapper is
         super._mint(node, owner, fuses, expiry);
     }
 
-    function _wrap(
-        bytes32 node,
-        bytes memory _name,
-        address wrappedOwner,
-        uint32 fuses,
-        uint64 expiry
-    ) internal {
+    function _wrap(bytes32 node, bytes memory name, address wrappedOwner, uint32 fuses, uint64 expiry) internal {
         _mint(node, wrappedOwner, fuses, expiry);
-        emit NameWrapped(node, _name, wrappedOwner, fuses, expiry);
+        emit NameWrapped(node, name, wrappedOwner, fuses, expiry);
     }
 
     function _storeNameAndWrap(
@@ -984,18 +828,14 @@ contract NameWrapper is
         uint32 fuses,
         uint64 expiry
     ) internal {
-        bytes memory _name = _addLabel(label, names[parentNode]);
-        _wrap(node, _name, owner, fuses, expiry);
+        bytes memory name = _addLabel(label, names[parentNode]);
+        _wrap(node, name, owner, fuses, expiry);
     }
 
-    function _saveLabel(
-        bytes32 parentNode,
-        bytes32 node,
-        string memory label
-    ) internal returns (bytes memory) {
-        bytes memory _name = _addLabel(label, names[parentNode]);
-        names[node] = _name;
-        return _name;
+    function _saveLabel(bytes32 parentNode, bytes32 node, string memory label) internal returns (bytes memory) {
+        bytes memory name = _addLabel(label, names[parentNode]);
+        names[node] = name;
+        return name;
     }
 
     function _updateName(
@@ -1006,12 +846,10 @@ contract NameWrapper is
         uint32 fuses,
         uint64 expiry
     ) internal {
-        (address oldOwner, uint32 oldFuses, uint64 oldExpiry) = getData(
-            uint256(node)
-        );
-        bytes memory _name = _addLabel(label, names[parentNode]);
+        (address oldOwner, uint32 oldFuses, uint64 oldExpiry) = getData(uint256(node));
+        bytes memory name = _addLabel(label, names[parentNode]);
         if (names[node].length == 0) {
-            names[node] = _name;
+            names[node] = name;
         }
         _setFuses(node, oldOwner, oldFuses | fuses, oldExpiry, expiry);
         if (owner == address(0)) {
@@ -1022,25 +860,19 @@ contract NameWrapper is
     }
 
     // wrapper function for stack limit
-    function _checkParentFusesAndExpiry(
-        bytes32 parentNode,
-        bytes32 node,
-        uint32 fuses,
-        uint64 expiry
-    ) internal view returns (uint64) {
-        (, , uint64 oldExpiry) = getData(uint256(node));
+    function _checkParentFusesAndExpiry(bytes32 parentNode, bytes32 node, uint32 fuses, uint64 expiry)
+        internal
+        view
+        returns (uint64)
+    {
+        (,, uint64 oldExpiry) = getData(uint256(node));
         (, uint32 parentFuses, uint64 maxExpiry) = getData(uint256(parentNode));
         _checkParentFuses(node, fuses, parentFuses);
         return _normaliseExpiry(expiry, oldExpiry, maxExpiry);
     }
 
-    function _checkParentFuses(
-        bytes32 node,
-        uint32 fuses,
-        uint32 parentFuses
-    ) internal pure {
-        bool isBurningParentControlledFuses = fuses & PARENT_CONTROLLED_FUSES !=
-            0;
+    function _checkParentFuses(bytes32 node, uint32 fuses, uint32 parentFuses) internal pure {
+        bool isBurningParentControlledFuses = fuses & PARENT_CONTROLLED_FUSES != 0;
 
         bool parentHasNotBurnedCU = parentFuses & CANNOT_UNWRAP == 0;
 
@@ -1049,11 +881,7 @@ contract NameWrapper is
         }
     }
 
-    function _normaliseExpiry(
-        uint64 expiry,
-        uint64 oldExpiry,
-        uint64 maxExpiry
-    ) internal pure returns (uint64) {
+    function _normaliseExpiry(uint64 expiry, uint64 oldExpiry, uint64 maxExpiry) private pure returns (uint64) {
         // Expiry cannot be more than maximum allowed
         // .flr names will check registrar, non .flr check parent
         if (expiry > maxExpiry) {
@@ -1067,29 +895,19 @@ contract NameWrapper is
         return expiry;
     }
 
-    function _wrapETH2LD(
-        string memory label,
-        address wrappedOwner,
-        uint32 fuses,
-        uint64 expiry,
-        address resolver
-    ) private {
+    function _wrapETH2LD(string memory label, address wrappedOwner, uint32 fuses, uint64 expiry, address resolver)
+        private
+    {
         bytes32 labelhash = keccak256(bytes(label));
         bytes32 node = _makeNode(FLR_NODE, labelhash);
         // hardcode dns-encoded flr string for gas savings
-        bytes memory _name = _addLabel(label, "\x03flr\x00");
-        names[node] = _name;
+        bytes memory name = _addLabel(label, "\x03flr\x00");
+        names[node] = name;
 
         // uint256(node) is the tokenId when mint is called
         mintedDomainNamesContract.add(wrappedOwner, uint256(node), fuses, expiry, label);
 
-        _wrap(
-            node,
-            _name,
-            wrappedOwner,
-            fuses | PARENT_CANNOT_CONTROL | IS_DOT_ETH,
-            expiry
-        );
+        _wrap(node, name, wrappedOwner, fuses | PARENT_CANNOT_CONTROL | IS_DOT_FLR, expiry);
 
         if (resolver != address(0)) {
             fns.setResolver(node, resolver);
@@ -1108,13 +926,7 @@ contract NameWrapper is
         emit NameUnwrapped(node, owner);
     }
 
-    function _setFuses(
-        bytes32 node,
-        address owner,
-        uint32 fuses,
-        uint64 oldExpiry,
-        uint64 expiry
-    ) internal {
+    function _setFuses(bytes32 node, address owner, uint32 fuses, uint64 oldExpiry, uint64 expiry) internal {
         _setData(node, owner, fuses, expiry);
         emit FusesSet(node, fuses);
         if (expiry > oldExpiry) {
@@ -1122,12 +934,7 @@ contract NameWrapper is
         }
     }
 
-    function _setData(
-        bytes32 node,
-        address owner,
-        uint32 fuses,
-        uint64 expiry
-    ) internal {
+    function _setData(bytes32 node, address owner, uint32 fuses, uint64 expiry) internal {
         _canFusesBeBurned(node, fuses);
         super._setData(uint256(node), owner, fuses, expiry);
     }
@@ -1135,9 +942,8 @@ contract NameWrapper is
     function _canFusesBeBurned(bytes32 node, uint32 fuses) internal pure {
         // If a non-parent controlled fuse is being burned, check PCC and CU are burnt
         if (
-            fuses & ~PARENT_CONTROLLED_FUSES != 0 &&
-            fuses & (PARENT_CANNOT_CONTROL | CANNOT_UNWRAP) !=
-            (PARENT_CANNOT_CONTROL | CANNOT_UNWRAP)
+            fuses & ~PARENT_CONTROLLED_FUSES != 0
+                && fuses & (PARENT_CANNOT_CONTROL | CANNOT_UNWRAP) != (PARENT_CANNOT_CONTROL | CANNOT_UNWRAP)
         ) {
             revert OperationProhibited(node);
         }
@@ -1151,8 +957,10 @@ contract NameWrapper is
     }
 
     function _isWrapped(bytes32 node) internal view returns (bool) {
-        return
-            ownerOf(uint256(node)) != address(0) &&
-            fns.owner(node) == address(this);
+        return ownerOf(uint256(node)) != address(0) && fns.owner(node) == address(this);
+    }
+
+    function _isETH2LDInGracePeriod(uint32 fuses, uint64 expiry) internal view returns (bool) {
+        return fuses & IS_DOT_FLR == IS_DOT_FLR && expiry - GRACE_PERIOD < block.timestamp;
     }
 }

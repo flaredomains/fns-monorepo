@@ -4,9 +4,6 @@ import ArrowDown from '../../public/ArrowDown.svg'
 
 import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
 import PublicRegistrar from '../../src/pages/abi/PublicResolver.json'
-import NameResolver from '../../src/pages/abi/PublicResolver.sol/NameResolver.json'
-// import Resolver from '../../src/pages/abi/ReverseRegistrar.sol/Resolver.json'
-// import ENS from '../../src/pages/abi/ReverseRegistrar.sol/ENS.json'
 
 const namehash = require('eth-ens-namehash')
 
@@ -138,7 +135,7 @@ export default function Reverse_Record({
   // NameResolver Name
   const { data: mainDomain, refetch: refetchMainDomain } = useContractRead({
     address: PublicRegistrar.address as `0x${string}`,
-    abi: NameResolver.abi,
+    abi: PublicRegistrar.abi,
     functionName: 'name',
     enabled: isConnected && isFetched,
     args: [node],

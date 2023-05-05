@@ -1,4 +1,4 @@
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.18;
 
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
@@ -22,7 +22,7 @@ contract CreateDomain is Script {
     address constant owner = 0x09Ec74F54dc4b316D8cd6DFBeB91263fB20E19d2;
     bytes32 constant rootNode = 0x0;
 
-    string constant name = 'simone2';
+    string constant name = "simone2";
 
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
@@ -30,7 +30,7 @@ contract CreateDomain is Script {
 
         FNSRegistry fnsRegistry = FNSRegistry(0x8E60eEeB7634930bba7a9d74f01Af9c9e78c9063);
         BaseRegistrar baseRegistrar = BaseRegistrar(0x7113e298973444eCC1c52bDdA92B2Ad5d5399426);
-        
+
         baseRegistrar.register(name, destination, 365 days);
 
         // require(fnsRegistry.owner(FNSNamehash.namehash('simone.flr')) == owner, "Owner not expected");
@@ -39,7 +39,7 @@ contract CreateDomain is Script {
         // baseRegistrar.transferFrom(owner, destination, uint256(keccak256(name)));
 
         // require(fnsRegistry.owner(FNSNamehash.namehash('simone.flr')) == destination, "destination not expected");
-        
+
         console.log(baseRegistrar.ownerOf(uint256(keccak256(bytes(name)))));
         require(baseRegistrar.ownerOf(uint256(keccak256(bytes(name)))) == destination, "destination not expected");
 

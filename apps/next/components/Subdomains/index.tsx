@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react'
 import Domain_Select from '../Domain_Select'
 import WalletConnect from '../WalletConnect'
 import SubdomainContent from './SubdomainContent'
-import SubdomainEdit from './SubdomainEdit'
+//import SubdomainEdit from './SubdomainEdit'
 
-import NameWrapper from '../../src/pages/abi/nameWrapper.json'
+import NameWrapper from '../../src/pages/abi/NameWrapper.json'
+import SubdomainTracker from '../../src/pages/abi/SubdomainTracker.json'
 
 import web3 from 'web3-utils'
 const namehash = require('eth-ens-namehash')
@@ -13,11 +14,9 @@ import { useAccount, useContractRead } from 'wagmi'
 import { BigNumber } from 'ethers'
 
 export default function Subdomains({
-  result,
-  arrSubdomains,
+  result
 }: {
   result: string
-  arrSubdomains: Array<any>
 }) {
   // const [editMode, setEditMode] = useState(false)
 
@@ -27,6 +26,7 @@ export default function Subdomains({
   const [filterResult, setFilterResult] = useState<string>('')
   const [tokenPrepared, setTokenPrepared] = useState(false)
   const [tokenId, setTokenId] = useState<BigNumber>()
+  const [arrSubdomains, setArrSubdomains] = useState<Array<string>>([])
 
   const date = new Date(1678273065000)
 
@@ -40,6 +40,10 @@ export default function Subdomains({
       // setHashHex(hash)
       // setPreparedHash(true)
     } else if (result) {
+      if (result !== "") {
+        setTokenId(BigNumber.from(namehash.hash(result)))
+      }
+
       const resultFiltered = result.endsWith('.flr')
         ? result.slice(0, -4)
         : result
@@ -50,18 +54,23 @@ export default function Subdomains({
     }
   }, [result])
 
-  useContractRead({
-    address: NameWrapper.address as `0x${string}`,
-    abi: NameWrapper.abi,
-    functionName: 'getFLRTokenId',
-    args: [filterResult as string],
+  // Read all subdomains under a given domain name
+  const {refetch: refGetAll} = useContractRead({
+    address: SubdomainTracker.address as `0x${string}`,
+    abi: SubdomainTracker.abi,
+    functionName: 'getAll',
+    enabled: tokenId !== undefined,
+    args: [tokenId],
     onSuccess(data: any) {
-      // console.log('Success getFLRTokenId', data)
-      setTokenId(data.tokenId)
-      setTokenPrepared(true)
+      const subdomains = data.data.map((x: any) => ({
+        domain: `${x.label}.${result}`,
+        owner: x.owner,
+        tokenId: x.id,
+      }));
+      setArrSubdomains(subdomains)
     },
     onError(error) {
-      console.error('Error getFLRTokenId', error)
+      console.error('SubdomainTracker::getAll Error', error)
     },
   })
 
@@ -78,11 +87,11 @@ export default function Subdomains({
     },
   }) as any
 
-  console.table({
-    result: result,
-    owner: owner,
-    tokenId: tokenId,
-  })
+  // console.table({
+  //   result: result,
+  //   owner: owner,
+  //   tokenId: tokenId,
+  // })
   console.log('owner === address', owner === address)
 
   return (
@@ -96,9 +105,10 @@ export default function Subdomains({
 
           {/* Change with Wagmi Array subdomains */}
           <SubdomainContent
-            arrSubdomains={[]}
+            arrSubdomains={arrSubdomains}
             checkOwnerDomain={owner === address}
             filterResult={filterResult}
+            refetchFn={refGetAll}
           />
         </div>
 

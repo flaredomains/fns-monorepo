@@ -7,13 +7,6 @@ import Subdomains from '../../components/Subdomains'
 import web3 from 'web3-utils'
 
 export default function Result() {
-  // Change to Wagmi data about user subdomain
-  const [arrSubdomains, setArrSubdomains] = useState([
-    'neel.flr',
-    'chase.flr',
-    'ben.flr',
-  ])
-
   const [result, setResult] = useState<string>('')
   const [path, setPath] = useState<String>('')
 
@@ -40,7 +33,7 @@ export default function Result() {
             {/* Three button Register, Details, Subdomain / Search Input (hidden mobile) */}
             <Pages_buttons result={result} path={path} />
 
-            <Subdomains result={result} arrSubdomains={arrSubdomains} />
+            <Subdomains result={result} />
           </div>
         </div>
       </div>

@@ -16,7 +16,7 @@ import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
 import web3 from 'web3-utils'
 import { ethers } from 'ethers'
 
-const OwnedDomains = ({ date, domain }: { date: Date; domain: string }) => {
+const OwnedDomains = ({ date, domain, isSubdomain }: { date: Date; domain: string; isSubdomain: boolean }) => {
   const day = date.getDate()
   const month = date.getMonth() + 1
   const year = date.getFullYear()
@@ -45,7 +45,7 @@ const OwnedDomains = ({ date, domain }: { date: Date; domain: string }) => {
           {/* Date exp */}
           <div className="flex items-center bg-gray-700 rounded-lg h-6 px-3 mr-3">
             <p className="text-gray-300 text-xs font-medium">
-              Expires {`${month}/${day}/${year}`}
+            {isSubdomain ? 'No Expiry' : `Expires ${month}/${day}/${year}`}
             </p>
           </div>
         </div>
@@ -57,6 +57,7 @@ const OwnedDomains = ({ date, domain }: { date: Date; domain: string }) => {
 type Domain = {
   label: string
   expire: number
+  isSubdomain: boolean
 }
 
 export default function MyAccount() {
@@ -74,13 +75,16 @@ export default function MyAccount() {
     enabled: isConnected,
     args: [address],
     onSuccess(data: any) {
-      console.log('Success getAll', data)
-      console.log('Get array of domains', data[0])
-      const arrDomains = data[0]
+      //console.log('Success getAll', data)
+      // console.log('Get array of domains', data)
+
+      // Ensure we only use the length returned for still-owned domains (after a transfer)
+      const arrDomains = data.data.slice(0, data._length.toNumber())
       const ownedDomain = arrDomains.map((item: any, index: any) => {
         return {
           label: item.label,
           expire: Number(item.expiry),
+          isSubdomain: /[a-zA-Z0-9]+\.{1}[a-zA-Z0-9]+/.test(item.label)
         }
       })
       setAddressDomain(ownedDomain)
@@ -90,7 +94,7 @@ export default function MyAccount() {
     },
   })
 
-  // console.log('addressDomain', addressDomain)
+  console.log('addressDomain', addressDomain)
 
   return (
     <div
@@ -124,6 +128,7 @@ export default function MyAccount() {
                 key={index}
                 date={new Date(item.expire ? item.expire * 1000 : '')}
                 domain={item.label}
+                isSubdomain={item.isSubdomain}
               />
             ))}
         </div>

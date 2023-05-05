@@ -1,3 +1,6 @@
+// NOTE: Identical to v0.1 tag
+// NOTE: Reviewed against fns codebase, differences look okay
+
 /**
  *Submitted for verification at Etherscan.io on 2020-01-30
 */

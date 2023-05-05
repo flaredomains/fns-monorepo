@@ -1,13 +1,11 @@
-//SPDX-License-Identifier: MIT
-pragma solidity ~0.8.17;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
 
 import "fns/registry/IFNS.sol";
 import "fns/flr-registrar/IBaseRegistrar.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
-import "./IMetadataService.sol";
+import "../IMetadataService.sol";
 import "./INameWrapperUpgrade.sol";
-import "fns/chain-state/IMintedDomainNames.sol";
-import "fns/chain-state/ISubdomainTracker.sol";
 
 uint32 constant CANNOT_UNWRAP = 1;
 uint32 constant CANNOT_BURN_FUSES = 2;
@@ -45,17 +43,12 @@ interface INameWrapper is IERC1155 {
 
     function upgradeContract() external view returns (INameWrapperUpgrade);
 
-    function updateMintedDomainNamesContract(IMintedDomainNames) external;
-
-    function updateSubdomainTrackerContract(ISubdomainTracker) external;
-
     function supportsInterface(bytes4 interfaceID) external view returns (bool);
 
     function wrap(bytes calldata name, address wrappedOwner, address resolver) external;
 
     function wrapETH2LD(string calldata label, address wrappedOwner, uint16 ownerControlledFuses, address resolver)
-        external
-        returns (uint64 expires);
+        external;
 
     function registerAndWrapETH2LD(
         string calldata label,
@@ -102,10 +95,6 @@ interface INameWrapper is IERC1155 {
     function setTTL(bytes32 node, uint64 ttl) external;
 
     function ownerOf(uint256 id) external view returns (address owner);
-
-    function approve(address to, uint256 tokenId) external;
-
-    function getApproved(uint256 tokenId) external view returns (address);
 
     function getData(uint256 id) external view returns (address, uint32, uint64);
 

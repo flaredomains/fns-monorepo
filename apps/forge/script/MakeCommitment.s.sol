@@ -1,4 +1,4 @@
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.18;
 
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
@@ -57,10 +57,10 @@ contract Template is Script {
         //     new bytes[](0),
         //     true,
         //     0);
-        
+
         // console.logBytes32(commitment);
         // flrRegistrarController.commit(commitment);
-        
+
         // console.log("Before Warp: block.timestamp = %s", block.timestamp);
         // vm.warp(block.timestamp + 600);
         // console.log("After Warp: block.timestamp = %s", block.timestamp);
@@ -70,16 +70,10 @@ contract Template is Script {
 
         console.log("Price of name:%s => %s", name, totalPrice);
 
-        flrRegistrarController.register{ value: totalPrice }(
-            name,
-            broadcastAddress,
-            31556952,
-            keccak256(bytes(name)),
-            publicResolverAddr,
-            new bytes[](0),
-            true,
-            0);
-        
+        flrRegistrarController.register{value: totalPrice}(
+            name, broadcastAddress, 31556952, keccak256(bytes(name)), publicResolverAddr, new bytes[](0), true, 0
+        );
+
         string memory reverseName = publicResolver.name(reverseRegistrar.node(broadcastAddress));
         console.log("NAME SET FOR: %s", broadcastAddress);
         console.logString(reverseName);

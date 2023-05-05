@@ -1,5 +1,5 @@
-//SPDX-License-Identifier: MIT
-pragma solidity ~0.8.17;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
 
 import "fns/registry/IFNS.sol";
 import "./FLRRegistrarController.sol";
@@ -13,8 +13,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 contract BulkRenewal is IBulkRenewal, IERC165, ReentrancyGuard {
-    bytes32 private constant FLR_NAMEHASH =
-        0xfd9ed02f44147ba87d942b154c98562d831e3a24daea862ee12868ac20f7bcc3;
+    bytes32 private constant FLR_NAMEHASH = 0xfd9ed02f44147ba87d942b154c98562d831e3a24daea862ee12868ac20f7bcc3;
 
     IFNS public immutable fns;
 
@@ -24,26 +23,14 @@ contract BulkRenewal is IBulkRenewal, IERC165, ReentrancyGuard {
 
     function getController() internal view returns (FLRRegistrarController) {
         IResolver r = IResolver(fns.resolver(FLR_NAMEHASH));
-        return
-            FLRRegistrarController(
-                r.interfaceImplementer(
-                    FLR_NAMEHASH,
-                    type(IFLRRegistrarController).interfaceId
-                )
-            );
+        return FLRRegistrarController(r.interfaceImplementer(FLR_NAMEHASH, type(IFLRRegistrarController).interfaceId));
     }
 
-    function rentPrice(
-        string[] calldata names,
-        uint256 duration
-    ) external view override returns (uint256 total) {
+    function rentPrice(string[] calldata names, uint256 duration) external view override returns (uint256 total) {
         FLRRegistrarController controller = getController();
         uint256 length = names.length;
-        for (uint256 i = 0; i < length; ) {
-            IPriceOracle.Price memory price = controller.rentPrice(
-                names[i],
-                duration
-            );
+        for (uint256 i = 0; i < length;) {
+            IPriceOracle.Price memory price = controller.rentPrice(names[i], duration);
             unchecked {
                 ++i;
                 total += (price.base + price.premium);
@@ -51,17 +38,11 @@ contract BulkRenewal is IBulkRenewal, IERC165, ReentrancyGuard {
         }
     }
 
-    function renewAll(
-        string[] calldata names,
-        uint256 duration
-    ) external payable override nonReentrant {
+    function renewAll(string[] calldata names, uint256 duration) external payable override nonReentrant {
         FLRRegistrarController controller = getController();
         uint256 length = names.length;
-        for (uint256 i = 0; i < length; ) {
-            IPriceOracle.Price memory price = controller.rentPrice(
-                names[i],
-                duration
-            );
+        for (uint256 i = 0; i < length;) {
+            IPriceOracle.Price memory price = controller.rentPrice(names[i], duration);
             uint256 totalPrice = price.base + price.premium;
             controller.renew{value: totalPrice}(names[i], duration);
             unchecked {
@@ -72,11 +53,7 @@ contract BulkRenewal is IBulkRenewal, IERC165, ReentrancyGuard {
         Address.sendValue(payable(msg.sender), address(this).balance);
     }
 
-    function supportsInterface(
-        bytes4 interfaceID
-    ) external pure returns (bool) {
-        return
-            interfaceID == type(IERC165).interfaceId ||
-            interfaceID == type(IBulkRenewal).interfaceId;
+    function supportsInterface(bytes4 interfaceID) external pure returns (bool) {
+        return interfaceID == type(IERC165).interfaceId || interfaceID == type(IBulkRenewal).interfaceId;
     }
 }

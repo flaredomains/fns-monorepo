@@ -1,4 +1,5 @@
-pragma solidity >=0.8.4;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
 
 import "./IMintedDomainNames.sol";
 import "fns/wrapper/INameWrapper.sol";
@@ -7,8 +8,8 @@ import "fns/wrapper/INameWrapper.sol";
 import "forge-std/console.sol";
 
 contract MintedDomainNames is IMintedDomainNames {
-    mapping(uint256 => string) tokenIdToName;
-    mapping(address => IMintedDomainNames.Data[]) mintedDomainNames;
+    mapping(uint256 => string) public tokenIdToName;
+    mapping(address => IMintedDomainNames.Data[]) public mintedDomainNames;
     INameWrapper immutable nameWrapper;
 
     /**
@@ -32,7 +33,7 @@ contract MintedDomainNames is IMintedDomainNames {
      * @param owner The address to return the length of minted ids of
      * @return the number of minted ids for the provided address
      */
-    function getLength(address owner) external view returns (uint) {
+    function getLength(address owner) external view returns (uint256) {
         return mintedDomainNames[owner].length;
     }
 
@@ -46,8 +47,8 @@ contract MintedDomainNames is IMintedDomainNames {
 
         // Filter all records based on the current owner. This handles transfers without increasing gas costs on
         // FNS users
-        for(uint i = 0; i < mintedDomainNames[owner].length; ++i) {
-            if(nameWrapper.ownerOf(mintedDomainNames[owner][i].id) == owner) {
+        for (uint256 i = 0; i < mintedDomainNames[owner].length; ++i) {
+            if (nameWrapper.ownerOf(mintedDomainNames[owner][i].id) == owner) {
                 data[length] = mintedDomainNames[owner][i];
                 ++length;
             }
@@ -61,14 +62,13 @@ contract MintedDomainNames is IMintedDomainNames {
      * @param expiry the expiry timestamp of the registered domain name
      * @param label the lable of the registered domain name
      */
-    function add(
-        address owner, uint256 id, uint32 fuses, uint64 expiry, string calldata label) external isNameWrapper {
-        (, uint256 idFromLabel) = nameWrapper.getFLRTokenId(label);
-        require(id == idFromLabel, "MintedDomainNames: id & label mismatch");
-
-        // TODO: Remove this
-        console.log("MintedDomainNames::add(owner:%s, id:%s, expiry:%s, label:...)", owner, id, expiry);
-        console.logString(label);
+    function add(address owner, uint256 id, uint32 fuses, uint64 expiry, string calldata label)
+        external
+        isNameWrapper
+    {
+        // // TODO: Remove this
+        // console.log("MintedDomainNames::add(owner:%s, id:%s, expiry:%s, label:...)", owner, id, expiry);
+        // console.logString(label);
 
         // We're safe to add label here because id will always match label. At worst, we will overwrite
         tokenIdToName[id] = label;
@@ -77,15 +77,44 @@ contract MintedDomainNames is IMintedDomainNames {
     }
 
     /**
+     * @dev Add a user minted subdomain, gated to the NameWrapper contract
+     * @param owner The address to add the id to
+     * @param id the id of the registered subdomain
+     * @param expiry the expiry timestamp of the registered subdomain
+     * @param parentNodeTokenId the tokenID of the parent node to the subdomain
+     * @param label the lable of the registered subdomain
+     */
+    function addSubdomain(
+        address owner,
+        uint256 id,
+        uint32 fuses,
+        uint64 expiry,
+        uint256 parentNodeTokenId,
+        string calldata label
+    ) external isNameWrapper {
+        string memory fullNameWithoutTLD = string.concat(label, ".", tokenIdToName[parentNodeTokenId]);
+        // console.log("MintedDomainNames::addSubdomain(...)");
+        // console.logString(fullNameWithoutTLD);
+
+        // We're safe to add label here because id will always match label. At worst, we will overwrite
+        tokenIdToName[id] = fullNameWithoutTLD;
+
+        mintedDomainNames[owner].push(IMintedDomainNames.Data(id, fuses, expiry, fullNameWithoutTLD));
+    }
+
+    /**
      * @dev Add a user minted domain name, from transfer origin, meaning we already know the label
      * @param owner The address to add the id to
      * @param id the id of the registered domain name
      * @param expiry the expiry timestamp of the registered domain name
      */
-    function addFromTransfer(address oldOwner, address owner, uint256 id, uint32 fuses, uint64 expiry) external isNameWrapper {
+    function addFromTransfer(address, /*oldOwner*/ address owner, uint256 id, uint32 fuses, uint64 expiry)
+        external
+        isNameWrapper
+    {
         // TODO: Remove this
-        console.log("addFromTransfer");
-        console.logString(tokenIdToName[id]);
+        // console.log("addFromTransfer");
+        // console.logString(tokenIdToName[id]);
 
         mintedDomainNames[owner].push(IMintedDomainNames.Data(id, fuses, expiry, tokenIdToName[id]));
     }

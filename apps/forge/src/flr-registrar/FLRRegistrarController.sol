@@ -1,5 +1,5 @@
-//SPDX-License-Identifier: MIT
-pragma solidity ~0.8.17;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
 
 import {BaseRegistrar} from "./BaseRegistrar.sol";
 import {StringUtils} from "./StringUtils.sol";
@@ -30,18 +30,12 @@ error MaxCommitmentAgeTooHigh();
 /**
  * @dev A registrar controller for registering and renewing names at fixed cost.
  */
-contract FLRRegistrarController is
-    Ownable,
-    IFLRRegistrarController,
-    IERC165,
-    ERC20Recoverable
-{
+contract FLRRegistrarController is Ownable, IFLRRegistrarController, IERC165, ERC20Recoverable {
     using StringUtils for *;
     using Address for address;
 
     uint256 public constant MIN_REGISTRATION_DURATION = 28 days;
-    bytes32 private constant FLR_NODE =
-        0xfd9ed02f44147ba87d942b154c98562d831e3a24daea862ee12868ac20f7bcc3;
+    bytes32 private constant FLR_NODE = 0xfd9ed02f44147ba87d942b154c98562d831e3a24daea862ee12868ac20f7bcc3;
     uint64 private constant MAX_EXPIRY = type(uint64).max;
     BaseRegistrar immutable base;
     IPriceOracle public priceOracle;
@@ -53,19 +47,9 @@ contract FLRRegistrarController is
     mapping(bytes32 => uint256) public commitments;
 
     event NameRegistered(
-        string name,
-        bytes32 indexed label,
-        address indexed owner,
-        uint256 baseCost,
-        uint256 premium,
-        uint256 expires
+        string name, bytes32 indexed label, address indexed owner, uint256 baseCost, uint256 premium, uint256 expires
     );
-    event NameRenewed(
-        string name,
-        bytes32 indexed label,
-        uint256 cost,
-        uint256 expires
-    );
+    event NameRenewed(string name, bytes32 indexed label, uint256 cost, uint256 expires);
     event NewPriceOracle(address indexed oracle);
 
     constructor(
@@ -99,16 +83,18 @@ contract FLRRegistrarController is
         emit NewPriceOracle(address(priceOracle));
     }
 
-    function rentPrice(
-        string memory name,
-        uint256 duration
-    ) public view override returns (IPriceOracle.Price memory price) {
+    function rentPrice(string memory name, uint256 duration)
+        public
+        view
+        override
+        returns (IPriceOracle.Price memory price)
+    {
         bytes32 label = keccak256(bytes(name));
         price = priceOracle.price(name, base.nameExpires(uint256(label)), duration);
     }
 
     function valid(string memory name) public pure returns (bool) {
-        return name.strlen() >= 3;
+        return name.strlen() >= 1;
     }
 
     function available(string memory name) public view override returns (bool) {
@@ -132,18 +118,7 @@ contract FLRRegistrarController is
             revert ResolverRequiredWhenDataSupplied();
         }
         return
-            keccak256(
-                abi.encode(
-                    label,
-                    owner,
-                    duration,
-                    secret,
-                    resolver,
-                    data,
-                    reverseRecord,
-                    ownerControlledFuses
-                )
-            );
+            keccak256(abi.encode(label, owner, duration, secret, resolver, data, reverseRecord, ownerControlledFuses));
     }
 
     function commit(bytes32 commitment) public override {
@@ -173,25 +148,10 @@ contract FLRRegistrarController is
         _consumeCommitment(
             name,
             duration,
-            makeCommitment(
-                name,
-                owner,
-                duration,
-                secret,
-                resolver,
-                data,
-                reverseRecord,
-                ownerControlledFuses
-            )
+            makeCommitment(name, owner, duration, secret, resolver, data, reverseRecord, ownerControlledFuses)
         );
 
-        uint256 expires = nameWrapper.registerAndWrapETH2LD(
-            name,
-            owner,
-            duration,
-            resolver,
-            ownerControlledFuses
-        );
+        uint256 expires = nameWrapper.registerAndWrapETH2LD(name, owner, duration, resolver, ownerControlledFuses);
 
         if (data.length > 0) {
             _setRecords(resolver, keccak256(bytes(name)), data);
@@ -201,26 +161,14 @@ contract FLRRegistrarController is
             _setReverseRecord(name, resolver, msg.sender);
         }
 
-        emit NameRegistered(
-            name,
-            keccak256(bytes(name)),
-            owner,
-            price.base,
-            price.premium,
-            expires
-        );
+        emit NameRegistered(name, keccak256(bytes(name)), owner, price.base, price.premium, expires);
 
         if (msg.value > (price.base + price.premium)) {
-            payable(msg.sender).transfer(
-                msg.value - (price.base + price.premium)
-            );
+            payable(msg.sender).transfer(msg.value - (price.base + price.premium));
         }
     }
 
-    function renew(
-        string calldata name,
-        uint256 duration
-    ) external payable override {
+    function renew(string calldata name, uint256 duration) external payable override {
         bytes32 labelhash = keccak256(bytes(name));
         uint256 tokenId = uint256(labelhash);
         IPriceOracle.Price memory price = rentPrice(name, duration);
@@ -241,21 +189,13 @@ contract FLRRegistrarController is
         payable(owner()).transfer(address(this).balance);
     }
 
-    function supportsInterface(
-        bytes4 interfaceID
-    ) external pure returns (bool) {
-        return
-            interfaceID == type(IERC165).interfaceId ||
-            interfaceID == type(IFLRRegistrarController).interfaceId;
+    function supportsInterface(bytes4 interfaceID) external pure returns (bool) {
+        return interfaceID == type(IERC165).interfaceId || interfaceID == type(IFLRRegistrarController).interfaceId;
     }
 
     /* Internal functions */
 
-    function _consumeCommitment(
-        string memory name,
-        uint256 duration,
-        bytes32 commitment
-    ) internal {
+    function _consumeCommitment(string memory name, uint256 duration, bytes32 commitment) internal {
         // Require an old enough commitment.
         if (commitments[commitment] + minCommitmentAge > block.timestamp) {
             console.log("revert CommitmentTooNew");
@@ -280,27 +220,14 @@ contract FLRRegistrarController is
         }
     }
 
-    function _setRecords(
-        address resolverAddress,
-        bytes32 label,
-        bytes[] calldata data
-    ) internal {
+    function _setRecords(address resolverAddress, bytes32 label, bytes[] calldata data) internal {
         // use hardcoded .flr namehash
         bytes32 nodehash = keccak256(abi.encodePacked(FLR_NODE, label));
         IResolver resolver = IResolver(resolverAddress);
         resolver.multicallWithNodeCheck(nodehash, data);
     }
 
-    function _setReverseRecord(
-        string memory name,
-        address resolver,
-        address owner
-    ) internal {
-        reverseRegistrar.setNameForAddr(
-            msg.sender,
-            owner,
-            resolver,
-            string.concat(name, ".flr")
-        );
+    function _setReverseRecord(string memory name, address resolver, address owner) internal {
+        reverseRegistrar.setNameForAddr(msg.sender, owner, resolver, string.concat(name, ".flr"));
     }
 }

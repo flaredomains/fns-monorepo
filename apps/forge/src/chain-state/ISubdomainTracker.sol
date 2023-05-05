@@ -1,4 +1,5 @@
-pragma solidity >=0.8.4;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
 
 interface ISubdomainTracker {
     struct Data {
@@ -6,6 +7,7 @@ interface ISubdomainTracker {
         address owner;
         string label;
     }
+
     function getAll(uint256 id) external view returns (Data[] memory, uint256 length);
     function add(uint256 parentId, uint256 subdomainId, address owner, string calldata subdomainLabel) external;
 }

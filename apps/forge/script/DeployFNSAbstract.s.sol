@@ -1,4 +1,4 @@
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.18;
 
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
@@ -12,7 +12,8 @@ import "fns/registry/ReverseRegistrar.sol";
 import "fns/wrapper/NameWrapper.sol";
 import "fns/wrapper/StaticMetadataService.sol";
 import "fns/flr-registrar/FLRRegistrarController.sol";
-import "fns/flr-registrar/mock/MockStablePriceOracle.sol";
+// import "fns/flr-registrar/mock/MockStablePriceOracle.sol";
+import "fns/flr-registrar/StablePriceOracle.sol";
 import "fns/flr-registrar/DummyOracle.sol";
 import "fns/no-collisions/NoNameCollisions.sol";
 import "fns/no-collisions/mocks/MockPunkTLD.sol";
@@ -22,6 +23,9 @@ import "fns-test/utils/FNSNamehash.sol";
 bytes32 constant ROOT_NODE = 0x0;
 
 abstract contract DeployFNSAbstract is Script {
+    string constant METADATA_SERVICE_URI = "https://fns.infura-ipfs.io/ipfs/QmSmtZszSZPfHokzKzcvaWxBbrnduiVCho6fDkaVjFPM4x";
+    string constant TICKER = "C2FLR";
+
     // Anvil Wallets
     address immutable ANVIL_DEPLOYER_ADDRESS = vm.envAddress("ANVIL_DEPLOYER_ADDRESS");
     uint256 immutable ANVIL_DEPLOYER_PRIVATE_KEY = vm.envUint("ANVIL_DEPLOYER_PRIVATE_KEY");
@@ -34,6 +38,9 @@ abstract contract DeployFNSAbstract is Script {
     address immutable OWNER_ADDRESS = vm.envAddress("OWNER_ADDRESS");
     uint256 immutable OWNER_PRIVATE_KEY = vm.envUint("OWNER_PRIVATE_KEY");
 
+    address deployerAddress;
+    uint256 deployerPrivKey;
+
     PublicResolver publicResolver;
     FLRRegistrarController flrRegistrarController;
     MintedDomainNames mintedDomainNames;
@@ -43,17 +50,16 @@ abstract contract DeployFNSAbstract is Script {
 
     // Entrypoint to deploy script
     function setUp() external {
-        // uint256 deployerPrivKey = ANVIL_DEPLOYER_PRIVATE_KEY;
-        // address deployerAddress = ANVIL_DEPLOYER_ADDRESS;
-        uint256 deployerPrivKey = DEPLOYER_PRIVATE_KEY;
-        address deployerAddress = DEPLOYER_ADDRESS;
-
+        // deployerPrivKey = ANVIL_DEPLOYER_PRIVATE_KEY;
+        // deployerAddress = ANVIL_DEPLOYER_ADDRESS;
+        deployerPrivKey = DEPLOYER_PRIVATE_KEY;
+        deployerAddress = DEPLOYER_ADDRESS;
         vm.startBroadcast(deployerPrivKey);
 
         // Begin script specifics
         // The root owner will be the msg.sender, which should be the private key owner
         FNSRegistry fnsRegistry = new FNSRegistry();
-        
+
         // TODO: Swap to this on testnet
         // NOTE: mockPunkTLD doesn't verify for some reason due to injection protection, so hardcode false
         //       in NoNameCollisions
@@ -67,27 +73,39 @@ abstract contract DeployFNSAbstract is Script {
 
         // Make BaseRegistrar the owner of the base 'flr' node
         baseRegistrar.addController(deployerAddress);
-        fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256('flr'), address(baseRegistrar));
-        baseRegistrar.register('deployer', deployerAddress, 365 days);
-        require(fnsRegistry.owner(FNSNamehash.namehash('deployer.flr')) == deployerAddress, "Owner not expected");
+        fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256("flr"), address(baseRegistrar));
 
-        // TODO: Update this to our own website
-        StaticMetadataService metadataService = new StaticMetadataService("https://ens.domains/");
+        // TODO: Should we auto-mint a domain name for the deployer address?
+        baseRegistrar.register("fns-deployer", deployerAddress, 36500 days);
+        require(fnsRegistry.owner(FNSNamehash.namehash("fns-deployer.flr")) == deployerAddress, "Owner not expected");
+
+        StaticMetadataService metadataService = new StaticMetadataService(METADATA_SERVICE_URI);
+
         nameWrapper = new NameWrapper(fnsRegistry, baseRegistrar, metadataService);
-
-        // Deploy the mintedIds data struct contract, then update the reference within Base Registrar
         mintedDomainNames = new MintedDomainNames(nameWrapper);
         subdomainTracker = new SubdomainTracker(nameWrapper);
-        
         nameWrapper.updateMintedDomainNamesContract(mintedDomainNames);
         nameWrapper.updateSubdomainTrackerContract(subdomainTracker);
 
         reverseRegistrar = new ReverseRegistrar(fnsRegistry);
+        // TODO: Transfer this to timelock at a later date (owned by Timelock on ENSv2 Deployment)
+        bytes32 reverseNode = fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256("reverse"), deployerAddress);
+        // Ensure owner of 'addr.reverse' is the ReverseRegistrar Contract
+        fnsRegistry.setSubnodeOwner(reverseNode, keccak256("addr"), address(reverseRegistrar));
+        // Automatically claim the '<deployerAddr>.addr.reverse' node at deployment time
+        reverseRegistrar.claim(deployerAddress);
 
         // TODO: Update this to Regular StablePriceOracle for mainnet deployment
-        MockStablePriceOracle stablePriceOracle = new MockStablePriceOracle(
+        // MockStablePriceOracle stablePriceOracle = new MockStablePriceOracle(
+        //     0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
+        //     // [uint256(500), 350, 300, 100, 5]);
+        //     [uint256(5), 4, 3, 2, 1]);
+        StablePriceOracle stablePriceOracle = new StablePriceOracle(
             0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
-            [uint256(5), 4, 3, 2, 1]);
+            // [uint256(500), 350, 300, 100, 5]);
+            [uint256(5), 4, 3, 2, 1]
+        );
+
         flrRegistrarController = new FLRRegistrarController(
             baseRegistrar,
             stablePriceOracle,
@@ -106,12 +124,6 @@ abstract contract DeployFNSAbstract is Script {
         baseRegistrar.addController(address(nameWrapper));
         nameWrapper.setController(address(flrRegistrarController), true);
         reverseRegistrar.setController(address(flrRegistrarController), true);
-
-        // TODO: Should this be set to the deployer address or the reverseRegistrar contract?
-        fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256('reverse'), deployerAddress);
-        fnsRegistry.setSubnodeOwner(
-            FNSNamehash.namehash('reverse'), keccak256('addr'), address(reverseRegistrar));
-        fnsRegistry.setSubnodeOwner(ROOT_NODE, keccak256('reverse'), address(reverseRegistrar));
 
         console.log("1. fnsRegistry: %s", address(fnsRegistry));
         console.log("2. noNameCollisions: %s", address(noNameCollisions));

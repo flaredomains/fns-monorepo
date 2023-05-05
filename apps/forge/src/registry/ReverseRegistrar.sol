@@ -1,4 +1,5 @@
-pragma solidity ^0.8.6;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "fns/root/Controllable.sol";
@@ -6,11 +7,12 @@ import "./IFNS.sol";
 import "./IReverseRegistrar.sol";
 import "fns/resolvers/profiles/NameResolver.sol";
 
+// TODO: Remove this
 import "forge-std/console.sol";
 
 /**
-* @dev The result of namehash('addr.reverse')
-*/
+ * @dev The result of namehash('addr.reverse')
+ */
 bytes32 constant ADDR_REVERSE_NODE = 0x91d1777781884d03a6757a803996e38de2a42967fb37eeaca72729271025a9e2;
 bytes32 constant lookup = 0x3031323334353637383961626364656600000000000000000000000000000000;
 
@@ -23,39 +25,23 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
 
     /**
      * @dev Constructor
-     * @param ensAddr The address of the FNS registry.
+     * @param fnsAddr The address of the FNS registry.
      */
-    constructor(IFNS ensAddr) {
-        fns = ensAddr;
-
-        // NOTE: This has been disabled because it pertains to migration. We will not have an owner
-        //       of the ADDR_REVERSE_NODE by default, and thus no existing ReverseRegistrar to
-        //       lookup
-        // Assign ownership of the reverse record to our deployer
-        ReverseRegistrar oldRegistrar = ReverseRegistrar(
-            ensAddr.owner(ADDR_REVERSE_NODE)
-        );
-        if (address(oldRegistrar) != address(0x0)) {
-            oldRegistrar.claim(msg.sender);
-        }
+    constructor(IFNS fnsAddr) {
+        fns = fnsAddr;
     }
 
     modifier authorised(address addr) {
         require(
-            addr == msg.sender ||
-                controllers[msg.sender] ||
-                fns.isApprovedForAll(addr, msg.sender) ||
-                ownsContract(addr),
+            addr == msg.sender || controllers[msg.sender] || fns.isApprovedForAll(addr, msg.sender)
+                || ownsContract(addr),
             "ReverseRegistrar: Caller is not a controller or authorised by address or the address itself"
         );
         _;
     }
 
     function setDefaultResolver(address resolver) public override onlyOwner {
-        require(
-            address(resolver) != address(0),
-            "ReverseRegistrar: Resolver address must not be 0"
-        );
+        require(address(resolver) != address(0), "ReverseRegistrar: Resolver address must not be 0");
         defaultResolver = NameResolver(resolver);
         emit DefaultResolverChanged(NameResolver(resolver));
     }
@@ -78,21 +64,20 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
      * @param resolver The resolver of the reverse node
      * @return The FNS node hash of the reverse record.
      */
-    function claimForAddr(
-        address addr,
-        address owner,
-        address resolver
-    ) public override authorised(addr) returns (bytes32) {
+    function claimForAddr(address addr, address owner, address resolver)
+        public
+        override
+        authorised(addr)
+        returns (bytes32)
+    {
         bytes32 labelHash = sha3HexAddress(addr);
-        bytes32 reverseNode = keccak256(
-            abi.encodePacked(ADDR_REVERSE_NODE, labelHash)
-        );
+        bytes32 reverseNode = keccak256(abi.encodePacked(ADDR_REVERSE_NODE, labelHash));
 
         console.log("claimForAddr::reverseNode");
         console.logBytes32(reverseNode);
         console.log("claimForAddr::labelHash");
         console.logBytes32(labelHash);
-        
+
         emit ReverseClaimed(addr, reverseNode);
         fns.setSubnodeRecord(ADDR_REVERSE_NODE, labelHash, owner, resolver, 0);
         return reverseNode;
@@ -105,10 +90,7 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
      * @param resolver The address of the resolver to set; 0 to leave unchanged.
      * @return The FNS node hash of the reverse record.
      */
-    function claimWithResolver(
-        address owner,
-        address resolver
-    ) public override returns (bytes32) {
+    function claimWithResolver(address owner, address resolver) public override returns (bytes32) {
         return claimForAddr(msg.sender, owner, resolver);
     }
 
@@ -120,13 +102,7 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
      * @return The FNS node hash of the reverse record.
      */
     function setName(string memory name) public override returns (bytes32) {
-        return
-            setNameForAddr(
-                msg.sender,
-                msg.sender,
-                address(defaultResolver),
-                name
-            );
+        return setNameForAddr(msg.sender, msg.sender, address(defaultResolver), name);
     }
 
     /**
@@ -139,12 +115,11 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
      * @param name The name to set for this address.
      * @return The FNS node hash of the reverse record.
      */
-    function setNameForAddr(
-        address addr,
-        address owner,
-        address resolver,
-        string memory name
-    ) public override returns (bytes32) {
+    function setNameForAddr(address addr, address owner, address resolver, string memory name)
+        public
+        override
+        returns (bytes32)
+    {
         bytes32 _node = claimForAddr(addr, owner, resolver);
         NameResolver(resolver).setName(_node, name);
         return _node;
@@ -156,10 +131,7 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
      * @return The FNS node hash.
      */
     function node(address addr) public pure override returns (bytes32) {
-        return
-            keccak256(
-                abi.encodePacked(ADDR_REVERSE_NODE, sha3HexAddress(addr))
-            );
+        return keccak256(abi.encodePacked(ADDR_REVERSE_NODE, sha3HexAddress(addr)));
     }
 
     /**
@@ -171,11 +143,7 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
      */
     function sha3HexAddress(address addr) private pure returns (bytes32 ret) {
         assembly {
-            for {
-                let i := 40
-            } gt(i, 0) {
-
-            } {
+            for { let i := 40 } gt(i, 0) {} {
                 i := sub(i, 1)
                 mstore8(i, byte(and(addr, 0xf), lookup))
                 addr := div(addr, 0x10)

@@ -1,5 +1,5 @@
-//SPDX-License-Identifier: MIT
-pragma solidity ~0.8.17;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -14,10 +14,7 @@ contract Controllable is Ownable {
     }
 
     modifier onlyController() {
-        require(
-            controllers[msg.sender],
-            "Controllable: Caller is not a controller"
-        );
+        require(controllers[msg.sender], "Controllable: Caller is not a controller");
         _;
     }
 }

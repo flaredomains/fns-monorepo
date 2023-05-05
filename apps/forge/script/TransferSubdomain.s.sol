@@ -42,12 +42,19 @@ contract Template is Script {
 
     // Entrypoint to deploy script
     function run() external {
-        uint256 deployerPrivKey = ANVIL_DEPLOYER_PRIVATE_KEY;
-        address deployerAddress = ANVIL_DEPLOYER_ADDRESS;
-        vm.startBroadcast(deployerPrivKey);
+        vm.startBroadcast(OWNER_PRIVATE_KEY);
 
         // Begin script specifics
         console.log("run()");
+
+        bytes memory emptyBytes;
+        NameWrapper nameWrapper = NameWrapper(0xd41653631E077f2A5B2fcDE6fE30501753222D90);
+        nameWrapper.safeTransferFrom(
+            OWNER_ADDRESS,
+            DEPLOYER_ADDRESS,
+            90061277657323471254005440716096034898587984338765359268584837035352089310914,
+            1,
+            emptyBytes);
 
         vm.stopBroadcast();
     }

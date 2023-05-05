@@ -1,5 +1,5 @@
-//SPDX-License-Identifier: MIT
-pragma solidity ~0.8.17;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
 
 import "./StablePriceOracle.sol";
 
@@ -9,8 +9,7 @@ contract LinearPremiumPriceOracle is StablePriceOracle {
     uint256 public immutable initialPremium;
     uint256 public immutable premiumDecreaseRate;
 
-    bytes4 private constant TIME_UNTIL_PREMIUM_ID =
-        bytes4(keccak256("timeUntilPremium(uint,uint"));
+    bytes4 private constant TIME_UNTIL_PREMIUM_ID = bytes4(keccak256("timeUntilPremium(uint,uint"));
 
     constructor(
         address _flareContractRegistry,
@@ -22,11 +21,12 @@ contract LinearPremiumPriceOracle is StablePriceOracle {
         premiumDecreaseRate = _premiumDecreaseRate;
     }
 
-    function _premium(
-        string memory /* name */,
-        uint256 expires,
-        uint256 /*duration*/
-    ) internal view override returns (uint256) {
+    function _premium(string memory, /* name */ uint256 expires, uint256 /*duration*/ )
+        internal
+        view
+        override
+        returns (uint256)
+    {
         expires = expires + GRACE_PERIOD;
         if (expires > block.timestamp) {
             // No premium for renewals
@@ -51,10 +51,7 @@ contract LinearPremiumPriceOracle is StablePriceOracle {
      * @param amount The amount, in wei, the caller is willing to pay
      * @return The timestamp at which the premium for this domain will be `amount`.
      */
-    function timeUntilPremium(
-        uint256 expires,
-        uint256 amount
-    ) external view returns (uint256) {
+    function timeUntilPremium(uint256 expires, uint256 amount) external view returns (uint256) {
         amount = weiToAttoUSD(amount);
         require(amount <= initialPremium);
 
@@ -65,11 +62,7 @@ contract LinearPremiumPriceOracle is StablePriceOracle {
         return expires + duration;
     }
 
-    function supportsInterface(
-        bytes4 interfaceID
-    ) public view virtual override returns (bool) {
-        return
-            (interfaceID == TIME_UNTIL_PREMIUM_ID) ||
-            super.supportsInterface(interfaceID);
+    function supportsInterface(bytes4 interfaceID) public view virtual override returns (bool) {
+        return (interfaceID == TIME_UNTIL_PREMIUM_ID) || super.supportsInterface(interfaceID);
     }
 }

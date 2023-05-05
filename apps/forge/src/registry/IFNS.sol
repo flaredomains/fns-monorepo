@@ -1,7 +1,7 @@
-pragma solidity ^0.8.6;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
 
 interface IFNS {
-
     // Logged when the owner of a node assigns a new owner to a subnode.
     event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner);
 
@@ -19,7 +19,7 @@ interface IFNS {
 
     function setRecord(bytes32 node, address owner, address resolver, uint64 ttl) external;
     function setSubnodeRecord(bytes32 node, bytes32 label, address owner, address resolver, uint64 ttl) external;
-    function setSubnodeOwner(bytes32 node, bytes32 label, address owner) external returns(bytes32);
+    function setSubnodeOwner(bytes32 node, bytes32 label, address owner) external returns (bytes32);
     function setResolver(bytes32 node, address resolver) external;
     function setOwner(bytes32 node, address owner) external;
     function setTTL(bytes32 node, uint64 ttl) external;

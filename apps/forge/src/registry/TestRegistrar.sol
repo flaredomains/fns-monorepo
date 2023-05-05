@@ -1,4 +1,5 @@
-pragma solidity ^0.8.6;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
 
 import "./IFNS.sol";
 
@@ -7,11 +8,11 @@ import "./IFNS.sol";
  * expires registrations a fixed period after they're initially claimed.
  */
 contract TestRegistrar {
-    uint constant registrationPeriod = 4 weeks;
+    uint256 constant registrationPeriod = 4 weeks;
 
     IFNS public fns;
     bytes32 public rootNode;
-    mapping (bytes32 => uint) public expiryTimes;
+    mapping(bytes32 => uint256) public expiryTimes;
 
     /**
      * Constructor.

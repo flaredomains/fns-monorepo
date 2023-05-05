@@ -1,4 +1,5 @@
-pragma solidity ^0.8.6;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
 
 import "./IFNS.sol";
 
@@ -9,15 +10,14 @@ import "forge-std/console.sol";
  * The FNS registry contract.
  */
 contract FNSRegistry is IFNS {
-
     struct Record {
         address owner;
         address resolver;
         uint64 ttl;
     }
 
-    mapping (bytes32 => Record) records;
-    mapping (address => mapping(address => bool)) operators;
+    mapping(bytes32 => Record) records;
+    mapping(address => mapping(address => bool)) operators;
 
     // Permits modifications only by the owner of the specified node.
     modifier authorised(bytes32 node) {
@@ -39,11 +39,6 @@ contract FNSRegistry is IFNS {
      */
     constructor() {
         records[0x0].owner = msg.sender;
-
-        // TODO: Reconsider this approach. For now, it gives ownership to the creator
-        //       of the reverse node
-        // NOTE: namehash('reverse') => 0xa097f6721ce401e757d1223a763fef49b8b5f90bb18567ddb86fd205dff71d34
-        records[0xa097f6721ce401e757d1223a763fef49b8b5f90bb18567ddb86fd205dff71d34].owner = msg.sender;
     }
 
     /**
@@ -87,7 +82,7 @@ contract FNSRegistry is IFNS {
      * @param label The hash of the label specifying the subnode.
      * @param _owner The address of the new owner.
      */
-    function setSubnodeOwner(bytes32 node, bytes32 label, address _owner) public authorised(node) returns(bytes32) {
+    function setSubnodeOwner(bytes32 node, bytes32 label, address _owner) public authorised(node) returns (bytes32) {
         bytes32 subnode = keccak256(abi.encodePacked(node, label));
 
         _setOwner(subnode, _owner);
@@ -182,12 +177,12 @@ contract FNSRegistry is IFNS {
     }
 
     function _setResolverAndTTL(bytes32 node, address _resolver, uint64 _ttl) internal {
-        if(_resolver != records[node].resolver) {
+        if (_resolver != records[node].resolver) {
             records[node].resolver = _resolver;
             emit NewResolver(node, _resolver);
         }
 
-        if(_ttl != records[node].ttl) {
+        if (_ttl != records[node].ttl) {
             records[node].ttl = _ttl;
             emit NewTTL(node, _ttl);
         }

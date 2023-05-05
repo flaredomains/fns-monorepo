@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-pragma solidity ^0.8.6;
+pragma solidity ^0.8.18;
 
 /// @notice: Helper contract for foundry testing.
 
@@ -9,7 +9,7 @@ import "fns/interfaces/IERC20.sol";
 
 interface Hevm {
     function warp(uint256) external;
-    function store(address,bytes32,bytes32) external;
+    function store(address, bytes32, bytes32) external;
 }
 
 interface User {
@@ -17,49 +17,71 @@ interface User {
 }
 
 contract Utility is DSTest {
-
     Hevm hevm;
 
-    /***********************/
-    /*** Protocol Actors ***/
-    /***********************/
-    Actor  dev;
-    Actor  joe;
-    
+    /**
+     *
+     */
+    /**
+     * Protocol Actors **
+     */
+    /**
+     *
+     */
+    Actor dev;
+    Actor joe;
 
-    /**********************************/
-    /*** Mainnet Contract Addresses ***/
-    /**********************************/
-    address constant DAI   = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
-    address constant USDC  = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
-    address constant FRAX  = 0x853d955aCEf822Db058eb8505911ED77F175b99e;
-    address constant WETH  = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    /**
+     *
+     */
+    /**
+     * Mainnet Contract Addresses **
+     */
+    /**
+     *
+     */
+    address constant DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
+    address constant USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
+    address constant FRAX = 0x853d955aCEf822Db058eb8505911ED77F175b99e;
+    address constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
 
-    IERC20 constant dai  = IERC20(DAI);
+    IERC20 constant dai = IERC20(DAI);
     IERC20 constant usdc = IERC20(USDC);
     IERC20 constant weth = IERC20(WETH);
 
     address constant UNISWAP_V2_ROUTER_02 = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D; // Uniswap V2 Router
-    address constant UNISWAP_V2_FACTORY   = 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f; // Uniswap V2 factory.
+    address constant UNISWAP_V2_FACTORY = 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f; // Uniswap V2 factory.
 
-    /*****************/
-    /*** Constants ***/
-    /*****************/
-    uint256 constant USD = 10 ** 6;  // USDC precision decimals
-    uint256 constant BTC = 10 ** 8;  // WBTC precision decimals
+    /**
+     *
+     */
+    /**
+     * Constants **
+     */
+    /**
+     *
+     */
+    uint256 constant USD = 10 ** 6; // USDC precision decimals
+    uint256 constant BTC = 10 ** 8; // WBTC precision decimals
     uint256 constant WAD = 10 ** 18; // ether
     uint256 constant RAY = 10 ** 27;
 
-    /*****************/
-    /*** Utilities ***/
-    /*****************/
+    /**
+     *
+     */
+    /**
+     * Utilities **
+     */
+    /**
+     *
+     */
     struct Token {
         address addr; // ERC20 Mainnet address
         uint256 slot; // Balance storage slot
         address orcl; // Chainlink oracle address
     }
- 
-    mapping (bytes32 => Token) tokens;
+
+    mapping(bytes32 => Token) tokens;
 
     struct TestObj {
         uint256 pre;
@@ -70,21 +92,34 @@ contract Utility is DSTest {
     event Debug(string, address);
     event Debug(string, bool);
 
-    constructor() { hevm = Hevm(address(bytes20(uint160(uint256(keccak256("hevm cheat code")))))); }
+    constructor() {
+        hevm = Hevm(address(bytes20(uint160(uint256(keccak256("hevm cheat code"))))));
+    }
 
-    /**************************************/
-    /*** Actor/Multisig Setup Functions ***/
-    /**************************************/
-    function createActors() public { 
+    /**
+     *
+     */
+    /**
+     * Actor/Multisig Setup Functions **
+     */
+    /**
+     *
+     */
+    function createActors() public {
         dev = new Actor();
         joe = new Actor();
     }
 
-    /******************************/
-    /*** Test Utility Functions ***/
-    /******************************/
+    /**
+     *
+     */
+    /**
+     * Test Utility Functions **
+     */
+    /**
+     *
+     */
     function setUpTokens() public {
-
         tokens["USDC"].addr = USDC;
         tokens["USDC"].slot = 9;
 
@@ -101,7 +136,7 @@ contract Utility is DSTest {
     // Manipulate mainnet ERC20 balance
     function mint(bytes32 symbol, address account, uint256 amt) public {
         address addr = tokens[symbol].addr;
-        uint256 slot  = tokens[symbol].slot;
+        uint256 slot = tokens[symbol].slot;
         uint256 bal = IERC20(addr).balanceOf(account);
 
         hevm.store(
@@ -115,13 +150,13 @@ contract Utility is DSTest {
 
     // Verify equality within accuracy decimals
     function withinPrecision(uint256 val0, uint256 val1, uint256 accuracy) public {
-        uint256 diff  = val0 > val1 ? val0 - val1 : val1 - val0;
+        uint256 diff = val0 > val1 ? val0 - val1 : val1 - val0;
         if (diff == 0) return;
 
         uint256 denominator = val0 == 0 ? val1 : val0;
         bool check = ((diff * RAY) / denominator) < (RAY / 10 ** accuracy);
 
-        if (!check){
+        if (!check) {
             emit log_named_uint("Error: approx a == b not satisfied, accuracy digits ", accuracy);
             emit log_named_uint("  Expected", val0);
             emit log_named_uint("    Actual", val1);
@@ -147,9 +182,8 @@ contract Utility is DSTest {
     }
 
     function constrictToRange(uint256 val, uint256 min, uint256 max, bool nonZero) public pure returns (uint256) {
-        if      (val == 0 && !nonZero) return 0;
-        else if (max == min)           return max;
-        else                           return val % (max - min) + min;
+        if (val == 0 && !nonZero) return 0;
+        else if (max == min) return max;
+        else return val % (max - min) + min;
     }
-    
 }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.4;
+pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "./profiles/IVersionableResolver.sol";
@@ -24,11 +24,7 @@ abstract contract ResolverBase is ERC165, IVersionableResolver {
         emit VersionChanged(node, recordVersions[node]);
     }
 
-    function supportsInterface(
-        bytes4 interfaceID
-    ) public view virtual override returns (bool) {
-        return
-            interfaceID == type(IVersionableResolver).interfaceId ||
-            super.supportsInterface(interfaceID);
+    function supportsInterface(bytes4 interfaceID) public view virtual override returns (bool) {
+        return interfaceID == type(IVersionableResolver).interfaceId || super.supportsInterface(interfaceID);
     }
 }

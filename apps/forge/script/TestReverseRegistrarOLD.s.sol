@@ -1,4 +1,4 @@
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.18;
 
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
@@ -37,9 +37,9 @@ contract TestReverseRegistrar is Script {
 
         // Make BaseRegistrar the owner of the base 'flr' node
         baseRegistrar.addController(owner);
-        fnsRegistry.setSubnodeOwner(rootNode, keccak256('flr'), address(baseRegistrar));
-        baseRegistrar.register('deployer', owner, 365 days);
-        require(fnsRegistry.owner(FNSNamehash.namehash('deployer.flr')) == owner, "Owner not expected");
+        fnsRegistry.setSubnodeOwner(rootNode, keccak256("flr"), address(baseRegistrar));
+        baseRegistrar.register("deployer", owner, 365 days);
+        require(fnsRegistry.owner(FNSNamehash.namehash("deployer.flr")) == owner, "Owner not expected");
 
         // TODO: Update this to our own website
         StaticMetadataService metadataService = new StaticMetadataService("https://fns.domains/");
@@ -74,13 +74,12 @@ contract TestReverseRegistrar is Script {
         nameWrapper.setController(address(flrRegistrarController), true);
         reverseRegistrar.setController(address(flrRegistrarController), true);
 
-        fnsRegistry.setSubnodeOwner(rootNode, keccak256('reverse'), owner);
-        fnsRegistry.setSubnodeOwner(
-            FNSNamehash.namehash('reverse'), keccak256('addr'), address(reverseRegistrar));
+        fnsRegistry.setSubnodeOwner(rootNode, keccak256("reverse"), owner);
+        fnsRegistry.setSubnodeOwner(FNSNamehash.namehash("reverse"), keccak256("addr"), address(reverseRegistrar));
 
-        baseRegistrar.register('hooray', owner, 365 days);
+        baseRegistrar.register("hooray", owner, 365 days);
         //reverseRegistrar.claim(owner);
-        bytes32 nodeHash = reverseRegistrar.setName('hooray');
+        bytes32 nodeHash = reverseRegistrar.setName("hooray");
 
         console.logBytes32(nodeHash);
         console.log(nameResolver.name(nodeHash));

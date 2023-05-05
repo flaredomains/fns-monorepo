@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import MyAccount from '../../public/MyAccount.svg'
-import Search from '../../public/Search.svg'
+import Search from '../../public/Search.png'
 import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'
 
@@ -14,7 +14,7 @@ export default function AccountLine() {
     e.preventDefault()
 
     // Regular expression to validate input
-    const pattern = /^[a-zA-Z0-9\s\p{Emoji}]+\.flr$/u
+    const pattern = /^[a-zA-Z0-9\s\p{Emoji}]+(\.[a-zA-Z0-9\s\p{Emoji}]+)*\.flr$/u
 
     const exception = /^0x[a-fA-F0-9]{40}$/
 

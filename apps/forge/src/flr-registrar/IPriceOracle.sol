@@ -1,5 +1,5 @@
-//SPDX-License-Identifier: MIT
-pragma solidity >=0.8.17 <0.9.0;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
 
 interface IPriceOracle {
     struct Price {
@@ -14,9 +14,5 @@ interface IPriceOracle {
      * @param duration How long the name is being registered or extended for, in seconds.
      * @return base premium tuple of base price + premium price
      */
-    function price(
-        string calldata name,
-        uint256 expires,
-        uint256 duration
-    ) external view returns (Price calldata);
+    function price(string calldata name, uint256 expires, uint256 duration) external view returns (Price calldata);
 }

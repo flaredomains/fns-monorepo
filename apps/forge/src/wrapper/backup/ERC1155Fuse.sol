@@ -1,5 +1,5 @@
-//SPDX-License-Identifier: MIT
-pragma solidity ~0.8.17;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
@@ -7,27 +7,15 @@ import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
-/* This contract is a variation on ERC1155 with the additions of:
- * _setData, getData, _beforeTransfer, _afterTransfer, and ownerOf.
- * _setData and getData allows the use of the other 96 bits next to the address of the owner for extra data. 
- * We use this to store 'fuses' that control permissions that can be burnt. 
- * 32 bits are used for the fuses themselves and 64 bits are used for the expiry of the name. 
- * When a name has expired, its fuses will be be set back to 0
- */
+/* This contract is a variation on ERC1155 with the additions of _setData, getData and _preTransferCheck and ownerOf. _setData and getData allows the use of the other 96 bits next to the address of the owner for extra data. We use this to store 'fuses' that control permissions that can be burnt. 32 bits are used for the fuses themselves and 64 bits are used for the expiry of the name. When a name has expired, its fuses will be be set back to 0 */
+
 abstract contract ERC1155Fuse is ERC165, IERC1155, IERC1155MetadataURI {
     using Address for address;
-    /**
-     * @dev Emitted when `owner` enables `approved` to manage the `tokenId` token.
-     */
-
-    event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId);
 
     mapping(uint256 => uint256) public _tokens;
 
     // Mapping from owner to operator approvals
     mapping(address => mapping(address => bool)) private _operatorApprovals;
-    // Mapping from token ID to approved address
-    mapping(uint256 => address) internal _tokenApprovals;
 
     /**
      *
@@ -38,28 +26,6 @@ abstract contract ERC1155Fuse is ERC165, IERC1155, IERC1155MetadataURI {
     function ownerOf(uint256 id) public view virtual returns (address) {
         (address owner,,) = getData(id);
         return owner;
-    }
-
-    /**
-     * @dev See {IERC721-approve}.
-     */
-    function approve(address to, uint256 tokenId) public virtual {
-        address owner = ownerOf(tokenId);
-        require(to != owner, "ERC721: approval to current owner");
-
-        require(
-            msg.sender == owner || isApprovedForAll(owner, msg.sender),
-            "ERC721: approve caller is not token owner or approved for all"
-        );
-
-        _approve(to, tokenId);
-    }
-
-    /**
-     * @dev See {IERC721-getApproved}.
-     */
-    function getApproved(uint256 tokenId) public view virtual returns (address) {
-        return _tokenApprovals[tokenId];
     }
 
     /**
@@ -175,12 +141,12 @@ abstract contract ERC1155Fuse is ERC165, IERC1155, IERC1155MetadataURI {
 
             (address oldOwner, uint32 fuses, uint64 expiry) = getData(id);
 
-            _beforeTransfer(id, fuses, expiry);
+            _preTransferCheck(id, fuses, expiry);
 
             require(amount == 1 && oldOwner == from, "ERC1155: insufficient balance for transfer");
             _setData(id, to, fuses, expiry);
 
-            _afterTransfer(from, to, id, fuses, expiry);
+            _postTransferAction(from, to, id, fuses, expiry);
         }
 
         emit TransferBatch(msg.sender, from, to, ids, amounts);
@@ -201,9 +167,9 @@ abstract contract ERC1155Fuse is ERC165, IERC1155, IERC1155MetadataURI {
         _tokens[tokenId] = uint256(uint160(owner)) | (uint256(fuses) << 160) | (uint256(expiry) << 192);
     }
 
-    function _beforeTransfer(uint256 id, uint32 fuses, uint64 expiry) internal virtual;
+    function _preTransferCheck(uint256 id, uint32 fuses, uint64 expiry) internal virtual returns (bool);
 
-    function _afterTransfer(address from, address to, uint256 id, uint32 fuses, uint64 expiry) internal virtual;
+    function _postTransferAction(address from, address to, uint256 id, uint32 fuses, uint64 expiry) internal virtual;
 
     function _clearOwnerAndFuses(address owner, uint32 fuses, uint64 expiry)
         internal
@@ -236,8 +202,6 @@ abstract contract ERC1155Fuse is ERC165, IERC1155, IERC1155MetadataURI {
     function _burn(uint256 tokenId) internal virtual {
         (address oldOwner, uint32 fuses, uint64 expiry) = ERC1155Fuse.getData(tokenId);
         (, fuses) = _clearOwnerAndFuses(oldOwner, fuses, expiry);
-        // Clear approvals
-        delete _tokenApprovals[tokenId];
         // Fuses and expiry are kept on burn
         _setData(tokenId, address(0x0), fuses, expiry);
         emit TransferSingle(msg.sender, oldOwner, address(0x0), tokenId, 1);
@@ -246,7 +210,7 @@ abstract contract ERC1155Fuse is ERC165, IERC1155, IERC1155MetadataURI {
     function _transfer(address from, address to, uint256 id, uint256 amount, bytes memory data) internal {
         (address oldOwner, uint32 fuses, uint64 expiry) = getData(id);
 
-        _beforeTransfer(id, fuses, expiry);
+        _preTransferCheck(id, fuses, expiry);
 
         require(amount == 1 && oldOwner == from, "ERC1155: insufficient balance for transfer");
 
@@ -258,7 +222,7 @@ abstract contract ERC1155Fuse is ERC165, IERC1155, IERC1155MetadataURI {
 
         emit TransferSingle(msg.sender, from, to, id, amount);
 
-        _afterTransfer(from, to, id, fuses, expiry);
+        _postTransferAction(from, to, id, fuses, expiry);
 
         _doSafeTransferAcceptanceCheck(msg.sender, from, to, id, amount, data);
     }
@@ -305,17 +269,5 @@ abstract contract ERC1155Fuse is ERC165, IERC1155, IERC1155MetadataURI {
                 revert("ERC1155: transfer to non ERC1155Receiver implementer");
             }
         }
-    }
-
-    /* ERC721 internal functions */
-
-    /**
-     * @dev Approve `to` to operate on `tokenId`
-     *
-     * Emits an {Approval} event.
-     */
-    function _approve(address to, uint256 tokenId) internal virtual {
-        _tokenApprovals[tokenId] = to;
-        emit Approval(ownerOf(tokenId), to, tokenId);
     }
 }
