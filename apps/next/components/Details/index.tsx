@@ -16,7 +16,7 @@ const namehash = require('eth-ens-namehash')
 const ZERO_ADDRESS: string = "0x0000000000000000000000000000000000000000";
 
 import { useAccount, useContractRead, useContract, Address } from 'wagmi'
-import { BigNumber, ethers } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 
 export default function Details({ result }: { result: string }) {
   const [prepared, setPrepared] = useState<boolean>(false)
@@ -49,7 +49,7 @@ export default function Details({ result }: { result: string }) {
       const parentDomain = parts.slice(numParts - (numParts - 1)).join('.')
       return parentDomain
     } else {
-      return '.flr'
+      return 'flr'
     }
   }
 
@@ -64,7 +64,7 @@ export default function Details({ result }: { result: string }) {
       console.log('Ethereum address')
       setFilterResult(result)
     } else if (result) {
-      setTokenId(BigNumber.from(namehash.hash(result)));
+      setTokenId(BigNumber.from(utils.namehash(result)));
 
       const resultFiltered = result.endsWith('.flr')
         ? result.slice(0, -4)
@@ -142,7 +142,7 @@ export default function Details({ result }: { result: string }) {
     enabled: !isAvailable && prepared,
     args: [filterResult],
     onSuccess(data: any) {
-      // console.log('Success getLabelId', Number(data))
+      console.log('Success getLabelId', data)
       setExpiredReady(true)
     },
     onError(error) {
