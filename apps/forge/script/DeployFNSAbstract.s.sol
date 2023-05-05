@@ -41,6 +41,7 @@ abstract contract DeployFNSAbstract is Script {
     address deployerAddress;
     uint256 deployerPrivKey;
 
+    BaseRegistrar baseRegistrar;
     PublicResolver publicResolver;
     FLRRegistrarController flrRegistrarController;
     MintedDomainNames mintedDomainNames;
@@ -50,10 +51,10 @@ abstract contract DeployFNSAbstract is Script {
 
     // Entrypoint to deploy script
     function setUp() external {
-        // deployerPrivKey = ANVIL_DEPLOYER_PRIVATE_KEY;
-        // deployerAddress = ANVIL_DEPLOYER_ADDRESS;
-        deployerPrivKey = DEPLOYER_PRIVATE_KEY;
-        deployerAddress = DEPLOYER_ADDRESS;
+        deployerPrivKey = ANVIL_DEPLOYER_PRIVATE_KEY;
+        deployerAddress = ANVIL_DEPLOYER_ADDRESS;
+        // deployerPrivKey = DEPLOYER_PRIVATE_KEY;
+        // deployerAddress = DEPLOYER_ADDRESS;
         vm.startBroadcast(deployerPrivKey);
 
         // Begin script specifics
@@ -69,7 +70,7 @@ abstract contract DeployFNSAbstract is Script {
         NoNameCollisions noNameCollisions = new NoNameCollisions(0xBDACF94dDCAB51c39c2dD50BffEe60Bb8021949a);
 
         // This is Ownable, and owned by the msg.sender (private key)
-        BaseRegistrar baseRegistrar = new BaseRegistrar(fnsRegistry, FNSNamehash.namehash('flr'), noNameCollisions);
+        baseRegistrar = new BaseRegistrar(fnsRegistry, FNSNamehash.namehash('flr'), noNameCollisions);
 
         // Make BaseRegistrar the owner of the base 'flr' node
         baseRegistrar.addController(deployerAddress);
