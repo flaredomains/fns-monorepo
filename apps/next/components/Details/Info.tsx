@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Like from '../../public/Like.svg'
 import Dislike from '../../public/Dislike.svg'
 import Clipboard_copy from '../../public/Clipboard_copy.svg'
@@ -65,6 +65,10 @@ const InfoLine = ({
 }
 
 const Alert = ({ available }: { available: boolean }) => {
+  useEffect(() => {
+    console.log("Details::Info::Alert - available changed", available)
+  }, [available])
+
   return (
     <>
       <div className="flex w-full bg-gray-500 py-3 px-5 rounded-lg">
