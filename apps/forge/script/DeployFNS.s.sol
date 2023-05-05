@@ -54,7 +54,7 @@ contract DeployFNS is Script, DeployFNSAbstract {
     function mintGiftDomains() private {
         baseRegistrar.setApprovalForAll(address(nameWrapper), true);
 
-        for(uint i = 0; i < giftDomains.length; ++i) {
+        for (uint256 i = 0; i < giftDomains.length; ++i) {
             console.log("MINTING: %s.flr", giftDomains[i]);
             baseRegistrar.register(giftDomains[i], deployerAddress, 365 days);
             nameWrapper.wrapETH2LD(giftDomains[i], deployerAddress, 0, address(publicResolver));
