@@ -140,7 +140,7 @@ const Info = ({
   // setText(namehash.hash(fullDomainName), "email", "simone@gmail.com")
   const { config: prepareSetText } = usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
-    abi: TextResolver.abi,
+    abi: PublicResolver.abi,
     functionName: 'setText',
     args: [namehash.hash(result), leftText.toLowerCase(), input],
     enabled: !isAddressList && input !== '',
@@ -171,7 +171,7 @@ const Info = ({
   // setAddr(bytes32 node, uint256 coinType, bytes a)
   const { config: prepareSetAddr } = usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
-    abi: AddrResolver.abi,
+    abi: PublicResolver.abi,
     functionName: 'setAddr',
     args: [
       namehash.hash(result),
@@ -356,7 +356,7 @@ export default function Content({
   // TODO: also has access to it
   const { data: addresses } = useContractRead({
     address: PublicResolver.address as `0x${string}`,
-    abi: AddrResolver.abi,
+    abi: PublicResolver.abi,
     functionName: 'addr',
     enabled: prepared && recordPrepared,
     args: [namehash.hash(result), /*formatsByName[leftText].coinType*/],
@@ -369,7 +369,7 @@ export default function Content({
 
   const textsPrepare = keysTexts.map((item, index) => ({
     address: PublicResolver.address as `0x${string}`,
-    abi: TextResolver.abi,
+    abi: PublicResolver.abi,
     functionName: 'text',
     args: [namehash.hash(result), item.toLowerCase()],
   }))
