@@ -7,6 +7,7 @@ import "./DeployFNSAbstract.s.sol";
 
 contract DeployFNS is Script, DeployFNSAbstract {
     string[] giftDomains = [
+        // Influencer Domains
         "xrpmonk",
         "web3iam",
         "uttam",
@@ -36,16 +37,16 @@ contract DeployFNS is Script, DeployFNSAbstract {
         "flarebuilder",
         "erik",
         "delx",
-        "_delx",  // alt for collision
+        "_delx", // alt for collision
         "danrocky",
         "charlieshrem",
         "blazeswap",
         "bank",
-        "_bank",  // alt for collision
+        "_bank", // alt for collision
         "ash",
         "_ash", // alt for collision
         "annieways",
-        "annie-ways",  // alt for collision
+        "annie-ways", // alt for collision
         "digitalasset",
         "digitalperspectives",
         "digperspectives"
@@ -61,9 +62,9 @@ contract DeployFNS is Script, DeployFNSAbstract {
     function mintGiftDomains() private {
         baseRegistrar.setApprovalForAll(address(nameWrapper), true);
 
-        for(uint i = 0; i < giftDomains.length; ++i) {
+        for (uint256 i = 0; i < giftDomains.length; ++i) {
             console.log("[%s.flr] Attempting Mint...", giftDomains[i]);
-            if(baseRegistrar.isNotCollision(giftDomains[i])) {
+            if (baseRegistrar.isNotCollision(giftDomains[i])) {
                 baseRegistrar.register(giftDomains[i], deployerAddress, 365 days);
                 nameWrapper.wrapETH2LD(giftDomains[i], deployerAddress, 0, address(publicResolver));
                 console.log("\t[%s.flr] minted!", giftDomains[i]);

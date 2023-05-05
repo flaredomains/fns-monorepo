@@ -48,16 +48,16 @@ contract Template is Script {
         "flarebuilder",
         "erik",
         "delx",
-        "_delx",  // alt for collision
+        "_delx", // alt for collision
         "danrocky",
         "charlieshrem",
         "blazeswap",
         "bank",
-        "_bank",  // alt for collision
+        "_bank", // alt for collision
         "ash",
         "_ash", // alt for collision
         "annieways",
-        "annie-ways",  // alt for collision
+        "annie-ways", // alt for collision
         "digitalasset",
         "digitalperspectives",
         "digperspectives"
@@ -81,10 +81,10 @@ contract Template is Script {
         console.log("run()");
         IBasePunkTLD collisionRegistry = IBasePunkTLD(0xBDACF94dDCAB51c39c2dD50BffEe60Bb8021949a);
 
-        for(uint i = 0; i < giftDomains.length; ++i) {
+        for (uint256 i = 0; i < giftDomains.length; ++i) {
             //console.log("[%s.flr] Checking Availability", giftDomains[i]);
             address owner = collisionRegistry.getDomainHolder(giftDomains[i]);
-            if(owner == address(0)) {
+            if (owner == address(0)) {
                 console.log("%s.flr\ttrue", giftDomains[i]);
             } else {
                 console.log("%s.flr\tfalse\t%s", giftDomains[i], owner);
