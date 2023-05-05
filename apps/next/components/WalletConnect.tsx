@@ -27,7 +27,7 @@ const WalletConnectSection = () => {
           alt="FNS"
         />
         <p className="text-xs font-medium">
-          {isConnected ? `${chain.name} Network` : 'Wallet Not Connected'}
+          {isConnected ? `${chain?.name} Network` : 'Wallet Not Connected'}
         </p>
       </div>
       {/* Messages */}
