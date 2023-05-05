@@ -1,0 +1,219 @@
+No files changed, compilation skipped
+[32mScript ran successfully.[0m
+
+== Logs ==
+  1. fnsRegistry: 0x7EFd59E0Cd291c1B5Dca77a9862A8943C1445726
+  2. noNameCollisions: 0x1AED499900376987b9e5C27EA196f3507cBF7914
+  3. baseRegistrar: 0x570F7b5F751B50b5B2DFF35d553cE05cB27697a7
+  4. mintedDomainNames: 0x5D09A2b2E29d5cB160f78EfA941Ad937BAC6De86
+  5. subdomainTracker: 0x0Fd7cC33C19881A39467A3A4f46e42c8fa0C7112
+  6. metadataService: 0x7B52dD4574d6473040bFE899899254CA3348db0f
+  7. nameWrapper: 0xA0A9b5B27D8dd064D0109501c1BFd61da17f2052
+  8. reverseRegistrar: 0xd1535858F7E8b4bee9BcBF39c498207Eb301D35b
+  9. stablePriceOracle: 0x1fb8430508D8699973208B7B6E4245d6d7221C3d
+  10. flrRegistrarController: 0x63Adf61F7a3C8BC78E32A5B447f3bc5D260Aa182
+  11. publicResolver: 0xdB37c3279c36516f0F90d069D8F18eCdD9D7D4D1
+
+==========================
+
+Chain 14
+
+Estimated gas price: 50 gwei
+
+Estimated total gas used for script: 21977962
+
+Estimated amount required: 1.0988981 ETH
+
+==========================
+
+###
+Finding wallets for all the necessary addresses...
+##
+Sending transactions [0 - 25].
+
+Transactions saved to: /home/ric/dev/projects/elevate/fns-back-end/apps/forge/broadcast/DeployFNS.s.sol/14/run-latest.json
+
+##
+Waiting for receipts.
+
+##### 14
+✅ Hash: 0x096f54f37a38443cb694314979a28dcca8c8fc66f35529fda2f8f9ef5fa55d8b
+Contract Address: 0x7efd59e0cd291c1b5dca77a9862a8943c1445726
+Block: 8293432
+Paid: 0.018010692 ETH (643239 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0xc2baedb210c034b63a21252e8814f05891a8dd48f2e6a2776797fea09e5abd18
+Contract Address: 0x1aed499900376987b9e5c27ea196f3507cbf7914
+Block: 8293432
+Paid: 0.00888426 ETH (317295 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0x74d6157a17187f35f50036679e3ce2095b627d217c0a07e9faf783d2e8d78678
+Contract Address: 0x570f7b5f751b50b5b2dff35d553ce05cb27697a7
+Block: 8293433
+Paid: 0.061871292 ETH (2209689 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0x35524c2f5106460bbdb839a87f037678f3a0cb27d93fee16060d4bd26a1f1317
+Block: 8293434
+Paid: 0.00132538 ETH (47335 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0xb980be3610aadb1cbfcbfcc9dd50cad7204079cbf8506285aeedd15a266babe0
+Block: 8293434
+Paid: 0.001372924 ETH (49033 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0xb87ec3c3e58f2bb64a51c7da053cb93f85a5746aa06444fa0a818ea5a4c128be
+Contract Address: 0x7b52dd4574d6473040bfe899899254ca3348db0f
+Block: 8293434
+Paid: 0.007041804 ETH (251493 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0x77b614e769bdbcf365ccb5867a8bdc2def62f94eed18862e54629e215c7fb4eb
+Contract Address: 0xa0a9b5b27d8dd064d0109501c1bfd61da17f2052
+Block: 8293435
+Paid: 0.147533148 ETH (5269041 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0x92b78526fd01a4cb7fba0001ffb91039fd8c7ccf52c7c2ea19369e25485f1995
+Contract Address: 0x5d09a2b2e29d5cb160f78efa941ad937bac6de86
+Block: 8293439
+Paid: 0.0272034 ETH (971550 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0xc51a57e5f5dd81f6cce0b812139bca6a730bbea8feb51fb9bff1a21333089634
+Contract Address: 0x0fd7cc33c19881a39467a3a4f46e42c8fa0c7112
+Block: 8293439
+Paid: 0.016974244 ETH (606223 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0x7e7a704429b96c0a59462d041e6bb94f573e9c5284eeaca2776b13bf10062f52
+Block: 8293439
+Paid: 0.00132594 ETH (47355 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0x4956ea6d457d548abf2a709b102f9759f99dcec48b26a38df9ffd7c107d79493
+Block: 8293439
+Paid: 0.001323476 ETH (47267 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0xd2d3347d44c00763c03a0829928849c41a998a35d714fbc403df80c97e2c59c3
+Contract Address: 0xd1535858f7e8b4bee9bcbf39c498207eb301d35b
+Block: 8293440
+Paid: 0.021542724 ETH (769383 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0xe06dc382e1ae05706c711b04a2955f5bc641248d169bb5b041c6bb88d55ed6af
+Block: 8293441
+Paid: 0.001372588 ETH (49021 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0xc04bb3e6bb8aaa550bededb9feb92c2bf13795f21c9ad862a41f5472aaf8eddb
+Block: 8293441
+Paid: 0.001383676 ETH (49417 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0x9adbf485d6b16da9f50216df42d722d5ee2a4b6d0e3ac773deda93fad144d427
+Block: 8293441
+Paid: 0.001714748 ETH (61241 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0x51e1eeb4d15c125a960ae541b0961c7809e5d275124d544bb82c810291900237
+Contract Address: 0x1fb8430508d8699973208b7b6e4245d6d7221c3d
+Block: 8293441
+Paid: 0.028729064 ETH (1026038 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0x8edb1ed1a03f2541153b2cfe1d914af86441e45b5e445aaeaaaf4066df38318c
+Contract Address: 0x63adf61f7a3c8bc78e32a5b447f3bc5d260aa182
+Block: 8293442
+Paid: 0.046319532 ETH (1654269 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0x1524be59ca0be022127e2f0f7b626a9d4eea649a92d800f6e17abb504f3d7033
+Contract Address: 0xdb37c3279c36516f0f90d069d8f18ecdd9d7d4d1
+Block: 8293445
+Paid: 0.056906864 ETH (2032388 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0x5c7fc783fee129357b8f517bdb75dad785a82d1acbfcebfb7fa912962f0f6f88
+Block: 8293446
+Paid: 0.00164122 ETH (58615 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0xd2fa604fc97d5069d163bb9dc1397ea3a9cc1305e69a3ee550848d70f6b488cd
+Block: 8293448
+Paid: 0.001323196 ETH (47257 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0x71a54bdea55b6476cec750e1cd1b6bb4bcce9663df88cdf5554196d7ee4be119
+Block: 8293448
+Paid: 0.00132538 ETH (47335 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0x4f7eedd9a866cb7857517ea3bdc4dcccc2a1dec0f275aa593a28ff2c3eafa7ee
+Block: 8293448
+Paid: 0.00134008 ETH (47860 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0xecb94b1a048922d7a209230ff7d61db7d9dc91dd77a3bc04f29c28f7ec981620
+Block: 8293449
+Paid: 0.001340024 ETH (47858 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0x4a33425d4b0b9b8db8bb53a15444bb3d6a2abd346e24cb298e4fee9441c12477
+Block: 8293449
+Paid: 0.001294888 ETH (46246 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0x86df8803356e0ed5da2890710b539f5bc6792b4ea5ac47696ac7c2ba1b649a7e
+Block: 8293450
+Paid: 0.003872428 ETH (138301 gas * 28 gwei)
+
+
+##### 14
+✅ Hash: 0xc1e406a28347d7fcfc26a0e29fde00d6095cdb4742b57b3c7b9263f62dfd39b4
+Block: 8293450
+Paid: 0.008054592 ETH (287664 gas * 28 gwei)
+
+
+Transactions saved to: /home/ric/dev/projects/elevate/fns-back-end/apps/forge/broadcast/DeployFNS.s.sol/14/run-latest.json
+
+
+
+==========================
+
+ONCHAIN EXECUTION COMPLETE & SUCCESSFUL.
+Total Paid: 0.471027564 ETH (16822413 gas * avg 28 gwei)
+##
+Start verification for (11) contracts
+Start verifying contract `0x7efd59e0cd291c1b5dca77a9862a8943c1445726` deployed on 14
+
+Transactions saved to: /home/ric/dev/projects/elevate/fns-back-end/apps/forge/broadcast/DeployFNS.s.sol/14/run-latest.json
+
