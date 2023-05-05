@@ -112,8 +112,8 @@ contract StablePriceOracle is IPriceOracle, IERC165, Ownable {
         IFtsoRegistry ftsoRegistry = IFtsoRegistry(flareContractRegistry.getContractAddressByName("FtsoRegistry"));
 
         // Now, grab the pricing data from the on-chain Oracle Contract
-        (flrPriceUSD, timestamp, decimals) = ftsoRegistry.getCurrentPriceWithDecimals("C2FLR");
-        // (flrPriceUSD, timestamp, decimals) = ftsoRegistry.getCurrentPriceWithDecimals("SGB");
+        // (flrPriceUSD, timestamp, decimals) = ftsoRegistry.getCurrentPriceWithDecimals("C2FLR");
+        (flrPriceUSD, timestamp, decimals) = ftsoRegistry.getCurrentPriceWithDecimals("SGB");
         // (flrPriceUSD, timestamp, decimals) = ftsoRegistry.getCurrentPriceWithDecimals("FLR");
     }
 

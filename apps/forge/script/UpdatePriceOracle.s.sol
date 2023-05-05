@@ -26,7 +26,7 @@ contract UpdatePriceOracle is Script {
         // FNSRegistry fnsRegistry = FNSRegistry(0x8E60eEeB7634930bba7a9d74f01Af9c9e78c9063);
         // BaseRegistrar baseRegistrar = BaseRegistrar(0x7113e298973444eCC1c52bDdA92B2Ad5d5399426);
         FLRRegistrarController flrRegistrarController =
-            FLRRegistrarController(0xD12560b5cf53055cf4717bA609b69914b816C8CA);
+            FLRRegistrarController(0x8C41EFcb8C28A31957f517aC1E8D136E66623351);
 
         console.log("FLRRegistrarController owner=%s", flrRegistrarController.owner());
 
