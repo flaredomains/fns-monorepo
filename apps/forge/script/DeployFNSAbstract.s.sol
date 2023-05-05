@@ -12,7 +12,8 @@ import "fns/registry/ReverseRegistrar.sol";
 import "fns/wrapper/NameWrapper.sol";
 import "fns/wrapper/StaticMetadataService.sol";
 import "fns/flr-registrar/FLRRegistrarController.sol";
-import "fns/flr-registrar/mock/MockStablePriceOracle.sol";
+// import "fns/flr-registrar/mock/MockStablePriceOracle.sol";
+import "fns/flr-registrar/StablePriceOracle.sol";
 import "fns/flr-registrar/DummyOracle.sol";
 import "fns/no-collisions/NoNameCollisions.sol";
 import "fns/no-collisions/mocks/MockPunkTLD.sol";
@@ -36,6 +37,9 @@ abstract contract DeployFNSAbstract is Script {
     address immutable OWNER_ADDRESS = vm.envAddress("OWNER_ADDRESS");
     uint256 immutable OWNER_PRIVATE_KEY = vm.envUint("OWNER_PRIVATE_KEY");
 
+    address deployerAddress;
+    uint256 deployerPrivKey;
+
     PublicResolver publicResolver;
     FLRRegistrarController flrRegistrarController;
     MintedDomainNames mintedDomainNames;
@@ -45,11 +49,10 @@ abstract contract DeployFNSAbstract is Script {
 
     // Entrypoint to deploy script
     function setUp() external {
-        uint256 deployerPrivKey = ANVIL_DEPLOYER_PRIVATE_KEY;
-        address deployerAddress = ANVIL_DEPLOYER_ADDRESS;
-        // uint256 deployerPrivKey = DEPLOYER_PRIVATE_KEY;
-        // address deployerAddress = DEPLOYER_ADDRESS;
-
+        // deployerPrivKey = ANVIL_DEPLOYER_PRIVATE_KEY;
+        // deployerAddress = ANVIL_DEPLOYER_ADDRESS;
+        deployerPrivKey = DEPLOYER_PRIVATE_KEY;
+        deployerAddress = DEPLOYER_ADDRESS;
         vm.startBroadcast(deployerPrivKey);
 
         // Begin script specifics
@@ -92,10 +95,17 @@ abstract contract DeployFNSAbstract is Script {
         reverseRegistrar.claim(deployerAddress);
 
         // TODO: Update this to Regular StablePriceOracle for mainnet deployment
-        MockStablePriceOracle stablePriceOracle = new MockStablePriceOracle(
+        // MockStablePriceOracle stablePriceOracle = new MockStablePriceOracle(
+        //     0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
+        //     // [uint256(500), 350, 300, 100, 5]);
+        //     [uint256(5), 4, 3, 2, 1]);
+        StablePriceOracle stablePriceOracle = new StablePriceOracle(
             0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
             // [uint256(500), 350, 300, 100, 5]);
-            [uint256(5), 4, 3, 2, 1]);
+            [uint256(5), 4, 3, 2, 1],
+            "SGB"
+        );
+
         flrRegistrarController = new FLRRegistrarController(
             baseRegistrar,
             stablePriceOracle,
