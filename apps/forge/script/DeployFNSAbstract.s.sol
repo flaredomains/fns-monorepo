@@ -24,6 +24,7 @@ bytes32 constant ROOT_NODE = 0x0;
 
 abstract contract DeployFNSAbstract is Script {
     string constant METADATA_SERVICE_URI = "https://fns.infura-ipfs.io/ipfs/QmSmtZszSZPfHokzKzcvaWxBbrnduiVCho6fDkaVjFPM4x";
+    string constant TICKER = "C2FLR";
 
     // Anvil Wallets
     address immutable ANVIL_DEPLOYER_ADDRESS = vm.envAddress("ANVIL_DEPLOYER_ADDRESS");
@@ -102,8 +103,7 @@ abstract contract DeployFNSAbstract is Script {
         StablePriceOracle stablePriceOracle = new StablePriceOracle(
             0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
             // [uint256(500), 350, 300, 100, 5]);
-            [uint256(5), 4, 3, 2, 1],
-            "SGB"
+            [uint256(5), 4, 3, 2, 1]
         );
 
         flrRegistrarController = new FLRRegistrarController(
