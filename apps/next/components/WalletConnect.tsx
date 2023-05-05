@@ -1,14 +1,21 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Plus from '../public/Plus.svg'
 import X from '../public/X.svg'
 import Network from '../public/Network.svg'
 import Image from 'next/image'
 import { Web3Button } from '@web3modal/react'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 
 const WalletConnectSection = () => {
   const { address, isConnected } = useAccount() as any
-  const { chain } = useNetwork() as any
+  const { chain } = useNetwork()
+  const { switchNetwork } = useSwitchNetwork()
+
+  useEffect(() => {
+    if(chain?.id !== 14 && chain?.name !== 'Flare') {
+      switchNetwork?.(14)
+    }
+  }, [chain, switchNetwork])
 
   return (
     <>
