@@ -1,11 +1,11 @@
 {
-  "address": "0xd41653631E077f2A5B2fcDE6fE30501753222D90",
+  "address": "0x9681774c2f77D5d2c3f30dCe490EFF3AF7B4d4aa",
   "abi": [
     {
       "inputs": [
         {
           "internalType": "contract IFNS",
-          "name": "_ens",
+          "name": "_fns",
           "type": "address"
         },
         {
@@ -111,6 +111,31 @@
       ],
       "name": "UnauthorisedAddr",
       "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "approved",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "Approval",
+      "type": "event"
     },
     {
       "anonymous": false,
@@ -409,6 +434,24 @@
       "inputs": [
         {
           "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "approve",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
           "name": "account",
           "type": "address"
         },
@@ -448,6 +491,30 @@
           "internalType": "uint256[]",
           "name": "",
           "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "node",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "addr",
+          "type": "address"
+        }
+      ],
+      "name": "canExtendSubnames",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
         }
       ],
       "stateMutability": "view",
@@ -546,6 +613,25 @@
           "type": "uint256"
         }
       ],
+      "name": "getApproved",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
       "name": "getData",
       "outputs": [
         {
@@ -565,30 +651,6 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "label",
-          "type": "string"
-        }
-      ],
-      "name": "getFLRTokenId",
-      "outputs": [
-        {
-          "internalType": "bytes32",
-          "name": "nodeHash",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "uint256",
-          "name": "tokenId",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "pure",
       "type": "function"
     },
     {
@@ -772,25 +834,6 @@
         }
       ],
       "name": "ownerOf",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "owner",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "label",
-          "type": "string"
-        }
-      ],
-      "name": "ownerOfLabel",
       "outputs": [
         {
           "internalType": "address",
@@ -1240,6 +1283,19 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "subdomainTrackerContract",
+      "outputs": [
+        {
+          "internalType": "contract ISubdomainTracker",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "bytes4",
@@ -1333,8 +1389,21 @@
     {
       "inputs": [
         {
+          "internalType": "contract ISubdomainTracker",
+          "name": "newContract",
+          "type": "address"
+        }
+      ],
+      "name": "updateSubdomainTrackerContract",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "bytes",
-          "name": "_name",
+          "name": "name",
           "type": "bytes"
         },
         {
@@ -1384,7 +1453,7 @@
       "inputs": [
         {
           "internalType": "bytes",
-          "name": "_name",
+          "name": "name",
           "type": "bytes"
         },
         {
@@ -1427,7 +1496,13 @@
         }
       ],
       "name": "wrapETH2LD",
-      "outputs": [],
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "expiry",
+          "type": "uint64"
+        }
+      ],
       "stateMutability": "nonpayable",
       "type": "function"
     }
