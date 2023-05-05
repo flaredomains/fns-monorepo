@@ -14,6 +14,7 @@ contract DeployFNS is Script, DeployFNSAbstract {
         "timrowley",
         "thanasimos",
         "solidifi",
+        "_solidifi", // alt for collision
         "scooterbrah",
         "santiago",
         "rulexrp",
@@ -23,6 +24,7 @@ contract DeployFNS is Script, DeployFNSAbstract {
         "neb",
         "mrfreshtime",
         "maxluck",
+        "max-luck", // alt for collision
         "legalguardian",
         "joshua",
         "johnsmith",
@@ -30,15 +32,20 @@ contract DeployFNS is Script, DeployFNSAbstract {
         "girlintheverse",
         "flarescan",
         "flarepedia",
+        "flare-pedia", // alt for collision
         "flarebuilder",
         "erik",
         "delx",
+        "_delx",  // alt for collision
         "danrocky",
         "charlieshrem",
         "blazeswap",
         "bank",
+        "_bank",  // alt for collision
         "ash",
+        "_ash", // alt for collision
         "annieways",
+        "annie-ways",  // alt for collision
         "digitalasset",
         "digitalperspectives",
         "digperspectives"
@@ -54,10 +61,15 @@ contract DeployFNS is Script, DeployFNSAbstract {
     function mintGiftDomains() private {
         baseRegistrar.setApprovalForAll(address(nameWrapper), true);
 
-        for (uint256 i = 0; i < giftDomains.length; ++i) {
-            console.log("MINTING: %s.flr", giftDomains[i]);
-            baseRegistrar.register(giftDomains[i], deployerAddress, 365 days);
-            nameWrapper.wrapETH2LD(giftDomains[i], deployerAddress, 0, address(publicResolver));
+        for(uint i = 0; i < giftDomains.length; ++i) {
+            console.log("[%s.flr] Attempting Mint...", giftDomains[i]);
+            if(baseRegistrar.isNotCollision(giftDomains[i])) {
+                baseRegistrar.register(giftDomains[i], deployerAddress, 365 days);
+                nameWrapper.wrapETH2LD(giftDomains[i], deployerAddress, 0, address(publicResolver));
+                console.log("\t[%s.flr] minted!", giftDomains[i]);
+            } else {
+                console.log("\t[%s.flr] collision - failed to mint", giftDomains[i]);
+            }
         }
     }
 }
