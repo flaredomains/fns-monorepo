@@ -23,7 +23,8 @@ import "fns-test/utils/FNSNamehash.sol";
 bytes32 constant ROOT_NODE = 0x0;
 
 abstract contract DeployFNSAbstract is Script {
-    string constant METADATA_SERVICE_URI = "https://fns.infura-ipfs.io/ipfs/QmSmtZszSZPfHokzKzcvaWxBbrnduiVCho6fDkaVjFPM4x";
+    string constant METADATA_SERVICE_URI =
+        "https://fns.infura-ipfs.io/ipfs/QmSmtZszSZPfHokzKzcvaWxBbrnduiVCho6fDkaVjFPM4x";
     string constant TICKER = "C2FLR";
 
     // Anvil Wallets

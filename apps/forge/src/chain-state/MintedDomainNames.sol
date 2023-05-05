@@ -4,9 +4,6 @@ pragma solidity ^0.8.18;
 import "./IMintedDomainNames.sol";
 import "fns/wrapper/INameWrapper.sol";
 
-// TODO: Remove
-import "forge-std/console.sol";
-
 contract MintedDomainNames is IMintedDomainNames {
     mapping(uint256 => string) public tokenIdToName;
     mapping(address => IMintedDomainNames.Data[]) public mintedDomainNames;
@@ -66,10 +63,6 @@ contract MintedDomainNames is IMintedDomainNames {
         external
         isNameWrapper
     {
-        // // TODO: Remove this
-        // console.log("MintedDomainNames::add(owner:%s, id:%s, expiry:%s, label:...)", owner, id, expiry);
-        // console.logString(label);
-
         // We're safe to add label here because id will always match label. At worst, we will overwrite
         tokenIdToName[id] = label;
 
@@ -93,9 +86,6 @@ contract MintedDomainNames is IMintedDomainNames {
         string calldata label
     ) external isNameWrapper {
         string memory fullNameWithoutTLD = string.concat(label, ".", tokenIdToName[parentNodeTokenId]);
-        // console.log("MintedDomainNames::addSubdomain(...)");
-        // console.logString(fullNameWithoutTLD);
-
         // We're safe to add label here because id will always match label. At worst, we will overwrite
         tokenIdToName[id] = fullNameWithoutTLD;
 
@@ -112,10 +102,6 @@ contract MintedDomainNames is IMintedDomainNames {
         external
         isNameWrapper
     {
-        // TODO: Remove this
-        // console.log("addFromTransfer");
-        // console.logString(tokenIdToName[id]);
-
         mintedDomainNames[owner].push(IMintedDomainNames.Data(id, fuses, expiry, tokenIdToName[id]));
     }
 }

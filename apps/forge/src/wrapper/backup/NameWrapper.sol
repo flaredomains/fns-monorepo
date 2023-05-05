@@ -29,9 +29,6 @@ import {ERC20Recoverable} from "fns/utils/ERC20Recoverable.sol";
 import {IMintedDomainNames} from "fns/chain-state/IMintedDomainNames.sol";
 import {ISubdomainTracker} from "fns/chain-state/ISubdomainTracker.sol";
 
-// TODO: Remove
-import "forge-std/console.sol";
-
 error UnauthorisedAddr(bytes32 node, address addr);
 error IncompatibleParent();
 error IncorrectTokenType();
@@ -532,11 +529,7 @@ contract NameWrapper is Ownable, ERC1155Fuse, INameWrapper, Controllable, IERC72
         uint32 fuses,
         uint64 expiry
     ) public onlyTokenOwner(parentNode) returns (bytes32 node) {
-        // console.log("--- setSubnodeRecord ---");
-        // console.logString(label);
-
         bytes32 labelhash = keccak256(bytes(label));
-        // console.logBytes32(labelhash);
 
         node = _makeNode(parentNode, labelhash);
         _checkCanCallSetSubnodeOwner(parentNode, node);

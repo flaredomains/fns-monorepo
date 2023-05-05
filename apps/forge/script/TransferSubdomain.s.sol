@@ -54,7 +54,8 @@ contract Template is Script {
             DEPLOYER_ADDRESS,
             90061277657323471254005440716096034898587984338765359268584837035352089310914,
             1,
-            emptyBytes);
+            emptyBytes
+        );
 
         vm.stopBroadcast();
     }
