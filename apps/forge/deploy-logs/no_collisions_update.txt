@@ -1,0 +1,220 @@
+Compiling 1 files with 0.8.18
+Solc 0.8.18 finished in 2.15s
+Compiler run successful (with warnings)
+[33mwarning[2519]: [0m[33mWarning: This declaration shadows an existing declaration.
+   --> src/wrapper/NameWrapper.sol:332:19:
+    |
+332 |     function wrap(bytes calldata name, address wrappedOwner, address resolver) public {
+    |                   ^^^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+  --> src/wrapper/NameWrapper.sol:52:5:
+   |
+52 |     string public constant name = "NameWrapper";
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[0m
+
+[33mwarning[2519]: [0m[33mWarning: This declaration shadows an existing declaration.
+   --> src/wrapper/NameWrapper.sol:457:22:
+    |
+457 |     function upgrade(bytes calldata name, bytes calldata extraData) public {
+    |                      ^^^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+  --> src/wrapper/NameWrapper.sol:52:5:
+   |
+52 |     string public constant name = "NameWrapper";
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[0m
+
+[33mwarning[2519]: [0m[33mWarning: This declaration shadows an existing declaration.
+   --> src/wrapper/NameWrapper.sol:533:9:
+    |
+533 |         bytes memory name = _saveLabel(parentNode, node, label);
+    |         ^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+  --> src/wrapper/NameWrapper.sol:52:5:
+   |
+52 |     string public constant name = "NameWrapper";
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[0m
+
+[33mwarning[2519]: [0m[33mWarning: This declaration shadows an existing declaration.
+   --> src/wrapper/NameWrapper.sol:694:9:
+    |
+694 |         bytes memory name = names[node];
+    |         ^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+  --> src/wrapper/NameWrapper.sol:52:5:
+   |
+52 |     string public constant name = "NameWrapper";
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[0m
+
+[33mwarning[2519]: [0m[33mWarning: This declaration shadows an existing declaration.
+   --> src/wrapper/NameWrapper.sol:799:45:
+    |
+799 |     function _addLabel(string memory label, bytes memory name) internal pure returns (bytes memory ret) {
+    |                                             ^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+  --> src/wrapper/NameWrapper.sol:52:5:
+   |
+52 |     string public constant name = "NameWrapper";
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[0m
+
+[33mwarning[2519]: [0m[33mWarning: This declaration shadows an existing declaration.
+   --> src/wrapper/NameWrapper.sol:820:34:
+    |
+820 |     function _wrap(bytes32 node, bytes memory name, address wrappedOwner, uint32 fuses, uint64 expiry) internal {
+    |                                  ^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+  --> src/wrapper/NameWrapper.sol:52:5:
+   |
+52 |     string public constant name = "NameWrapper";
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[0m
+
+[33mwarning[2519]: [0m[33mWarning: This declaration shadows an existing declaration.
+   --> src/wrapper/NameWrapper.sol:833:9:
+    |
+833 |         bytes memory name = _addLabel(label, names[parentNode]);
+    |         ^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+  --> src/wrapper/NameWrapper.sol:52:5:
+   |
+52 |     string public constant name = "NameWrapper";
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[0m
+
+[33mwarning[2519]: [0m[33mWarning: This declaration shadows an existing declaration.
+   --> src/wrapper/NameWrapper.sol:838:9:
+    |
+838 |         bytes memory name = _addLabel(label, names[parentNode]);
+    |         ^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+  --> src/wrapper/NameWrapper.sol:52:5:
+   |
+52 |     string public constant name = "NameWrapper";
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[0m
+
+[33mwarning[2519]: [0m[33mWarning: This declaration shadows an existing declaration.
+   --> src/wrapper/NameWrapper.sol:852:9:
+    |
+852 |         bytes memory name = _addLabel(label, names[parentNode]);
+    |         ^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+  --> src/wrapper/NameWrapper.sol:52:5:
+   |
+52 |     string public constant name = "NameWrapper";
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[0m
+
+[33mwarning[2519]: [0m[33mWarning: This declaration shadows an existing declaration.
+   --> src/wrapper/NameWrapper.sol:906:9:
+    |
+906 |         bytes memory name = _addLabel(label, "\x03flr\x00");
+    |         ^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+  --> src/wrapper/NameWrapper.sol:52:5:
+   |
+52 |     string public constant name = "NameWrapper";
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[0m
+
+[33mwarning[2072]: [0m[33mWarning: Unused local variable.
+  --> script/UpdateNoCollisions.s.sol:23:9:
+   |
+23 |         uint256 deployerAddress = vm.envUint("FLARE_DEPLOYER_ADDRESS");
+   |         ^^^^^^^^^^^^^^^^^^^^^^^
+
+[0m
+
+Traces:
+  [376171] [32mUpdateNoCollisions[0m::[32mrun[0m() [33m[0m
+    ├─ [0] [34mVM[0m::[34menvUint[0m(FLARE_DEPLOYER_PRIVATE_KEY) [33m[staticcall][0m
+    │   └─ [34m← [0m<env var value>
+    ├─ [0] [34mVM[0m::[34menvUint[0m(FLARE_DEPLOYER_ADDRESS) [33m[staticcall][0m
+    │   └─ [34m← [0m<env var value>
+    ├─ [0] [34mVM[0m::[34mstartBroadcast[0m(<pk>) [33m[0m
+    │   └─ [34m← [0m()
+    ├─ [2442] [32m0x570F7b5F751B50b5B2DFF35d553cE05cB27697a7[0m::[32mowner[0m() [33m[staticcall][0m
+    │   └─ [32m← [0m0xBfbf256B6a4f830c762c7f9bcEca9018fBB70104
+    ├─ [0] [32mconsole[0m::[32mlog[0m(BaseRegistrar owner=%s, 0xBfbf256B6a4f830c762c7f9bcEca9018fBB70104) [33m[staticcall][0m
+    │   └─ [32m← [0m()
+    ├─ [287159] [33m→ [0m[33mnew[0m NoNameCollisions@0x65748B0eBfFF46f6d1f64468E5746175120c4C14
+    │   ├─ emit [36mOwnershipTransferred[0m(previousOwner: 0x0000000000000000000000000000000000000000, newOwner: 0xBfbf256B6a4f830c762c7f9bcEca9018fBB70104)
+    │   └─ [32m← [0m1204 bytes of code
+    ├─ [0] [32mconsole[0m::[32mlog[0m(Checking Collision that should happen) [33m[staticcall][0m
+    │   └─ [32m← [0m()
+    ├─ [8623] [32mNoNameCollisions[0m::[32misNameCollision[0m(bank) [33m[staticcall][0m
+    │   ├─ [4935] [32m0xBDACF94dDCAB51c39c2dD50BffEe60Bb8021949a[0m::[32mgetDomainHolder[0m(bank) [33m[staticcall][0m
+    │   │   └─ [32m← [0m0x000000000000000000000000bc8c693440b9274f116986f566b8200ad126e0b2
+    │   └─ [32m← [0mtrue
+    ├─ [6770] [32m0x570F7b5F751B50b5B2DFF35d553cE05cB27697a7[0m::[32m81a5fd7c[0m(00000000000000000000000065748b0ebfff46f6d1f64468e5746175120c4c14) [33m[0m
+    │   ├─  emit topic 0: [36m0x3ba861ce44755a4d3c596dae6fe297662cd501c21b9bab583767523ac5d7f873[0m
+    │   │       topic 1: [36m0x00000000000000000000000065748b0ebfff46f6d1f64468e5746175120c4c14[0m
+    │   │           data: [36m0x[0m
+    │   └─ [32m← [0m()
+    ├─ [5417] [32m0x570F7b5F751B50b5B2DFF35d553cE05cB27697a7[0m::[32m3fdf79d0[0m(0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000462616e6b00000000000000000000000000000000000000000000000000000000) [33m[staticcall][0m
+    │   ├─ [4123] [32mNoNameCollisions[0m::[32misNameCollision[0m(bank) [33m[staticcall][0m
+    │   │   ├─ [2935] [32m0xBDACF94dDCAB51c39c2dD50BffEe60Bb8021949a[0m::[32mgetDomainHolder[0m(bank) [33m[staticcall][0m
+    │   │   │   └─ [32m← [0m0x000000000000000000000000bc8c693440b9274f116986f566b8200ad126e0b2
+    │   │   └─ [32m← [0mtrue
+    │   └─ [32m← [0m0x0000000000000000000000000000000000000000000000000000000000000000
+    ├─ [0] [34mVM[0m::[34mstopBroadcast[0m() [33m[0m
+    │   └─ [34m← [0m()
+    └─ [32m← [0m()
+
+
+[32mScript ran successfully.[0m
+
+== Logs ==
+  BaseRegistrar owner=0xBfbf256B6a4f830c762c7f9bcEca9018fBB70104
+  Checking Collision that should happen
+
+SKIPPING ON CHAIN SIMULATION.
+
+###
+Finding wallets for all the necessary addresses...
+##
+Sending transactions [0 - 1].
+
+Transactions saved to: /home/ric/dev/projects/elevate/fns-back-end/apps/forge/broadcast/UpdateNoCollisions.s.sol/14/run-latest.json
+
+##
+Waiting for receipts.
+
+##### 14
+✅ Hash: 0x03469eb3c2be6c2eea431f3691e8718643506b4f045edc88161128cb00855e56
+Contract Address: 0x65748b0ebfff46f6d1f64468e5746175120c4c14
+Block: 8295721
+Paid: 0.011564711462775519 ETH (362847 gas * 31.872142977 gwei)
+
+
+##### 14
+✅ Hash: 0x4440c907d34d57e60adecd16ed8badeaf2d9dc0b5cfd95906f84201f08bd1e5f
+Block: 8295721
+Paid: 0.000962602462191354 ETH (30202 gas * 31.872142977 gwei)
+
+
+Transactions saved to: /home/ric/dev/projects/elevate/fns-back-end/apps/forge/broadcast/UpdateNoCollisions.s.sol/14/run-latest.json
+
+
+
+==========================
+
+ONCHAIN EXECUTION COMPLETE & SUCCESSFUL.
+Total Paid: 0.012527313924966873 ETH (393049 gas * avg 31.872142977 gwei)
+
+Transactions saved to: /home/ric/dev/projects/elevate/fns-back-end/apps/forge/broadcast/UpdateNoCollisions.s.sol/14/run-latest.json
+

@@ -1,7 +1,7 @@
-pragma solidity ^0.8.6;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
 
-interface IENS {
-
+interface IFNS {
     // Logged when the owner of a node assigns a new owner to a subnode.
     event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner);
 
@@ -19,7 +19,7 @@ interface IENS {
 
     function setRecord(bytes32 node, address owner, address resolver, uint64 ttl) external;
     function setSubnodeRecord(bytes32 node, bytes32 label, address owner, address resolver, uint64 ttl) external;
-    function setSubnodeOwner(bytes32 node, bytes32 label, address owner) external returns(bytes32);
+    function setSubnodeOwner(bytes32 node, bytes32 label, address owner) external returns (bytes32);
     function setResolver(bytes32 node, address resolver) external;
     function setOwner(bytes32 node, address owner) external;
     function setTTL(bytes32 node, uint64 ttl) external;
@@ -31,39 +31,31 @@ interface IENS {
     function isApprovedForAll(address owner, address operator) external view returns (bool);
 }
 
-// import "forge-std/console.sol";
-
 /**
- * The ENS registry contract.
+ * The FNS registry contract.
  */
-contract ENSRegistry is IENS {
-
+contract FNSRegistry is IFNS {
     struct Record {
         address owner;
         address resolver;
         uint64 ttl;
     }
 
-    mapping (bytes32 => Record) records;
-    mapping (address => mapping(address => bool)) operators;
+    mapping(bytes32 => Record) records;
+    mapping(address => mapping(address => bool)) operators;
 
     // Permits modifications only by the owner of the specified node.
     modifier authorised(bytes32 node) {
         address _owner = records[node].owner;
-        require(_owner == msg.sender || operators[_owner][msg.sender]);
+        require(_owner == msg.sender || operators[_owner][msg.sender], "FNSRegistry: Not authorised");
         _;
     }
 
     /**
-     * @dev Constructs a new ENS registrar.
+     * @dev Constructs a new FNS registrar.
      */
     constructor() {
         records[0x0].owner = msg.sender;
-
-        // TODO: Reconsider this approach. For now, it gives ownership to the creator
-        //       of the reverse node
-        // NOTE: namehash('reverse') => 0xa097f6721ce401e757d1223a763fef49b8b5f90bb18567ddb86fd205dff71d34
-        records[0xa097f6721ce401e757d1223a763fef49b8b5f90bb18567ddb86fd205dff71d34].owner = msg.sender;
     }
 
     /**
@@ -107,11 +99,8 @@ contract ENSRegistry is IENS {
      * @param label The hash of the label specifying the subnode.
      * @param _owner The address of the new owner.
      */
-    function setSubnodeOwner(bytes32 node, bytes32 label, address _owner) public authorised(node) returns(bytes32) {
+    function setSubnodeOwner(bytes32 node, bytes32 label, address _owner) public authorised(node) returns (bytes32) {
         bytes32 subnode = keccak256(abi.encodePacked(node, label));
-
-        // console.log("ENSRegistry::setSubnodeOwner::subnode");
-        // console.logBytes32(subnode);
 
         _setOwner(subnode, _owner);
         emit NewOwner(node, label, _owner);
@@ -140,7 +129,7 @@ contract ENSRegistry is IENS {
 
     /**
      * @dev Enable or disable approval for a third party ("operator") to manage
-     *  all of `msg.sender`'s ENS records. Emits the ApprovalForAll event.
+     *  all of `msg.sender`'s FNS records. Emits the ApprovalForAll event.
      * @param operator Address to add to the set of authorized operators.
      * @param approved True if the operator is approved, false to revoke approval.
      */
@@ -205,12 +194,12 @@ contract ENSRegistry is IENS {
     }
 
     function _setResolverAndTTL(bytes32 node, address _resolver, uint64 _ttl) internal {
-        if(_resolver != records[node].resolver) {
+        if (_resolver != records[node].resolver) {
             records[node].resolver = _resolver;
             emit NewResolver(node, _resolver);
         }
 
-        if(_ttl != records[node].ttl) {
+        if (_ttl != records[node].ttl) {
             records[node].ttl = _ttl;
             emit NewTTL(node, _ttl);
         }

@@ -35,11 +35,11 @@ export default function Details({ result }: { result: string }) {
 
   function getParentDomain(str: string) {
     // Define a regular expression pattern that matches subdomains of a domain that ends with .flr.
-    const subdomainPattern = /^([a-z0-9][a-z0-9-]*[a-z0-9]\.)+[a-z]{1,}\.flr$/i
+    const subdomainPattern = /^([a-zA-Z0-9-]+)\.{1}([a-zA-Z0-9-]+)\.{1}flr$/i
 
     // Use the regular expression pattern to test whether the string matches a subdomain.
     const isSubdomain = subdomainPattern.test(str)
-    console.log('isSubdomain', isSubdomain)
+    console.log('isSubdomain', str, isSubdomain)
     setIsSubdomain(isSubdomain);
 
     if (isSubdomain) {
@@ -52,6 +52,14 @@ export default function Details({ result }: { result: string }) {
       return 'flr'
     }
   }
+
+  useEffect(() => {
+    console.log("isAvailable changed", isAvailable)
+  }, [isAvailable])
+
+  useEffect(() => {
+    console.log("isSubdomain changed", isSubdomain)
+  }, [isSubdomain])
 
   // Check if result end with .flr and we do an hash with the resultFiltered for registrant and date
   useEffect(() => {
@@ -72,7 +80,7 @@ export default function Details({ result }: { result: string }) {
       const hash = web3.sha3(resultFiltered) as string
       setFilterResult(resultFiltered)
       setHashHex(hash)
-      setPreparedHash(true)
+      setPreparedHash(true);
     }
   }, [result])
 
@@ -86,6 +94,7 @@ export default function Details({ result }: { result: string }) {
     enabled: preparedHash && !isSubdomain,
     args: [filterResult],
     onSuccess(data: any) {
+      console.log("Details::FLRRegistrarController::available()", data)
       setPrepared(true)
       setIsAvailable(data)
     },
@@ -93,7 +102,7 @@ export default function Details({ result }: { result: string }) {
       console.log('Error available', error)
     },
   })
-
+  
   // Subdomains: Is name available
   useContractRead({
     address: NameWrapper.address as `0x${string}`,
@@ -102,6 +111,11 @@ export default function Details({ result }: { result: string }) {
     enabled: preparedHash && isSubdomain,
     args: [tokenId],
     onSuccess(data: string) {
+      console.log(
+        "Details::NameWrapper::ownerOf()",
+        data,
+        data === ZERO_ADDRESS,
+        "isSubdomain:", isSubdomain)
       setIsAvailable(data === ZERO_ADDRESS);
     },
     onError(error) {

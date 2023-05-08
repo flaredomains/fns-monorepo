@@ -1,8 +1,7 @@
-//SPDX-License-Identifier: MIT
-pragma solidity ~0.8.17;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
 
-interface IENS {
-
+interface IFNS {
     // Logged when the owner of a node assigns a new owner to a subnode.
     event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner);
 
@@ -20,7 +19,7 @@ interface IENS {
 
     function setRecord(bytes32 node, address owner, address resolver, uint64 ttl) external;
     function setSubnodeRecord(bytes32 node, bytes32 label, address owner, address resolver, uint64 ttl) external;
-    function setSubnodeOwner(bytes32 node, bytes32 label, address owner) external returns(bytes32);
+    function setSubnodeOwner(bytes32 node, bytes32 label, address owner) external returns (bytes32);
     function setResolver(bytes32 node, address resolver) external;
     function setOwner(bytes32 node, address owner) external;
     function setTTL(bytes32 node, uint64 ttl) external;
@@ -197,18 +196,11 @@ interface IERC721 is IERC165 {
 }
 
 interface IBaseRegistrar is IERC721 {
+    event NewNoNameCollisions(address indexed noNameCollisions);
     event ControllerAdded(address indexed controller);
     event ControllerRemoved(address indexed controller);
-    event NameMigrated(
-        uint256 indexed id,
-        address indexed owner,
-        uint256 expires
-    );
-    event NameRegistered(
-        uint256 indexed id,
-        address indexed owner,
-        uint256 expires
-    );
+    event ResolverSet(address indexed resolver);
+    event NameRegistered(string indexed name, uint256 indexed id, address indexed owner, uint256 expires);
     event NameRenewed(uint256 indexed id, uint256 expires);
 
     // Authorises a controller, who can register and renew domains.
@@ -226,21 +218,30 @@ interface IBaseRegistrar is IERC721 {
     // Returns true iff the specified name is available for registration.
     function available(uint256 id) external view returns (bool);
 
+    // Returns true iff the specified name is not a collision in another registry
+    function isNotCollision(string calldata name) external view returns (bool);
+
     /**
      * @dev Register a name.
      */
-    function register(
-        uint256 id,
-        address owner,
-        uint256 duration
-    ) external returns (uint256);
+    function register(string calldata label, address owner, uint256 duration) external returns (uint256);
 
     function renew(uint256 id, uint256 duration) external returns (uint256);
 
     /**
-     * @dev Reclaim ownership of a name in IENS, if you own it in the registrar.
+     * @dev Reclaim ownership of a name in IFNS, if you own it in the registrar.
      */
     function reclaim(uint256 id, address owner) external;
+}
+
+interface INoNameCollisions {
+    /**
+     * @dev Checks to see if there is a name collision for the given name between FNS Registry
+     *      and another Registry
+     * @param name the name on TLD '.flr' to check for a name collision
+     * @return true if there is a name collision, false otherwise
+     */
+    function isNameCollision(string calldata name) external view returns (bool);
 }
 
 // OpenZeppelin Contracts (last updated v4.8.0) (token/ERC721/ERC721.sol)
@@ -1563,30 +1564,25 @@ abstract contract Ownable is Context {
 
 contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     // A map of expiry times
-    mapping(uint256 => uint256) expiries;
-    // The IENS registry
-    IENS public ens;
-    // The namehash of the TLD this registrar owns (eg, .eth)
+    mapping(uint256 => uint256) public expiries;
+    // The IFNS registry
+    IFNS public fns;
+    // The namehash of the TLD this registrar owns (eg, .flr)
     bytes32 public baseNode;
     // A map of addresses that are authorised to register and renew names.
     mapping(address => bool) public controllers;
     uint256 public constant GRACE_PERIOD = 90 days;
-    bytes4 private constant INTERFACE_META_ID =
-        bytes4(keccak256("supportsInterface(bytes4)"));
-    bytes4 private constant ERC721_ID =
-        bytes4(
-            keccak256("balanceOf(address)") ^
-                keccak256("ownerOf(uint256)") ^
-                keccak256("approve(address,uint256)") ^
-                keccak256("getApproved(uint256)") ^
-                keccak256("setApprovalForAll(address,bool)") ^
-                keccak256("isApprovedForAll(address,address)") ^
-                keccak256("transferFrom(address,address,uint256)") ^
-                keccak256("safeTransferFrom(address,address,uint256)") ^
-                keccak256("safeTransferFrom(address,address,uint256,bytes)")
-        );
-    bytes4 private constant RECLAIM_ID =
-        bytes4(keccak256("reclaim(uint256,address)"));
+    bytes4 private constant INTERFACE_META_ID = bytes4(keccak256("supportsInterface(bytes4)"));
+    bytes4 private constant ERC721_ID = bytes4(
+        keccak256("balanceOf(address)") ^ keccak256("ownerOf(uint256)") ^ keccak256("approve(address,uint256)")
+            ^ keccak256("getApproved(uint256)") ^ keccak256("setApprovalForAll(address,bool)")
+            ^ keccak256("isApprovedForAll(address,address)") ^ keccak256("transferFrom(address,address,uint256)")
+            ^ keccak256("safeTransferFrom(address,address,uint256)")
+            ^ keccak256("safeTransferFrom(address,address,uint256,bytes)")
+    );
+    bytes4 private constant RECLAIM_ID = bytes4(keccak256("reclaim(uint256,address)"));
+
+    INoNameCollisions public noNameCollisionsContract;
 
     /**
      * v2.1.3 version of _isApprovedOrOwner which calls ownerOf(tokenId) and takes grace period into consideration instead of ERC721.ownerOf(tokenId);
@@ -1597,29 +1593,44 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
      * @return bool whether the msg.sender is approved for the given token ID,
      *    is an operator of the owner, or is the owner of the token
      */
-    function _isApprovedOrOwner(
-        address spender,
-        uint256 tokenId
-    ) internal view override returns (bool) {
+    function _isApprovedOrOwner(address spender, uint256 tokenId) internal view override returns (bool) {
         address owner = ownerOf(tokenId);
-        return (spender == owner ||
-            getApproved(tokenId) == spender ||
-            isApprovedForAll(owner, spender));
+        return (spender == owner || getApproved(tokenId) == spender || isApprovedForAll(owner, spender));
     }
 
-    constructor(IENS _ens, bytes32 _baseNode) ERC721("", "") {
-        ens = _ens;
+    constructor(IFNS _fns, bytes32 _baseNode, INoNameCollisions _noNameCollisionsContract) ERC721("", "") {
+        require(address(_fns) != address(0), "BaseRegistrar: ENS Contract Can Not Be Address 0");
+        require(_baseNode != 0x0, "BaseRegistrar: BaseNode Can Not Be 0x0");
+        require(
+            address(_noNameCollisionsContract) != address(0),
+            "BaseRegistrar: NoNameCollisions Contract Can Not Be Address 0"
+        );
+
+        fns = _fns;
         baseNode = _baseNode;
+        noNameCollisionsContract = _noNameCollisionsContract;
     }
 
     modifier live() {
-        require(ens.owner(baseNode) == address(this));
+        require(fns.owner(baseNode) == address(this), "BaseRegistrar: Base Node Not Live");
         _;
     }
 
     modifier onlyController() {
-        require(controllers[msg.sender]);
+        require(controllers[msg.sender], "BaseRegistrar: onlyController");
         _;
+    }
+
+    /**
+     * @dev Allows the owner of the contract to update the Collision Registry, in case it
+     *      is ever altered in the future
+     * @dev This assumes that the interface remains constant
+     * @param newContract the new NoNameCollisions Contract address
+     */
+    function updateNoNameCollisionContract(INoNameCollisions newContract) public onlyOwner {
+        require(address(newContract) != address(0), "BaseRegistrar: Cannot update NoCollisions to Address 0");
+        noNameCollisionsContract = newContract;
+        emit NewNoNameCollisions(address(newContract));
     }
 
     /**
@@ -1628,10 +1639,8 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
      * @param tokenId uint256 ID of the token to query the owner of
      * @return address currently marked as the owner of the given token ID
      */
-    function ownerOf(
-        uint256 tokenId
-    ) public view override(IERC721, ERC721) returns (address) {
-        require(expiries[tokenId] > block.timestamp);
+    function ownerOf(uint256 tokenId) public view override(IERC721, ERC721) returns (address) {
+        require(expiries[tokenId] > block.timestamp, "BaseRegistrar: Token Id Expired");
         return super.ownerOf(tokenId);
     }
 
@@ -1649,7 +1658,8 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
 
     // Set the resolver for the TLD this registrar manages.
     function setResolver(address resolver) external override onlyOwner {
-        ens.setResolver(baseNode, resolver);
+        fns.setResolver(baseNode, resolver);
+        emit ResolverSet(resolver);
     }
 
     // Returns the expiration timestamp of the specified id.
@@ -1664,68 +1674,69 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     }
 
     /**
+     * @dev Returns true iff the specified name is not already minted by the referenced registry
+     * @param name the string of the base name for TLD ".flr". ex: 'based' for 'based.flr'
+     */
+    function isNotCollision(string calldata name) public view returns (bool) {
+        return !noNameCollisionsContract.isNameCollision(name);
+    }
+
+    /**
      * @dev Register a name.
-     * @param id The token ID (keccak256 of the label).
+     * @param label The label for the given TLD. If 'based.flr', label is 'based'
      * @param owner The address that should own the registration.
      * @param duration Duration in seconds for the registration.
      */
-    function register(
-        uint256 id,
-        address owner,
-        uint256 duration
-    ) external override returns (uint256) {
-        return _register(id, owner, duration, true);
+    function register(string calldata label, address owner, uint256 duration) external override returns (uint256) {
+        return _register(label, owner, duration, true);
     }
 
     /**
      * @dev Register a name, without modifying the registry.
-     * @param id The token ID (keccak256 of the label).
+     * @param label The label for the given TLD. If 'based.flr', label is 'based'
      * @param owner The address that should own the registration.
      * @param duration Duration in seconds for the registration.
      */
-    function registerOnly(
-        uint256 id,
-        address owner,
-        uint256 duration
-    ) external returns (uint256) {
-        return _register(id, owner, duration, false);
+    function registerOnly(string calldata label, address owner, uint256 duration) external returns (uint256) {
+        return _register(label, owner, duration, false);
     }
 
-    function _register(
-        uint256 id,
-        address owner,
-        uint256 duration,
-        bool updateRegistry
-    ) internal live onlyController returns (uint256) {
-        require(available(id));
-        require(
-            block.timestamp + duration + GRACE_PERIOD >
-                block.timestamp + GRACE_PERIOD
-        ); // Prevent future overflow
+    function getLabelId(string calldata label) public pure returns (uint256) {
+        return uint256(keccak256(bytes(label)));
+    }
 
-        expiries[id] = block.timestamp + duration;
+    function _register(string calldata label, address owner, uint256 duration, bool updateRegistry)
+        internal
+        live
+        onlyController
+        returns (uint256)
+    {
+        uint256 id = uint256(keccak256(bytes(label)));
+        uint256 expiry = block.timestamp + duration;
+
+        require(available(id), "BaseRegistrar: Name is not available");
+        require(isNotCollision(label), "BaseRegistrar: FLR Domain Already Exists In Collision Registry");
+        require(expiry + GRACE_PERIOD > block.timestamp + GRACE_PERIOD, "BaseRegistrar: Expiry Overflow"); // Prevent future overflow
+
+        expiries[id] = expiry;
         if (_exists(id)) {
             // Name was previously owned, and expired
             _burn(id);
         }
         _mint(owner, id);
+
+        emit NameRegistered(label, id, owner, expiry);
+
         if (updateRegistry) {
-            ens.setSubnodeOwner(baseNode, bytes32(id), owner);
+            fns.setSubnodeOwner(baseNode, bytes32(id), owner);
         }
 
-        emit NameRegistered(id, owner, block.timestamp + duration);
-
-        return block.timestamp + duration;
+        return expiry;
     }
 
-    function renew(
-        uint256 id,
-        uint256 duration
-    ) external override live onlyController returns (uint256) {
-        require(expiries[id] + GRACE_PERIOD >= block.timestamp); // Name must be registered here or in grace period
-        require(
-            expiries[id] + duration + GRACE_PERIOD > duration + GRACE_PERIOD
-        ); // Prevent future overflow
+    function renew(uint256 id, uint256 duration) external override live onlyController returns (uint256) {
+        require(expiries[id] + GRACE_PERIOD >= block.timestamp, "BaseRegistrar: Name has expired"); // Name must be registered here or in grace period
+        require(expiries[id] + duration + GRACE_PERIOD > duration + GRACE_PERIOD, "BaseRegistrar: Expiry Overflow"); // Prevent future overflow
 
         expiries[id] += duration;
         emit NameRenewed(id, expiries[id]);
@@ -1733,20 +1744,15 @@ contract BaseRegistrar is ERC721, IBaseRegistrar, Ownable {
     }
 
     /**
-     * @dev Reclaim ownership of a name in IENS, if you own it in the registrar.
+     * @dev Reclaim ownership of a name in IFNS, if you own it in the registrar.
      */
     function reclaim(uint256 id, address owner) external override live {
-        require(_isApprovedOrOwner(msg.sender, id));
-        ens.setSubnodeOwner(baseNode, bytes32(id), owner);
+        require(_isApprovedOrOwner(msg.sender, id), "BaseRegistrar: Must be owner or approved");
+        fns.setSubnodeOwner(baseNode, bytes32(id), owner);
     }
 
-    function supportsInterface(
-        bytes4 interfaceID
-    ) public pure override(ERC721, IERC165) returns (bool) {
-        return
-            interfaceID == INTERFACE_META_ID ||
-            interfaceID == ERC721_ID ||
-            interfaceID == RECLAIM_ID;
+    function supportsInterface(bytes4 interfaceID) public pure override(ERC721, IERC165) returns (bool) {
+        return interfaceID == INTERFACE_META_ID || interfaceID == ERC721_ID || interfaceID == RECLAIM_ID;
     }
 }
 
@@ -1785,33 +1791,23 @@ interface IABIResolver {
     event ABIChanged(bytes32 indexed node, uint256 indexed contentType);
 
     /**
-     * Returns the ABI associated with an ENS node.
+     * Returns the ABI associated with an FNS node.
      * Defined in EIP205.
-     * @param node The ENS node to query
+     * @param node The FNS node to query
      * @param contentTypes A bitwise OR of the ABI formats accepted by the caller.
      * @return contentType The content type of the return value
      * @return data The ABI data
      */
-    function ABI(
-        bytes32 node,
-        uint256 contentTypes
-    ) external view returns (uint256, bytes memory);
+    function ABI(bytes32 node, uint256 contentTypes) external view returns (uint256, bytes memory);
 }
 
 /**
  * Interface for the new (multicoin) addr function.
  */
 interface IAddressResolver {
-    event AddressChanged(
-        bytes32 indexed node,
-        uint256 coinType,
-        bytes newAddress
-    );
+    event AddressChanged(bytes32 indexed node, uint256 coinType, bytes newAddress);
 
-    function addr(
-        bytes32 node,
-        uint256 coinType
-    ) external view returns (bytes memory);
+    function addr(bytes32 node, uint256 coinType) external view returns (bytes memory);
 }
 
 /**
@@ -1821,8 +1817,8 @@ interface IAddrResolver {
     event AddrChanged(bytes32 indexed node, address a);
 
     /**
-     * Returns the address associated with an ENS node.
-     * @param node The ENS node to query.
+     * Returns the address associated with an FNS node.
+     * @param node The FNS node to query.
      * @return The associated address.
      */
     function addr(bytes32 node) external view returns (address payable);
@@ -1832,8 +1828,8 @@ interface IContentHashResolver {
     event ContenthashChanged(bytes32 indexed node, bytes hash);
 
     /**
-     * Returns the contenthash associated with an ENS node.
-     * @param node The ENS node to query.
+     * Returns the contenthash associated with an FNS node.
+     * @param node The FNS node to query.
      * @return The associated contenthash.
      */
     function contenthash(bytes32 node) external view returns (bytes memory);
@@ -1841,12 +1837,7 @@ interface IContentHashResolver {
 
 interface IDNSRecordResolver {
     // DNSRecordChanged is emitted whenever a given node/name/resource's RRSET is updated.
-    event DNSRecordChanged(
-        bytes32 indexed node,
-        bytes name,
-        uint16 resource,
-        bytes record
-    );
+    event DNSRecordChanged(bytes32 indexed node, bytes name, uint16 resource, bytes record);
     // DNSRecordDeleted is emitted whenever a given node/name/resource's RRSET is deleted.
     event DNSRecordDeleted(bytes32 indexed node, bytes name, uint16 resource);
 
@@ -1857,35 +1848,23 @@ interface IDNSRecordResolver {
      * @param resource the ID of the resource as per https://en.wikipedia.org/wiki/List_of_DNS_record_types
      * @return the DNS record in wire format if present, otherwise empty
      */
-    function dnsRecord(
-        bytes32 node,
-        bytes32 name,
-        uint16 resource
-    ) external view returns (bytes memory);
+    function dnsRecord(bytes32 node, bytes32 name, uint16 resource) external view returns (bytes memory);
 }
 
 interface IDNSZoneResolver {
     // DNSZonehashChanged is emitted whenever a given node's zone hash is updated.
-    event DNSZonehashChanged(
-        bytes32 indexed node,
-        bytes lastzonehash,
-        bytes zonehash
-    );
+    event DNSZonehashChanged(bytes32 indexed node, bytes lastzonehash, bytes zonehash);
 
     /**
      * zonehash obtains the hash for the zone.
-     * @param node The ENS node to query.
+     * @param node The FNS node to query.
      * @return The associated contenthash.
      */
     function zonehash(bytes32 node) external view returns (bytes memory);
 }
 
 interface IInterfaceResolver {
-    event InterfaceChanged(
-        bytes32 indexed node,
-        bytes4 indexed interfaceID,
-        address implementer
-    );
+    event InterfaceChanged(bytes32 indexed node, bytes4 indexed interfaceID, address implementer);
 
     /**
      * Returns the address of a contract that implements the specified interface for this name.
@@ -1893,23 +1872,20 @@ interface IInterfaceResolver {
      * the contract at `addr()`. If `addr()` is set, a contract exists at that address, and that
      * contract implements EIP165 and returns `true` for the specified interfaceID, its address
      * will be returned.
-     * @param node The ENS node to query.
+     * @param node The FNS node to query.
      * @param interfaceID The EIP 165 interface ID to check for.
      * @return The address that implements this interface, or 0 if the interface is unsupported.
      */
-    function interfaceImplementer(
-        bytes32 node,
-        bytes4 interfaceID
-    ) external view returns (address);
+    function interfaceImplementer(bytes32 node, bytes4 interfaceID) external view returns (address);
 }
 
 interface INameResolver {
     event NameChanged(bytes32 indexed node, string name);
 
     /**
-     * Returns the name associated with an ENS node, for reverse records.
+     * Returns the name associated with an FNS node, for reverse records.
      * Defined in EIP181.
-     * @param node The ENS node to query.
+     * @param node The FNS node to query.
      * @return The associated name.
      */
     function name(bytes32 node) external view returns (string memory);
@@ -1919,9 +1895,9 @@ interface IPubkeyResolver {
     event PubkeyChanged(bytes32 indexed node, bytes32 x, bytes32 y);
 
     /**
-     * Returns the SECP256k1 public key associated with an ENS node.
+     * Returns the SECP256k1 public key associated with an FNS node.
      * Defined in EIP 619.
-     * @param node The ENS node to query
+     * @param node The FNS node to query
      * @return x The X coordinate of the curve point for the public key.
      * @return y The Y coordinate of the curve point for the public key.
      */
@@ -1929,30 +1905,19 @@ interface IPubkeyResolver {
 }
 
 interface ITextResolver {
-    event TextChanged(
-        bytes32 indexed node,
-        string indexed indexedKey,
-        string key,
-        string value
-    );
+    event TextChanged(bytes32 indexed node, string indexed indexedKey, string key, string value);
 
     /**
-     * Returns the text data associated with an ENS node and key.
-     * @param node The ENS node to query.
+     * Returns the text data associated with an FNS node and key.
+     * @param node The FNS node to query.
      * @param key The text data key to query.
      * @return The associated text data.
      */
-    function text(
-        bytes32 node,
-        string calldata key
-    ) external view returns (string memory);
+    function text(bytes32 node, string calldata key) external view returns (string memory);
 }
 
 interface IExtendedResolver {
-    function resolve(
-        bytes memory name,
-        bytes memory data
-    ) external view returns (bytes memory);
+    function resolve(bytes memory name, bytes memory data) external view returns (bytes memory);
 }
 
 /**
@@ -1975,11 +1940,7 @@ interface IResolver is
     /* Deprecated events */
     event ContentChanged(bytes32 indexed node, bytes32 hash);
 
-    function setABI(
-        bytes32 node,
-        uint256 contentType,
-        bytes calldata data
-    ) external;
+    function setABI(bytes32 node, uint256 contentType, bytes calldata data) external;
 
     function setAddr(bytes32 node, address addr) external;
 
@@ -1993,26 +1954,15 @@ interface IResolver is
 
     function setPubkey(bytes32 node, bytes32 x, bytes32 y) external;
 
-    function setText(
-        bytes32 node,
-        string calldata key,
-        string calldata value
-    ) external;
+    function setText(bytes32 node, string calldata key, string calldata value) external;
 
-    function setInterface(
-        bytes32 node,
-        bytes4 interfaceID,
-        address implementer
-    ) external;
+    function setInterface(bytes32 node, bytes4 interfaceID, address implementer) external;
 
-    function multicall(
-        bytes[] calldata data
-    ) external returns (bytes[] memory results);
+    function multicall(bytes[] calldata data) external returns (bytes[] memory results);
 
-    function multicallWithNodeCheck(
-        bytes32 nodehash,
-        bytes[] calldata data
-    ) external returns (bytes[] memory results);
+    function multicallWithNodeCheck(bytes32 nodehash, bytes[] calldata data)
+        external
+        returns (bytes[] memory results);
 
     /* Deprecated functions */
     function content(bytes32 node) external view returns (bytes32);
@@ -2027,19 +1977,16 @@ interface IResolver is
 contract Controllable is Ownable {
     mapping(address => bool) public controllers;
 
-    event ControllerChanged(address indexed controller, bool enabled);
+    event ControllerChanged(address indexed controller, bool active);
 
-    modifier onlyController() {
-        require(
-            controllers[msg.sender],
-            "Controllable: Caller is not a controller"
-        );
-        _;
+    function setController(address controller, bool active) public onlyOwner {
+        controllers[controller] = active;
+        emit ControllerChanged(controller, active);
     }
 
-    function setController(address controller, bool enabled) public onlyOwner {
-        controllers[controller] = enabled;
-        emit ControllerChanged(controller, enabled);
+    modifier onlyController() {
+        require(controllers[msg.sender], "Controllable: Caller is not a controller");
+        _;
     }
 }
 
@@ -2048,25 +1995,15 @@ interface IReverseRegistrar {
 
     function claim(address owner) external returns (bytes32);
 
-    function claimForAddr(
-        address addr,
-        address owner,
-        address resolver
-    ) external returns (bytes32);
+    function claimForAddr(address addr, address owner, address resolver) external returns (bytes32);
 
-    function claimWithResolver(
-        address owner,
-        address resolver
-    ) external returns (bytes32);
+    function claimWithResolver(address owner, address resolver) external returns (bytes32);
 
     function setName(string memory name) external returns (bytes32);
 
-    function setNameForAddr(
-        address addr,
-        address owner,
-        address resolver,
-        string memory name
-    ) external returns (bytes32);
+    function setNameForAddr(address addr, address owner, address resolver, string memory name)
+        external
+        returns (bytes32);
 
     function node(address addr) external pure returns (bytes32);
 }
@@ -2083,13 +2020,13 @@ abstract contract ResolverBase is ERC165, IVersionableResolver {
     function isAuthorised(bytes32 node) internal view virtual returns (bool);
 
     modifier authorised(bytes32 node) {
-        require(isAuthorised(node));
+        require(isAuthorised(node), "ResolverBase: Not Authorised");
         _;
     }
 
     /**
-     * Increments the record version associated with an ENS node.
-     * May only be called by the owner of that node in the ENS registry.
+     * Increments the record version associated with an FNS node.
+     * May only be called by the owner of that node in the FNS registry.
      * @param node The node to update.
      */
     function clearRecords(bytes32 node) public virtual authorised(node) {
@@ -2097,12 +2034,8 @@ abstract contract ResolverBase is ERC165, IVersionableResolver {
         emit VersionChanged(node, recordVersions[node]);
     }
 
-    function supportsInterface(
-        bytes4 interfaceID
-    ) public view virtual override returns (bool) {
-        return
-            interfaceID == type(IVersionableResolver).interfaceId ||
-            super.supportsInterface(interfaceID);
+    function supportsInterface(bytes4 interfaceID) public view virtual override returns (bool) {
+        return interfaceID == type(IVersionableResolver).interfaceId || super.supportsInterface(interfaceID);
     }
 }
 
@@ -2110,49 +2043,38 @@ abstract contract NameResolver is INameResolver, ResolverBase {
     mapping(uint64 => mapping(bytes32 => string)) versionable_names;
 
     /**
-     * Sets the name associated with an ENS node, for reverse records.
-     * May only be called by the owner of that node in the ENS registry.
+     * Sets the name associated with an FNS node, for reverse records.
+     * May only be called by the owner of that node in the FNS registry.
      * @param node The node to update.
      */
-    function setName(
-        bytes32 node,
-        string calldata newName
-    ) external virtual authorised(node) {
+    function setName(bytes32 node, string calldata newName) external virtual authorised(node) {
         versionable_names[recordVersions[node]][node] = newName;
         emit NameChanged(node, newName);
     }
 
     /**
-     * Returns the name associated with an ENS node, for reverse records.
+     * Returns the name associated with an FNS node, for reverse records.
      * Defined in EIP181.
-     * @param node The ENS node to query.
+     * @param node The FNS node to query.
      * @return The associated name.
      */
-    function name(
-        bytes32 node
-    ) external view virtual override returns (string memory) {
+    function name(bytes32 node) external view virtual override returns (string memory) {
         return versionable_names[recordVersions[node]][node];
     }
 
-    function supportsInterface(
-        bytes4 interfaceID
-    ) public view virtual override returns (bool) {
-        return
-            interfaceID == type(INameResolver).interfaceId ||
-            super.supportsInterface(interfaceID);
+    function supportsInterface(bytes4 interfaceID) public view virtual override returns (bool) {
+        return interfaceID == type(INameResolver).interfaceId || super.supportsInterface(interfaceID);
     }
 }
 
-// import "forge-std/console.sol";
-
 /**
-* @dev The result of namehash('addr.reverse')
-*/
+ * @dev The result of namehash('addr.reverse')
+ */
 bytes32 constant ADDR_REVERSE_NODE = 0x91d1777781884d03a6757a803996e38de2a42967fb37eeaca72729271025a9e2;
 bytes32 constant lookup = 0x3031323334353637383961626364656600000000000000000000000000000000;
 
 contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
-    IENS public immutable ens;
+    IFNS public immutable fns;
     NameResolver public defaultResolver;
 
     event ReverseClaimed(address indexed addr, bytes32 indexed node);
@@ -2160,128 +2082,96 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
 
     /**
      * @dev Constructor
-     * @param ensAddr The address of the ENS registry.
+     * @param fnsAddr The address of the FNS registry.
      */
-    constructor(IENS ensAddr) {
-        ens = ensAddr;
-
-        // NOTE: This has been disabled because it pertains to migration. We will not have an owner
-        //       of the ADDR_REVERSE_NODE by default, and thus no existing ReverseRegistrar to
-        //       lookup
-        // Assign ownership of the reverse record to our deployer
-        ReverseRegistrar oldRegistrar = ReverseRegistrar(
-            ensAddr.owner(ADDR_REVERSE_NODE)
-        );
-        if (address(oldRegistrar) != address(0x0)) {
-            oldRegistrar.claim(msg.sender);
-        }
+    constructor(IFNS fnsAddr) {
+        fns = fnsAddr;
     }
 
     modifier authorised(address addr) {
         require(
-            addr == msg.sender ||
-                controllers[msg.sender] ||
-                ens.isApprovedForAll(addr, msg.sender) ||
-                ownsContract(addr),
+            addr == msg.sender || controllers[msg.sender] || fns.isApprovedForAll(addr, msg.sender)
+                || ownsContract(addr),
             "ReverseRegistrar: Caller is not a controller or authorised by address or the address itself"
         );
         _;
     }
 
     function setDefaultResolver(address resolver) public override onlyOwner {
-        require(
-            address(resolver) != address(0),
-            "ReverseRegistrar: Resolver address must not be 0"
-        );
+        require(address(resolver) != address(0), "ReverseRegistrar: Resolver address must not be 0");
         defaultResolver = NameResolver(resolver);
         emit DefaultResolverChanged(NameResolver(resolver));
     }
 
     /**
-     * @dev Transfers ownership of the reverse ENS record associated with the
+     * @dev Transfers ownership of the reverse FNS record associated with the
      *      calling account.
-     * @param owner The address to set as the owner of the reverse record in ENS.
-     * @return The ENS node hash of the reverse record.
+     * @param owner The address to set as the owner of the reverse record in FNS.
+     * @return The FNS node hash of the reverse record.
      */
     function claim(address owner) public override returns (bytes32) {
         return claimForAddr(msg.sender, owner, address(defaultResolver));
     }
 
     /**
-     * @dev Transfers ownership of the reverse ENS record associated with the
+     * @dev Transfers ownership of the reverse FNS record associated with the
      *      calling account.
      * @param addr The reverse record to set
-     * @param owner The address to set as the owner of the reverse record in ENS.
+     * @param owner The address to set as the owner of the reverse record in FNS.
      * @param resolver The resolver of the reverse node
-     * @return The ENS node hash of the reverse record.
+     * @return The FNS node hash of the reverse record.
      */
-    function claimForAddr(
-        address addr,
-        address owner,
-        address resolver
-    ) public override authorised(addr) returns (bytes32) {
+    function claimForAddr(address addr, address owner, address resolver)
+        public
+        override
+        authorised(addr)
+        returns (bytes32)
+    {
         bytes32 labelHash = sha3HexAddress(addr);
-        bytes32 reverseNode = keccak256(
-            abi.encodePacked(ADDR_REVERSE_NODE, labelHash)
-        );
+        bytes32 reverseNode = keccak256(abi.encodePacked(ADDR_REVERSE_NODE, labelHash));
 
-        // console.log("claimForAddr::reverseNode");
-        // console.logBytes32(reverseNode);
-        // console.log("claimForAddr::labelHash");
-        // console.logBytes32(labelHash);
-        
         emit ReverseClaimed(addr, reverseNode);
-        ens.setSubnodeRecord(ADDR_REVERSE_NODE, labelHash, owner, resolver, 0);
+        fns.setSubnodeRecord(ADDR_REVERSE_NODE, labelHash, owner, resolver, 0);
         return reverseNode;
     }
 
     /**
-     * @dev Transfers ownership of the reverse ENS record associated with the
+     * @dev Transfers ownership of the reverse FNS record associated with the
      *      calling account.
-     * @param owner The address to set as the owner of the reverse record in ENS.
+     * @param owner The address to set as the owner of the reverse record in FNS.
      * @param resolver The address of the resolver to set; 0 to leave unchanged.
-     * @return The ENS node hash of the reverse record.
+     * @return The FNS node hash of the reverse record.
      */
-    function claimWithResolver(
-        address owner,
-        address resolver
-    ) public override returns (bytes32) {
+    function claimWithResolver(address owner, address resolver) public override returns (bytes32) {
         return claimForAddr(msg.sender, owner, resolver);
     }
 
     /**
-     * @dev Sets the `name()` record for the reverse ENS record associated with
+     * @dev Sets the `name()` record for the reverse FNS record associated with
      * the calling account. First updates the resolver to the default reverse
      * resolver if necessary.
      * @param name The name to set for this address.
-     * @return The ENS node hash of the reverse record.
+     * @return The FNS node hash of the reverse record.
      */
     function setName(string memory name) public override returns (bytes32) {
-        return
-            setNameForAddr(
-                msg.sender,
-                msg.sender,
-                address(defaultResolver),
-                name
-            );
+        return setNameForAddr(msg.sender, msg.sender, address(defaultResolver), name);
     }
 
     /**
-     * @dev Sets the `name()` record for the reverse ENS record associated with
+     * @dev Sets the `name()` record for the reverse FNS record associated with
      * the account provided. Updates the resolver to a designated resolver
      * Only callable by controllers and authorised users
      * @param addr The reverse record to set
      * @param owner The owner of the reverse node
      * @param resolver The resolver of the reverse node
      * @param name The name to set for this address.
-     * @return The ENS node hash of the reverse record.
+     * @return The FNS node hash of the reverse record.
      */
-    function setNameForAddr(
-        address addr,
-        address owner,
-        address resolver,
-        string memory name
-    ) public override returns (bytes32) {
+    function setNameForAddr(address addr, address owner, address resolver, string memory name)
+        public
+        override
+        returns (bytes32)
+    {
         bytes32 _node = claimForAddr(addr, owner, resolver);
         NameResolver(resolver).setName(_node, name);
         return _node;
@@ -2290,13 +2180,10 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
     /**
      * @dev Returns the node hash for a given account's reverse records.
      * @param addr The address to hash
-     * @return The ENS node hash.
+     * @return The FNS node hash.
      */
     function node(address addr) public pure override returns (bytes32) {
-        return
-            keccak256(
-                abi.encodePacked(ADDR_REVERSE_NODE, sha3HexAddress(addr))
-            );
+        return keccak256(abi.encodePacked(ADDR_REVERSE_NODE, sha3HexAddress(addr)));
     }
 
     /**
@@ -2308,11 +2195,7 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
      */
     function sha3HexAddress(address addr) private pure returns (bytes32 ret) {
         assembly {
-            for {
-                let i := 40
-            } gt(i, 0) {
-
-            } {
+            for { let i := 40 } gt(i, 0) {} {
                 i := sub(i, 1)
                 mstore8(i, byte(and(addr, 0xf), lookup))
                 addr := div(addr, 0x10)
@@ -2347,44 +2230,24 @@ interface IPriceOracle {
      * @param duration How long the name is being registered or extended for, in seconds.
      * @return base premium tuple of base price + premium price
      */
-    function price(
-        string calldata name,
-        uint256 expires,
-        uint256 duration
-    ) external view returns (Price calldata);
+    function price(string calldata name, uint256 expires, uint256 duration) external view returns (Price calldata);
 }
 
-interface IETHRegistrarController {
-    function rentPrice(
-        string memory,
-        uint256
-    ) external view returns (IPriceOracle.Price memory);
+interface IFLRRegistrarController {
+    function rentPrice(string memory, uint256) external view returns (IPriceOracle.Price memory);
 
     function available(string memory) external returns (bool);
 
-    function makeCommitment(
-        string memory,
-        address,
-        uint256,
-        bytes32,
-        address,
-        bytes[] calldata,
-        bool,
-        uint16
-    ) external pure returns (bytes32);
+    function makeCommitment(string memory, address, uint256, bytes32, address, bytes[] calldata, bool, uint16)
+        external
+        pure
+        returns (bytes32);
 
     function commit(bytes32) external;
 
-    function register(
-        string calldata,
-        address,
-        uint256,
-        bytes32,
-        address,
-        bytes[] calldata,
-        bool,
-        uint16
-    ) external payable;
+    function register(string calldata, address, uint256, bytes32, address, bytes[] calldata, bool, uint16)
+        external
+        payable;
 
     function renew(string calldata, uint256) external payable;
 }
@@ -2520,8 +2383,41 @@ interface INameWrapperUpgrade {
         address wrappedOwner,
         uint32 fuses,
         uint64 expiry,
+        address approved,
         bytes calldata extraData
     ) external;
+}
+
+interface IMintedDomainNames {
+    struct Data {
+        uint256 id;
+        uint32 fuses;
+        uint64 expiry;
+        string label;
+    }
+
+    function getAll(address owner) external view returns (Data[] memory, uint256 length);
+    function add(address owner, uint256 id, uint32 fuses, uint64 expiry, string calldata label) external;
+    function addSubdomain(
+        address owner,
+        uint256 id,
+        uint32 fuses,
+        uint64 expiry,
+        uint256 parentNodeTokenId,
+        string calldata label
+    ) external;
+    function addFromTransfer(address oldOwner, address owner, uint256 id, uint32 fuses, uint64 expiry) external;
+}
+
+interface ISubdomainTracker {
+    struct Data {
+        uint256 id;
+        address owner;
+        string label;
+    }
+
+    function getAll(uint256 id) external view returns (Data[] memory, uint256 length);
+    function add(uint256 parentId, uint256 subdomainId, address owner, string calldata subdomainLabel) external;
 }
 
 uint32 constant CANNOT_UNWRAP = 1;
@@ -2530,30 +2426,29 @@ uint32 constant CANNOT_TRANSFER = 4;
 uint32 constant CANNOT_SET_RESOLVER = 8;
 uint32 constant CANNOT_SET_TTL = 16;
 uint32 constant CANNOT_CREATE_SUBDOMAIN = 32;
+uint32 constant CANNOT_APPROVE = 64;
 //uint16 reserved for parent controlled fuses from bit 17 to bit 32
 uint32 constant PARENT_CANNOT_CONTROL = 1 << 16;
-uint32 constant IS_DOT_ETH = 1 << 17;
+uint32 constant IS_DOT_FLR = 1 << 17;
 uint32 constant CAN_EXTEND_EXPIRY = 1 << 18;
 uint32 constant CAN_DO_EVERYTHING = 0;
 uint32 constant PARENT_CONTROLLED_FUSES = 0xFFFF0000;
-// all fuses apart from IS_DOT_ETH
+// all fuses apart from IS_DOT_FLR
 uint32 constant USER_SETTABLE_FUSES = 0xFFFDFFFF;
 
 interface INameWrapper is IERC1155 {
-    event NameWrapped(
-        bytes32 indexed node,
-        bytes name,
-        address owner,
-        uint32 fuses,
-        uint64 expiry
-    );
+    event NewMintedDomainNames(address indexed mintedDomainNames);
+    event NewSubdomainTracker(address indexed subdomainTracker);
+    event NewMetadataService(address indexed metadataService);
+    event NewNameWrapperUpgrade(address indexed nameWrapperUpgrade);
 
+    event NameWrapped(bytes32 indexed node, bytes name, address owner, uint32 fuses, uint64 expiry);
     event NameUnwrapped(bytes32 indexed node, address owner);
 
     event FusesSet(bytes32 indexed node, uint32 fuses);
     event ExpiryExtended(bytes32 indexed node, uint64 expiry);
 
-    function ens() external view returns (IENS);
+    function fns() external view returns (IFNS);
 
     function registrar() external view returns (IBaseRegistrar);
 
@@ -2565,20 +2460,17 @@ interface INameWrapper is IERC1155 {
 
     function upgradeContract() external view returns (INameWrapperUpgrade);
 
+    function updateMintedDomainNamesContract(IMintedDomainNames) external;
+
+    function updateSubdomainTrackerContract(ISubdomainTracker) external;
+
     function supportsInterface(bytes4 interfaceID) external view returns (bool);
 
-    function wrap(
-        bytes calldata name,
-        address wrappedOwner,
-        address resolver
-    ) external;
+    function wrap(bytes calldata name, address wrappedOwner, address resolver) external;
 
-    function wrapETH2LD(
-        string calldata label,
-        address wrappedOwner,
-        uint16 ownerControlledFuses,
-        address resolver
-    ) external;
+    function wrapETH2LD(string calldata label, address wrappedOwner, uint16 ownerControlledFuses, address resolver)
+        external
+        returns (uint64 expires);
 
     function registerAndWrapETH2LD(
         string calldata label,
@@ -2588,32 +2480,17 @@ interface INameWrapper is IERC1155 {
         uint16 ownerControlledFuses
     ) external returns (uint256 registrarExpiry);
 
-    function renew(
-        uint256 labelHash,
-        uint256 duration
-    ) external returns (uint256 expires);
+    function renew(uint256 labelHash, uint256 duration) external returns (uint256 expires);
 
     function unwrap(bytes32 node, bytes32 label, address owner) external;
 
-    function unwrapETH2LD(
-        bytes32 label,
-        address newRegistrant,
-        address newController
-    ) external;
+    function unwrapETH2LD(bytes32 label, address newRegistrant, address newController) external;
 
     function upgrade(bytes calldata name, bytes calldata extraData) external;
 
-    function setFuses(
-        bytes32 node,
-        uint16 ownerControlledFuses
-    ) external returns (uint32 newFuses);
+    function setFuses(bytes32 node, uint16 ownerControlledFuses) external returns (uint32 newFuses);
 
-    function setChildFuses(
-        bytes32 parentNode,
-        bytes32 labelhash,
-        uint32 fuses,
-        uint64 expiry
-    ) external;
+    function setChildFuses(bytes32 parentNode, bytes32 labelhash, uint32 fuses, uint64 expiry) external;
 
     function setSubnodeRecord(
         bytes32 node,
@@ -2625,31 +2502,15 @@ interface INameWrapper is IERC1155 {
         uint64 expiry
     ) external returns (bytes32);
 
-    function setRecord(
-        bytes32 node,
-        address owner,
-        address resolver,
-        uint64 ttl
-    ) external;
+    function setRecord(bytes32 node, address owner, address resolver, uint64 ttl) external;
 
-    function setSubnodeOwner(
-        bytes32 node,
-        string calldata label,
-        address newOwner,
-        uint32 fuses,
-        uint64 expiry
-    ) external returns (bytes32);
+    function setSubnodeOwner(bytes32 node, string calldata label, address newOwner, uint32 fuses, uint64 expiry)
+        external
+        returns (bytes32);
 
-    function extendExpiry(
-        bytes32 node,
-        bytes32 labelhash,
-        uint64 expiry
-    ) external returns (uint64);
+    function extendExpiry(bytes32 node, bytes32 labelhash, uint64 expiry) external returns (uint64);
 
-    function canModifyName(
-        bytes32 node,
-        address addr
-    ) external view returns (bool);
+    function canModifyName(bytes32 node, address addr) external view returns (bool);
 
     function setResolver(bytes32 node, address resolver) external;
 
@@ -2657,9 +2518,11 @@ interface INameWrapper is IERC1155 {
 
     function ownerOf(uint256 id) external view returns (address owner);
 
-    function getData(
-        uint256 id
-    ) external view returns (address, uint32, uint64);
+    function approve(address to, uint256 tokenId) external;
+
+    function getApproved(uint256 tokenId) external view returns (address);
+
+    function getData(uint256 id) external view returns (address, uint32, uint64);
 
     function setMetadataService(IMetadataService _metadataService) external;
 
@@ -2667,10 +2530,7 @@ interface INameWrapper is IERC1155 {
 
     function setUpgradeContract(INameWrapperUpgrade _upgradeAddress) external;
 
-    function allFusesBurned(
-        bytes32 node,
-        uint32 fuseMask
-    ) external view returns (bool);
+    function allFusesBurned(bytes32 node, uint32 fuseMask) external view returns (bool);
 
     function isWrapped(bytes32) external view returns (bool);
 
@@ -2758,22 +2618,18 @@ interface IERC20 {
 }
 
 /**
-    @notice Contract is used to recover ERC20 tokens sent to the contract by mistake.
+ * @notice Contract is used to recover ERC20 tokens sent to the contract by mistake.
  */
 
 contract ERC20Recoverable is Ownable {
     /**
-    @notice Recover ERC20 tokens sent to the contract by mistake.
-    @dev The contract is Ownable and only the owner can call the recover function.
-    @param _to The address to send the tokens to.
-@param _token The address of the ERC20 token to recover
-    @param _amount The amount of tokens to recover.
- */
-    function recoverFunds(
-        address _token,
-        address _to,
-        uint256 _amount
-    ) external onlyOwner {
+     * @notice Recover ERC20 tokens sent to the contract by mistake.
+     * @dev The contract is Ownable and only the owner can call the recover function.
+     * @param _to The address to send the tokens to.
+     * @param _token The address of the ERC20 token to recover
+     * @param _amount The amount of tokens to recover.
+     */
+    function recoverFunds(address _token, address _to, uint256 _amount) external onlyOwner {
         IERC20(_token).transfer(_to, _amount);
     }
 }
@@ -2792,21 +2648,15 @@ error MaxCommitmentAgeTooHigh();
 /**
  * @dev A registrar controller for registering and renewing names at fixed cost.
  */
-contract ETHRegistrarController is
-    Ownable,
-    IETHRegistrarController,
-    IERC165,
-    ERC20Recoverable
-{
+contract FLRRegistrarController is Ownable, IFLRRegistrarController, IERC165, ERC20Recoverable {
     using StringUtils for *;
     using Address for address;
 
     uint256 public constant MIN_REGISTRATION_DURATION = 28 days;
-    bytes32 private constant ETH_NODE =
-        0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae;
+    bytes32 private constant FLR_NODE = 0xfd9ed02f44147ba87d942b154c98562d831e3a24daea862ee12868ac20f7bcc3;
     uint64 private constant MAX_EXPIRY = type(uint64).max;
     BaseRegistrar immutable base;
-    IPriceOracle public immutable prices;
+    IPriceOracle public priceOracle;
     uint256 public immutable minCommitmentAge;
     uint256 public immutable maxCommitmentAge;
     ReverseRegistrar public immutable reverseRegistrar;
@@ -2815,23 +2665,14 @@ contract ETHRegistrarController is
     mapping(bytes32 => uint256) public commitments;
 
     event NameRegistered(
-        string name,
-        bytes32 indexed label,
-        address indexed owner,
-        uint256 baseCost,
-        uint256 premium,
-        uint256 expires
+        string name, bytes32 indexed label, address indexed owner, uint256 baseCost, uint256 premium, uint256 expires
     );
-    event NameRenewed(
-        string name,
-        bytes32 indexed label,
-        uint256 cost,
-        uint256 expires
-    );
+    event NameRenewed(string name, bytes32 indexed label, uint256 cost, uint256 expires);
+    event NewPriceOracle(address indexed oracle);
 
     constructor(
         BaseRegistrar _base,
-        IPriceOracle _prices,
+        IPriceOracle _priceOracle,
         uint256 _minCommitmentAge,
         uint256 _maxCommitmentAge,
         ReverseRegistrar _reverseRegistrar,
@@ -2846,28 +2687,35 @@ contract ETHRegistrarController is
         }
 
         base = _base;
-        prices = _prices;
+        priceOracle = _priceOracle;
         minCommitmentAge = _minCommitmentAge;
         maxCommitmentAge = _maxCommitmentAge;
         reverseRegistrar = _reverseRegistrar;
         nameWrapper = _nameWrapper;
     }
 
-    function rentPrice(
-        string memory name,
-        uint256 duration
-    ) public view override returns (IPriceOracle.Price memory price) {
+    function setPriceOracle(IPriceOracle _priceOracle) public onlyOwner {
+        priceOracle = _priceOracle;
+        emit NewPriceOracle(address(priceOracle));
+    }
+
+    function rentPrice(string memory name, uint256 duration)
+        public
+        view
+        override
+        returns (IPriceOracle.Price memory price)
+    {
         bytes32 label = keccak256(bytes(name));
-        price = prices.price(name, base.nameExpires(uint256(label)), duration);
+        price = priceOracle.price(name, base.nameExpires(uint256(label)), duration);
     }
 
     function valid(string memory name) public pure returns (bool) {
-        return name.strlen() >= 3;
+        return name.strlen() >= 1;
     }
 
     function available(string memory name) public view override returns (bool) {
         bytes32 label = keccak256(bytes(name));
-        return valid(name) && base.available(uint256(label));
+        return valid(name) && base.available(uint256(label)) && base.isNotCollision(name);
     }
 
     function makeCommitment(
@@ -2885,18 +2733,7 @@ contract ETHRegistrarController is
             revert ResolverRequiredWhenDataSupplied();
         }
         return
-            keccak256(
-                abi.encode(
-                    label,
-                    owner,
-                    duration,
-                    secret,
-                    resolver,
-                    data,
-                    reverseRecord,
-                    ownerControlledFuses
-                )
-            );
+            keccak256(abi.encode(label, owner, duration, secret, resolver, data, reverseRecord, ownerControlledFuses));
     }
 
     function commit(bytes32 commitment) public override {
@@ -2924,25 +2761,10 @@ contract ETHRegistrarController is
         _consumeCommitment(
             name,
             duration,
-            makeCommitment(
-                name,
-                owner,
-                duration,
-                secret,
-                resolver,
-                data,
-                reverseRecord,
-                ownerControlledFuses
-            )
+            makeCommitment(name, owner, duration, secret, resolver, data, reverseRecord, ownerControlledFuses)
         );
 
-        uint256 expires = nameWrapper.registerAndWrapETH2LD(
-            name,
-            owner,
-            duration,
-            resolver,
-            ownerControlledFuses
-        );
+        uint256 expires = nameWrapper.registerAndWrapETH2LD(name, owner, duration, resolver, ownerControlledFuses);
 
         if (data.length > 0) {
             _setRecords(resolver, keccak256(bytes(name)), data);
@@ -2952,26 +2774,14 @@ contract ETHRegistrarController is
             _setReverseRecord(name, resolver, msg.sender);
         }
 
-        emit NameRegistered(
-            name,
-            keccak256(bytes(name)),
-            owner,
-            price.base,
-            price.premium,
-            expires
-        );
+        emit NameRegistered(name, keccak256(bytes(name)), owner, price.base, price.premium, expires);
 
         if (msg.value > (price.base + price.premium)) {
-            payable(msg.sender).transfer(
-                msg.value - (price.base + price.premium)
-            );
+            payable(msg.sender).transfer(msg.value - (price.base + price.premium));
         }
     }
 
-    function renew(
-        string calldata name,
-        uint256 duration
-    ) external payable override {
+    function renew(string calldata name, uint256 duration) external payable override {
         bytes32 labelhash = keccak256(bytes(name));
         uint256 tokenId = uint256(labelhash);
         IPriceOracle.Price memory price = rentPrice(name, duration);
@@ -2991,21 +2801,13 @@ contract ETHRegistrarController is
         payable(owner()).transfer(address(this).balance);
     }
 
-    function supportsInterface(
-        bytes4 interfaceID
-    ) external pure returns (bool) {
-        return
-            interfaceID == type(IERC165).interfaceId ||
-            interfaceID == type(IETHRegistrarController).interfaceId;
+    function supportsInterface(bytes4 interfaceID) external pure returns (bool) {
+        return interfaceID == type(IERC165).interfaceId || interfaceID == type(IFLRRegistrarController).interfaceId;
     }
 
     /* Internal functions */
 
-    function _consumeCommitment(
-        string memory name,
-        uint256 duration,
-        bytes32 commitment
-    ) internal {
+    function _consumeCommitment(string memory name, uint256 duration, bytes32 commitment) internal {
         // Require an old enough commitment.
         if (commitments[commitment] + minCommitmentAge > block.timestamp) {
             revert CommitmentTooNew(commitment);
@@ -3026,27 +2828,14 @@ contract ETHRegistrarController is
         }
     }
 
-    function _setRecords(
-        address resolverAddress,
-        bytes32 label,
-        bytes[] calldata data
-    ) internal {
-        // use hardcoded .eth namehash
-        bytes32 nodehash = keccak256(abi.encodePacked(ETH_NODE, label));
+    function _setRecords(address resolverAddress, bytes32 label, bytes[] calldata data) internal {
+        // use hardcoded .flr namehash
+        bytes32 nodehash = keccak256(abi.encodePacked(FLR_NODE, label));
         IResolver resolver = IResolver(resolverAddress);
         resolver.multicallWithNodeCheck(nodehash, data);
     }
 
-    function _setReverseRecord(
-        string memory name,
-        address resolver,
-        address owner
-    ) internal {
-        reverseRegistrar.setNameForAddr(
-            msg.sender,
-            owner,
-            resolver,
-            string.concat(name, ".eth")
-        );
+    function _setReverseRecord(string memory name, address resolver, address owner) internal {
+        reverseRegistrar.setNameForAddr(msg.sender, owner, resolver, string.concat(name, ".flr"));
     }
 }

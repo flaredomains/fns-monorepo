@@ -80,7 +80,7 @@ export default function Register({ result }: { result: string }) {
 
   function getParentDomain(str: string) {
     // Define a regular expression pattern that matches subdomains of a domain that ends with .flr.
-    const subdomainPattern = /^([a-z0-9][a-z0-9-]*[a-z0-9]\.)+[a-z]{2,}\.flr$/i
+    const subdomainPattern = /^([a-zA-Z0-9-]+)\.{1}([a-zA-Z0-9-]+)\.{1}flr$/i
 
     // Use the regular expression pattern to test whether the string matches a subdomain.
     const isSubdomain = subdomainPattern.test(str)
