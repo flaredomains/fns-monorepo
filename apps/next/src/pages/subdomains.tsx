@@ -23,13 +23,13 @@ export default function Result() {
 
   return (
     <>
-      <div className="min-h-screen">
+      <div className="min-h-full">
         <div className="flex-col bg-[#0F172A] lg:flex lg:flex-row">
           {/* Left Side / Navbar */}
           <Side_Navbar />
 
           {/* Register */}
-          <div className="flex-col mt-9 pb-8 lg:mx-8 w-full min-h-screen lg:w-3/4">
+          <div className="flex-col mt-9 pb-8 lg:mx-8 w-full min-h-full lg:w-3/4">
             {/* Three button Register, Details, Subdomain / Search Input (hidden mobile) */}
             <Pages_buttons result={result} path={path} />
 
