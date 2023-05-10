@@ -37,6 +37,7 @@ import { Chain } from 'wagmi'
 //     default: { http: ['https://songbird-api.flare.network/ext/C/rpc'] },
 //   },
 // } as const satisfies Chain
+//
 
 export const Flare = {
   id: 14,
