@@ -38,9 +38,9 @@ const arrFAQ = [
     list: [
       '5+ character .flr names: $5 in FLR per year.',
       '4 character .flr names: $100 in FLR per year.',
-      '3 character .flr names $300 in FLR per year.',
-      '2 character .flr names $350 in FLR per year.',
-      '1 character .flr names $500 in FLR per year.',
+      '3 character .flr names: $300 in FLR per year.',
+      '2 character .flr names: $350 in FLR per year.',
+      '1 character .flr names: $500 in FLR per year.',
     ],
   },
   {
