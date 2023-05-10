@@ -83,7 +83,7 @@ const AddSubdomain = ({
     async onSuccess(data) {
       await data.wait(1);
       refetchFn();
-      console.log('Success setSubnodeRecord', data)
+      //console.log('Success setSubnodeRecord', data)
       // redirect?
       setIsOpen(false);
     },
