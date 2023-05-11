@@ -152,11 +152,23 @@ const ReqToRegister = ({
         try {
           const currentBlock = await ETHERS_PROVIDER.getBlockNumber()
           const blockTimestamp = (await ETHERS_PROVIDER.getBlock(currentBlock)).timestamp
+          const secondsSinceCommit = BigNumber.from(blockTimestamp).sub(data).toNumber()
           // console.log("blockTimestamp", blockTimestamp)
+          // console.log("commitmentTimestamp", data.toNumber())
+          // console.log("secondsSinceCommit", secondsSinceCommit)
 
-          // Only move state to registered if the commit isn't too old
-          if(data.add(MAX_COMMITMENT_AGE_SECS).gt(blockTimestamp)) {
+          // Ensure a small time buffer to account for UI easing function & updates
+          if(secondsSinceCommit < (MIN_COMMITMENT_AGE_SECS - 2))  {
+            setRegisterState(RegisterState.Waiting)
+            wait(secondsSinceCommit)
+          }
+          // Ensure a reasonable time buffer so the user has time to make the txn
+          else if (secondsSinceCommit < (MAX_COMMITMENT_AGE_SECS - 5)) {
             setRegisterState(RegisterState.Unregistered)
+          }
+          // Otherwise, secondsSinceCommit >= MAX_COMMITMENT_AGE_SECS, and can be re-committed
+          else {
+            setRegisterState(RegisterState.Committable)
           }
         } catch (error) {
           console.error("Error fetching block timestamp")
@@ -209,7 +221,7 @@ const ReqToRegister = ({
         if (receipt.status == 1) {
           // console.log('Commit transaction succeeded!', receipt.logs)
           setRegisterState(RegisterState.Waiting)
-          wait()
+          wait(60) // Wait the full minute duration
           return
         }
         console.error('Commit transaction reverted!', receipt.logs)
@@ -219,17 +231,10 @@ const ReqToRegister = ({
       })
   }
 
-  function wait() {
-    let counter = 1
-    const intervalId = setInterval(function () {
-      //console.log(`Waiting for ${counter} minute(s)`)
-      counter++
-      if (counter > 1) {
-        clearInterval(intervalId)
-        //console.log('Finished waiting!')
-        setRegisterState(RegisterState.Unregistered)
-      }
-    }, 60000)
+  function wait(seconds: number) {
+    setTimeout(() => {
+      setRegisterState(RegisterState.Unregistered)
+    }, seconds * 1000)
   }
 
   // Prepare Register
