@@ -160,42 +160,6 @@ export default function Register({ result }: { result: string }) {
     signerOrProvider: signer,
   })
 
-  // Get gas fee
-  // useEffect(() => {
-  //   const getGas = async () => {
-  //     const makeCommitment = await contract?.makeCommitment(
-  //       result as string,
-  //       address as `0x${string}`,
-  //       BigNumber.from(regPeriod).mul(31556952),
-  //       web3.sha3(address as `0x${string}`),
-  //       PublicResolver.address as `0x${string}`,
-  //       [],
-  //       false,
-  //       0
-  //     )
-  //     const gasCommit = await contract?.estimateGas.commit(makeCommitment)
-  //     // const gasRegister = await contract?.estimateGas.register(
-  //     //   result as string,
-  //     //   address as `0x${string}`,
-  //     //   BigNumber.from(regPeriod).mul(31556952),
-  //     //   web3.sha3(address as `0x${string}`),
-  //     //   PublicResolver.address as `0x${string}`,
-  //     //   [],
-  //     //   false,
-  //     //   0
-  //     // )
-  //     console.log('gasCommit', Number(gasCommit))
-  //   }
-
-  //   if (isConnected) {
-  //     getGas()
-  //   }
-  // }, [isConnected])
-
-  //0.00117262
-  //0.219
-  //0.220 * 2 = 0.44
-
   const incrementYears = () => {
     if (regPeriod >= 999) return
     setRegPeriod(regPeriod + 1)
