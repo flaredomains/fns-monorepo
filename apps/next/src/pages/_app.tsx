@@ -8,6 +8,7 @@ import { configureChains, createClient, WagmiConfig } from 'wagmi'
 
 import { Chain } from 'wagmi'
 
+// Mainnet
 export const Flare = {
   id: 14,
   name: 'Flare',
