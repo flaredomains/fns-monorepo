@@ -8,36 +8,6 @@ import { configureChains, createClient, WagmiConfig } from 'wagmi'
 
 import { Chain } from 'wagmi'
 
-// export const Coston2 = {
-//   id: 114,
-//   name: 'Coston 2',
-//   network: 'Coston 2 Test Network',
-//   nativeCurrency: {
-//     decimals: 18,
-//     name: 'C2FLR',
-//     symbol: 'C2FLR',
-//   },
-//   rpcUrls: {
-//     public: { http: ['https://coston2-api.flare.network/ext/C/rpc'] },
-//     default: { http: ['https://coston2-api.flare.network/ext/C/rpc'] },
-//   },
-// } as const satisfies Chain
-
-// export const Songbird = {
-//   id: 19,
-//   name: 'Songbird',
-//   network: 'Songbird Canary Network',
-//   nativeCurrency: {
-//     decimals: 18,
-//     name: 'SGB',
-//     symbol: 'SGB',
-//   },
-//   rpcUrls: {
-//     public: { http: ['https://songbird-api.flare.network/ext/C/rpc'] },
-//     default: { http: ['https://songbird-api.flare.network/ext/C/rpc'] },
-//   },
-// } as const satisfies Chain
-
 export const Flare = {
   id: 14,
   name: 'Flare',
@@ -60,8 +30,17 @@ if (!process.env.WALLET_CONNECT_PROJECT_ID) {
 
 const projectId = process.env.WALLET_CONNECT_PROJECT_ID
 
+// // 2. Configure wagmi client
+// const chains = [Flare]
+// const { provider } = configureChains(chains, [w3mProvider({ projectId })])
+// export const wagmiClient = createClient({
+//   autoConnect: true,
+//   connectors: w3mConnectors({ projectId, version: 1, chains }),
+//   provider,
+// })
+
 // 2. Configure wagmi client
-const chains = [Flare]
+const chains: Chain[] = [Flare]
 const { provider } = configureChains(chains, [w3mProvider({ projectId })])
 export const wagmiClient = createClient({
   autoConnect: true,
