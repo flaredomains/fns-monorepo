@@ -84,6 +84,7 @@ const AddSubdomain = ({
       await data.wait(1);
       refetchFn();
       // console.log('Success setSubnodeRecord', data)
+      setIsOpen(false);
     },
     onError(error) {
       // console.log('Error setSubnodeRecord', error)

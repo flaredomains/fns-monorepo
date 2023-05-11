@@ -75,7 +75,7 @@ const RegPrice = ({
           FLR
         </div>
         <p className="text-[#91A3B8] font-medium text-sm lg:text-xs xl:text-sm">
-          Registration price to pay{' '}
+          Registration price in Flare{' '}
         </p>
       </div>
     </>
@@ -88,7 +88,7 @@ const Note = () => {
       <div className="flex justify-center items-center mt-6 bg-[#334155] h-12 text-[#9cacc0] rounded-lg px-5 w-3/4 lg:w-1/3 lg:mt-0">
         <Image className="h-5 w-5 mr-2" src={Info} alt="FNS" />
         <p className="text-xs font-medium">
-          Increase period to avoid paying gas every year
+          Increase period to save on gas fees
         </p>
       </div>
     </>
