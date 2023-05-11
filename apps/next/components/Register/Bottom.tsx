@@ -14,20 +14,11 @@ import { BigNumber, providers } from 'ethers'
 import FLRRegistrarController from '@/pages/abi/FLRRegistrarController.json'
 import PublicResolver from '@/pages/abi/PublicResolver.json'
 import { MIN_COMMITMENT_AGE_SECS, MAX_COMMITMENT_AGE_SECS } from '@/constants/FLRRegistrarController'
+import { RegisterState } from './index'
 
 import web3 from 'web3-utils'
 
 const ETHERS_PROVIDER = new providers.JsonRpcProvider('https://flare-api.flare.network/ext/C/rpc');
-
-enum RegisterState {
-  Uncommitted,  // this is the default begin state (count => 0)
-  Committable,  // reflects if commit will succeed or not (if there's a valid commitment already or not)
-  Committing,   // committing transaction in progress
-  Waiting,      // committing transaction complete, waiting timer in progress (count => 1)
-  Unregistered, // timer complete, pending register transaction (count => 2)
-  Registering,  // registering transaction in progress
-  Registered    // registration complete (count => 3)
-}
 
 const ActionButton = ({ onClickFn, label } : { onClickFn: any, label: string }) => {
   return (
@@ -75,19 +66,22 @@ const ReqToRegister = ({
   price,
   count,
   setCount,
+  registerState,
+  setRegisterState
 }: {
   result: string
   regPeriod: number
   price: string
   count: number
   setCount: React.Dispatch<React.SetStateAction<number>>
+  registerState: RegisterState
+  setRegisterState: React.Dispatch<React.SetStateAction<RegisterState>>
 }) => {
-  const [registerState, setRegisterState] = useState<RegisterState>(RegisterState.Uncommitted)
   const { address } = useAccount()
 
   useEffect(() => {
     setRegisterState(RegisterState.Uncommitted)
-  }, [result])
+  }, [result, setRegisterState])
 
   useEffect(() => {
     switch(registerState) {
@@ -173,9 +167,6 @@ const ReqToRegister = ({
         } catch (error) {
           console.error("Error fetching block timestamp")
         }
-
-        // TODO: Finish implementation of remaining timer, when data is between
-        //       MIN and MAX_COMMITMENT_AGE_SECS
       }
       // If the data is zero, that means no matching commitment was found, which means we can
       // move to committable state, which prepares the write hook for commit
@@ -339,12 +330,16 @@ export default function Bottom({
   price,
   count,
   setCount,
+  registerState,
+  setRegisterState
 }: {
   result: string
   regPeriod: number
   price: string
   count: number
   setCount: React.Dispatch<React.SetStateAction<number>>
+  registerState: RegisterState
+  setRegisterState: React.Dispatch<React.SetStateAction<RegisterState>>
 }) {
   const { address, isConnected } = useAccount() as any
 
@@ -360,6 +355,8 @@ export default function Bottom({
               price={price}
               count={count}
               setCount={setCount}
+              registerState={registerState}
+              setRegisterState={setRegisterState}
             />
           </>
         ) : (

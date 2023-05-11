@@ -25,6 +25,16 @@ import {
 } from 'wagmi'
 import { BigNumber, ethers } from 'ethers'
 
+export enum RegisterState {
+  Uncommitted,  // this is the default begin state (count => 0)
+  Committable,  // reflects if commit will succeed or not (if there's a valid commitment already or not)
+  Committing,   // committing transaction in progress
+  Waiting,      // committing transaction complete, waiting timer in progress (count => 1)
+  Unregistered, // timer complete, pending register transaction (count => 2)
+  Registering,  // registering transaction in progress
+  Registered    // registration complete (count => 3)
+}
+
 const Alert = ({ available }: { available: boolean }) => {
   return (
     <>
@@ -74,6 +84,7 @@ export default function Register({ result }: { result: string }) {
   const [hashHex, setHashHex] = useState<string>('')
   const [filterResult, setFilterResult] = useState<string>('')
   const [isNormalDomain, setIsNormalDomain] = useState<boolean>(true)
+  const [registerState, setRegisterState] = useState<RegisterState>(RegisterState.Uncommitted)
 
   const { address, isConnected } = useAccount()
   const { data: signer } = useSigner()
@@ -120,7 +131,7 @@ export default function Register({ result }: { result: string }) {
   }, [result])
 
   // Available READ function
-  const { data: available } = useContractRead({
+  useContractRead({
     address: FLRRegistrarController.address as `0x${string}`,
     abi: FLRRegistrarController.abi,
     functionName: 'available',
@@ -128,6 +139,13 @@ export default function Register({ result }: { result: string }) {
     args: [filterResult],
     onSuccess(data: any) {
       // console.log('Success available', data)
+      // data is a boolean that represents if the domain is available or not
+      if(data) {
+        setRegisterState(RegisterState.Uncommitted)
+      }
+      else {
+        setRegisterState(RegisterState.Registered)
+      }
     },
     onError(error) {
       console.log('Error available', error)
@@ -178,7 +196,6 @@ export default function Register({ result }: { result: string }) {
   //   filterResult: filterResult,
   //   hashHex: hashHex,
   //   priceFLR: priceFLR,
-  //   available: available,
   //   regPeriod: regPeriod,
   //   isNormalDomain: isNormalDomain,
   // })
@@ -193,8 +210,8 @@ export default function Register({ result }: { result: string }) {
           <Domain_Select result={result} />
 
           <div className="flex-col bg-gray-800 px-8 py-12 rounded-b-md">
-            <Alert available={isNormalDomain && available} />
-            {available && isNormalDomain && (
+            <Alert available={isNormalDomain && registerState !== RegisterState.Registered} />
+            {isNormalDomain && registerState !== RegisterState.Registered && (
               <>
                 {/* Increment Selector */}
                 <Selector
@@ -223,6 +240,8 @@ export default function Register({ result }: { result: string }) {
                   price={priceFLR}
                   count={count}
                   setCount={setCount}
+                  registerState={registerState}
+                  setRegisterState={setRegisterState}
                 />
               </>
             )}
