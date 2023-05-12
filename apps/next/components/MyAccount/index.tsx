@@ -22,7 +22,7 @@ const OwnedDomains = ({ date, domain, isSubdomain }: { date: Date; domain: strin
   const year = date.getFullYear()
   return (
     <>
-      <div className="flex items-center justify-between px-6 py-5">
+      <div className="flex items-center justify-between md:px-6 py-5">
         <div className="flex items-center">
           {/* Avatar */}
           <Image className="h-8 w-8 mr-2" src={Avatar} alt="FNS" />
