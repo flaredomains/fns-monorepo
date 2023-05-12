@@ -51,7 +51,7 @@ const Dropdown = ({
     <>
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className="flex-col cursor-pointer relative w-full md:w-1/2"
+        className="flex-col cursor-pointer relative w-full md:w-full lg:w-1/2"
       >
         <div className="flex justify-between items-center p-3 w-full mt-7 bg-gray-700 rounded-lg">
           <p
