@@ -16,13 +16,21 @@ import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
 import web3 from 'web3-utils'
 import { ethers } from 'ethers'
 
-const OwnedDomains = ({ date, domain, isSubdomain }: { date: Date; domain: string; isSubdomain: boolean }) => {
+const OwnedDomains = ({
+  date,
+  domain,
+  isSubdomain,
+}: {
+  date: Date
+  domain: string
+  isSubdomain: boolean
+}) => {
   const day = date.getDate()
   const month = date.getMonth() + 1
   const year = date.getFullYear()
   return (
     <>
-      <div className="flex flex-col sm:flex-row gap-4 w-full sm:items-center justify-between px-6 py-5">
+      <div className="flex flex-col sm:flex-row gap-4 w-full sm:items-center justify-between md:px-6 py-5">
         <div className="inline-flex flex-row items-center">
           {/* Avatar */}
           <Image className="h-8 w-8 mr-2" src={Avatar} alt="FNS" />
@@ -37,7 +45,7 @@ const OwnedDomains = ({ date, domain, isSubdomain }: { date: Date; domain: strin
           >
             <p
               className={
-                "text-white font-semibold text-base break-all cursor-pointer hover:underline hover:underline-offset-2"
+                'text-white font-semibold text-base break-all cursor-pointer hover:underline hover:underline-offset-2'
               }
             >
               {domain}.flr
@@ -86,7 +94,7 @@ export default function MyAccount() {
         return {
           label: item.label,
           expire: Number(item.expiry),
-          isSubdomain: /[a-zA-Z0-9]+\.{1}[a-zA-Z0-9]+/.test(item.label)
+          isSubdomain: /[a-zA-Z0-9]+\.{1}[a-zA-Z0-9]+/.test(item.label),
         }
       })
       setAddressDomain(ownedDomain)
