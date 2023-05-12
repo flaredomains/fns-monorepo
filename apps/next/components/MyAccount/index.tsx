@@ -43,7 +43,7 @@ const OwnedDomains = ({ date, domain, isSubdomain }: { date: Date; domain: strin
         </div>
         <div className="flex items-center">
           {/* Date exp */}
-          <div className="flex items-center bg-gray-700 rounded-lg h-6 px-3 mr-3">
+          <div className="flex items-center bg-gray-700 rounded-lg h-6 px-3 md:mr-3">
             <p className="text-gray-300 text-xs font-medium">
             {isSubdomain ? 'No Expiry' : `Expires ${month}/${day}/${year}`}
             </p>
