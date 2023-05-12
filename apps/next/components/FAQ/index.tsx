@@ -38,7 +38,9 @@ const arrFAQ = [
     list: [
       '5+ character .flr names: $5 in FLR per year.',
       '4 character .flr names: $100 in FLR per year.',
-      '3 character .flr names $300 in FLR per year.',
+      '3 character .flr names: $300 in FLR per year.',
+      '2 character .flr names: $350 in FLR per year.',
+      '1 character .flr names: $500 in FLR per year.',
     ],
   },
   {
@@ -149,7 +151,7 @@ export default function FAQ() {
   return (
     <>
       <div className="flex-col w-full mt-6 mx-auto lg:flex lg:flex-row lg:w-full">
-        <div className="flex-col bg-gray-800 px-4 py-16 w-full rounded-md lg:px-32">
+        <div className="flex-col bg-gray-800 px-4 py-16 w-full rounded-md lg:px-[70px]">
           <div className="flex-col bg-gray-700 w-full px-8 py-8 rounded-lg">
             <p className="text-white font-bold mb-6 px-4 text-4xl">
               Frequently Asked Questions

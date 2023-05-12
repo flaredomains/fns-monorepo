@@ -194,7 +194,7 @@ export default function Reverse_Record({
           onClick={() => setName?.()}
           className="flex items-center px-3 py-1 bg-[#F97316] rounded-full cursor-pointer hover:scale-110 active:scale-125 transform transition duration-300 ease-out lg:py-2 lg:px-4"
         >
-          <p className="text-white text-sm font-medium">Not Set</p>
+          <p className="text-white text-sm font-medium">Set Name</p>
         </div>
       </div>
 
