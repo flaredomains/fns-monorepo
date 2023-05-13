@@ -4,7 +4,7 @@
 
 Flare Name Service (FNS) is a decentralized domain name registry that facilitates the allocation of human-readable addresses to wallet addresses and smart contracts. FNS domains serve to simplify the identification of wallets and smart contracts on the Flare blockchain, as well as to enable links to decentralized webpages.
 
-Anyone with a Flare-supported wallet may visit the FNS dApp to register a .flr address of their choosing. This process effectively transforms their 64-character 0x address, which is typically composed of randomized alphanumeric characters, into an easily recognizable domain name.
+Anyone with a Flare-supported wallet may visit the FNS dApp to register a .flr address of their choosing. This process effectively transforms their 64-character 0x address, which is typically composed of randomized alphanumeric characters, into an easily recognizable domain name. The protocol also allows the setting of records of the users choosing, from arbitrary text inputs like email addresses, to wallet addresses for a multitude of other chains.
 
 Access the docs [here](https://docs.flrns.domains/).
 
@@ -33,7 +33,7 @@ Once the second transaction is processed, you will officially become the owner o
 
 ### Resolve Domain Address
 
-Once you have successfully registered your .flr domain, the next step is to assign it to a Flare wallet or smart contract address of your choice. This process can be accomplished by setting yourself as the controller of the domain and adding the relevant address to the domain records.
+Once you have successfully registered your .flr domain, the next step is to assign it to a Flare wallet or smart contract address of your choice. This can be accomplished by setting the ReverseRegistrar to point to your desired Flare Wallet Address on the My Account page.
 You have the flexibility to choose whether the domain resolves to your own Flare wallet address or to an alternate wallet address or smart contract address. Once you have specified the desired address in the domain records, any transactions sent to the .flr domain will be automatically routed to the corresponding address via the resolver. To do this, you must be using a wallet provider that supports FNS domain name look-ups.
 
 ### Decentralized Webpages
