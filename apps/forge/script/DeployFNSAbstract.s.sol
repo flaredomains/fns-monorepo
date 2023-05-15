@@ -57,8 +57,8 @@ abstract contract DeployFNSAbstract is Script {
     function setUp() external {
         // deployerPrivKey = ANVIL_DEPLOYER_PRIVATE_KEY;
         // deployerAddress = ANVIL_DEPLOYER_ADDRESS;
-        deployerPrivKey = FLARE_DEPLOYER_PRIVATE_KEY;
-        deployerAddress = FLARE_DEPLOYER_ADDRESS;
+        deployerPrivKey = DEPLOYER_PRIVATE_KEY;
+        deployerAddress = DEPLOYER_ADDRESS;
         vm.startBroadcast(deployerPrivKey);
 
         // Begin script specifics
@@ -92,8 +92,8 @@ abstract contract DeployFNSAbstract is Script {
 
         StablePriceOracle stablePriceOracle = new StablePriceOracle(
             0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
-            [uint256(500), 350, 300, 100, 5]);
-        // [uint256(5), 4, 3, 2, 1]);
+            // [uint256(500), 350, 300, 100, 5]);
+        [uint256(5), 4, 3, 2, 1]);
 
         flrRegistrarController = new FLRRegistrarController(
             baseRegistrar,

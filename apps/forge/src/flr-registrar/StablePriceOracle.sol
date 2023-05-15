@@ -113,7 +113,7 @@ contract StablePriceOracle is IPriceOracle, IERC165, Ownable {
 
         // Now, grab the pricing data from the on-chain Oracle Contract
         // "C2FLR" for Coston2 Testnet, "SGB" for Songbird Canarynet, "FLR" for Flare Mainnet
-        (flrPriceUSD, timestamp, decimals) = ftsoRegistry.getCurrentPriceWithDecimals("FLR");
+        (flrPriceUSD, timestamp, decimals) = ftsoRegistry.getCurrentPriceWithDecimals("C2FLR");
     }
 
     function attoUSDToWei(uint256 amount) internal view returns (uint256) {
