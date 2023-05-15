@@ -15,17 +15,18 @@ contract TestStablePriceOracle is Test {
     MockFtsoRegistry public mockFtsoRegistry;
     MockFlareContractRegistry public mockFlareContractRegistry;
 
-    // Price: $0.05 as uint256 with 5 decimal places (5000 / 1e5 == 0.05)
-    uint256 public constant staticPricePerFLR = 5000;
+    // Price: $0.025 as uint256 with 5 decimal places (2500 / 1e5 == 0.025)
+    uint256 public constant staticPricePerFLR = 2500;
     uint256 public constant staticDecimalsFLRPrice = 5;
 
-    uint256 public constant oneLetterAnnualPriceUSD = 1000;
-    uint256 public constant twoLetterAnnualPriceUSD = 500;
-    uint256 public constant threeLetterAnnualPriceUSD = 250;
-    uint256 public constant fourLetterAnnualPriceUSD = 125;
-    uint256 public constant fiveLetterAnnualPriceUSD = 50;
+    uint256 public constant oneLetterAnnualPriceUSD = 500;
+    uint256 public constant twoLetterAnnualPriceUSD = 350;
+    uint256 public constant threeLetterAnnualPriceUSD = 300;
+    uint256 public constant fourLetterAnnualPriceUSD = 100;
+    uint256 public constant fiveLetterAnnualPriceUSD = 25;
+    uint256 public constant sixLetterAnnualPriceUSD = 5;
 
-    event RentPriceChanged(uint256[5] prices);
+    event RentPriceChanged(uint256[6] prices);
 
     function setUp() public {
         mockFtsoRegistry = new MockFtsoRegistry(staticPricePerFLR, block.timestamp, staticDecimalsFLRPrice);
@@ -38,7 +39,8 @@ contract TestStablePriceOracle is Test {
                 twoLetterAnnualPriceUSD,
                 threeLetterAnnualPriceUSD,
                 fourLetterAnnualPriceUSD,
-                fiveLetterAnnualPriceUSD
+                fiveLetterAnnualPriceUSD,
+                sixLetterAnnualPriceUSD
             ]
         );
     }
@@ -50,9 +52,10 @@ contract TestStablePriceOracle is Test {
                 // The smallest valid value is $1/year 
                 uint256(1), // 1-letter name price (attoUSD)
                 1,          // 2-letter name price (attoUSD)
-                0,          // 3-letter name price (attoUSD)
+                1,          // 3-letter name price (attoUSD)
                 1,          // 4-letter name price (attoUSD)
-                2           // 5-letter name price (attoUSD)
+                1,          // 5-letter name price (attoUSD)
+                1           // 6+ letter name price (attoUSD)
             ]
         );
     }
@@ -61,22 +64,24 @@ contract TestStablePriceOracle is Test {
         vm.prank(address0);
         stablePriceOracle.setPrices(
             [
-                uint256(2000), // 1-letter name price (attoUSD)
-                500, // 2-letter name price (attoUSD)
-                250, // 3-letter name price (attoUSD)
-                125, // 4-letter name price (attoUSD)
-                75 // 5-letter name price (attoUSD)
+                uint256(2000),
+                500,
+                250,
+                125,
+                75,
+                50
             ]
         );
     }
 
     function test_ownerCanCallSetPricesAndEventEmits() public {
-        uint256[5] memory annualRentPricesUSD = [
-            uint256(2000), // 1-letter name price (attoUSD)
-            500, // 2-letter name price (attoUSD)
-            250, // 3-letter name price (attoUSD)
-            125, // 4-letter name price (attoUSD)
-            75 // 5-letter name price (attoUSD)
+        uint256[6] memory annualRentPricesUSD = [
+            uint256(2000),
+            500,
+            250,
+            125,
+            75,
+            50
         ];
 
         vm.expectEmit(true, false, false, false);
@@ -143,15 +148,15 @@ contract TestStablePriceOracle is Test {
         assertEq(stablePriceOracle.price("ricky", 0, numSecondsToPrice).base, expectedPrice);
     }
 
-    function test_GT5LetterPriceIsCorrect() public {
-        uint256 fiveLetterPriceAttoUSDAnnual = fiveLetterAnnualPriceUSD * 1e18;
-        uint256 fiveLetterPriceAttoUSDPerSec = fiveLetterPriceAttoUSDAnnual / stablePriceOracle.secondsPerYear();
+    function test_GTE6LetterPriceIsCorrect() public {
+        uint256 sixLetterPriceAttoUSDAnnual = sixLetterAnnualPriceUSD * 1e18;
+        uint256 sixLetterPriceAttoUSDPerSec = sixLetterPriceAttoUSDAnnual / stablePriceOracle.secondsPerYear();
         uint256 numYearsToPrice = 1;
         uint256 numSecondsToPrice = numYearsToPrice * stablePriceOracle.secondsPerYear();
         uint256 expectedPrice = (
-            fiveLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ** staticDecimalsFLRPrice))
+            sixLetterPriceAttoUSDPerSec * numSecondsToPrice * (1 * (10 ** staticDecimalsFLRPrice))
         ) / staticPricePerFLR;
 
-        assertEq(stablePriceOracle.price("amuchlongernamethanfiveletters", 0, numSecondsToPrice).base, expectedPrice);
+        assertEq(stablePriceOracle.price("amuchlongernamethansixletters", 0, numSecondsToPrice).base, expectedPrice);
     }
 }

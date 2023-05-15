@@ -13,7 +13,7 @@ contract LinearPremiumPriceOracle is StablePriceOracle {
 
     constructor(
         address _flareContractRegistry,
-        uint256[5] memory _rentPrices,
+        uint256[6] memory _rentPrices,
         uint256 _initialPremium,
         uint256 _premiumDecreaseRate
     ) StablePriceOracle(_flareContractRegistry, _rentPrices) {
