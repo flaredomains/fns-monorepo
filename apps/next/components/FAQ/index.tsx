@@ -34,9 +34,10 @@ const arrFAQ = [
   {
     text: 'Currently, registration costs are set at the following prices (Not including gas fees):',
     subText:
-      'Domains with less than 5 characters are priced higher since there are less combinations than the names with 5+ characters.',
+      'Domains with less than 6 characters are priced higher since there are less combinations than the names with 6+ characters.',
     list: [
-      '5+ character .flr names: $5 in FLR per year.',
+      '6+ character .flr names: $5 in FLR per year.',
+      '5 character .flr names: $25 in FLR per year.',
       '4 character .flr names: $100 in FLR per year.',
       '3 character .flr names: $300 in FLR per year.',
       '2 character .flr names: $350 in FLR per year.',
@@ -127,7 +128,7 @@ const FAQ_Line = ({
           <ul
             className={`list-disc ${
               isOpen ? 'block' : 'hidden'
-            } py-4 text-gray-500 font-normal text-sm pl-4`}
+            } py-4 text-gray-300 font-normal text-sm pl-4`}
           >
             {list.map((item, index) => (
               <li key={index}>{item}</li>
@@ -138,7 +139,7 @@ const FAQ_Line = ({
         <p
           className={`${
             isOpen ? 'block' : 'hidden'
-          } py-4 text-gray-500 font-normal text-sm`}
+          } py-4 text-gray-300 font-normal text-sm`}
         >
           {subText}
         </p>
