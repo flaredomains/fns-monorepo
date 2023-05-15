@@ -22,7 +22,7 @@ const OwnedDomains = ({ date, domain, isSubdomain }: { date: Date; domain: strin
   const year = date.getFullYear()
   return (
     <>
-      <div className="flex items-center justify-between px-6 py-5">
+      <div className="flex items-center justify-between md:px-6 py-5">
         <div className="flex items-center">
           {/* Avatar */}
           <Image className="h-8 w-8 mr-2" src={Avatar} alt="FNS" />
@@ -43,7 +43,7 @@ const OwnedDomains = ({ date, domain, isSubdomain }: { date: Date; domain: strin
         </div>
         <div className="flex items-center">
           {/* Date exp */}
-          <div className="flex items-center bg-gray-700 rounded-lg h-6 px-3 mr-3">
+          <div className="flex items-center bg-gray-700 rounded-lg h-6 px-3 md:mr-3">
             <p className="text-gray-300 text-xs font-medium">
             {isSubdomain ? 'No Expiry' : `Expires ${month}/${day}/${year}`}
             </p>
