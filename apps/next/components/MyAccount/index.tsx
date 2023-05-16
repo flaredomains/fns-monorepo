@@ -25,13 +25,22 @@ const OwnedDomains = ({
   domain: string
   isSubdomain: boolean
 }) => {
+const OwnedDomains = ({
+  date,
+  domain,
+  isSubdomain,
+}: {
+  date: Date
+  domain: string
+  isSubdomain: boolean
+}) => {
   const day = date.getDate()
   const month = date.getMonth() + 1
   const year = date.getFullYear()
   return (
     <>
-      <div className="flex flex-col sm:flex-row gap-4 w-full sm:items-center justify-between md:md:px-6 py-5">
-        <div className="inline-flex flex-row items-center">
+      <div className="flex flex-col sm:flex-row gap-4 w-full sm:flex-col sm:flex-row gap-4 w-full sm:items-center justify-between md:md:px-6 py-5">
+        <div className="inline-inline-flex flex-row flex-row items-center">
           {/* Avatar */}
           <Image className="h-8 w-8 mr-2" src={Avatar} alt="FNS" />
 
@@ -42,8 +51,12 @@ const OwnedDomains = ({
               query: { result: domain + '.flr' },
             }}
             title={`${domain}.flr`}
+            title={`${domain}.flr`}
           >
             <p
+              className={
+                'text-white font-semibold text-base break-all cursor-pointer hover:underline hover:underline-offset-2'
+              }
               className={
                 'text-white font-semibold text-base break-all cursor-pointer hover:underline hover:underline-offset-2'
               }
@@ -56,7 +69,14 @@ const OwnedDomains = ({
         {/* Date exp */}
         <div className="flex items-center justify-center bg-gray-700 rounded-lg px-3 md:shrink-0">
           <p className="text-gray-300 text-xs font-medium py-1">
+
+        {/* Date exp */}
+        <div className="flex items-center justify-center bg-gray-700 rounded-lg px-3 md:shrink-0">
+          <p className="text-gray-300 text-xs font-medium py-1">
             {isSubdomain ? 'No Expiry' : `Expires ${month}/${day}/${year}`}
+          </p>
+        </div>
+      </div>
           </p>
         </div>
       </div>
@@ -94,7 +114,7 @@ export default function MyAccount() {
         return {
           label: item.label,
           expire: Number(item.expiry),
-          isSubdomain: /[a-zA-Z0-9]+\.{1}[a-zA-Z0-9]+/.test(item.label),
+          isSubdomain: /[a-zA-Z0-9]+\.{1}[a-zA-Z0-9]+/.test(item.label),,
         }
       })
       setAddressDomain(ownedDomain)
