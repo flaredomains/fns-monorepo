@@ -22,8 +22,8 @@ const OwnedDomains = ({ date, domain, isSubdomain }: { date: Date; domain: strin
   const year = date.getFullYear()
   return (
     <>
-      <div className="flex items-center justify-between px-6 py-5">
-        <div className="flex items-center">
+      <div className="flex flex-col sm:flex-row gap-4 w-full sm:items-center justify-between px-6 py-5">
+        <div className="inline-flex flex-row items-center">
           {/* Avatar */}
           <Image className="h-8 w-8 mr-2" src={Avatar} alt="FNS" />
 
@@ -33,21 +33,23 @@ const OwnedDomains = ({ date, domain, isSubdomain }: { date: Date; domain: strin
               pathname: `details`,
               query: { result: domain + '.flr' },
             }}
+            title={`${domain}.flr`}
           >
             <p
-              className={`text-white font-semibold text-base cursor-pointer hover:underline hover:underline-offset-2`}
+              className={
+                "text-white font-semibold text-base break-all cursor-pointer hover:underline hover:underline-offset-2"
+              }
             >
               {domain}.flr
             </p>
           </Link>
         </div>
-        <div className="flex items-center">
-          {/* Date exp */}
-          <div className="flex items-center bg-gray-700 rounded-lg h-6 px-3 mr-3">
-            <p className="text-gray-300 text-xs font-medium">
+
+        {/* Date exp */}
+        <div className="flex items-center justify-center bg-gray-700 rounded-lg px-3 shrink-0">
+          <p className="text-gray-300 text-xs font-medium py-1">
             {isSubdomain ? 'No Expiry' : `Expires ${month}/${day}/${year}`}
-            </p>
-          </div>
+          </p>
         </div>
       </div>
     </>
