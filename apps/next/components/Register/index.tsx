@@ -209,7 +209,7 @@ export default function Register({ result }: { result: string }) {
           {/* Domain Container */}
           <Domain_Select result={result} />
 
-          <div className="flex-col bg-gray-800 px-8 py-12 rounded-b-md">
+          <div className="flex-col bg-gray-800 px-8 py-12 rounded-b-lg">
             <Alert available={isNormalDomain && registerState !== RegisterState.Registered} />
             {isNormalDomain && registerState !== RegisterState.Registered && (
               <>

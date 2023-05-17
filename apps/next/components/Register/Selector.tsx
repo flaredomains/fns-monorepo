@@ -26,16 +26,16 @@ const RegistrationPeriod = ({
 }) => {
   return (
     <>
-      <div className="flex items-center">
+      <div className="flex items-center justify-between gap-[12px] shrink-0">
         {/* - */}
         <div
           onClick={decreaseYears}
-          className="bg-[#F97316] h-6 w-6 rounded-full text-white text-center mr-5 flex items-center justify-center hover:scale-110 active:scale-125 transform transition duration-300 ease-out"
+          className="bg-[#F97316] h-6 w-6 rounded-full text-white text-center flex items-center justify-center hover:scale-110 active:scale-125 transform transition duration-300 ease-out cursor-pointer"
         >
           <Image className="h-3 w-3" src={Minus} alt="FNS" />
         </div>
         {/* Text */}
-        <div className="flex-col">
+        <div className="flex-col shrink-0">
           <p className="text-white font-semibold text-3xl lg:text-xl xl:text-3xl">
             {regPeriod} year
           </p>
@@ -46,7 +46,7 @@ const RegistrationPeriod = ({
         {/* + */}
         <div
           onClick={incrementYears}
-          className="bg-[#F97316] h-6 w-6 rounded-full text-white text-center ml-5 flex items-center justify-center lg:ml-1 hover:scale-110 active:scale-125 transform transition duration-300 ease-out"
+          className="bg-[#F97316] h-6 w-6 rounded-full text-white text-center flex items-center justify-center lg:ml-1 hover:scale-110 active:scale-125 transform transition duration-300 ease-out cursor-pointer"
         >
           <Image className="h-3 w-3" src={Plus} alt="FNS" />
         </div>
@@ -107,7 +107,7 @@ export default function Selector({
   decreaseYears: () => void
 }) {
   return (
-    <div className="flex flex-col justify-between items-center mt-9 lg:flex-row">
+    <div className="flex flex-col justify-between items-center mt-9 lg:flex-row lg:gap-4">
       <RegistrationPeriod
         decreaseYears={decreaseYears}
         regPeriod={regPeriod}
