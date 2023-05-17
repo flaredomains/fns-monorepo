@@ -30,8 +30,8 @@ const OwnedDomains = ({
   const year = date.getFullYear()
   return (
     <>
-      <div className="flex flex-col sm:flex-row gap-4 w-full sm:items-center justify-between md:md:px-6 py-5">
-        <div className="inline-inline-flex flex-row items-center">
+      <div className="flex flex-col sm:flex-row gap-4 w-full sm:items-center justify-between md:px-6 py-5">
+        <div className="inline-flex flex-row items-center">
           {/* Avatar */}
           <Image className="h-8 w-8 mr-2" src={Avatar} alt="FNS" />
 
