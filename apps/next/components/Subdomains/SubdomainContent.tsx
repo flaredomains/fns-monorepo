@@ -104,7 +104,7 @@ const AddSubdomain = ({
 
   return (
     <>
-      <div className="flex flex-col md:flex-row items-center bg-gray-800 px-8 py-12 rounded-b-lg gap-4 md:gap-6 w-full">
+      <div className={`flex flex-col md:flex-row items-center bg-gray-800 px-8 py-12 gap-4 md:gap-6 w-full ${arrSubdomains.length > 0 ? `rounded-b-none`:'rounded-b-lg' }`}>
         {isOpen ? (
           <>
             <form
@@ -201,7 +201,7 @@ export default function SubdomainContent({
       />
 
       {arrSubdomains.length > 0 && (
-        <div className="flex-col bg-gray-800 px-8 py-5 rounded-b-md">
+        <div className="flex-col bg-gray-800 px-8 py-5 rounded-b-lg">
           {arrSubdomains.map((item) => (
             <Link
               key={item.domain}
