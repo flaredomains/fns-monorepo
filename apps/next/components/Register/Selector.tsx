@@ -85,9 +85,9 @@ const RegPrice = ({
 const Note = () => {
   return (
     <>
-      <div className="flex justify-center items-center mt-6 bg-[#334155] h-12 text-[#9cacc0] rounded-lg px-5 w-3/4 lg:w-1/3 lg:mt-0">
+      <div className="flex justify-center items-center mt-6 bg-[#334155] text-[#9cacc0] rounded-lg px-5 py-1 w-3/4 lg:w-1/3 lg:mt-0">
         <Image className="h-5 w-5 mr-2" src={Info} alt="FNS" />
-        <p className="text-xs font-medium">
+        <p className="text-xs font-medium py-1">
           Increase period to save on gas fees
         </p>
       </div>
