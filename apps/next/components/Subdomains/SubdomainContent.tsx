@@ -104,11 +104,11 @@ const AddSubdomain = ({
 
   return (
     <>
-      <div className="flex flex-row items-center mt-5 bg-gray-800 px-8 py-12 lg:mt-0">
+      <div className="flex flex-col md:flex-row items-center bg-gray-800 px-8 py-12 rounded-b-lg gap-4 md:gap-6 w-full">
         {isOpen ? (
           <>
             <form
-              className={`${isInputValid ? 'border-gray-500' : 'border-red-500'} flex items-center w-3/5 py-2 px-4 h-12 rounded-md bg-gray-700 border-2`}
+              className={`${isInputValid ? 'border-gray-500' : 'border-red-500'} flex items-center w-full py-2 px-4 h-12 rounded-md bg-gray-700 border-2`}
             >
               <input
                 type="text"
@@ -122,7 +122,7 @@ const AddSubdomain = ({
                 required
               />
             </form>
-            <div className="items-center flex ml-auto">
+            <div className="flex flex-row items-center justify-center ">
               {/* Cancel */}
               <button
                 onClick={() => setIsOpen(false)}
@@ -145,32 +145,34 @@ const AddSubdomain = ({
           </>
         ) : (
           <>
-            {/* No subdomains have been added yet */}
-            {typeof arrSubdomains !== 'undefined' &&
-              arrSubdomains.length === 0 && (
-                <div
-                  className={`flex w-full ${
-                    checkOwnerDomain ? `lg:w-3/4` : 'lg:w-full'
-                  } bg-gray-500 py-3 px-5 rounded-lg mr-4`}
-                >
-                  <Image className="h-4 w-4 mr-2" src={Question} alt="FNS" />
-                  <div className="flex-col">
-                    <p className="text-gray-200 font-semibold text-sm">
-                      No subdomains have been added yet
-                    </p>
+            <div className='flex flex-col gap-3 md:flex-row w-full'>
+              {/* No subdomains have been added yet */}
+              {typeof arrSubdomains !== 'undefined' &&
+                arrSubdomains.length === 0 && (
+                  <div
+                    className={`flex w-full ${
+                      checkOwnerDomain ? `lg:w-3/4` : 'lg:w-full'
+                    } bg-gray-500 py-3 px-5 rounded-lg`}
+                  >
+                    <Image className="h-4 w-4 mr-2" src={Question} alt="FNS" />
+                    <div className="flex-col">
+                      <p className="text-gray-200 font-semibold text-sm">
+                        No subdomains have been added yet
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
+              {/* Button */}
+              {checkOwnerDomain && (
+                <button
+                  onClick={() => setIsOpen(true)}
+                  className="flex justify-center items-center shrink-0 px-4 text-center bg-[#F97316] h-11 w-[138px] rounded-lg text-white hover:scale-105 transform transition duration-100 ease-out "
+                >
+                  <p className="text-xs font-medium mr-2 shrink-0">Add Subdomain</p>
+                  <Image className="h-4 w-4" src={Plus} alt="FNS" />
+                </button>
               )}
-            {/* Button */}
-            {checkOwnerDomain && (
-              <button
-                onClick={() => setIsOpen(true)}
-                className="flex justify-center items-center text-center bg-[#F97316] h-11 w-1/2 rounded-lg text-white px-auto hover:scale-105 transform transition duration-100 ease-out md:w-1/4 lg:ml-auto"
-              >
-                <p className="text-xs font-medium mr-2">Add Subdomain</p>
-                <Image className="h-4 w-4" src={Plus} alt="FNS" />
-              </button>
-            )}
+            </div>
           </>
         )}
       </div>
