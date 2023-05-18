@@ -13,7 +13,7 @@ import { sha3_256 } from 'js-sha3'
 import web3 from 'web3-utils'
 const namehash = require('eth-ens-namehash')
 
-const ZERO_ADDRESS: string = "0x0000000000000000000000000000000000000000";
+const ZERO_ADDRESS: string = '0x0000000000000000000000000000000000000000'
 
 import { useAccount, useContractRead, useContract, Address } from 'wagmi'
 import { BigNumber, utils } from 'ethers'
@@ -35,12 +35,13 @@ export default function Details({ result }: { result: string }) {
 
   function getParentDomain(str: string) {
     // Define a regular expression pattern that matches subdomains of a domain that ends with .flr.
-    const subdomainPattern = /^([a-zA-Z0-9-]+)\.{1}([a-zA-Z0-9-]+)\.{1}flr$/i
+    const subdomainPattern = /^([a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)\.flr$/i
+    // /^([a-zA-Z0-9-]+)\.{1}([a-zA-Z0-9-]+)\.{1}flr$/i
 
     // Use the regular expression pattern to test whether the string matches a subdomain.
     const isSubdomain = subdomainPattern.test(str)
     console.log('isSubdomain', str, isSubdomain)
-    setIsSubdomain(isSubdomain);
+    setIsSubdomain(isSubdomain)
 
     if (isSubdomain) {
       // The input string is a subdomain, extract the parent domain.
@@ -54,11 +55,11 @@ export default function Details({ result }: { result: string }) {
   }
 
   useEffect(() => {
-    console.log("isAvailable changed", isAvailable)
+    console.log('isAvailable changed', isAvailable)
   }, [isAvailable])
 
   useEffect(() => {
-    console.log("isSubdomain changed", isSubdomain)
+    console.log('isSubdomain changed', isSubdomain)
   }, [isSubdomain])
 
   // Check if result end with .flr and we do an hash with the resultFiltered for registrant and date
@@ -72,7 +73,7 @@ export default function Details({ result }: { result: string }) {
       console.log('Ethereum address')
       setFilterResult(result)
     } else if (result) {
-      setTokenId(BigNumber.from(utils.namehash(result)));
+      setTokenId(BigNumber.from(utils.namehash(result)))
 
       const resultFiltered = result.endsWith('.flr')
         ? result.slice(0, -4)
@@ -80,7 +81,7 @@ export default function Details({ result }: { result: string }) {
       const hash = web3.sha3(resultFiltered) as string
       setFilterResult(resultFiltered)
       setHashHex(hash)
-      setPreparedHash(true);
+      setPreparedHash(true)
     }
   }, [result])
 
@@ -94,7 +95,7 @@ export default function Details({ result }: { result: string }) {
     enabled: preparedHash && !isSubdomain,
     args: [filterResult],
     onSuccess(data: any) {
-      console.log("Details::FLRRegistrarController::available()", data)
+      console.log('Details::FLRRegistrarController::available()', data)
       setPrepared(true)
       setIsAvailable(data)
     },
@@ -102,7 +103,7 @@ export default function Details({ result }: { result: string }) {
       console.log('Error available', error)
     },
   })
-  
+
   // Subdomains: Is name available
   useContractRead({
     address: NameWrapper.address as `0x${string}`,
@@ -112,11 +113,13 @@ export default function Details({ result }: { result: string }) {
     args: [tokenId],
     onSuccess(data: string) {
       console.log(
-        "Details::NameWrapper::ownerOf()",
+        'Details::NameWrapper::ownerOf()',
         data,
         data === ZERO_ADDRESS,
-        "isSubdomain:", isSubdomain)
-      setIsAvailable(data === ZERO_ADDRESS);
+        'isSubdomain:',
+        isSubdomain
+      )
+      setIsAvailable(data === ZERO_ADDRESS)
     },
     onError(error) {
       console.log('Error ownerOf', error)

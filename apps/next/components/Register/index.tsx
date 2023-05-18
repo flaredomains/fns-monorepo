@@ -26,13 +26,13 @@ import {
 import { BigNumber, ethers } from 'ethers'
 
 export enum RegisterState {
-  Uncommitted,  // this is the default begin state (count => 0)
-  Committable,  // reflects if commit will succeed or not (if there's a valid commitment already or not)
-  Committing,   // committing transaction in progress
-  Waiting,      // committing transaction complete, waiting timer in progress (count => 1)
+  Uncommitted, // this is the default begin state (count => 0)
+  Committable, // reflects if commit will succeed or not (if there's a valid commitment already or not)
+  Committing, // committing transaction in progress
+  Waiting, // committing transaction complete, waiting timer in progress (count => 1)
   Unregistered, // timer complete, pending register transaction (count => 2)
-  Registering,  // registering transaction in progress
-  Registered    // registration complete (count => 3)
+  Registering, // registering transaction in progress
+  Registered, // registration complete (count => 3)
 }
 
 const Alert = ({ available }: { available: boolean }) => {
@@ -84,14 +84,16 @@ export default function Register({ result }: { result: string }) {
   const [hashHex, setHashHex] = useState<string>('')
   const [filterResult, setFilterResult] = useState<string>('')
   const [isNormalDomain, setIsNormalDomain] = useState<boolean>(true)
-  const [registerState, setRegisterState] = useState<RegisterState>(RegisterState.Uncommitted)
+  const [registerState, setRegisterState] = useState<RegisterState>(
+    RegisterState.Uncommitted
+  )
 
   const { address, isConnected } = useAccount()
   const { data: signer } = useSigner()
 
   function getParentDomain(str: string) {
     // Define a regular expression pattern that matches subdomains of a domain that ends with .flr.
-    const subdomainPattern = /^([a-zA-Z0-9-]+)\.{1}([a-zA-Z0-9-]+)\.{1}flr$/i
+    const subdomainPattern = /^([a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)\.flr$/i
 
     // Use the regular expression pattern to test whether the string matches a subdomain.
     const isSubdomain = subdomainPattern.test(str)
@@ -140,10 +142,9 @@ export default function Register({ result }: { result: string }) {
     onSuccess(data: any) {
       // console.log('Success available', data)
       // data is a boolean that represents if the domain is available or not
-      if(data) {
+      if (data) {
         setRegisterState(RegisterState.Uncommitted)
-      }
-      else {
+      } else {
         setRegisterState(RegisterState.Registered)
       }
     },
@@ -210,7 +211,11 @@ export default function Register({ result }: { result: string }) {
           <Domain_Select result={result} />
 
           <div className="flex-col bg-gray-800 px-8 py-12 rounded-b-lg">
-            <Alert available={isNormalDomain && registerState !== RegisterState.Registered} />
+            <Alert
+              available={
+                isNormalDomain && registerState !== RegisterState.Registered
+              }
+            />
             {isNormalDomain && registerState !== RegisterState.Registered && (
               <>
                 {/* Increment Selector */}
