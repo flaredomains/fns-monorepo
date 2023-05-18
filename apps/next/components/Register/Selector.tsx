@@ -30,14 +30,14 @@ const RegistrationPeriod = ({
         {/* - */}
         <div
           onClick={decreaseYears}
-          className="bg-[#F97316] h-6 w-6 rounded-full text-white text-center flex items-center justify-center hover:scale-110 active:scale-125 transform transition duration-300 ease-out cursor-pointer"
+          className={`h-6 w-6 rounded-full text-white text-center flex items-center justify-center ${regPeriod === 1 ? 'bg-[#334155] text-[#91A3B8] cursor-not-allowed ' : 'bg-[#F97316] hover:scale-110 active:scale-125 transform transition duration-300 ease-out cursor-pointer'}`}
         >
           <Image className="h-3 w-3" src={Minus} alt="FNS" />
         </div>
         {/* Text */}
         <div className="flex-col shrink-0">
           <p className="text-white font-semibold text-3xl lg:text-xl xl:text-3xl">
-            {regPeriod} year
+            {regPeriod === 1 && `${regPeriod} year`} {regPeriod > 1 && `${regPeriod} years`}
           </p>
           <p className="text-[#91A3B8] font-medium text-sm lg:text-xs xl:text-sm">
             Registration Period
