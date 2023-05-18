@@ -66,7 +66,7 @@ const addressKeys: Array<string> = [
   "DOGE"
 ]
 
-// Regular expression that matches for any text or address record 
+// Regular expression that matches for any text or address record
 // that has been set! ie any record that is not "" or "0x"
 const recordIsSet = /[^(^0x$|^$)]/;
 
@@ -128,7 +128,7 @@ const Info = ({
       }
       catch (error) {
         setAddressInputValid(false)
-      }
+    }
     }
   }, [input])
 
@@ -159,7 +159,7 @@ const Info = ({
 
       // Waits for 1 txn confirmation (block confirmation)
       await data.wait(1);
-      
+
       refetch()
       setRecordsEditMode(false)
       setInput('')
@@ -202,11 +202,13 @@ const Info = ({
   // that has been set and returns "Not Set" otherwise.
   const formattedRecord = () => {
     // if a text or address record is not set, return not set
-    if(recordIsSet.test(rightText)) {
+    if (recordIsSet.test(rightText)) {
       // address record
-      if(addressRecord) {
+      if (addressRecord) {
+        if (rightText) {
           // https://docs.ens.domains/dapp-developer-guide/resolving-names#listing-cryptocurrency-addresses-and-text-records
           return formatsByName[leftText].encoder(Buffer.from(utils.arrayify(rightText)))
+        }
       }
       // text record
       else {
@@ -218,35 +220,41 @@ const Info = ({
 
   return (
     <>
-      <div className="flex flex-col mb-3 lg:flex-row lg:items-center">
-        <p className="w-32 text-white font-medium text-xs mr-6">{leftText}</p>
+      <div className="flex flex-col mb-3 lg:flex-row lg:items-start">
+        <p className="w-32 text-white font-medium text-xs mr-6 shrink-0">
+          {leftText}
+        </p>
         {/* Not Edit section */}
-        {!recordsEditMode && (
-          <>
-            <p
-              className={`${
-                // if a text or address record are not set, set text color to gray!
+        <div className="gap-2 flex flex-col items-start lg:flex-row lg:items-center">
+          {!recordsEditMode && (
+            <>
+              <p
+                className={`${
+                  // if a text or address record are not set, set text color to gray!
                 recordIsSet.test(rightText) ? 'text-[#F97316]' : 'text-gray-400'
-              } font-medium text-xs mr-3 mt-2 lg:mt-0`}
-            >
+                } font-medium text-xs mr-3 mt-2 lg:mt-0`}
+              >
               { formattedRecord() }
-            </p>
-            {copied ? (
-              <>
-                <p className="text-[#F97316] font-medium text-sm">Copied</p>
-              </>
-            ) : (
-              rightText && (
-                <Image
-                  onClick={handleCopy}
-                  className="h-4 w-4 cursor-pointer"
-                  src={Clipboard_copy}
-                  alt="FNS"
-                />
-              )
-            )}
-          </>
-        )}
+              </p>
+              {copied ? (
+                <>
+                  <p className="text-[#F97316] font-medium text-sm items-center">
+                    Copied
+                  </p>
+                </>
+              ) : (
+                rightText && (
+                  <Image
+                    onClick={handleCopy}
+                    className="h-4 w-4 cursor-pointer items-center"
+                    src={Clipboard_copy}
+                    alt="FNS"
+                  />
+                )
+              )}
+            </>
+          )}
+        </div>
         {/* Edit section */}
         {recordsEditMode && (
           <div className="flex items-center mt-2 lg:mt-0">
@@ -335,9 +343,9 @@ export default function Content({
   // Delete the element from list
   function deleteButton(addressRecord: boolean, index: number) {
     if (addressRecord) {
-      setCopyArrAddr(copyArrAddr.filter((_, i) => i !== index))
+      setCopyArrAddr(copyArrAddr.filter((_, i) => i !== index));
     } else {
-      setCopyArrTextRecords(copyArrTextRecords.filter((_, i) => i !== index))
+      setCopyArrTextRecords(copyArrTextRecords.filter((_, i) => i !== index));
     }
   }
 
@@ -371,7 +379,7 @@ export default function Content({
     args: [utils.namehash(result), formatsByName[coin].coinType]
   }))
 
-  // Performs all of the reads for the address record types and 
+  // Performs all of the reads for the address record types and
   // returns an array of "hex" strings corresponding to each type.
   const { data: addressRecords } = useContractReads({
     contracts: addressRecordReads as [{address?: `0x${string}`, abi?: any, functionName?: string, args?:[any, number]}],
@@ -393,7 +401,7 @@ export default function Content({
     args: [utils.namehash(result), item.toLowerCase()],
   }))
 
-  // Performs all of the reads for the text record types and 
+  // Performs all of the reads for the text record types and
   // returns an array of strings corresponding to each type.
   const { data: textRecords, refetch: refetchText } = useContractReads({
     contracts: textRecordReads as [{address?: `0x${string}`, abi?: any, functionName?: string, args?:[any, number]}],
@@ -411,7 +419,7 @@ export default function Content({
     <>
       {/* Records / Addresses */}
       <>
-        <div className="flex-col bg-gray-800 px-8 pb-14">
+        <div className="flex-col bg-gray-800 px-8 pb-14 rounded-b-lg">
           {/* Record Line -- Button Add/Edit Records */}
           <div className="flex-col justify-between mb-10 md:flex md:flex-row">
             {/* Records */}
@@ -457,18 +465,18 @@ export default function Content({
             </h2>
             <div className="flex-col items-center">
               { addressRecords ? copyArrAddr.map((item, index) => (
-                <Info
-                  key={index}
-                  namehash={utils.namehash(result)}
-                  leftText={item.leftText}
-                  rightText={addressRecords[index] as string}
-                  index={index}
-                  recordsEditMode={recordsEditMode}
-                  addressRecord={true}
-                  coinType={formatsByName[item.leftText].coinType}
-                  refetch={refetchText}
-                  setRecordsEditMode={setRecordsEditMode}
-                  deleteButton={deleteButton}
+                  <Info
+                    key={index}
+                    namehash={utils.namehash(result)}
+                    leftText={item.leftText}
+                    rightText={addressRecords[index] as string}
+                    index={index}
+                    recordsEditMode={recordsEditMode}
+                    addressRecord={true}
+                    coinType={formatsByName[item.leftText].coinType}
+                    refetch={refetchText}
+                    setRecordsEditMode={setRecordsEditMode}
+                    deleteButton={deleteButton}
                 />))
                 :
                 (<></>)
@@ -477,27 +485,27 @@ export default function Content({
           </div>
 
           {/* Text Records Section */}
-          <div className="flex-col bg-gray-800 pb-14">
-            <div className="flex flex-col lg:flex-row">
+          <div className="flex-col bg-gray-800 pb-14 w-full">
+            <div className="flex flex-col lg:flex-row w-full">
               {/* Text Records */}
-              <h2 className="text-white text-xl font-semibold w-32 mr-10 mb-4 lg:mb-0">
+              <h2 className="text-white text-xl font-semibold w-32 mr-10 mb-4 lg:mb-0 shrink-0">
                 Text Records
               </h2>
               <div className="flex-col items-center">
                 { textRecords ? copyArrTextRecords.map((item, index) => (
-                  <Info
-                    key={index}
-                    namehash={utils.namehash(result)}
-                    leftText={item.leftText}
-                    rightText={textRecords[index] as string}
-                    index={index}
-                    recordsEditMode={recordsEditMode}
-                    addressRecord={false}
-                    refetch={refetchText}
-                    setRecordsEditMode={setRecordsEditMode}
-                    deleteButton={deleteButton}
-                  />
-                ))
+                    <Info
+                      key={index}
+                      namehash={utils.namehash(result)}
+                      leftText={item.leftText}
+                      rightText={textRecords[index] as string}
+                      index={index}
+                      recordsEditMode={recordsEditMode}
+                      addressRecord={false}
+                      refetch={refetchText}
+                      setRecordsEditMode={setRecordsEditMode}
+                      deleteButton={deleteButton}
+                    />
+                  ))
                 :
                 (<></>)
               }
