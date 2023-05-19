@@ -35,8 +35,7 @@ export default function Details({ result }: { result: string }) {
 
   function getParentDomain(str: string) {
     // Define a regular expression pattern that matches subdomains of a domain that ends with .flr.
-    const subdomainPattern = /^([a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)\.flr$/i
-    // /^([a-zA-Z0-9-]+)\.{1}([a-zA-Z0-9-]+)\.{1}flr$/i
+    const subdomainPattern = /^([a-z0-9][a-z0-9-]*[a-z0-9]\.)+[a-z]{1,}\.flr$/i
 
     // Use the regular expression pattern to test whether the string matches a subdomain.
     const isSubdomain = subdomainPattern.test(str)
@@ -54,13 +53,13 @@ export default function Details({ result }: { result: string }) {
     }
   }
 
-  useEffect(() => {
-    console.log('isAvailable changed', isAvailable)
-  }, [isAvailable])
+  // useEffect(() => {
+  //   console.log('isAvailable changed', isAvailable)
+  // }, [isAvailable])
 
-  useEffect(() => {
-    console.log('isSubdomain changed', isSubdomain)
-  }, [isSubdomain])
+  // useEffect(() => {
+  //   console.log('isSubdomain changed', isSubdomain)
+  // }, [isSubdomain])
 
   // Check if result end with .flr and we do an hash with the resultFiltered for registrant and date
   useEffect(() => {
@@ -85,6 +84,8 @@ export default function Details({ result }: { result: string }) {
     }
   }, [result])
 
+  console.log('filterResult', filterResult)
+
   // const { address } = useAccount()
 
   // Normal Domains: Is name available
@@ -104,6 +105,20 @@ export default function Details({ result }: { result: string }) {
     },
   })
 
+  const { data: isNotCollision } = useContractRead({
+    address: BaseRegistrar.address as `0x${string}`,
+    abi: BaseRegistrar.abi,
+    functionName: 'isNotCollision',
+    enabled: !isAvailable && prepared,
+    args: [filterResult],
+    onSuccess(data: any) {
+      console.log('Details::isNotCollision', data)
+    },
+    onError(error) {
+      console.log('Error isNotCollision', error)
+    },
+  })
+
   // Subdomains: Is name available
   useContractRead({
     address: NameWrapper.address as `0x${string}`,
@@ -112,14 +127,17 @@ export default function Details({ result }: { result: string }) {
     enabled: preparedHash && isSubdomain,
     args: [tokenId],
     onSuccess(data: string) {
-      console.log(
-        'Details::NameWrapper::ownerOf()',
-        data,
-        data === ZERO_ADDRESS,
-        'isSubdomain:',
-        isSubdomain
-      )
-      setIsAvailable(data === ZERO_ADDRESS)
+      if (preparedHash && isSubdomain) {
+        console.log(
+          'Details::NameWrapper::ownerOf()',
+          data,
+          data === ZERO_ADDRESS,
+          'isSubdomain:',
+          isSubdomain
+        )
+        setPrepared(true)
+        setIsAvailable(data === ZERO_ADDRESS)
+      }
     },
     onError(error) {
       console.log('Error ownerOf', error)
@@ -204,10 +222,27 @@ export default function Details({ result }: { result: string }) {
           <Info
             parent={parent}
             isSubdomain={isSubdomain}
+            isCollision={!isNotCollision}
             available={isAvailable}
-            registrant_address={isAvailable ? '' : owner ? owner : ''}
-            controller={isAvailable ? '' : controller ? controller : ''}
-            date={isAvailable ? new Date() : new Date(Number(expire) * 1000)}
+            registrant_address={
+              isAvailable
+                ? ''
+                : isNotCollision
+                ? owner
+                  ? owner
+                  : ''
+                : '0x0000000000000000000000000000000000000000'
+            }
+            controller={
+              isAvailable
+                ? ''
+                : isNotCollision
+                ? controller
+                  ? controller
+                  : ''
+                : '0x0000000000000000000000000000000000000000'
+            }
+            dateNumber={isAvailable ? 0 : Number(expire) * 1000}
           />
 
           {!isAvailable && isAvailable !== undefined && (

@@ -392,6 +392,9 @@ export default function Content({
     },
   })
 
+  console.log('addressRecords', addressRecords)
+  console.log('prepared && recordPrepared', prepared, recordPrepared)
+
   // Prepares an array of read objects on the PublicResolver contract
   // for every available text record type defined in `addressKeys`.
   const textRecordReads = textKeys.map((item) => ({
@@ -420,6 +423,8 @@ export default function Content({
       console.log('Error texts', error)
     },
   })
+
+  console.log('textRecords', textRecords)
 
   return (
     <>
