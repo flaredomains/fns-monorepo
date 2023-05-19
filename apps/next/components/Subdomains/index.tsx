@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import Domain_Select from '../Domain_Select'
 import WalletConnect from '../WalletConnect'
 import SubdomainContent from './SubdomainContent'
-//import SubdomainEdit from './SubdomainEdit'
+
+import { useRouter } from 'next/router'
 
 import NameWrapper from '../../src/pages/abi/NameWrapper.json'
 import SubdomainTracker from '../../src/pages/abi/SubdomainTracker.json'
@@ -13,11 +14,7 @@ const namehash = require('eth-ens-namehash')
 import { useAccount, useContractRead } from 'wagmi'
 import { BigNumber } from 'ethers'
 
-export default function Subdomains({
-  result
-}: {
-  result: string
-}) {
+export default function Subdomains({ result }: { result: string }) {
   // const [editMode, setEditMode] = useState(false)
 
   const [prepared, setPrepared] = useState<boolean>(false)
@@ -32,15 +29,18 @@ export default function Subdomains({
 
   const { address } = useAccount()
 
+  const router = useRouter()
+
   useEffect(() => {
+    if (!router.isReady) return
+
+    const result = router.query.result as string
     // Check if ethereum address
     if (/^0x[a-fA-F0-9]{40}$/.test(result)) {
       console.log('Ethereum address')
       setFilterResult(result)
-      // setHashHex(hash)
-      // setPreparedHash(true)
     } else if (result) {
-      if (result !== "") {
+      if (result !== '') {
         setTokenId(BigNumber.from(namehash.hash(result)))
       }
 
@@ -52,10 +52,10 @@ export default function Subdomains({
       setHashHex(hash)
       setPreparedHash(true)
     }
-  }, [result])
+  }, [router.isReady, router.query])
 
   // Read all subdomains under a given domain name
-  const {refetch: refGetAll} = useContractRead({
+  const { refetch: refGetAll } = useContractRead({
     address: SubdomainTracker.address as `0x${string}`,
     abi: SubdomainTracker.abi,
     functionName: 'getAll',
@@ -66,7 +66,7 @@ export default function Subdomains({
         domain: `${x.label}.${result}`,
         owner: x.owner,
         tokenId: x.id,
-      }));
+      }))
       setArrSubdomains(subdomains)
     },
     onError(error) {
@@ -92,7 +92,7 @@ export default function Subdomains({
   //   owner: owner,
   //   tokenId: tokenId,
   // })
-  console.log('owner === address', owner === address)
+  // console.log('owner === address', owner === address)
 
   return (
     <>

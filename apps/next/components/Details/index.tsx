@@ -4,6 +4,8 @@ import WalletConnect from '../WalletConnect'
 import Info from './Info'
 import Content from './Content'
 
+import { useRouter } from 'next/router'
+
 import FLRRegistrarController from '../../src/pages/abi/FLRRegistrarController.json'
 import BaseRegistrar from '../../src/pages/abi/BaseRegistrar.json'
 // import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
@@ -30,6 +32,8 @@ export default function Details({ result }: { result: string }) {
   // const [checkOwnerDomain, setCheckOwnerDomain] = useState<boolean>()
   const [isAvailable, setIsAvailable] = useState<boolean>(true)
 
+  const router = useRouter()
+
   const { address } = useAccount()
 
   function getParentDomain(str: string) {
@@ -38,7 +42,7 @@ export default function Details({ result }: { result: string }) {
 
     // Use the regular expression pattern to test whether the string matches a subdomain.
     const isSubdomain = subdomainPattern.test(str)
-    console.log('isSubdomain', str, isSubdomain)
+    // console.log('isSubdomain', str, isSubdomain)
     setIsSubdomain(isSubdomain)
 
     if (isSubdomain) {
@@ -62,9 +66,14 @@ export default function Details({ result }: { result: string }) {
 
   // Check if result end with .flr and we do an hash with the resultFiltered for registrant and date
   useEffect(() => {
+    if (!router.isReady) return
+
+    const result = router.query.result as string
+
     const parent = getParentDomain(result)
     setParent(parent)
     console.log('parent', parent)
+    console.log('router.query', router.query)
 
     // Check if ethereum address
     if (/^0x[a-fA-F0-9]{40}$/.test(result)) {
@@ -81,11 +90,7 @@ export default function Details({ result }: { result: string }) {
       setHashHex(hash)
       setPreparedHash(true)
     }
-  }, [result])
-
-  console.log('filterResult', filterResult)
-
-  // const { address } = useAccount()
+  }, [router.isReady, router.query])
 
   // Normal Domains: Is name available
   useContractRead({

@@ -65,9 +65,9 @@ const InfoLine = ({
 }
 
 const Alert = ({ available }: { available: boolean }) => {
-  useEffect(() => {
-    console.log('Details::Info::Alert - available changed', available)
-  }, [available])
+  // useEffect(() => {
+  //   console.log('Details::Info::Alert - available changed', available)
+  // }, [available])
 
   return (
     <>
@@ -109,11 +109,6 @@ export default function Info({
   dateNumber: number
 }) {
   const date = new Date(dateNumber)
-  // if (date) {
-  //   const day = date?.getDate()
-  //   const month = date?.toLocaleString('en-US', { month: 'long' })
-  //   const year = date?.getFullYear()
-  // }
 
   return (
     <>

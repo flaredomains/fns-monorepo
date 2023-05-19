@@ -10,6 +10,8 @@ import Steps from './Steps'
 import Bottom from './Bottom'
 import web3 from 'web3-utils'
 
+import { useRouter } from 'next/router'
+
 import FLRRegistrarController from '../../src/pages/abi/FLRRegistrarController.json'
 import PublicResolver from '../../src/pages/abi/PublicResolver.json'
 
@@ -88,6 +90,8 @@ export default function Register({ result }: { result: string }) {
     RegisterState.Uncommitted
   )
 
+  const router = useRouter()
+
   const { address, isConnected } = useAccount()
   const { data: signer } = useSigner()
 
@@ -97,7 +101,7 @@ export default function Register({ result }: { result: string }) {
 
     // Use the regular expression pattern to test whether the string matches a subdomain.
     const isSubdomain = subdomainPattern.test(str)
-    console.log('isSubdomain', isSubdomain)
+    // console.log('isSubdomain', isSubdomain)
 
     if (isSubdomain) {
       // The input string is a subdomain, extract the parent domain.
@@ -112,6 +116,10 @@ export default function Register({ result }: { result: string }) {
   }
 
   useEffect(() => {
+    if (!router.isReady) return
+
+    const result = router.query.result as string
+
     const parent = getParentDomain(result)
     // console.log('parent', parent)
     // Check if ethereum address
@@ -128,7 +136,7 @@ export default function Register({ result }: { result: string }) {
       setHashHex(hash)
       setPreparedHash(true)
     }
-  }, [result])
+  }, [router.isReady, router.query])
 
   // Available READ function
   useContractRead({
