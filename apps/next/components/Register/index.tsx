@@ -113,19 +113,17 @@ export default function Register({ result }: { result: string }) {
 
   useEffect(() => {
     const parent = getParentDomain(result)
-    console.log('parent', parent)
+    // console.log('parent', parent)
     // Check if ethereum address
     if (/^0x[a-fA-F0-9]{40}$/.test(result)) {
       console.log('Ethereum address')
       setFilterResult(result)
-      // setHashHex(hash)
-      // setPreparedHash(true)
     } else if (result) {
+      // Remove .flr from result for READ/WRITE function purposes and get hash
       const resultFiltered = result.endsWith('.flr')
         ? result.slice(0, -4)
         : result
       const hash = web3.sha3(resultFiltered) as string
-      // console.log('hash', hash)
       setFilterResult(resultFiltered)
       setHashHex(hash)
       setPreparedHash(true)

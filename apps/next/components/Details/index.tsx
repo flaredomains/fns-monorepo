@@ -9,7 +9,6 @@ import BaseRegistrar from '../../src/pages/abi/BaseRegistrar.json'
 // import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
 import NameWrapper from '../../src/pages/abi/NameWrapper.json'
 
-import { sha3_256 } from 'js-sha3'
 import web3 from 'web3-utils'
 const namehash = require('eth-ens-namehash')
 

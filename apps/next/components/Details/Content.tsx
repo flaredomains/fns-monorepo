@@ -195,6 +195,7 @@ const Info = ({
     if (recordIsSet.test(rightText)) {
       // address record
       if (addressRecord) {
+        // Added if rightText because can cause crash if rightText is null
         if (rightText) {
           // https://docs.ens.domains/dapp-developer-guide/resolving-names#listing-cryptocurrency-addresses-and-text-records
           return formatsByName[leftText].encoder(
@@ -237,7 +238,8 @@ const Info = ({
                   </p>
                 </>
               ) : (
-                rightText && (
+                rightText &&
+                rightText !== '0x' && (
                   <Image
                     onClick={handleCopy}
                     className="h-4 w-4 cursor-pointer items-center"
@@ -311,19 +313,11 @@ export default function Content({
   const [copyArrTextRecords, setCopyArrTextRecords] =
     useState<Array<{ leftText: string; rightText: string }>>(listTextRecords)
 
-  // TO CHANGE WITH WAGMI READ/WRITE FUNCTION
   // Save the REAL array in a copy
   function editModeFunc() {
     setCopyArrAddr(arrAddresses)
     setCopyArrTextRecords(arrTextRecords)
     setRecordsEditMode(true)
-  }
-
-  // Change the REAL array with the copy one
-  function save() {
-    setArrAddresses(copyArrAddr)
-    setArrTextRecords(copyArrTextRecords)
-    setRecordsEditMode(false)
   }
 
   // Return to normal mode without save
@@ -349,7 +343,7 @@ export default function Content({
     enabled: prepared,
     args: [utils.namehash(result)],
     onSuccess(data: any) {
-      console.log('Success resolver', data)
+      // console.log('Success resolver', data)
       setRecordPrepared(true)
     },
     onError(error) {
@@ -392,9 +386,6 @@ export default function Content({
     },
   })
 
-  console.log('addressRecords', addressRecords)
-  console.log('prepared && recordPrepared', prepared, recordPrepared)
-
   // Prepares an array of read objects on the PublicResolver contract
   // for every available text record type defined in `addressKeys`.
   const textRecordReads = textKeys.map((item) => ({
@@ -423,8 +414,6 @@ export default function Content({
       console.log('Error texts', error)
     },
   })
-
-  console.log('textRecords', textRecords)
 
   return (
     <>
@@ -455,14 +444,6 @@ export default function Content({
                   >
                     <p className="text-gray-400 text-medium text-xs">Cancel</p>
                   </button>
-
-                  {/* Save */}
-                  {/* <button
-                    onClick={() => save()}
-                    className="flex justify-center items-center text-center bg-[#F97316] px-3 py-2 rounded-lg text-white border border-[#F97316] hover:scale-105 transform transition duration-300 ease-out lg:ml-auto"
-                  >
-                    <p className="text-xs font-medium">Save</p>
-                  </button> */}
                 </div>
               </>
             )}
@@ -545,14 +526,6 @@ export default function Content({
                   >
                     <p className="text-gray-400 text-medium text-xs">Cancel</p>
                   </button>
-
-                  {/* Save */}
-                  {/* <button
-                    onClick={() => save()}
-                    className="flex justify-center items-center text-center bg-[#F97316] px-3 py-2 rounded-lg text-white border border-[#F97316] lg:ml-auto"
-                  >
-                    <p className="text-xs font-medium">Save</p>
-                  </button> */}
                 </div>
               </>
             )}
@@ -562,45 +535,3 @@ export default function Content({
     </>
   )
 }
-
-/**
- <>
-      <div className="flex-col bg-gray-800 px-8 pb-14">
-        <h1 className="text-white text-2xl font-semibold mb-10">Records</h1>
-
-        
-        <div className="flex flex-col lg:flex-row">
-          <h2 className="text-white text-xl font-semibold w-32 mr-10 mb-4 lg:mb-0">
-            Addresses
-          </h2>
-          <div className="flex-col items-center">
-            {listAddresses.map((item, index) => (
-              <RecordSection
-                key={index}
-                leftText={item.leftText}
-                rightText={item.rightText}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-
-      
-      <div className="flex-col bg-gray-800 px-8 pb-14 rounded-b-md">
-        <div className="flex flex-col lg:flex-row">
-          <h2 className="text-white text-xl font-semibold w-32 mr-10 mb-4 lg:mb-0">
-            Text Records
-          </h2>
-          <div className="flex-col items-center">
-            {textRecords?.map((item: any, index: any) => (
-              <RecordSection
-                key={index}
-                leftText={textKeys[index]}
-                rightText={item}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-    </>
- */
