@@ -309,16 +309,18 @@ const ReqToRegister = ({
 const WalletConnectBottom = () => {
   return (
     <>
-      <div className="w-2/3 flex items-center bg-[#334155] h-12 rounded-lg text-[#9cacc0] px-5 mr-4">
-        <Image className="h-4 w-4 mr-2" src={Info} alt="FNS" />
-        <p className="text-xs font-medium">
-          No wallet connected. Please connect to continue.
-        </p>
-      </div>
-      <div
-        className={`w-1/3 flex justify-center items-center h-12 rounded-lg text-white px-auto`}
-      >
-        <Web3Button icon="hide" label="Connect Wallet" balance="hide" />
+      <div className='flex flex-col md:flex-row w-full justify-center items-center gap-4'>
+        <div className="w-2/3 flex items-center bg-[#334155] rounded-lg text-[#9cacc0] px-5 py-4">
+          <Image className="h-4 w-4 mr-2" src={Info} alt="FNS" />
+          <p className="text-xs font-medium">
+            No wallet connected. Please connect to continue.
+          </p>
+        </div>
+        <div
+          className={`flex justify-center items-center py-1 rounded-lg text-white px-auto`}
+        >
+          <Web3Button icon="hide" label="Connect Wallet" balance="hide" />
+        </div>
       </div>
     </>
   )

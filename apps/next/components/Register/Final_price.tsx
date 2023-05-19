@@ -98,7 +98,7 @@ const FinalPrice = ({
 
   return (
     <>
-      <div className="flex flex-col text-center justify-center w-full bg-[#F97316] h-32  rounded-b-lg lg:rounded-l-none lg:rounded-r-lg lg:w-1/3">
+      <div className="flex flex-col text-center justify-center w-full bg-[#F97316] h-32 rounded-b-lg lg:rounded-l-none lg:rounded-r-lg px-4 lg:w-1/3">
         <div className="flex flex-col items-center text-center">
           <p className="text-[#FED7AA] text-xs">At most</p>
           <div className="flex items-center text-white font-semibold text-2xl lg:text-lg xl:text-2xl">
@@ -109,8 +109,8 @@ const FinalPrice = ({
             )}{' '}
             FLR
           </div>
-          <div className="flex items-center text-[#FED7AA] text-xs">
-            <p className="text-[#FED7AA] text-xs mr-1">Calculated to</p>
+          <div className="flex flex-wrap items-center text-[#FED7AA] text-xs gap-1 justify-center">
+            <p className="text-[#FED7AA] text-xs">Calculated to</p>
             <span className="font-semibold text-white flex items-center">
               $
               {priceToPay ? (
