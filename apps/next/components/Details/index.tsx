@@ -8,7 +8,6 @@ import { useRouter } from 'next/router'
 
 import FLRRegistrarController from '../../src/pages/abi/FLRRegistrarController.json'
 import BaseRegistrar from '../../src/pages/abi/BaseRegistrar.json'
-// import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
 import NameWrapper from '../../src/pages/abi/NameWrapper.json'
 
 import web3 from 'web3-utils'
@@ -16,24 +15,27 @@ const namehash = require('eth-ens-namehash')
 
 const ZERO_ADDRESS: string = '0x0000000000000000000000000000000000000000'
 
-import { useAccount, useContractRead, useContract, Address } from 'wagmi'
+import { useAccount, useContractRead } from 'wagmi'
 import { BigNumber, utils } from 'ethers'
 
 export default function Details({ result }: { result: string }) {
-  const [prepared, setPrepared] = useState<boolean>(false)
-  const [preparedHash, setPreparedHash] = useState<boolean>(false)
-  const [hashHex, setHashHex] = useState<string>('')
+  // State variable that changed inside useEffect that check result and unlock Wagmi READ/WRITE function
   const [filterResult, setFilterResult] = useState<string>('')
-  const [expiredReady, setExpiredReady] = useState<boolean>(false)
-  //const [tokenPrepared, setTokenPrepared] = useState<boolean>(false)
   const [tokenId, setTokenId] = useState<BigNumber>()
+  const [hashHex, setHashHex] = useState<string>('')
+  const [preparedHash, setPreparedHash] = useState<boolean>(false)
   const [isSubdomain, setIsSubdomain] = useState<boolean>(false)
   const [parent, setParent] = useState<string>('')
-  // const [checkOwnerDomain, setCheckOwnerDomain] = useState<boolean>()
-  const [isAvailable, setIsAvailable] = useState<boolean>(true)
 
+  // State variable that changed inside Wagmi hooks
+  const [prepared, setPrepared] = useState<boolean>(false)
+  const [isAvailable, setIsAvailable] = useState<boolean>(true)
+  const [expiredReady, setExpiredReady] = useState<boolean>(false)
+
+  // Used for useEffect for avoid re-render
   const router = useRouter()
 
+  // Use to check that checkOwnerDomain={address === owner} -- prop of Content component
   const { address } = useAccount()
 
   function getParentDomain(str: string) {
@@ -42,7 +44,6 @@ export default function Details({ result }: { result: string }) {
 
     // Use the regular expression pattern to test whether the string matches a subdomain.
     const isSubdomain = subdomainPattern.test(str)
-    // console.log('isSubdomain', str, isSubdomain)
     setIsSubdomain(isSubdomain)
 
     if (isSubdomain) {
@@ -56,14 +57,6 @@ export default function Details({ result }: { result: string }) {
     }
   }
 
-  // useEffect(() => {
-  //   console.log('isAvailable changed', isAvailable)
-  // }, [isAvailable])
-
-  // useEffect(() => {
-  //   console.log('isSubdomain changed', isSubdomain)
-  // }, [isSubdomain])
-
   // Check if result end with .flr and we do an hash with the resultFiltered for registrant and date
   useEffect(() => {
     if (!router.isReady) return
@@ -72,8 +65,6 @@ export default function Details({ result }: { result: string }) {
 
     const parent = getParentDomain(result)
     setParent(parent)
-    console.log('parent', parent)
-    console.log('router.query', router.query)
 
     // Check if ethereum address
     if (/^0x[a-fA-F0-9]{40}$/.test(result)) {
@@ -202,17 +193,6 @@ export default function Details({ result }: { result: string }) {
       console.log('Error expire', error)
     },
   })
-
-  // console.table({
-  //   result: result,
-  //   isAvailable: isAvailable,
-  //   isSubdomain: isSubdomain,
-  //   getFLRTokenId: tokenId,
-  //   owner: owner,
-  //   controller: controller,
-  //   expire: Number(expire),
-  //   checkOwnerDomain: address === owner,
-  // })
 
   return (
     <>

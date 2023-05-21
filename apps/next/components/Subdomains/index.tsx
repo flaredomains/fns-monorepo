@@ -15,20 +15,21 @@ import { useAccount, useContractRead } from 'wagmi'
 import { BigNumber } from 'ethers'
 
 export default function Subdomains({ result }: { result: string }) {
-  // const [editMode, setEditMode] = useState(false)
-
-  const [prepared, setPrepared] = useState<boolean>(false)
-  const [preparedHash, setPreparedHash] = useState<boolean>(false)
-  const [hashHex, setHashHex] = useState<string>('')
+  // State variable that changed inside useEffect that check result and unlock Wagmi READ/WRITE function
   const [filterResult, setFilterResult] = useState<string>('')
-  const [tokenPrepared, setTokenPrepared] = useState(false)
   const [tokenId, setTokenId] = useState<BigNumber>()
+  const [hashHex, setHashHex] = useState<string>('')
+  const [preparedHash, setPreparedHash] = useState<boolean>(false)
+
+  // State variable that changed inside Wagmi hooks
   const [arrSubdomains, setArrSubdomains] = useState<Array<string>>([])
 
-  const date = new Date(1678273065000)
+  const [tokenPrepared, setTokenPrepared] = useState(false)
 
+  // Use to check that checkOwnerDomain={address === owner} -- prop of SubdomainContent component
   const { address } = useAccount()
 
+  // Used for useEffect for avoid re-render
   const router = useRouter()
 
   useEffect(() => {
@@ -87,13 +88,6 @@ export default function Subdomains({ result }: { result: string }) {
     },
   }) as any
 
-  // console.table({
-  //   result: result,
-  //   owner: owner,
-  //   tokenId: tokenId,
-  // })
-  // console.log('owner === address', owner === address)
-
   return (
     <>
       {/* Main Content / Wallet connect (hidden mobile) */}
@@ -118,14 +112,3 @@ export default function Subdomains({ result }: { result: string }) {
     </>
   )
 }
-
-/**
-   {/* {editMode && (
-            <SubdomainEdit
-              data={dataEdit}
-              editMode={editMode}
-              setEditMode={setEditMode}
-              setDataEdit={setDataEdit}
-            />
-          )} 
- */

@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Clipboard_copy from '../../public/Clipboard_copy.svg'
 import Image from 'next/image'
 
 import FLRRegistrarController from '../../src/pages/abi/FLRRegistrarController.json'
 import BaseRegistrar from '../../src/pages/abi/BaseRegistrar.json'
-import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
 
 import web3 from 'web3-utils'
 const namehash = require('eth-ens-namehash')
 
-import { useAccount, useContractRead } from 'wagmi'
+import { useContractRead } from 'wagmi'
 
 const InfoLine = ({
   leftText,
@@ -94,8 +93,6 @@ export default function SubDetails({
       console.error('Error ownerOf', error)
     },
   })
-
-  // console.log(hashHex)
 
   const { data: controller } = useContractRead({
     address: FLRRegistrarController.address as `0x${string}`,

@@ -13,14 +13,10 @@ import web3 from 'web3-utils'
 import { useRouter } from 'next/router'
 
 import FLRRegistrarController from '../../src/pages/abi/FLRRegistrarController.json'
-import PublicResolver from '../../src/pages/abi/PublicResolver.json'
 
 import {
   useFeeData,
   useContractRead,
-  useContractWrite,
-  usePrepareContractWrite,
-  useContractEvent,
   useContract,
   useSigner,
   useAccount,
@@ -80,20 +76,22 @@ export default function Register({ result }: { result: string }) {
   // For steps animation
   const [count, setCount] = useState(0)
 
-  const [priceFLR, setPriceFLR] = useState('1')
-  const [regPeriod, setRegPeriod] = useState(1)
-  const [preparedHash, setPreparedHash] = useState<boolean>(false)
-  const [hashHex, setHashHex] = useState<string>('')
+  // State variable that changed inside useEffect that check result and unlock Wagmi READ/WRITE function
   const [filterResult, setFilterResult] = useState<string>('')
+  const [hashHex, setHashHex] = useState<string>('')
+  const [preparedHash, setPreparedHash] = useState<boolean>(false)
   const [isNormalDomain, setIsNormalDomain] = useState<boolean>(true)
+
+  // State variable that changed inside Wagmi hooks
+  const [regPeriod, setRegPeriod] = useState(1)
+  const [priceFLR, setPriceFLR] = useState('1')
+
   const [registerState, setRegisterState] = useState<RegisterState>(
     RegisterState.Uncommitted
   )
 
+  // Used for useEffect for avoid re-render
   const router = useRouter()
-
-  const { address, isConnected } = useAccount()
-  const { data: signer } = useSigner()
 
   function getParentDomain(str: string) {
     // Define a regular expression pattern that matches subdomains of a domain that ends with .flr.
@@ -121,7 +119,7 @@ export default function Register({ result }: { result: string }) {
     const result = router.query.result as string
 
     const parent = getParentDomain(result)
-    // console.log('parent', parent)
+
     // Check if ethereum address
     if (/^0x[a-fA-F0-9]{40}$/.test(result)) {
       console.log('Ethereum address')
@@ -146,7 +144,6 @@ export default function Register({ result }: { result: string }) {
     enabled: preparedHash,
     args: [filterResult],
     onSuccess(data: any) {
-      // console.log('Success available', data)
       // data is a boolean that represents if the domain is available or not
       if (data) {
         setRegisterState(RegisterState.Uncommitted)
@@ -166,10 +163,6 @@ export default function Register({ result }: { result: string }) {
     functionName: 'rentPrice',
     args: [filterResult as string, regPeriod * 31556952], // 31536000
     onSuccess(data: any) {
-      // console.log('Success rentPrice', data)
-      // console.log('Base', Number(data.base))
-      // console.log('Base', ethers.utils.formatEther(data.base))
-      // console.log('Premium', Number(data.premium))
       setPriceFLR(data.base)
     },
     onError(error) {
@@ -178,12 +171,6 @@ export default function Register({ result }: { result: string }) {
   })
 
   const { data: fee } = useFeeData()
-
-  const contract = useContract({
-    address: FLRRegistrarController.address as `0x${string}`,
-    abi: FLRRegistrarController.abi,
-    signerOrProvider: signer,
-  })
 
   const incrementYears = () => {
     if (regPeriod >= 999) return
@@ -197,15 +184,6 @@ export default function Register({ result }: { result: string }) {
     }
     setRegPeriod(regPeriod - 1)
   }
-
-  // console.table({
-  //   result: result,
-  //   filterResult: filterResult,
-  //   hashHex: hashHex,
-  //   priceFLR: priceFLR,
-  //   regPeriod: regPeriod,
-  //   isNormalDomain: isNormalDomain,
-  // })
 
   return (
     <>

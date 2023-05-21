@@ -8,13 +8,7 @@ import Reverse_Record from './Reverse_Record'
 
 import { useAccount, useContract, useProvider, useContractRead } from 'wagmi'
 
-import BaseRegistrar from '../../src/pages/abi/BaseRegistrar.json'
 import MintedDomainNames from '../../src/pages/abi/MintedDomainNames.json'
-import FLRRegistrarController from '../../src/pages/abi/FLRRegistrarController.json'
-import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
-
-import web3 from 'web3-utils'
-import { ethers } from 'ethers'
 
 const OwnedDomains = ({
   date,
@@ -75,8 +69,6 @@ export default function MyAccount() {
 
   const { address, isConnected } = useAccount()
 
-  const date = new Date(1678273065000)
-
   const { data } = useContractRead({
     address: MintedDomainNames.address as `0x${string}`,
     abi: MintedDomainNames.abi,
@@ -84,7 +76,7 @@ export default function MyAccount() {
     enabled: isConnected,
     args: [address],
     onSuccess(data: any) {
-      //console.log('Success getAll', data)
+      // console.log('Success getAll', data)
       // console.log('Get array of domains', data)
 
       // Ensure we only use the length returned for still-owned domains (after a transfer)

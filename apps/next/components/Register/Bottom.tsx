@@ -13,14 +13,25 @@ import { BigNumber, providers } from 'ethers'
 
 import FLRRegistrarController from '@/pages/abi/FLRRegistrarController.json'
 import PublicResolver from '@/pages/abi/PublicResolver.json'
-import { MIN_COMMITMENT_AGE_SECS, MAX_COMMITMENT_AGE_SECS } from '@/constants/FLRRegistrarController'
+import {
+  MIN_COMMITMENT_AGE_SECS,
+  MAX_COMMITMENT_AGE_SECS,
+} from '@/constants/FLRRegistrarController'
 import { RegisterState } from './index'
 
 import web3 from 'web3-utils'
 
-const ETHERS_PROVIDER = new providers.JsonRpcProvider('https://flare-api.flare.network/ext/C/rpc');
+const ETHERS_PROVIDER = new providers.JsonRpcProvider(
+  'https://flare-api.flare.network/ext/C/rpc'
+)
 
-const ActionButton = ({ onClickFn, label } : { onClickFn: any, label: string }) => {
+const ActionButton = ({
+  onClickFn,
+  label,
+}: {
+  onClickFn: any
+  label: string
+}) => {
   return (
     <button
       onClick={() => onClickFn()}
@@ -32,7 +43,7 @@ const ActionButton = ({ onClickFn, label } : { onClickFn: any, label: string }) 
   )
 }
 
-const SpinnerButton = ({ label } : { label: string}) => {
+const SpinnerButton = ({ label }: { label: string }) => {
   return (
     <>
       <div className="flex justify-center items-center px-6 py-3 bg-[#F97316] h-12 rounded-lg">
@@ -67,7 +78,7 @@ const ReqToRegister = ({
   count,
   setCount,
   registerState,
-  setRegisterState
+  setRegisterState,
 }: {
   result: string
   regPeriod: number
@@ -84,7 +95,7 @@ const ReqToRegister = ({
   }, [result, setRegisterState])
 
   useEffect(() => {
-    switch(registerState) {
+    switch (registerState) {
       case RegisterState.Uncommitted: {
         setCount(0)
         break
@@ -142,22 +153,25 @@ const ReqToRegister = ({
       // If this read returns 0, that means there is no equivalent pending commit
       // If this read returns 1, we need to wait any remaining time for the 1 minute timeout,
       // then set the state to register
-      if(!data.isZero()) {
+      if (!data.isZero()) {
         try {
           const currentBlock = await ETHERS_PROVIDER.getBlockNumber()
-          const blockTimestamp = (await ETHERS_PROVIDER.getBlock(currentBlock)).timestamp
-          const secondsSinceCommit = BigNumber.from(blockTimestamp).sub(data).toNumber()
+          const blockTimestamp = (await ETHERS_PROVIDER.getBlock(currentBlock))
+            .timestamp
+          const secondsSinceCommit = BigNumber.from(blockTimestamp)
+            .sub(data)
+            .toNumber()
           // console.log("blockTimestamp", blockTimestamp)
           // console.log("commitmentTimestamp", data.toNumber())
           // console.log("secondsSinceCommit", secondsSinceCommit)
 
           // Ensure a small time buffer to account for UI easing function & updates
-          if(secondsSinceCommit < (MIN_COMMITMENT_AGE_SECS - 2))  {
+          if (secondsSinceCommit < MIN_COMMITMENT_AGE_SECS - 2) {
             setRegisterState(RegisterState.Waiting)
             wait(secondsSinceCommit)
           }
           // Ensure a reasonable time buffer so the user has time to make the txn
-          else if (secondsSinceCommit < (MAX_COMMITMENT_AGE_SECS - 5)) {
+          else if (secondsSinceCommit < MAX_COMMITMENT_AGE_SECS - 5) {
             setRegisterState(RegisterState.Unregistered)
           }
           // Otherwise, secondsSinceCommit >= MAX_COMMITMENT_AGE_SECS, and can be re-committed
@@ -165,7 +179,7 @@ const ReqToRegister = ({
             setRegisterState(RegisterState.Committable)
           }
         } catch (error) {
-          console.error("Error fetching block timestamp")
+          console.error('Error fetching block timestamp')
         }
       }
       // If the data is zero, that means no matching commitment was found, which means we can
@@ -184,7 +198,8 @@ const ReqToRegister = ({
     abi: FLRRegistrarController.abi,
     functionName: 'commit',
     args: [commitmentHash],
-    enabled: isMakeCommitmentReady && registerState === RegisterState.Committable,
+    enabled:
+      isMakeCommitmentReady && registerState === RegisterState.Committable,
     onSuccess(data) {
       // console.log('Success prepare configCommit', data)
     },
@@ -288,18 +303,20 @@ const ReqToRegister = ({
   return (
     <>
       <div className="mt-10 flex justify-center items-center w-full">
-        { registerState === RegisterState.Committable ? (
-          <ActionButton onClickFn={commitFunc} label={"Commit"}/>
+        {registerState === RegisterState.Committable ? (
+          <ActionButton onClickFn={commitFunc} label={'Commit'} />
         ) : registerState === RegisterState.Committing ? (
-          <SpinnerButton label={"Committing"}/>
+          <SpinnerButton label={'Committing'} />
         ) : registerState === RegisterState.Waiting ? (
-          <SpinnerButton label={"Waiting"}/>
+          <SpinnerButton label={'Waiting'} />
         ) : registerState === RegisterState.Unregistered ? (
-          <ActionButton onClickFn={registerFunc} label={"Register"}/>
+          <ActionButton onClickFn={registerFunc} label={'Register'} />
         ) : registerState === RegisterState.Registering ? (
-          <SpinnerButton label={"Registering"}/>
-        ) : /* Registered returns empty fragment because we don't need a button */ (
-          <></>
+          <SpinnerButton label={'Registering'} />
+        ) : (
+          /* Registered returns empty fragment because we don't need a button */ <>
+
+          </>
         )}
       </div>
     </>
@@ -309,7 +326,7 @@ const ReqToRegister = ({
 const WalletConnectBottom = () => {
   return (
     <>
-      <div className='flex flex-col md:flex-row w-full justify-center items-center gap-4'>
+      <div className="flex flex-col md:flex-row w-full justify-center items-center gap-4">
         <div className="w-2/3 flex items-center bg-[#334155] rounded-lg text-[#9cacc0] px-5 py-4">
           <Image className="h-4 w-4 mr-2" src={Info} alt="FNS" />
           <p className="text-xs font-medium">
@@ -333,7 +350,7 @@ export default function Bottom({
   count,
   setCount,
   registerState,
-  setRegisterState
+  setRegisterState,
 }: {
   result: string
   regPeriod: number
@@ -343,7 +360,7 @@ export default function Bottom({
   registerState: RegisterState
   setRegisterState: React.Dispatch<React.SetStateAction<RegisterState>>
 }) {
-  const { address, isConnected } = useAccount() as any
+  const { isConnected } = useAccount() as any
 
   return (
     <>
