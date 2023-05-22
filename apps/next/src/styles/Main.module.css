@@ -33,4 +33,10 @@
   -webkit-text-fill-color: white !important;
   caret-color: white;
   font-size: 1rem;
+  color: white;
+}
+
+.autofill input::selection {
+  color: white;
+  background-color: #f97316;
 }
