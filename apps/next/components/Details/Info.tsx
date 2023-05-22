@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Like from '../../public/Like.svg'
 import Dislike from '../../public/Dislike.svg'
 import Clipboard_copy from '../../public/Clipboard_copy.svg'
@@ -65,10 +65,6 @@ const InfoLine = ({
 }
 
 const Alert = ({ available }: { available: boolean }) => {
-  useEffect(() => {
-    console.log("Details::Info::Alert - available changed", available)
-  }, [available])
-
   return (
     <>
       <div className="flex w-full bg-gray-500 py-3 px-5 rounded-lg">
@@ -94,27 +90,25 @@ const Alert = ({ available }: { available: boolean }) => {
 export default function Info({
   available,
   isSubdomain,
+  isCollision,
   parent,
   registrant_address,
   controller,
-  date,
+  dateNumber,
 }: {
   available: boolean
   isSubdomain: boolean
+  isCollision: boolean
   parent: string
   registrant_address: string
   controller: string
-  date: Date
+  dateNumber: number
 }) {
-  // if (date) {
-  //   const day = date?.getDate()
-  //   const month = date?.toLocaleString('en-US', { month: 'long' })
-  //   const year = date?.getFullYear()
-  // }
+  const date = new Date(dateNumber)
 
   return (
     <>
-      <div className="flex-col bg-gray-800 px-8 py-12">
+      <div className={`flex-col bg-gray-800 px-8 py-12 ${available ? "rounded-b-lg" : "rounded-b-none"}`}>
         <Alert available={available} />
 
         {/* Details */}
@@ -128,17 +122,19 @@ export default function Info({
 
           {/* Registrant */}
           <InfoLine
-            leftText={isSubdomain ? "Owner" : "Registrant"}
+            leftText={isSubdomain ? 'Owner' : 'Registrant'}
             rightText={registrant_address}
             alternativeText="0x0"
           />
 
           {/* Controller */}
-          {!isSubdomain && <InfoLine
-            leftText="Controller"
-            rightText={controller}
-            alternativeText="Not Owned"
-          />}
+          {!isSubdomain && (
+            <InfoLine
+              leftText="Controller"
+              rightText={controller}
+              alternativeText="Not Owned"
+            />
+          )}
 
           {/* Expiration Date */}
           {date && !available && (
@@ -148,9 +144,11 @@ export default function Info({
               </p>
               <div className="flex-col items-center mt-2 lg:mt-0 lg:flex lg:flex-row">
                 <p className="font-semibold text-white text-base mr-12">
-                  {isSubdomain ? 'No Expiry' : `${date?.toLocaleString('en-US', {
-                    month: 'long',
-                  })} ${date?.getDate()}, ${date?.getFullYear()}`}
+                  {isSubdomain || isCollision
+                    ? 'No Expiry'
+                    : `${date?.toLocaleString('en-US', {
+                        month: 'long',
+                      })} ${date?.getDate()}, ${date?.getFullYear()}`}
                 </p>
               </div>
             </div>

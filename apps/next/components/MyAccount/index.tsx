@@ -8,22 +8,24 @@ import Reverse_Record from './Reverse_Record'
 
 import { useAccount, useContract, useProvider, useContractRead } from 'wagmi'
 
-import BaseRegistrar from '../../src/pages/abi/BaseRegistrar.json'
 import MintedDomainNames from '../../src/pages/abi/MintedDomainNames.json'
-import FLRRegistrarController from '../../src/pages/abi/FLRRegistrarController.json'
-import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
 
-import web3 from 'web3-utils'
-import { ethers } from 'ethers'
-
-const OwnedDomains = ({ date, domain, isSubdomain }: { date: Date; domain: string; isSubdomain: boolean }) => {
+const OwnedDomains = ({
+  date,
+  domain,
+  isSubdomain,
+}: {
+  date: Date
+  domain: string
+  isSubdomain: boolean
+}) => {
   const day = date.getDate()
   const month = date.getMonth() + 1
   const year = date.getFullYear()
   return (
     <>
-      <div className="flex items-center justify-between md:px-6 py-5">
-        <div className="flex items-center">
+      <div className="flex flex-col sm:flex-row gap-4 w-full sm:items-center justify-between md:px-6 py-5">
+        <div className="inline-flex flex-row items-center">
           {/* Avatar */}
           <Image className="h-8 w-8 mr-2" src={Avatar} alt="FNS" />
 
@@ -33,21 +35,22 @@ const OwnedDomains = ({ date, domain, isSubdomain }: { date: Date; domain: strin
               pathname: `details`,
               query: { result: domain + '.flr' },
             }}
+            title={`${domain}.flr`}
           >
             <p
-              className={`text-white font-semibold text-base cursor-pointer hover:underline hover:underline-offset-2`}
+              className={
+                'text-white font-semibold text-base break-all cursor-pointer hover:underline hover:underline-offset-2'
+              }
             >
               {domain}.flr
             </p>
           </Link>
         </div>
-        <div className="flex items-center">
-          {/* Date exp */}
-          <div className="flex items-center bg-gray-700 rounded-lg h-6 px-3 md:mr-3">
-            <p className="text-gray-300 text-xs font-medium">
+        {/* Date exp */}
+        <div className="flex items-center justify-center bg-gray-700 rounded-lg px-3 md:shrink-0">
+          <p className="text-gray-300 text-xs font-medium py-1">
             {isSubdomain ? 'No Expiry' : `Expires ${month}/${day}/${year}`}
-            </p>
-          </div>
+          </p>
         </div>
       </div>
     </>
@@ -66,8 +69,6 @@ export default function MyAccount() {
 
   const { address, isConnected } = useAccount()
 
-  const date = new Date(1678273065000)
-
   const { data } = useContractRead({
     address: MintedDomainNames.address as `0x${string}`,
     abi: MintedDomainNames.abi,
@@ -75,7 +76,7 @@ export default function MyAccount() {
     enabled: isConnected,
     args: [address],
     onSuccess(data: any) {
-      //console.log('Success getAll', data)
+      // console.log('Success getAll', data)
       // console.log('Get array of domains', data)
 
       // Ensure we only use the length returned for still-owned domains (after a transfer)
@@ -84,7 +85,7 @@ export default function MyAccount() {
         return {
           label: item.label,
           expire: Number(item.expiry),
-          isSubdomain: /[a-zA-Z0-9]+\.{1}[a-zA-Z0-9]+/.test(item.label)
+          isSubdomain: /[a-zA-Z0-9]+\.{1}[a-zA-Z0-9]+/.test(item.label),
         }
       })
       setAddressDomain(ownedDomain)

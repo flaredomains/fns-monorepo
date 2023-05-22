@@ -33,13 +33,13 @@ const TotalPrice = ({
 }) => {
   return (
     <>
-      <div className="px-12 py-8 bg-[#334155] lg:py-0">
+      <div className="bg-[#334155] lg:py-0">
         <p className="text-[#91A3B8] font-medium text-sm lg:text-xs xl:text-sm">
           Estimated Total Price
         </p>
         <div className="flex items-center text-white font-semibold text-2xl lg:text-lg xl:text-2xl">
           {priceToPay ? (
-            priceToPay.slice(0, 6)
+            (Number(priceToPay) * regPeriod).toString().slice(0, 6)
           ) : (
             <Loading isFinalPrize={false} isCalculation={false} />
           )}{' '}
@@ -53,7 +53,7 @@ const TotalPrice = ({
 const GasFee = ({ fee }: { fee: number }) => {
   return (
     <>
-      <div className="px-12 py-8 bg-[#334155] lg:py-0">
+      <div className="bg-[#334155] lg:py-0">
         <p className="text-[#91A3B8] font-medium text-sm lg:text-xs xl:text-sm">
           Gas Fee (at most)
         </p>
@@ -98,24 +98,28 @@ const FinalPrice = ({
 
   return (
     <>
-      <div className="flex flex-col text-center items-center w-full bg-[#F97316] h-32 py-6 rounded-b-lg lg:rounded-bl-none lg:rounded-r-lg lg:w-1/3">
-        <div className="px-20 flex flex-col justify-center items-center text-center lg:px-10">
+      <div className="flex flex-col text-center justify-center w-full bg-[#F97316] h-32 rounded-b-lg lg:rounded-l-none lg:rounded-r-lg px-4 lg:w-1/3">
+        <div className="flex flex-col items-center text-center">
           <p className="text-[#FED7AA] text-xs">At most</p>
           <div className="flex items-center text-white font-semibold text-2xl lg:text-lg xl:text-2xl">
             {priceToPay ? (
-              (Number(priceToPay) + (0.5 * 10 ** 18) / 10 ** 18).toFixed(3)
+              (
+                Number(priceToPay) * regPeriod +
+                (0.5 * 10 ** 18) / 10 ** 18
+              ).toFixed(3)
             ) : (
               <Loading isFinalPrize={true} isCalculation={false} />
             )}{' '}
             FLR
           </div>
-          <div className="flex items-center text-[#FED7AA] text-xs">
-            <p className="text-[#FED7AA] text-xs mr-1">Calculated to</p>
+          <div className="flex flex-wrap items-center text-[#FED7AA] text-xs gap-1 justify-center">
+            <p className="text-[#FED7AA] text-xs">Calculated to</p>
             <span className="font-semibold text-white flex items-center">
               $
               {priceToPay ? (
                 (
-                  (Number(priceToPay) + (0.5 * 10 ** 18) / 10 ** 18) *
+                  (Number(priceToPay) * regPeriod +
+                    (0.5 * 10 ** 18) / 10 ** 18) *
                   ethPrice
                 ).toFixed(2)
               ) : (
@@ -141,8 +145,8 @@ export default function Final_price({
 }) {
   const flrPrice = ethers.utils.formatEther(priceToPay ? priceToPay : 1)
   return (
-    <div className="flex flex-col items-center mt-9 h-96 w-full bg-[#334155] rounded-t-lg lg:flex-row lg:rounded-l-lg lg:h-32">
-      <div className="bg-[#334155] flex flex-col items-center w-full lg:w-2/3 lg:flex-row">
+    <div className="flex flex-col items-center mt-9 h-96 w-full bg-[#334155] rounded-lg lg:rounded-l-lg lg:flex-row lg:h-32">
+      <div className="flex flex-col h-2/3 items-center justify-evenly w-full lg:w-2/3 lg:flex-row rounded-lg">
         <TotalPrice regPeriod={regPeriod} priceToPay={flrPrice} />
 
         {/* + */}

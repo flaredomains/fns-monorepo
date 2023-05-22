@@ -26,18 +26,23 @@ const RegistrationPeriod = ({
 }) => {
   return (
     <>
-      <div className="flex items-center">
+      <div className="flex items-center justify-between gap-[12px] shrink-0">
         {/* - */}
         <div
           onClick={decreaseYears}
-          className="bg-[#F97316] h-6 w-6 rounded-full text-white text-center mr-5 flex items-center justify-center hover:scale-110 active:scale-125 transform transition duration-300 ease-out"
+          className={`h-6 w-6 rounded-full text-white text-center flex items-center justify-center ${
+            regPeriod === 1
+              ? 'bg-[#334155] text-[#91A3B8] cursor-not-allowed '
+              : 'bg-[#F97316] hover:scale-110 active:scale-125 transform transition duration-300 ease-out cursor-pointer'
+          }`}
         >
           <Image className="h-3 w-3" src={Minus} alt="FNS" />
         </div>
         {/* Text */}
-        <div className="flex-col">
+        <div className="flex-col shrink-0">
           <p className="text-white font-semibold text-3xl lg:text-xl xl:text-3xl">
-            {regPeriod} year
+            {regPeriod === 1 && `${regPeriod} year`}{' '}
+            {regPeriod > 1 && `${regPeriod} years`}
           </p>
           <p className="text-[#91A3B8] font-medium text-sm lg:text-xs xl:text-sm">
             Registration Period
@@ -46,7 +51,7 @@ const RegistrationPeriod = ({
         {/* + */}
         <div
           onClick={incrementYears}
-          className="bg-[#F97316] h-6 w-6 rounded-full text-white text-center ml-5 flex items-center justify-center lg:ml-1 hover:scale-110 active:scale-125 transform transition duration-300 ease-out"
+          className="bg-[#F97316] h-6 w-6 rounded-full text-white text-center flex items-center justify-center lg:ml-1 hover:scale-110 active:scale-125 transform transition duration-300 ease-out cursor-pointer"
         >
           <Image className="h-3 w-3" src={Plus} alt="FNS" />
         </div>
@@ -63,12 +68,20 @@ const RegPrice = ({
   regPeriod: number
   priceToPay: string
 }) => {
+  // console.log(Number(priceToPay))
+  // console.log((Number(priceToPay) * regPeriod).toString())
+  // console.log((Number(priceToPay) * regPeriod).toString().slice(0, 6))
   return (
     <>
       <div className="flex-col mt-6 lg:mt-0">
         <div className="flex items-center text-white font-semibold text-3xl lg:text-xl xl:text-3xl">
           {priceToPay ? (
-            ethers.utils.formatEther(priceToPay).slice(0, 6)
+            (
+              Number(ethers.utils.formatEther(priceToPay ? priceToPay : 1)) *
+              regPeriod
+            )
+              .toString()
+              .slice(0, 6)
           ) : (
             <Loading />
           )}{' '}
@@ -85,9 +98,9 @@ const RegPrice = ({
 const Note = () => {
   return (
     <>
-      <div className="flex justify-center items-center mt-6 bg-[#334155] h-12 text-[#9cacc0] rounded-lg px-5 w-3/4 lg:w-1/3 lg:mt-0">
+      <div className="flex justify-center items-center mt-6 bg-[#334155] text-[#9cacc0] rounded-lg px-5 py-3 lg:py-1 w-3/4 md:w-1/2 lg:w-1/3 lg:mt-0">
         <Image className="h-5 w-5 mr-2" src={Info} alt="FNS" />
-        <p className="text-xs font-medium">
+        <p className="text-xs font-medium py-1">
           Increase period to save on gas fees
         </p>
       </div>
@@ -107,7 +120,7 @@ export default function Selector({
   decreaseYears: () => void
 }) {
   return (
-    <div className="flex flex-col justify-between items-center mt-9 lg:flex-row">
+    <div className="flex flex-col justify-between items-center mt-9 lg:flex-row lg:gap-4">
       <RegistrationPeriod
         decreaseYears={decreaseYears}
         regPeriod={regPeriod}

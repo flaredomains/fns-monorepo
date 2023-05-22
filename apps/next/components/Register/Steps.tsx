@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 const progressArr = [
   {
@@ -35,9 +35,6 @@ const Step = ({
   stepText: string
   descriptionText: string
 }) => {
-  // console.log(`Number:${number} -- number - 1 ${number - 1} <= count ${count}`)
-  // console.log(`Number:${number} -- number - 1 ${number - 1} === count ${count}`)
-  // console.log(`Number:${number} -- number ${number} <= count ${count}`)
   return (
     <>
       <div className="w-full flex-col justify-center items-center mt-4 lg:mt-0 lg:w-1/3">
@@ -91,12 +88,6 @@ export default function Steps({ count }: { count: number }) {
           />
         ))}
       </div>
-      {/* <button
-        onClick={() => setCount(count + 1)}
-        className="bg-[#F97316] text-white font-semibold  rounded-xl p-5 mt-10"
-      >
-        Add count
-      </button> */}
     </>
   )
 }

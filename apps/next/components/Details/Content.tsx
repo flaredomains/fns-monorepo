@@ -59,16 +59,11 @@ const textKeys: Array<string> = [
 
 // Mock address data for various chains here:
 // https://docs.ens.domains/ens-improvement-proposals/ensip-9-multichain-address-resolution
-const addressKeys: Array<string> = [
-  "ETH",
-  "BTC",
-  "LTC",
-  "DOGE"
-]
+const addressKeys: Array<string> = ['ETH', 'BTC', 'LTC', 'DOGE']
 
-// Regular expression that matches for any text or address record 
+// Regular expression that matches for any text or address record
 // that has been set! ie any record that is not "" or "0x"
-const recordIsSet = /[^(^0x$|^$)]/;
+const recordIsSet = /[^(^0x$|^$)]/
 
 // leftText ---> key -- ex. ETH,BTC,... or email,URL
 // rightText ---> value -- ex. addrETH, addrBTC,... or simone@elevatesoftware.io,....
@@ -83,7 +78,7 @@ const Info = ({
   coinType,
   refetch,
   deleteButton,
-  setRecordsEditMode
+  setRecordsEditMode,
 }: {
   namehash: string
   leftText: string
@@ -113,20 +108,19 @@ const Info = ({
 
   // Validates address record inputs using @ensdomains/address-encoder
   useEffect(() => {
-    if(addressRecord && input !== "") {
+    if (addressRecord && input !== '') {
       try {
         // formatsByName always returns valid for ETH addresses, so use ethersjs instead
-        if(leftText === 'ETH') {
+        if (leftText === 'ETH') {
           if (!utils.isAddress(input)) {
-            throw Error("Invalid ETH Address")
+            throw Error('Invalid ETH Address')
           }
           setAddressAsBytes(utils.arrayify(utils.getAddress(input)))
         } else {
           setAddressAsBytes(formatsByName[leftText].decoder(input))
         }
         setAddressInputValid(true)
-      }
-      catch (error) {
+      } catch (error) {
         setAddressInputValid(false)
       }
     }
@@ -158,8 +152,8 @@ const Info = ({
       console.log('Success writeSetText', data)
 
       // Waits for 1 txn confirmation (block confirmation)
-      await data.wait(1);
-      
+      await data.wait(1)
+
       refetch()
       setRecordsEditMode(false)
       setInput('')
@@ -175,11 +169,7 @@ const Info = ({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: 'setAddr',
-    args: [
-      namehash,
-      coinType,
-      addressAsBytes
-    ],
+    args: [namehash, coinType, addressAsBytes],
     enabled: addressRecord && coinType !== undefined && addressInputIsValid,
     onSuccess(data: any) {
       console.log('Success prepareSetAddr', data)
@@ -202,51 +192,65 @@ const Info = ({
   // that has been set and returns "Not Set" otherwise.
   const formattedRecord = () => {
     // if a text or address record is not set, return not set
-    if(recordIsSet.test(rightText)) {
+    if (recordIsSet.test(rightText)) {
       // address record
-      if(addressRecord) {
+      if (addressRecord) {
+        // Added if rightText because can cause crash if rightText is null
+        if (rightText) {
           // https://docs.ens.domains/dapp-developer-guide/resolving-names#listing-cryptocurrency-addresses-and-text-records
-          return formatsByName[leftText].encoder(Buffer.from(utils.arrayify(rightText)))
+          return formatsByName[leftText].encoder(
+            Buffer.from(utils.arrayify(rightText))
+          )
+        }
       }
       // text record
       else {
-        return rightText;
+        return rightText
       }
     }
-    return "Not Set"
+    return 'Not Set'
   }
 
   return (
     <>
-      <div className="flex flex-col mb-3 lg:flex-row lg:items-center">
-        <p className="w-32 text-white font-medium text-xs mr-6">{leftText}</p>
+      <div className="flex flex-col mb-3 lg:flex-row lg:items-start">
+        <p className="w-32 text-white font-medium text-xs mr-6 shrink-0">
+          {leftText}
+        </p>
         {/* Not Edit section */}
-        {!recordsEditMode && (
-          <>
-            <p
-              className={`${
-                // if a text or address record are not set, set text color to gray!
-                recordIsSet.test(rightText) ? 'text-[#F97316]' : 'text-gray-400'
-              } font-medium text-xs mr-3 mt-2 lg:mt-0`}
-            >
-              { formattedRecord() }
-            </p>
-            {copied ? (
-              <>
-                <p className="text-[#F97316] font-medium text-sm">Copied</p>
-              </>
-            ) : (
-              rightText && (
-                <Image
-                  onClick={handleCopy}
-                  className="h-4 w-4 cursor-pointer"
-                  src={Clipboard_copy}
-                  alt="FNS"
-                />
-              )
-            )}
-          </>
-        )}
+        <div className="gap-2 flex flex-col items-start lg:flex-row lg:items-center">
+          {!recordsEditMode && (
+            <>
+              <p
+                className={`${
+                  // if a text or address record are not set, set text color to gray!
+                  recordIsSet.test(rightText)
+                    ? 'text-[#F97316]'
+                    : 'text-gray-400'
+                } font-medium text-xs mr-3 mt-2 lg:mt-0`}
+              >
+                {formattedRecord()}
+              </p>
+              {copied ? (
+                <>
+                  <p className="text-[#F97316] font-medium text-sm items-center">
+                    Copied
+                  </p>
+                </>
+              ) : (
+                rightText &&
+                rightText !== '0x' && (
+                  <Image
+                    onClick={handleCopy}
+                    className="h-4 w-4 cursor-pointer items-center"
+                    src={Clipboard_copy}
+                    alt="FNS"
+                  />
+                )
+              )}
+            </>
+          )}
+        </div>
         {/* Edit section */}
         {recordsEditMode && (
           <div className="flex items-center mt-2 lg:mt-0">
@@ -309,20 +313,11 @@ export default function Content({
   const [copyArrTextRecords, setCopyArrTextRecords] =
     useState<Array<{ leftText: string; rightText: string }>>(listTextRecords)
 
-
-  // TO CHANGE WITH WAGMI READ/WRITE FUNCTION
   // Save the REAL array in a copy
   function editModeFunc() {
     setCopyArrAddr(arrAddresses)
     setCopyArrTextRecords(arrTextRecords)
     setRecordsEditMode(true)
-  }
-
-  // Change the REAL array with the copy one
-  function save() {
-    setArrAddresses(copyArrAddr)
-    setArrTextRecords(copyArrTextRecords)
-    setRecordsEditMode(false)
   }
 
   // Return to normal mode without save
@@ -348,7 +343,7 @@ export default function Content({
     enabled: prepared,
     args: [utils.namehash(result)],
     onSuccess(data: any) {
-      console.log('Success resolver', data)
+      // console.log('Success resolver', data)
       setRecordPrepared(true)
     },
     onError(error) {
@@ -364,54 +359,67 @@ export default function Content({
 
   // Prepares an array of read objects on the PublicResolver contract
   // for every available address record type defined in `addressKeys`.
-  const addressRecordReads = addressKeys.map((coin,) => ({
+  const addressRecordReads = addressKeys.map((coin) => ({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: 'addr',
-    args: [utils.namehash(result), formatsByName[coin].coinType]
+    args: [utils.namehash(result), formatsByName[coin].coinType],
   }))
 
-  // Performs all of the reads for the address record types and 
+  // Performs all of the reads for the address record types and
   // returns an array of "hex" strings corresponding to each type.
   const { data: addressRecords } = useContractReads({
-    contracts: addressRecordReads as [{address?: `0x${string}`, abi?: any, functionName?: string, args?:[any, number]}],
+    contracts: addressRecordReads as [
+      {
+        address?: `0x${string}`
+        abi?: any
+        functionName?: string
+        args?: [any, number]
+      }
+    ],
     enabled: prepared && recordPrepared,
-    // onSuccess(data: any) {
-    //   console.log('Success addresses', data)
-    // },
-    // onError(error) {
-    //   console.log('Error addresses', error)
-    // },
+    onSuccess(data: any) {
+      console.log('Success addresses', data)
+    },
+    onError(error) {
+      console.log('Error addresses', error)
+    },
   })
 
   // Prepares an array of read objects on the PublicResolver contract
   // for every available text record type defined in `addressKeys`.
-  const textRecordReads = textKeys.map((item,) => ({
+  const textRecordReads = textKeys.map((item) => ({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: 'text',
     args: [utils.namehash(result), item.toLowerCase()],
   }))
 
-  // Performs all of the reads for the text record types and 
+  // Performs all of the reads for the text record types and
   // returns an array of strings corresponding to each type.
   const { data: textRecords, refetch: refetchText } = useContractReads({
-    contracts: textRecordReads as [{address?: `0x${string}`, abi?: any, functionName?: string, args?:[any, number]}],
+    contracts: textRecordReads as [
+      {
+        address?: `0x${string}`
+        abi?: any
+        functionName?: string
+        args?: [any, number]
+      }
+    ],
     enabled: prepared && recordPrepared,
-    // onSuccess(data: any) {
-    //   console.log('Success texts', data)
-    // },
-    // onError(error) {
-    //   console.log('Error texts', error)
-    // },
+    onSuccess(data: any) {
+      console.log('Success texts', data)
+    },
+    onError(error) {
+      console.log('Error texts', error)
+    },
   })
-
 
   return (
     <>
       {/* Records / Addresses */}
       <>
-        <div className="flex-col bg-gray-800 px-8 pb-14">
+        <div className="flex-col bg-gray-800 px-8 pb-14 rounded-b-lg">
           {/* Record Line -- Button Add/Edit Records */}
           <div className="flex-col justify-between mb-10 md:flex md:flex-row">
             {/* Records */}
@@ -436,14 +444,6 @@ export default function Content({
                   >
                     <p className="text-gray-400 text-medium text-xs">Cancel</p>
                   </button>
-
-                  {/* Save */}
-                  {/* <button
-                    onClick={() => save()}
-                    className="flex justify-center items-center text-center bg-[#F97316] px-3 py-2 rounded-lg text-white border border-[#F97316] hover:scale-105 transform transition duration-300 ease-out lg:ml-auto"
-                  >
-                    <p className="text-xs font-medium">Save</p>
-                  </button> */}
                 </div>
               </>
             )}
@@ -456,51 +456,54 @@ export default function Content({
               Addresses
             </h2>
             <div className="flex-col items-center">
-              { addressRecords ? copyArrAddr.map((item, index) => (
-                <Info
-                  key={index}
-                  namehash={utils.namehash(result)}
-                  leftText={item.leftText}
-                  rightText={addressRecords[index] as string}
-                  index={index}
-                  recordsEditMode={recordsEditMode}
-                  addressRecord={true}
-                  coinType={formatsByName[item.leftText].coinType}
-                  refetch={refetchText}
-                  setRecordsEditMode={setRecordsEditMode}
-                  deleteButton={deleteButton}
-                />))
-                :
-                (<></>)
-              }
-            </div>
-          </div>
-
-          {/* Text Records Section */}
-          <div className="flex-col bg-gray-800 pb-14">
-            <div className="flex flex-col lg:flex-row">
-              {/* Text Records */}
-              <h2 className="text-white text-xl font-semibold w-32 mr-10 mb-4 lg:mb-0">
-                Text Records
-              </h2>
-              <div className="flex-col items-center">
-                { textRecords ? copyArrTextRecords.map((item, index) => (
+              {addressRecords ? (
+                copyArrAddr.map((item, index) => (
                   <Info
                     key={index}
                     namehash={utils.namehash(result)}
                     leftText={item.leftText}
-                    rightText={textRecords[index] as string}
+                    rightText={addressRecords[index] as string}
                     index={index}
                     recordsEditMode={recordsEditMode}
-                    addressRecord={false}
+                    addressRecord={true}
+                    coinType={formatsByName[item.leftText].coinType}
                     refetch={refetchText}
                     setRecordsEditMode={setRecordsEditMode}
                     deleteButton={deleteButton}
                   />
                 ))
-                :
-                (<></>)
-              }
+              ) : (
+                <></>
+              )}
+            </div>
+          </div>
+
+          {/* Text Records Section */}
+          <div className="flex-col bg-gray-800 pb-14 w-full">
+            <div className="flex flex-col lg:flex-row w-full">
+              {/* Text Records */}
+              <h2 className="text-white text-xl font-semibold w-32 mr-10 mb-4 lg:mb-0 shrink-0">
+                Text Records
+              </h2>
+              <div className="flex-col items-center">
+                {textRecords ? (
+                  copyArrTextRecords.map((item, index) => (
+                    <Info
+                      key={index}
+                      namehash={utils.namehash(result)}
+                      leftText={item.leftText}
+                      rightText={textRecords[index] as string}
+                      index={index}
+                      recordsEditMode={recordsEditMode}
+                      addressRecord={false}
+                      refetch={refetchText}
+                      setRecordsEditMode={setRecordsEditMode}
+                      deleteButton={deleteButton}
+                    />
+                  ))
+                ) : (
+                  <></>
+                )}
               </div>
             </div>
             {/* Add/Edit Record buttons Mobile */}
@@ -523,14 +526,6 @@ export default function Content({
                   >
                     <p className="text-gray-400 text-medium text-xs">Cancel</p>
                   </button>
-
-                  {/* Save */}
-                  {/* <button
-                    onClick={() => save()}
-                    className="flex justify-center items-center text-center bg-[#F97316] px-3 py-2 rounded-lg text-white border border-[#F97316] lg:ml-auto"
-                  >
-                    <p className="text-xs font-medium">Save</p>
-                  </button> */}
                 </div>
               </>
             )}
@@ -540,45 +535,3 @@ export default function Content({
     </>
   )
 }
-
-/**
- <>
-      <div className="flex-col bg-gray-800 px-8 pb-14">
-        <h1 className="text-white text-2xl font-semibold mb-10">Records</h1>
-
-        
-        <div className="flex flex-col lg:flex-row">
-          <h2 className="text-white text-xl font-semibold w-32 mr-10 mb-4 lg:mb-0">
-            Addresses
-          </h2>
-          <div className="flex-col items-center">
-            {listAddresses.map((item, index) => (
-              <RecordSection
-                key={index}
-                leftText={item.leftText}
-                rightText={item.rightText}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-
-      
-      <div className="flex-col bg-gray-800 px-8 pb-14 rounded-b-md">
-        <div className="flex flex-col lg:flex-row">
-          <h2 className="text-white text-xl font-semibold w-32 mr-10 mb-4 lg:mb-0">
-            Text Records
-          </h2>
-          <div className="flex-col items-center">
-            {textRecords?.map((item: any, index: any) => (
-              <RecordSection
-                key={index}
-                leftText={textKeys[index]}
-                rightText={item}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-    </>
- */

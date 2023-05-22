@@ -10,15 +10,13 @@ import Steps from './Steps'
 import Bottom from './Bottom'
 import web3 from 'web3-utils'
 
+import { useRouter } from 'next/router'
+
 import FLRRegistrarController from '../../src/pages/abi/FLRRegistrarController.json'
-import PublicResolver from '../../src/pages/abi/PublicResolver.json'
 
 import {
   useFeeData,
   useContractRead,
-  useContractWrite,
-  usePrepareContractWrite,
-  useContractEvent,
   useContract,
   useSigner,
   useAccount,
@@ -26,13 +24,13 @@ import {
 import { BigNumber, ethers } from 'ethers'
 
 export enum RegisterState {
-  Uncommitted,  // this is the default begin state (count => 0)
-  Committable,  // reflects if commit will succeed or not (if there's a valid commitment already or not)
-  Committing,   // committing transaction in progress
-  Waiting,      // committing transaction complete, waiting timer in progress (count => 1)
+  Uncommitted, // this is the default begin state (count => 0)
+  Committable, // reflects if commit will succeed or not (if there's a valid commitment already or not)
+  Committing, // committing transaction in progress
+  Waiting, // committing transaction complete, waiting timer in progress (count => 1)
   Unregistered, // timer complete, pending register transaction (count => 2)
-  Registering,  // registering transaction in progress
-  Registered    // registration complete (count => 3)
+  Registering, // registering transaction in progress
+  Registered, // registration complete (count => 3)
 }
 
 const Alert = ({ available }: { available: boolean }) => {
@@ -78,24 +76,30 @@ export default function Register({ result }: { result: string }) {
   // For steps animation
   const [count, setCount] = useState(0)
 
-  const [priceFLR, setPriceFLR] = useState('1')
-  const [regPeriod, setRegPeriod] = useState(1)
-  const [preparedHash, setPreparedHash] = useState<boolean>(false)
-  const [hashHex, setHashHex] = useState<string>('')
+  // State variable that changed inside useEffect that check result and unlock Wagmi READ/WRITE function
   const [filterResult, setFilterResult] = useState<string>('')
+  const [hashHex, setHashHex] = useState<string>('')
+  const [preparedHash, setPreparedHash] = useState<boolean>(false)
   const [isNormalDomain, setIsNormalDomain] = useState<boolean>(true)
-  const [registerState, setRegisterState] = useState<RegisterState>(RegisterState.Uncommitted)
 
-  const { address, isConnected } = useAccount()
-  const { data: signer } = useSigner()
+  // State variable that changed inside Wagmi hooks
+  const [regPeriod, setRegPeriod] = useState(1)
+  const [priceFLR, setPriceFLR] = useState('1')
+
+  const [registerState, setRegisterState] = useState<RegisterState>(
+    RegisterState.Uncommitted
+  )
+
+  // Used for useEffect for avoid re-render
+  const router = useRouter()
 
   function getParentDomain(str: string) {
     // Define a regular expression pattern that matches subdomains of a domain that ends with .flr.
-    const subdomainPattern = /^([a-zA-Z0-9-]+)\.{1}([a-zA-Z0-9-]+)\.{1}flr$/i
+    const subdomainPattern = /^([a-z0-9][a-z0-9-]*[a-z0-9]\.)+[a-z]{1,}\.flr$/i
 
     // Use the regular expression pattern to test whether the string matches a subdomain.
     const isSubdomain = subdomainPattern.test(str)
-    console.log('isSubdomain', isSubdomain)
+    // console.log('isSubdomain', isSubdomain)
 
     if (isSubdomain) {
       // The input string is a subdomain, extract the parent domain.
@@ -110,25 +114,27 @@ export default function Register({ result }: { result: string }) {
   }
 
   useEffect(() => {
+    if (!router.isReady) return
+
+    const result = router.query.result as string
+
     const parent = getParentDomain(result)
-    console.log('parent', parent)
+
     // Check if ethereum address
     if (/^0x[a-fA-F0-9]{40}$/.test(result)) {
       console.log('Ethereum address')
       setFilterResult(result)
-      // setHashHex(hash)
-      // setPreparedHash(true)
     } else if (result) {
+      // Remove .flr from result for READ/WRITE function purposes and get hash
       const resultFiltered = result.endsWith('.flr')
         ? result.slice(0, -4)
         : result
       const hash = web3.sha3(resultFiltered) as string
-      // console.log('hash', hash)
       setFilterResult(resultFiltered)
       setHashHex(hash)
       setPreparedHash(true)
     }
-  }, [result])
+  }, [router.isReady, router.query])
 
   // Available READ function
   useContractRead({
@@ -138,12 +144,10 @@ export default function Register({ result }: { result: string }) {
     enabled: preparedHash,
     args: [filterResult],
     onSuccess(data: any) {
-      // console.log('Success available', data)
       // data is a boolean that represents if the domain is available or not
-      if(data) {
+      if (data) {
         setRegisterState(RegisterState.Uncommitted)
-      }
-      else {
+      } else {
         setRegisterState(RegisterState.Registered)
       }
     },
@@ -157,12 +161,8 @@ export default function Register({ result }: { result: string }) {
     address: FLRRegistrarController.address as `0x${string}`,
     abi: FLRRegistrarController.abi,
     functionName: 'rentPrice',
-    args: [filterResult as string, regPeriod * 31556952], // 31536000
+    args: [filterResult as string, 31556952], // 31536000
     onSuccess(data: any) {
-      // console.log('Success rentPrice', data)
-      // console.log('Base', Number(data.base))
-      // console.log('Base', ethers.utils.formatEther(data.base))
-      // console.log('Premium', Number(data.premium))
       setPriceFLR(data.base)
     },
     onError(error) {
@@ -171,12 +171,6 @@ export default function Register({ result }: { result: string }) {
   })
 
   const { data: fee } = useFeeData()
-
-  const contract = useContract({
-    address: FLRRegistrarController.address as `0x${string}`,
-    abi: FLRRegistrarController.abi,
-    signerOrProvider: signer,
-  })
 
   const incrementYears = () => {
     if (regPeriod >= 999) return
@@ -191,15 +185,6 @@ export default function Register({ result }: { result: string }) {
     setRegPeriod(regPeriod - 1)
   }
 
-  // console.table({
-  //   result: result,
-  //   filterResult: filterResult,
-  //   hashHex: hashHex,
-  //   priceFLR: priceFLR,
-  //   regPeriod: regPeriod,
-  //   isNormalDomain: isNormalDomain,
-  // })
-
   return (
     <>
       {/* Main Content / Wallet connect (hidden mobile) */}
@@ -209,8 +194,12 @@ export default function Register({ result }: { result: string }) {
           {/* Domain Container */}
           <Domain_Select result={result} />
 
-          <div className="flex-col bg-gray-800 px-8 py-12 rounded-b-md">
-            <Alert available={isNormalDomain && registerState !== RegisterState.Registered} />
+          <div className="flex-col bg-gray-800 px-8 py-12 rounded-b-lg">
+            <Alert
+              available={
+                isNormalDomain && registerState !== RegisterState.Registered
+              }
+            />
             {isNormalDomain && registerState !== RegisterState.Registered && (
               <>
                 {/* Increment Selector */}

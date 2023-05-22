@@ -51,7 +51,7 @@ const Dropdown = ({
     <>
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className="flex-col cursor-pointer relative w-full md:w-1/2"
+        className="flex-col cursor-pointer relative w-full md:w-full lg:w-1/2"
       >
         <div className="flex justify-between items-center p-3 w-full mt-7 bg-gray-700 rounded-lg">
           <p
@@ -183,7 +183,7 @@ export default function Reverse_Record({
 
   return (
     <>
-      <div className="flex justify-between mt-16">
+      <div className="flex justify-between mt-16 gap-2">
         {/* Text */}
         <p className="text-white font-semibold text-lg">
           {isLarge ? 'Primary FNS Name (Reverse Record)' : 'Primary FNS Name'}
@@ -192,7 +192,7 @@ export default function Reverse_Record({
         {/* Button */}
         <div
           onClick={() => setName?.()}
-          className="flex items-center px-3 py-1 bg-[#F97316] rounded-full cursor-pointer hover:scale-110 active:scale-125 transform transition duration-300 ease-out lg:py-2 lg:px-4"
+          className="flex items-center h-7 px-3 py-1 bg-[#F97316] rounded-full cursor-pointer hover:scale-110 active:scale-125 transform transition duration-300 ease-out lg:py-2 lg:px-4 shrink-0"
         >
           <p className="text-white text-sm font-medium">Set Name</p>
         </div>

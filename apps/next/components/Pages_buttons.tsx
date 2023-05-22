@@ -4,6 +4,7 @@ import Account_Plus from '../public/buttons_main_page/Account_Plus.png'
 import Details from '../public/buttons_main_page/Details.png'
 import Subdomain from '../public/buttons_main_page/Subdomain.png'
 import Image from 'next/image'
+import styles from '../src/styles/Main.module.css'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
@@ -122,7 +123,7 @@ function Pages_buttons({ result, path }: any) {
         {/* Search */}
         <form
           onSubmit={handleSubmit}
-          className="flex items-center w-4/5 py-2 px-4 h-12 rounded-md bg-gray-700 border-2 border-gray-500 mt-5 lg:flex lg:w-2/5 lg:mt-0"
+          className={`flex items-center w-4/5 py-2 px-4 h-12 rounded-md bg-gray-700 border-2 border-gray-500 mt-5 lg:flex lg:w-2/5 lg:mt-0 ${styles.autofill}`}
         >
           <Image className="z-10 h-6 w-6 mr-2" src={Search} alt="FNS" />
           <input
@@ -138,6 +139,7 @@ function Pages_buttons({ result, path }: any) {
             }}
             className="w-full bg-transparent font-normal text-base text-white border-0 focus:outline-none placeholder:text-gray-300 placeholder:font-normal focus:bg-transparent"
             placeholder="Search New Names or Addresses"
+            spellCheck="false"
             required
           />
         </form>

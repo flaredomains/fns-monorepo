@@ -27,11 +27,11 @@ const BottomFlare = () => {
   return (
     <>
       <div className="hidden lg:flex lg:mb-10">
-        <div className="flex items-center w-full mt-auto h-12 px-3 py-2 bg-trasparent">
-          <p className="w-full bg-transparent font-semibold text-lg text-white focus:outline-none">
+        <div className="flex flex-row items-center w-full mt-auto h-12 py-2 bg-trasparent gap-4">
+          <p className="bg-transparent font-semibold text-lg text-white focus:outline-none shrink-0">
             Built on{' '}
           </p>
-          <Image className="h-7 w-20 ml-4" src={Flare} alt="FNS" />
+          <Image className="h-7 w-20" src={Flare} alt="FNS" />
         </div>
       </div>
     </>

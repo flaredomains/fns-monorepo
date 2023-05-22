@@ -72,7 +72,7 @@ function Main() {
         {/* Search Form */}
         <form
           onSubmit={handleSubmit}
-          className="flex items-center w-full mt-10 py-2 px-4 h-12 bg-gray-700 border-2 border-gray-500"
+          className={`flex items-center w-full mt-10 py-2 px-4 h-12 bg-gray-700 border-2 border-gray-500 ${styles.autofill}`}
         >
           <Image className="z-10 h-6 w-6 mr-2" src={Search} alt="FNS" />
           <input
@@ -88,12 +88,13 @@ function Main() {
             }}
             className="w-full bg-transparent font-normal text-base text-white border-0 focus:outline-none placeholder:text-gray-300 placeholder:font-normal"
             placeholder="Search New Names or Addresses"
+            spellCheck="false"
             required
           />
         </form>
       </div>
     </div>
-  )
+  );
 }
 
-export default Main
+export default Main;

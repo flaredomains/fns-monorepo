@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import Domain_Select from '../Domain_Select'
 import WalletConnect from '../WalletConnect'
 import SubdomainContent from './SubdomainContent'
-//import SubdomainEdit from './SubdomainEdit'
+
+import { useRouter } from 'next/router'
 
 import NameWrapper from '../../src/pages/abi/NameWrapper.json'
 import SubdomainTracker from '../../src/pages/abi/SubdomainTracker.json'
@@ -13,34 +14,34 @@ const namehash = require('eth-ens-namehash')
 import { useAccount, useContractRead } from 'wagmi'
 import { BigNumber } from 'ethers'
 
-export default function Subdomains({
-  result
-}: {
-  result: string
-}) {
-  // const [editMode, setEditMode] = useState(false)
-
-  const [prepared, setPrepared] = useState<boolean>(false)
-  const [preparedHash, setPreparedHash] = useState<boolean>(false)
-  const [hashHex, setHashHex] = useState<string>('')
+export default function Subdomains({ result }: { result: string }) {
+  // State variable that changed inside useEffect that check result and unlock Wagmi READ/WRITE function
   const [filterResult, setFilterResult] = useState<string>('')
-  const [tokenPrepared, setTokenPrepared] = useState(false)
   const [tokenId, setTokenId] = useState<BigNumber>()
+  const [hashHex, setHashHex] = useState<string>('')
+  const [preparedHash, setPreparedHash] = useState<boolean>(false)
+
+  // State variable that changed inside Wagmi hooks
   const [arrSubdomains, setArrSubdomains] = useState<Array<string>>([])
 
-  const date = new Date(1678273065000)
+  const [tokenPrepared, setTokenPrepared] = useState(false)
 
+  // Use to check that checkOwnerDomain={address === owner} -- prop of SubdomainContent component
   const { address } = useAccount()
 
+  // Used for useEffect for avoid re-render
+  const router = useRouter()
+
   useEffect(() => {
+    if (!router.isReady) return
+
+    const result = router.query.result as string
     // Check if ethereum address
     if (/^0x[a-fA-F0-9]{40}$/.test(result)) {
       console.log('Ethereum address')
       setFilterResult(result)
-      // setHashHex(hash)
-      // setPreparedHash(true)
     } else if (result) {
-      if (result !== "") {
+      if (result !== '') {
         setTokenId(BigNumber.from(namehash.hash(result)))
       }
 
@@ -52,10 +53,10 @@ export default function Subdomains({
       setHashHex(hash)
       setPreparedHash(true)
     }
-  }, [result])
+  }, [router.isReady, router.query])
 
   // Read all subdomains under a given domain name
-  const {refetch: refGetAll} = useContractRead({
+  const { refetch: refGetAll } = useContractRead({
     address: SubdomainTracker.address as `0x${string}`,
     abi: SubdomainTracker.abi,
     functionName: 'getAll',
@@ -66,7 +67,7 @@ export default function Subdomains({
         domain: `${x.label}.${result}`,
         owner: x.owner,
         tokenId: x.id,
-      }));
+      }))
       setArrSubdomains(subdomains)
     },
     onError(error) {
@@ -86,13 +87,6 @@ export default function Subdomains({
       console.error('Error ownerOfLabel', error)
     },
   }) as any
-
-  // console.table({
-  //   result: result,
-  //   owner: owner,
-  //   tokenId: tokenId,
-  // })
-  console.log('owner === address', owner === address)
 
   return (
     <>
@@ -118,14 +112,3 @@ export default function Subdomains({
     </>
   )
 }
-
-/**
-   {/* {editMode && (
-            <SubdomainEdit
-              data={dataEdit}
-              editMode={editMode}
-              setEditMode={setEditMode}
-              setDataEdit={setDataEdit}
-            />
-          )} 
- */
