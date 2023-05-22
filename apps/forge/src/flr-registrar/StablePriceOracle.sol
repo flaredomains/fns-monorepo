@@ -15,7 +15,8 @@ contract StablePriceOracle is IPriceOracle, IERC165, Ownable {
     // This address is used to JIT (Just-In-Time) lookup the address of the FtsoRegistry,
     // which gives us a price oracle for FLR. This is the documented standard way to perform
     // a price oracle lookup. See: https://docs.flare.network/dev/reference/contracts/
-    IFlareContractRegistry public immutable flareContractRegistry; // = IFlareContractRegistry(0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019);
+    // On-Chain Flare Registry: 0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019
+    IFlareContractRegistry public immutable flareContractRegistry;
 
     // Number of Seconds in a Gregorian Calendar Year
     uint256 public constant secondsPerYear = 31556952;
@@ -27,24 +28,29 @@ contract StablePriceOracle is IPriceOracle, IERC165, Ownable {
     uint256 public price3LetterAttoUSDPerSec;
     uint256 public price4LetterAttoUSDPerSec;
     uint256 public price5LetterAttoUSDPerSec;
+    uint256 public price6LetterAttoUSDPerSec;
 
-    event RentPriceChanged(uint256[5] prices);
+    event RentPriceChanged(uint256[6] prices);
 
-    constructor(address _flareContractRegistry, uint256[5] memory _annualRentPricesUSD) {
+    constructor(address _flareContractRegistry, uint256[6] memory _annualRentPricesUSD) {
         flareContractRegistry = IFlareContractRegistry(_flareContractRegistry);
         setPrices(_annualRentPricesUSD);
     }
 
     // Input prices are expected to be normal USD pricing in integer format:
-    function setPrices(uint256[5] memory _annualRentPricesUSD) public onlyOwner {
+    function setPrices(uint256[6] memory _annualRentPricesUSD) public onlyOwner {
         require(_annualRentPricesUSD[0] > 0, "Input 1 Letter Price is too small");
         require(_annualRentPricesUSD[1] > 0, "Input 2 Letter Price is too small");
         require(_annualRentPricesUSD[2] > 0, "Input 3 Letter Price is too small");
         require(_annualRentPricesUSD[3] > 0, "Input 4 Letter Price is too small");
-        require(_annualRentPricesUSD[4] > 0, "Input 5+ Letter Price is too small");
+        require(_annualRentPricesUSD[4] > 0, "Input 5 Letter Price is too small");
+        require(_annualRentPricesUSD[5] > 0, "Input 6+ Letter Price is too small");
         require(
-            _annualRentPricesUSD[0] > _annualRentPricesUSD[1] && _annualRentPricesUSD[1] > _annualRentPricesUSD[2]
-                && _annualRentPricesUSD[2] > _annualRentPricesUSD[3] && _annualRentPricesUSD[3] > _annualRentPricesUSD[4],
+            _annualRentPricesUSD[0] > _annualRentPricesUSD[1] &&
+            _annualRentPricesUSD[1] > _annualRentPricesUSD[2] &&
+            _annualRentPricesUSD[2] > _annualRentPricesUSD[3] &&
+            _annualRentPricesUSD[3] > _annualRentPricesUSD[4] &&
+            _annualRentPricesUSD[4] > _annualRentPricesUSD[5],
             "Price ordering not valid"
         );
 
@@ -53,6 +59,7 @@ contract StablePriceOracle is IPriceOracle, IERC165, Ownable {
         price3LetterAttoUSDPerSec = (_annualRentPricesUSD[2] * 1e18) / secondsPerYear;
         price4LetterAttoUSDPerSec = (_annualRentPricesUSD[3] * 1e18) / secondsPerYear;
         price5LetterAttoUSDPerSec = (_annualRentPricesUSD[4] * 1e18) / secondsPerYear;
+        price6LetterAttoUSDPerSec = (_annualRentPricesUSD[5] * 1e18) / secondsPerYear;
 
         emit RentPriceChanged(_annualRentPricesUSD);
     }
@@ -66,7 +73,9 @@ contract StablePriceOracle is IPriceOracle, IERC165, Ownable {
         uint256 len = name.strlen();
         uint256 basePrice;
 
-        if (len >= 5) {
+        if (len >= 6) {
+            basePrice = price6LetterAttoUSDPerSec * duration;
+        } else if (len == 5) {
             basePrice = price5LetterAttoUSDPerSec * duration;
         } else if (len == 4) {
             basePrice = price4LetterAttoUSDPerSec * duration;

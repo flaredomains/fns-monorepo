@@ -19,20 +19,21 @@ import "fns-test/utils/FNSNamehash.sol";
 
 contract UpdatePriceOracle is Script {
     function run() external {
-        uint256 deployerPrivateKey = vm.envUint("DEPLOYER_PRIVATE_KEY");
-        uint256 deployerAddress = vm.envUint("DEPLOYER_ADDRESS");
+        uint256 deployerPrivateKey = vm.envUint("FLARE_DEPLOYER_PRIVATE_KEY");
+        uint256 deployerAddress = vm.envUint("FLARE_DEPLOYER_ADDRESS");
         vm.startBroadcast(deployerPrivateKey);
 
         // FNSRegistry fnsRegistry = FNSRegistry(0x8E60eEeB7634930bba7a9d74f01Af9c9e78c9063);
         // BaseRegistrar baseRegistrar = BaseRegistrar(0x7113e298973444eCC1c52bDdA92B2Ad5d5399426);
         FLRRegistrarController flrRegistrarController =
-            FLRRegistrarController(0x8C41EFcb8C28A31957f517aC1E8D136E66623351);
+            FLRRegistrarController(0x63Adf61F7a3C8BC78E32A5B447f3bc5D260Aa182);
 
         console.log("FLRRegistrarController owner=%s", flrRegistrarController.owner());
 
         StablePriceOracle stablePriceOracle = new StablePriceOracle(
             0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019,
-            [uint256(5), 4, 3, 2, 1]);
+            [uint256(500), 350, 300, 100, 25, 5]);
+            // [uint256(6), 5, 4, 3, 2, 1]);
 
         console.log("Stable Price Oracle Deployed to: %s", address(stablePriceOracle));
 
