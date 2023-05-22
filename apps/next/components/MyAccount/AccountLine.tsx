@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import MyAccount from '../../public/MyAccount.svg'
 import Search from '../../public/Search.png'
+import styles from '../../src/styles/Main.module.css'
 import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'
 
@@ -53,7 +54,7 @@ export default function AccountLine() {
         </div>
         <form
           onSubmit={handleSubmit}
-          className="hidden lg:flex items-center w-1/2 py-2 px-4 h-12 rounded-md bg-gray-700 border-2 border-gray-500"
+          className={`hidden lg:flex items-center w-1/2 py-2 px-4 h-12 rounded-md bg-gray-700 border-2 border-gray-500 ${styles.autofill}`}
         >
           <Image className="z-10 h-6 w-6 mr-2" src={Search} alt="FNS" />
           <input

@@ -5,7 +5,7 @@
   height: 28rem;
   left: -27.75rem;
   top: -22rem;
-  
+
   background: #F97316;
   opacity: 0.58;
   filter: blur(241px);
@@ -22,4 +22,15 @@
   background: linear-gradient(180deg, #F97316 0%, #F91616 100%);
   opacity: 0.38;
   filter: blur(241px);
+}
+
+.autofill input:-webkit-autofill,
+.autofill input:-webkit-autofill:hover,
+.autofill input:-webkit-autofill:focus,
+.autofill input:-webkit-autofill:active,
+.autofill input:-webkit-autofill::first-line {
+  transition: background-color 5000s;
+  -webkit-text-fill-color: white !important;
+  caret-color: white;
+  font-size: 1rem;
 }
