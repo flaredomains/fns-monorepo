@@ -261,7 +261,9 @@ const ReqToRegister = ({
     ],
     overrides: {
       from: address as `0x${string}`,
-      value: BigNumber.from(price).add(BigNumber.from(price).div(100)),
+      value: BigNumber.from(price)
+        .mul(regPeriod)
+        .add(BigNumber.from(price).div(100)),
       gasLimit: BigNumber.from(1000000),
     },
     onSuccess(data) {

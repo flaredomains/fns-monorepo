@@ -39,7 +39,7 @@ const TotalPrice = ({
         </p>
         <div className="flex items-center text-white font-semibold text-2xl lg:text-lg xl:text-2xl">
           {priceToPay ? (
-            priceToPay.slice(0, 6)
+            (Number(priceToPay) * regPeriod).toString().slice(0, 6)
           ) : (
             <Loading isFinalPrize={false} isCalculation={false} />
           )}{' '}
@@ -103,7 +103,10 @@ const FinalPrice = ({
           <p className="text-[#FED7AA] text-xs">At most</p>
           <div className="flex items-center text-white font-semibold text-2xl lg:text-lg xl:text-2xl">
             {priceToPay ? (
-              (Number(priceToPay) + (0.5 * 10 ** 18) / 10 ** 18).toFixed(3)
+              (
+                Number(priceToPay) * regPeriod +
+                (0.5 * 10 ** 18) / 10 ** 18
+              ).toFixed(3)
             ) : (
               <Loading isFinalPrize={true} isCalculation={false} />
             )}{' '}
@@ -115,7 +118,8 @@ const FinalPrice = ({
               $
               {priceToPay ? (
                 (
-                  (Number(priceToPay) + (0.5 * 10 ** 18) / 10 ** 18) *
+                  (Number(priceToPay) * regPeriod +
+                    (0.5 * 10 ** 18) / 10 ** 18) *
                   ethPrice
                 ).toFixed(2)
               ) : (

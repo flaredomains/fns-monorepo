@@ -30,14 +30,19 @@ const RegistrationPeriod = ({
         {/* - */}
         <div
           onClick={decreaseYears}
-          className={`h-6 w-6 rounded-full text-white text-center flex items-center justify-center ${regPeriod === 1 ? 'bg-[#334155] text-[#91A3B8] cursor-not-allowed ' : 'bg-[#F97316] hover:scale-110 active:scale-125 transform transition duration-300 ease-out cursor-pointer'}`}
+          className={`h-6 w-6 rounded-full text-white text-center flex items-center justify-center ${
+            regPeriod === 1
+              ? 'bg-[#334155] text-[#91A3B8] cursor-not-allowed '
+              : 'bg-[#F97316] hover:scale-110 active:scale-125 transform transition duration-300 ease-out cursor-pointer'
+          }`}
         >
           <Image className="h-3 w-3" src={Minus} alt="FNS" />
         </div>
         {/* Text */}
         <div className="flex-col shrink-0">
           <p className="text-white font-semibold text-3xl lg:text-xl xl:text-3xl">
-            {regPeriod === 1 && `${regPeriod} year`} {regPeriod > 1 && `${regPeriod} years`}
+            {regPeriod === 1 && `${regPeriod} year`}{' '}
+            {regPeriod > 1 && `${regPeriod} years`}
           </p>
           <p className="text-[#91A3B8] font-medium text-sm lg:text-xs xl:text-sm">
             Registration Period
@@ -63,12 +68,20 @@ const RegPrice = ({
   regPeriod: number
   priceToPay: string
 }) => {
+  // console.log(Number(priceToPay))
+  // console.log((Number(priceToPay) * regPeriod).toString())
+  // console.log((Number(priceToPay) * regPeriod).toString().slice(0, 6))
   return (
     <>
       <div className="flex-col mt-6 lg:mt-0">
         <div className="flex items-center text-white font-semibold text-3xl lg:text-xl xl:text-3xl">
           {priceToPay ? (
-            ethers.utils.formatEther(priceToPay).slice(0, 6)
+            (
+              Number(ethers.utils.formatEther(priceToPay ? priceToPay : 1)) *
+              regPeriod
+            )
+              .toString()
+              .slice(0, 6)
           ) : (
             <Loading />
           )}{' '}

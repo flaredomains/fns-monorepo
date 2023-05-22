@@ -161,7 +161,7 @@ export default function Register({ result }: { result: string }) {
     address: FLRRegistrarController.address as `0x${string}`,
     abi: FLRRegistrarController.abi,
     functionName: 'rentPrice',
-    args: [filterResult as string, regPeriod * 31556952], // 31536000
+    args: [filterResult as string, 31556952], // 31536000
     onSuccess(data: any) {
       setPriceFLR(data.base)
     },
