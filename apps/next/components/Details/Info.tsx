@@ -108,7 +108,7 @@ export default function Info({
 
   return (
     <>
-      <div className="flex-col bg-gray-800 px-8 py-12">
+      <div className={`flex-col bg-gray-800 px-8 py-12 ${available ? "rounded-b-lg" : "rounded-b-none"}`}>
         <Alert available={available} />
 
         {/* Details */}
