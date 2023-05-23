@@ -29,7 +29,7 @@ export default function Details({ result }: { result: string }) {
 
   // State variable that changed inside Wagmi hooks
   const [prepared, setPrepared] = useState<boolean>(false)
-  const [isAvailable, setIsAvailable] = useState<boolean>(true)
+  const [isAvailable, setIsAvailable] = useState<boolean>()
   const [expiredReady, setExpiredReady] = useState<boolean>(false)
 
   // Used for useEffect for avoid re-render

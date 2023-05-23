@@ -86,7 +86,7 @@ const ReqToRegister = ({
   count: number
   setCount: React.Dispatch<React.SetStateAction<number>>
   registerState: RegisterState
-  setRegisterState: React.Dispatch<React.SetStateAction<RegisterState>>
+  setRegisterState: React.Dispatch<React.SetStateAction<RegisterState | undefined>>
 }) => {
   const { address } = useAccount()
 
@@ -360,7 +360,7 @@ export default function Bottom({
   count: number
   setCount: React.Dispatch<React.SetStateAction<number>>
   registerState: RegisterState
-  setRegisterState: React.Dispatch<React.SetStateAction<RegisterState>>
+  setRegisterState: React.Dispatch<React.SetStateAction<RegisterState | undefined>>
 }) {
   const { isConnected } = useAccount() as any
 

@@ -33,27 +33,41 @@ export enum RegisterState {
   Registered, // registration complete (count => 3)
 }
 
-const Alert = ({ available }: { available: boolean }) => {
+const Alert = ({ available, registerState }: { available: boolean; registerState:  RegisterState | undefined }) => {
   return (
     <>
       <div className="flex w-full bg-[#F97316] py-3 px-5 rounded-lg">
-        <Image
+        {registerState ? (
+          <>
+            <Image
           className={`h-4 w-4 mr-2 ${!available && 'mt-1'}`}
-          src={available ? Like : Dislike}
-          alt="FNS"
-        />
-        <div className="flex-col">
-          <p className="text-white font-semibold text-sm">
-            {available
+              src={available ? Like : Dislike}
+              alt="FNS"
+            />
+            <div className="flex-col">
+              <p className="text-white font-semibold text-sm">
+                {available
               ? 'This name is available!'
               : 'This name is already registered.'}
-          </p>
-          <p className="text-white font-normal text-sm mt-2">
-            {available
+              </p>
+              <p className="text-white font-normal text-sm mt-2">
+                {available
               ? 'Please complete the form below to secure this domain for yourself.'
               : 'Please check the Details tab to see when this domain will free up.'}
-          </p>
-        </div>
+              </p>
+            </div>
+          </>
+        ) : (
+          <div className="grid items-center w-full h-12">
+            <div className="animate-pulse flex space-x-4">
+              <div className="rounded-full bg-orange-300 h-4 w-4"></div>
+              <div className="flex-1 space-y-6 py-1 grid grid-cols-5">
+                <div className="h-2 bg-orange-300 rounded col-span-2"></div>
+                <div className="h-2 bg-orange-300 rounded col-span-4"></div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   )
@@ -86,9 +100,9 @@ export default function Register({ result }: { result: string }) {
   const [regPeriod, setRegPeriod] = useState(1)
   const [priceFLR, setPriceFLR] = useState('1')
 
-  const [registerState, setRegisterState] = useState<RegisterState>(
-    RegisterState.Uncommitted
-  )
+  const [registerState, setRegisterState] = useState<
+    RegisterState | undefined
+  >();
 
   // Used for useEffect for avoid re-render
   const router = useRouter()
@@ -197,43 +211,48 @@ export default function Register({ result }: { result: string }) {
           <div className="flex-col bg-gray-800 px-8 py-12 rounded-b-lg">
             <Alert
               available={
-                isNormalDomain && registerState !== RegisterState.Registered
+                isNormalDomain &&
+                registerState !== RegisterState.Registered &&
+                registerState !== undefined
               }
+              registerState={registerState}
             />
-            {isNormalDomain && registerState !== RegisterState.Registered && (
-              <>
-                {/* Increment Selector */}
-                <Selector
-                  regPeriod={regPeriod}
-                  priceToPay={priceFLR}
-                  incrementYears={incrementYears}
-                  decreaseYears={decreaseYears}
-                />
+            {isNormalDomain &&
+              registerState !== RegisterState.Registered &&
+              registerState !== undefined && (
+                <>
+                  {/* Increment Selector */}
+                  <Selector
+                    regPeriod={regPeriod}
+                    priceToPay={priceFLR}
+                    incrementYears={incrementYears}
+                    decreaseYears={decreaseYears}
+                  />
 
-                {/* Final price block */}
-                <Final_price
-                  regPeriod={regPeriod}
-                  fee={Number(fee?.gasPrice)}
-                  priceToPay={priceFLR}
-                />
+                  {/* Final price block */}
+                  <Final_price
+                    regPeriod={regPeriod}
+                    fee={Number(fee?.gasPrice)}
+                    priceToPay={priceFLR}
+                  />
 
-                {/* Steps title mobile hidden */}
-                <StepTitle />
+                  {/* Steps title mobile hidden */}
+                  <StepTitle />
 
-                {/* Steps */}
-                <Steps count={count} />
+                  {/* Steps */}
+                  <Steps count={count} />
 
-                <Bottom
-                  result={filterResult}
-                  regPeriod={regPeriod}
-                  price={priceFLR}
-                  count={count}
-                  setCount={setCount}
-                  registerState={registerState}
-                  setRegisterState={setRegisterState}
-                />
-              </>
-            )}
+                  <Bottom
+                    result={filterResult}
+                    regPeriod={regPeriod}
+                    price={priceFLR}
+                    count={count}
+                    setCount={setCount}
+                    registerState={registerState}
+                    setRegisterState={setRegisterState}
+                  />
+                </>
+              )}
           </div>
         </div>
 
