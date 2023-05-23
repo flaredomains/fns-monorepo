@@ -37,7 +37,7 @@ const Alert = ({ available, registerState }: { available: boolean; registerState
   return (
     <>
       <div className="flex w-full bg-[#F97316] py-3 px-5 rounded-lg">
-        {registerState ? (
+        {registerState !== undefined ? (
           <>
             <Image
           className={`h-4 w-4 mr-2 ${!available && 'mt-1'}`}
