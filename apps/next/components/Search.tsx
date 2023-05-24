@@ -4,6 +4,8 @@ import Logo from '../public/Logo.png'
 import Search from '../public/Search.png'
 import Github from '../public/github.png'
 import Discord from '../public/discord.png'
+import Ellipse_2 from '../public/Ellipse_2.png'
+import Ellipse from '../public/Ellipse.png'
 import Image from 'next/image'
 import styles from '../src/styles/Main.module.css'
 import Link from 'next/link'
@@ -37,8 +39,17 @@ function Main() {
   return (
     <div className="bg-[#0F172A] min-h-screen  relative overflow-hidden">
       {/* Gradient */}
-      <div className={`${styles.gradient_top}`} />
-      <div className={`${styles.gradient_bottom}`} />
+      <Image
+        className="absolute top-0 h-[28rem] w-[58rem]"
+        src={Ellipse}
+        alt="FNS"
+      />
+
+      <Image
+        className="absolute bottom-0 h-[44rem] w-[91.31rem]"
+        src={Ellipse_2}
+        alt="FNS"
+      />
 
       {/* NavBar */}
       <div className="flex justify-between items-center py-6 px-10 z-10 md:py-14 md:px-28">
