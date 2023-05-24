@@ -76,9 +76,9 @@ function Side_Navbar_Choise({
   return (
     <>
       <div
-        className={` pt-8 ${
-          isOpen && !isLarge && 'py-8 px-8 bg-gray-800'
-        } w-full lg:flex lg:flex-col lg:mb-auto`}
+        className={`pt-8 ${
+          isOpen && !isLarge && 'pb-1 px-8 bg-gray-800'
+        } w-full lg:flex lg:flex-col`}
       >
         {buttonData.map((item) => (
           <ButtonChoise

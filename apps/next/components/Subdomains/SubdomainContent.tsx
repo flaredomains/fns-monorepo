@@ -44,7 +44,7 @@ const AddSubdomain = ({
     }
   }, [input])
 
-  const { address } = useAccount()
+  const { address, isConnected } = useAccount()
 
   const { config: configSetSubnodeRecord } = usePrepareContractWrite({
     address: NameWrapper.address as `0x${string}`,
@@ -136,7 +136,7 @@ const AddSubdomain = ({
                 arrSubdomains.length === 0 && (
                   <div
                     className={`flex w-full ${
-                      checkOwnerDomain ? `lg:w-3/4` : 'lg:w-full'
+                      checkOwnerDomain && isConnected ? `lg:w-3/4` : 'lg:w-full'
                     } bg-gray-500 py-3 px-5 rounded-lg`}
                   >
                     <Image className="h-4 w-4 mr-2" src={Question} alt="FNS" />
@@ -148,7 +148,7 @@ const AddSubdomain = ({
                   </div>
                 )}
               {/* Button */}
-              {checkOwnerDomain && (
+              {checkOwnerDomain && isConnected && (
                 <button
                   onClick={() => setIsOpen(true)}
                   className="flex justify-center items-center shrink-0 px-4 text-center bg-[#F97316] h-11 w-[138px] rounded-lg text-white hover:scale-105 transform transition duration-100 ease-out "

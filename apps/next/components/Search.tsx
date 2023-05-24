@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import Logo from '../public/Logo.png'
 import Search from '../public/Search.png'
+import Github from '../public/github.png'
+import Discord from '../public/discord.png'
 import Image from 'next/image'
 import styles from '../src/styles/Main.module.css'
 import Link from 'next/link'
@@ -14,7 +16,8 @@ function Main() {
     e.preventDefault()
 
     // Regular expression to validate input
-    const pattern = /^[a-zA-Z0-9-\s\p{Emoji}]+(\.[a-zA-Z0-9-\s\p{Emoji}]+)*\.flr$/u
+    const pattern =
+      /^[a-zA-Z0-9-\s\p{Emoji}]+(\.[a-zA-Z0-9-\s\p{Emoji}]+)*\.flr$/u
 
     const exception = /^0x[a-fA-F0-9]{40}$/
 
@@ -40,16 +43,24 @@ function Main() {
       {/* NavBar */}
       <div className="flex justify-between items-center py-6 px-10 z-10 md:py-14 md:px-28">
         {/* Logo */}
-        <Image className="z-10 h-8 w-32 md:h-14 md:w-56" src={Logo} alt="FNS" />
+        <Link className="z-10" target="_blank" href="https://flrns.domains/">
+          <Image
+            width={96}
+            height={24}
+            className="cursor-pointer z-10 md:h-14 md:w-56"
+            src={Logo}
+            alt="FNS"
+          />
+        </Link>
 
         {/* My account / FAQ */}
-        <div className="flex justify-center items-center px-4 z-10">
+        <div className="flex justify-around items-center px-4 z-10 gap-4 md:gap-6">
           <Link
             href={{
               pathname: `/my_account`,
             }}
           >
-            <p className="text-white font-semibold pr-6 text-sm cursor-pointer md:text-lg md:pr-16">
+            <p className="text-white font-semibold text-xs text-center cursor-pointer md:text-lg">
               My Account
             </p>
           </Link>
@@ -58,9 +69,38 @@ function Main() {
               pathname: `/faq`,
             }}
           >
-            <p className="text-white font-semibold text-sm cursor-pointer md:text-lg">
+            <p className="text-white font-semibold text-xs cursor-pointer md:text-lg">
               FAQ
             </p>
+          </Link>
+          <Link
+            target="_blank"
+            href="https://github.com/flaredomains/fns-monorepo"
+          >
+            <div
+              className={`hover:scale-125 transform transition duration-400 ease-out`}
+            >
+              <Image
+                width={32}
+                height={32}
+                className="md:h-8 md:w-8"
+                src={Github}
+                alt="FNS"
+              />
+            </div>
+          </Link>
+          <Link target="_blank" href="https://discord.gg/wDd3pGsscZ">
+            <div
+              className={`hover:scale-125 transform transition duration-400 ease-out`}
+            >
+              <Image
+                width={32}
+                height={32}
+                className="md:h-8 md:w-8"
+                src={Discord}
+                alt="FNS"
+              />
+            </div>
           </Link>
         </div>
       </div>
@@ -94,7 +134,7 @@ function Main() {
         </form>
       </div>
     </div>
-  );
+  )
 }
 
-export default Main;
+export default Main

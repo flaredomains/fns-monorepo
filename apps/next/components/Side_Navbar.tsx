@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import Logo from '../public/Logo.png'
 import Flare from '../public/FlareBottom.png'
 import Hamburger_Icon from '../public/Hamburger_Icon.png'
+import Github from '../public/github.png'
+import Discord from '../public/discord.png'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
@@ -10,11 +12,7 @@ import Side_Navbar_Choise from './Side_Navbar_Choise'
 const LogoZone = () => {
   return (
     <>
-      <Link
-        href={{
-          pathname: '/',
-        }}
-      >
+      <Link target="_blank" href="https://flrns.domains/">
         <div className="lg:border-b lg:border-white/[.23] lg:px-auto lg:py-8">
           <Image className="h-8 w-32 lg:h-14 lg:w-56" src={Logo} alt="FNS" />
         </div>
@@ -33,6 +31,42 @@ const BottomFlare = () => {
           </p>
           <Image className="h-7 w-20" src={Flare} alt="FNS" />
         </div>
+      </div>
+    </>
+  )
+}
+
+const SocialLinks = ({
+  isOpen,
+  isLarge,
+}: {
+  isOpen: boolean
+  isLarge: boolean
+}) => {
+  return (
+    <>
+      <div
+        className={`pt-4 ${
+          isOpen && !isLarge && 'py-8 px-8 bg-gray-800'
+        } w-full flex flex-row items-center justify-around lg:mb-auto`}
+      >
+        <Link
+          target="_blank"
+          href="https://github.com/flaredomains/fns-monorepo"
+        >
+          <div
+            className={`hover:scale-125 transform transition duration-400 ease-out`}
+          >
+            <Image className="h-10 w-10 mr-2" src={Github} alt="FNS" />
+          </div>
+        </Link>
+        <Link target="_blank" href="https://discord.gg/wDd3pGsscZ">
+          <div
+            className={`hover:scale-125 transform transition duration-400 ease-out`}
+          >
+            <Image className="h-10 w-10 mr-2" src={Discord} alt="FNS" />
+          </div>
+        </Link>
       </div>
     </>
   )
@@ -65,6 +99,7 @@ function Side_Navbar() {
 
     const handleResize = () => {
       setisLarge(window.innerWidth >= 1024)
+      setIsOpen(false)
     }
 
     // Add event listener to update isLarge state when the window is resized
@@ -84,6 +119,8 @@ function Side_Navbar() {
         {isLarge && (
           <Side_Navbar_Choise path={path} isOpen={isOpen} isLarge={isLarge} />
         )}
+
+        {isLarge && <SocialLinks isOpen={isOpen} isLarge={isLarge} />}
 
         {/* Flare Image lg:visible */}
         <BottomFlare />
@@ -119,7 +156,10 @@ function Side_Navbar() {
 
       {/* Menu Choise after the user click the Hamburger Icon */}
       {isOpen && !isLarge && (
-        <Side_Navbar_Choise path={path} isOpen={isOpen} isLarge={isLarge} />
+        <>
+          <Side_Navbar_Choise path={path} isOpen={isOpen} isLarge={isLarge} />
+          <SocialLinks isOpen={isOpen} isLarge={isLarge} />
+        </>
       )}
     </>
   )
