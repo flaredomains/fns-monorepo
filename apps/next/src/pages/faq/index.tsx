@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Side_Navbar from '../../../components/Side_Navbar'
 import { useRouter } from 'next/router'
 import FAQComp from '../../../components/FAQ'
+import Links from '../../../components/Links'
 
 function FAQ() {
   const [setIsConnect] = useState(false)
@@ -30,8 +31,13 @@ function FAQ() {
           <Side_Navbar />
 
           {/* Register */}
-          <div className="flex-col mt-9 pb-8 lg:mx-8 w-full min-h-full lg:w-3/4">
+          <div className="flex flex-col mt-9 pb-8 lg:mx-8 w-full min-h-full lg:w-3/4 justify-between lg:justify-normal">
             <FAQComp />
+
+            {/* Links */}
+            <div className="flex flex-row lg:hidden w-full justify-center mt-8 gap-8 ">
+              <Links />
+            </div>
           </div>
         </div>
       </div>

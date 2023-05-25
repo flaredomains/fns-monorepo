@@ -3,6 +3,7 @@ import Side_Navbar from '../../components/Side_Navbar'
 import { useRouter } from 'next/router'
 import Pages_buttons from '../../components/Pages_buttons'
 import Subdomains from '../../components/Subdomains'
+import Links from '../../components/Links'
 
 export default function Result() {
   const [result, setResult] = useState<string>('')
@@ -27,11 +28,18 @@ export default function Result() {
           <Side_Navbar />
 
           {/* Register */}
-          <div className="flex-col mt-9 pb-8 lg:mx-8 w-full min-h-screen lg:min-h-full lg:w-3/4">
+          <div className="flex flex-col mt-9 pb-8 lg:mx-8 w-full min-h-screen lg:min-h-full lg:w-3/4 justify-between lg:justify-normal">
             {/* Three button Register, Details, Subdomain / Search Input (hidden mobile) */}
-            <Pages_buttons result={result} path={path} />
+            <div>
+              <Pages_buttons result={result} path={path} />
 
-            <Subdomains result={result} />
+              <Subdomains result={result} />
+            </div>
+
+            {/* Links */}
+            <div className="flex flex-row lg:hidden w-full justify-center mt-8 gap-8 ">
+              <Links />
+            </div>
           </div>
         </div>
       </div>

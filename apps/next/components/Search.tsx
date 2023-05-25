@@ -4,11 +4,15 @@ import Logo from '../public/Logo.png'
 import Search from '../public/Search.png'
 import Github from '../public/github.png'
 import Discord from '../public/discord.png'
+import Twitter from '../public/twitter.png'
+import Website from '../public/website.png'
+import Docs from '../public/docs.png'
 import Ellipse_2 from '../public/Ellipse_2.png'
 import Ellipse from '../public/Ellipse.png'
 import Image from 'next/image'
 import styles from '../src/styles/Main.module.css'
 import Link from 'next/link'
+import Links from './Links'
 
 function Main() {
   const router = useRouter()
@@ -37,22 +41,22 @@ function Main() {
   }
 
   return (
-    <div className="bg-[#0F172A] min-h-screen  relative overflow-hidden">
+    <div className="bg-[#0F172A] min-h-screen relative overflow-hidden">
       {/* Gradient */}
       <Image
-        className="absolute top-0 h-[28rem] w-[58rem]"
+        className="absolute top-0 left-0 h-2/5 w-full md:h-1/3 md:w-2/3 pointer-events-none"
         src={Ellipse}
         alt="FNS"
       />
 
       <Image
-        className="absolute bottom-0 h-[44rem] w-[91.31rem]"
+        className="absolute bottom-0 right-0 h-5/6 w-8/9 md:h-2/3 md:w-5/6 pointer-events-none"
         src={Ellipse_2}
         alt="FNS"
       />
 
       {/* NavBar */}
-      <div className="flex justify-between items-center py-6 px-10 z-10 md:py-14 md:px-28">
+      <div className="flex justify-between items-center py-6 px-10 z-10 md:py-14 md:px-28 gap-4">
         {/* Logo */}
         <Link className="z-10" target="_blank" href="https://flrns.domains/">
           <Image
@@ -65,7 +69,7 @@ function Main() {
         </Link>
 
         {/* My account / FAQ */}
-        <div className="flex justify-around items-center px-4 z-10 gap-4 md:gap-6">
+        <div className="flex justify-around items-center z-10 gap-4 md:gap-6">
           <Link
             href={{
               pathname: `/my_account`,
@@ -84,39 +88,11 @@ function Main() {
               FAQ
             </p>
           </Link>
-          <Link
-            target="_blank"
-            href="https://github.com/flaredomains/fns-monorepo"
-          >
-            <div
-              className={`hover:scale-125 transform transition duration-400 ease-out`}
-            >
-              <Image
-                width={32}
-                height={32}
-                className="md:h-8 md:w-8"
-                src={Github}
-                alt="FNS"
-              />
-            </div>
-          </Link>
-          <Link target="_blank" href="https://discord.gg/wDd3pGsscZ">
-            <div
-              className={`hover:scale-125 transform transition duration-400 ease-out`}
-            >
-              <Image
-                width={32}
-                height={32}
-                className="md:h-8 md:w-8"
-                src={Discord}
-                alt="FNS"
-              />
-            </div>
-          </Link>
         </div>
       </div>
+
       {/* Search -- Middle page */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 md:w-auto">
         <p className="font-bold text-5xl text-white text-center">
           Find Your Next .flr Domain
         </p>
@@ -143,6 +119,11 @@ function Main() {
             required
           />
         </form>
+      </div>
+
+      {/* Links */}
+      <div className="flex bottom-0 absolute w-full justify-center py-6 px-10 z-10 md:py-14 md:px-28 gap-8 ">
+        <Links />
       </div>
     </div>
   )

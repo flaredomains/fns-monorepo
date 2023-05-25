@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react'
 import Logo from '../public/Logo.png'
 import Flare from '../public/FlareBottom.png'
 import Hamburger_Icon from '../public/Hamburger_Icon.png'
-import Github from '../public/github.png'
-import Discord from '../public/discord.png'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Side_Navbar_Choise from './Side_Navbar_Choise'
+import Links from './Links'
 
 const LogoZone = () => {
   return (
@@ -24,7 +23,7 @@ const LogoZone = () => {
 const BottomFlare = () => {
   return (
     <>
-      <div className="hidden lg:flex lg:mb-10">
+      <div className="hidden lg:flex">
         <div className="flex flex-row items-center w-full mt-auto h-12 py-2 bg-trasparent gap-4">
           <p className="bg-transparent font-semibold text-lg text-white focus:outline-none shrink-0">
             Built on{' '}
@@ -46,27 +45,9 @@ const SocialLinks = ({
   return (
     <>
       <div
-        className={`pt-4 ${
-          isOpen && !isLarge && 'py-8 px-8 bg-gray-800'
-        } w-full flex flex-row items-center justify-around lg:mb-auto`}
+        className={`hidden bg-gray-800 w-full lg:flex flex-row items-center justify-between`}
       >
-        <Link
-          target="_blank"
-          href="https://github.com/flaredomains/fns-monorepo"
-        >
-          <div
-            className={`hover:scale-125 transform transition duration-400 ease-out`}
-          >
-            <Image className="h-10 w-10 mr-2" src={Github} alt="FNS" />
-          </div>
-        </Link>
-        <Link target="_blank" href="https://discord.gg/wDd3pGsscZ">
-          <div
-            className={`hover:scale-125 transform transition duration-400 ease-out`}
-          >
-            <Image className="h-10 w-10 mr-2" src={Discord} alt="FNS" />
-          </div>
-        </Link>
+        <Links />
       </div>
     </>
   )
@@ -113,17 +94,23 @@ function Side_Navbar() {
     <>
       {/* Left Side / Navbar */}
       <div className="flex justify-between items-center py-3 px-4 w-full bg-gray-800 lg:flex-col lg:w-1/5 lg:min-h-screen">
-        <LogoZone />
+        <div>
+          <LogoZone />
 
-        {/* Middle lg:visible */}
-        {isLarge && (
-          <Side_Navbar_Choise path={path} isOpen={isOpen} isLarge={isLarge} />
-        )}
+          {/* Middle lg:visible */}
+          {isLarge && (
+            <Side_Navbar_Choise path={path} isOpen={isOpen} isLarge={isLarge} />
+          )}
+        </div>
 
-        {isLarge && <SocialLinks isOpen={isOpen} isLarge={isLarge} />}
+        <div className="flex flex-col gap-4 lg:mb-10">
+          <div className="hidden md:inline">
+            {isLarge && <SocialLinks isOpen={isOpen} isLarge={isLarge} />}
+          </div>
 
-        {/* Flare Image lg:visible */}
-        <BottomFlare />
+          {/* Flare Image lg:visible */}
+          <BottomFlare />
+        </div>
 
         {/* Hamburger Icon lg:hidden */}
         {isOpen ? (
