@@ -12,7 +12,7 @@ function Links() {
     <>
       <Link
         target="_blank"
-        href="https://github.com/flaredomains/fns-monorepo"
+        href="https://github.com/flaredomains"
         className="shrink-0"
       >
         <div
