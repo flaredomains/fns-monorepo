@@ -26,7 +26,7 @@ const WalletConnectSection = () => {
         <Image
           className="h-4 w-4 mr-2"
           src={isConnected ? Network : X}
-          alt="FNS"
+          alt={isConnected ? "Network" : "X"}
         />
         <p className="text-xs font-medium shrink-0">
           {isConnected ? `${chain?.name} Network` : 'Wallet Not Connected'}

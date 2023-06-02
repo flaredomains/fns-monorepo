@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import Info from '../../public/Info.svg'
 import Plus from '../../public/Plus.svg'
 import Image from 'next/image'
@@ -38,7 +38,7 @@ const ActionButton = ({
       className="flex justify-center items-center px-6 py-3 bg-[#F97316] h-12 rounded-lg text-white px-auto hover:scale-105 transform transition duration-300 ease-out"
     >
       <p className="text-base font-semibold mr-2">{label}</p>
-      <Image className="h-4 w-4" src={Plus} alt="FNS" />
+      <Image className="h-4 w-4" src={Plus} alt="Plus" />
     </button>
   )
 }
@@ -75,7 +75,6 @@ const ReqToRegister = ({
   result,
   regPeriod,
   price,
-  count,
   setCount,
   registerState,
   setRegisterState,
@@ -83,7 +82,6 @@ const ReqToRegister = ({
   result: string
   regPeriod: number
   price: string
-  count: number
   setCount: React.Dispatch<React.SetStateAction<number>>
   registerState: RegisterState
   setRegisterState: React.Dispatch<React.SetStateAction<RegisterState | undefined>>
@@ -330,7 +328,7 @@ const WalletConnectBottom = () => {
     <>
       <div className="flex flex-col md:flex-row w-full justify-center items-center gap-4">
         <div className="w-2/3 flex items-center bg-[#334155] rounded-lg text-[#9cacc0] px-5 py-4">
-          <Image className="h-4 w-4 mr-2" src={Info} alt="FNS" />
+          <Image className="h-4 w-4 mr-2" src={Info} alt="Info" />
           <p className="text-xs font-medium">
             No wallet connected. Please connect to continue.
           </p>
@@ -374,7 +372,6 @@ export default function Bottom({
               result={result}
               regPeriod={regPeriod}
               price={price}
-              count={count}
               setCount={setCount}
               registerState={registerState}
               setRegisterState={setRegisterState}

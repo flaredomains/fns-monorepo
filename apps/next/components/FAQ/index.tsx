@@ -122,7 +122,7 @@ const FAQ_Line = ({
         {/* Text */}
         <div className="flex justify-between items-center">
           <p className="text-base font-medium text-gray-200">{text}</p>
-          <Image className="h-2 w-3" src={ArrowDown} alt="FNS" />
+          <Image className="h-2 w-3" src={ArrowDown} alt="ArrowDown" />
         </div>
         {list && (
           <ul

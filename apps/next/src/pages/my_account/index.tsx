@@ -1,7 +1,7 @@
-import React from 'react'
-import Side_Navbar from '../../../components/Side_Navbar'
-import MyAccount from '../../../components/MyAccount'
-import Links from '../../../components/Links'
+import React from "react";
+import SideNavbar from "../../../components/SideNavbar";
+import MyAccount from "../../../components/MyAccount";
+import Links from "../../../components/Links";
 
 export default function My_Account() {
   return (
@@ -9,7 +9,7 @@ export default function My_Account() {
       <div className="min-h-screen lg:min-h-full">
         <div className="flex flex-col bg-[#0F172A] lg:flex lg:flex-row">
           {/* Left Side / Navbar */}
-          <Side_Navbar />
+          <SideNavbar />
 
           {/* Register */}
           <div className="flex flex-col mt-9 pb-8 lg:mx-8 w-full min-h-screen lg:min-h-full lg:w-3/4 justify-between lg:justify-normal">
@@ -23,5 +23,5 @@ export default function My_Account() {
         </div>
       </div>
     </>
-  )
+  );
 }

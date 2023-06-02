@@ -23,7 +23,7 @@ function Links() {
             height={32}
             className="h-4 w-auto opacity-80 hover:opacity-100"
             src={Github}
-            alt="FNS"
+            alt="Github"
           />
         </div>
       </Link>
@@ -40,7 +40,7 @@ function Links() {
             height={32}
             className="h-4 w-auto opacity-80 hover:opacity-100"
             src={Discord}
-            alt="FNS"
+            alt="Discord"
           />
         </div>
       </Link>
@@ -57,7 +57,7 @@ function Links() {
             height={32}
             className="h-4 w-auto opacity-80 hover:opacity-100"
             src={Twitter}
-            alt="FNS"
+            alt="Twitter"
           />
         </div>
       </Link>
@@ -74,7 +74,7 @@ function Links() {
             height={32}
             className="h-4 w-auto opacity-80 hover:opacity-100"
             src={Docs}
-            alt="FNS"
+            alt="Docs"
           />
         </div>
       </Link>
@@ -87,7 +87,7 @@ function Links() {
             height={32}
             className="h-4 w-auto opacity-80 hover:opacity-100"
             src={Website}
-            alt="FNS"
+            alt="Website"
           />
         </div>
       </Link>

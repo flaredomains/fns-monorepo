@@ -1,27 +1,20 @@
-import React, { useState, useEffect } from 'react'
-import Like from '../../public/Like.svg'
-import Dislike from '../../public/Dislike.svg'
-import WalletConnect from '../WalletConnect'
-import Image from 'next/image'
-import Domain_Select from '../Domain_Select'
-import Selector from './Selector'
-import Final_price from './Final_price'
-import Steps from './Steps'
-import Bottom from './Bottom'
-import web3 from 'web3-utils'
+import React, { useState, useEffect } from "react";
+import Like from "../../public/Like.svg";
+import Dislike from "../../public/Dislike.svg";
+import WalletConnect from "../WalletConnect";
+import Image from "next/image";
+import DomainSelect from "../DomainSelect";
+import Selector from "./Selector";
+import FinalPrice from "./FinalPrice";
+import Steps from "./Steps";
+import Bottom from "./Bottom";
+import web3 from "web3-utils";
 
-import { useRouter } from 'next/router'
+import { useRouter } from "next/router";
 
-import FLRRegistrarController from '../../src/pages/abi/FLRRegistrarController.json'
+import FLRRegistrarController from "../../src/pages/abi/FLRRegistrarController.json";
 
-import {
-  useFeeData,
-  useContractRead,
-  useContract,
-  useSigner,
-  useAccount,
-} from 'wagmi'
-import { BigNumber, ethers } from 'ethers'
+import { useFeeData, useContractRead } from "wagmi";
 
 export enum RegisterState {
   Uncommitted, // this is the default begin state (count => 0)
@@ -33,27 +26,33 @@ export enum RegisterState {
   Registered, // registration complete (count => 3)
 }
 
-const Alert = ({ available, registerState }: { available: boolean; registerState:  RegisterState | undefined }) => {
+const Alert = ({
+  available,
+  registerState,
+}: {
+  available: boolean;
+  registerState: RegisterState | undefined;
+}) => {
   return (
     <>
       <div className="flex w-full bg-[#F97316] py-3 px-5 rounded-lg">
         {registerState !== undefined ? (
           <>
             <Image
-          className={`h-4 w-4 mr-2 ${!available && 'mt-1'}`}
+              className={`h-4 w-4 mr-2 ${!available && "mt-1"}`}
               src={available ? Like : Dislike}
-              alt="FNS"
+              alt={available ? "Like" : "Dislike"}
             />
             <div className="flex-col">
               <p className="text-white font-semibold text-sm">
                 {available
-              ? 'This name is available!'
-              : 'This name is already registered.'}
+                  ? "This name is available!"
+                  : "This name is already registered."}
               </p>
               <p className="text-white font-normal text-sm mt-2">
                 {available
-              ? 'Please complete the form below to secure this domain for yourself.'
-              : 'Please check the Details tab to see when this domain will free up.'}
+                  ? "Please complete the form below to secure this domain for yourself."
+                  : "Please check the Details tab to see when this domain will free up."}
               </p>
             </div>
           </>
@@ -70,8 +69,8 @@ const Alert = ({ available, registerState }: { available: boolean; registerState
         )}
       </div>
     </>
-  )
-}
+  );
+};
 
 const StepTitle = () => {
   return (
@@ -83,121 +82,121 @@ const StepTitle = () => {
         </p>
       </div>
     </>
-  )
-}
+  );
+};
 
 export default function Register({ result }: { result: string }) {
   // For steps animation
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   // State variable that changed inside useEffect that check result and unlock Wagmi READ/WRITE function
-  const [filterResult, setFilterResult] = useState<string>('')
-  const [hashHex, setHashHex] = useState<string>('')
-  const [preparedHash, setPreparedHash] = useState<boolean>(false)
-  const [isNormalDomain, setIsNormalDomain] = useState<boolean>(true)
+  const [filterResult, setFilterResult] = useState<string>("");
+  const [hashHex, setHashHex] = useState<string>("");
+  const [preparedHash, setPreparedHash] = useState<boolean>(false);
+  const [isNormalDomain, setIsNormalDomain] = useState<boolean>(true);
 
   // State variable that changed inside Wagmi hooks
-  const [regPeriod, setRegPeriod] = useState(1)
-  const [priceFLR, setPriceFLR] = useState('1')
+  const [regPeriod, setRegPeriod] = useState(1);
+  const [priceFLR, setPriceFLR] = useState("1");
 
   const [registerState, setRegisterState] = useState<
     RegisterState | undefined
   >();
 
   // Used for useEffect for avoid re-render
-  const router = useRouter()
+  const router = useRouter();
 
   function getParentDomain(str: string) {
     // Define a regular expression pattern that matches subdomains of a domain that ends with .flr.
-    const subdomainPattern = /^([a-z0-9][a-z0-9-]*[a-z0-9]\.)+[a-z]{1,}\.flr$/i
+    const subdomainPattern = /^([a-z0-9][a-z0-9-]*[a-z0-9]\.)+[a-z]{1,}\.flr$/i;
 
     // Use the regular expression pattern to test whether the string matches a subdomain.
-    const isSubdomain = subdomainPattern.test(str)
+    const isSubdomain = subdomainPattern.test(str);
     // console.log('isSubdomain', isSubdomain)
 
     if (isSubdomain) {
       // The input string is a subdomain, extract the parent domain.
-      const parts = str.split('.')
-      const numParts = parts.length
-      const parentDomain = parts.slice(numParts - (numParts - 1)).join('.')
-      setIsNormalDomain(false)
-      return parentDomain
+      const parts = str.split(".");
+      const numParts = parts.length;
+      const parentDomain = parts.slice(numParts - (numParts - 1)).join(".");
+      setIsNormalDomain(false);
+      return parentDomain;
     } else {
-      return str
+      return str;
     }
   }
 
   useEffect(() => {
-    if (!router.isReady) return
+    if (!router.isReady) return;
 
-    const result = router.query.result as string
+    const result = router.query.result as string;
 
-    const parent = getParentDomain(result)
+    const parent = getParentDomain(result);
 
     // Check if ethereum address
     if (/^0x[a-fA-F0-9]{40}$/.test(result)) {
-      console.log('Ethereum address')
-      setFilterResult(result)
+      console.log("Ethereum address");
+      setFilterResult(result);
     } else if (result) {
       // Remove .flr from result for READ/WRITE function purposes and get hash
-      const resultFiltered = result.endsWith('.flr')
+      const resultFiltered = result.endsWith(".flr")
         ? result.slice(0, -4)
-        : result
-      const hash = web3.sha3(resultFiltered) as string
-      setFilterResult(resultFiltered)
-      setHashHex(hash)
-      setPreparedHash(true)
+        : result;
+      const hash = web3.sha3(resultFiltered) as string;
+      setFilterResult(resultFiltered);
+      setHashHex(hash);
+      setPreparedHash(true);
     }
-  }, [router.isReady, router.query])
+  }, [router.isReady, router.query]);
 
   // Available READ function
   useContractRead({
     address: FLRRegistrarController.address as `0x${string}`,
     abi: FLRRegistrarController.abi,
-    functionName: 'available',
+    functionName: "available",
     enabled: preparedHash,
     args: [filterResult],
     onSuccess(data: any) {
       // data is a boolean that represents if the domain is available or not
       if (data) {
-        setRegisterState(RegisterState.Uncommitted)
+        setRegisterState(RegisterState.Uncommitted);
       } else {
-        setRegisterState(RegisterState.Registered)
+        setRegisterState(RegisterState.Registered);
       }
     },
     onError(error) {
-      console.log('Error available', error)
+      console.log("Error available", error);
     },
-  })
+  });
 
   // RentPrice READ function
   useContractRead({
     address: FLRRegistrarController.address as `0x${string}`,
     abi: FLRRegistrarController.abi,
-    functionName: 'rentPrice',
+    functionName: "rentPrice",
     args: [filterResult as string, 31556952], // 31536000
     onSuccess(data: any) {
-      setPriceFLR(data.base)
+      setPriceFLR(data.base);
     },
     onError(error) {
-      console.log('Error rentPrice', error)
+      console.log("Error rentPrice", error);
     },
-  })
+  });
 
-  const { data: fee } = useFeeData()
+  const { data: fee } = useFeeData();
 
   const incrementYears = () => {
-    if (regPeriod >= 999) return
-    setRegPeriod(regPeriod + 1)
-  }
+    if (regPeriod >= 999) return;
+    setRegPeriod(regPeriod + 1);
+  };
 
   const decreaseYears = () => {
-    if (regPeriod === 1) return
+    if (regPeriod === 1) return;
     if (regPeriod < 1) {
-      setRegPeriod(1)
+      setRegPeriod(1);
     }
-    setRegPeriod(regPeriod - 1)
-  }
+    setRegPeriod(regPeriod - 1);
+  };
 
   return (
     <>
@@ -206,7 +205,7 @@ export default function Register({ result }: { result: string }) {
         {/* Domain Result */}
         <div className="flex-col w-full lg:w-3/4 lg:mr-2">
           {/* Domain Container */}
-          <Domain_Select result={result} />
+          <DomainSelect result={result} />
 
           <div className="flex-col bg-gray-800 px-8 py-12 rounded-b-lg">
             <Alert
@@ -230,7 +229,7 @@ export default function Register({ result }: { result: string }) {
                   />
 
                   {/* Final price block */}
-                  <Final_price
+                  <FinalPrice
                     regPeriod={regPeriod}
                     fee={Number(fee?.gasPrice)}
                     priceToPay={priceFLR}
@@ -260,5 +259,5 @@ export default function Register({ result }: { result: string }) {
         <WalletConnect />
       </div>
     </>
-  )
+  );
 }

@@ -139,7 +139,7 @@ const AddSubdomain = ({
                       checkOwnerDomain && isConnected ? `lg:w-3/4` : 'lg:w-full'
                     } bg-gray-500 py-3 px-5 rounded-lg`}
                   >
-                    <Image className="h-4 w-4 mr-2" src={Question} alt="FNS" />
+                    <Image className="h-4 w-4 mr-2" src={Question} alt="Question" />
                     <div className="flex-col">
                       <p className="text-gray-200 font-semibold text-sm">
                         No subdomains have been added yet
@@ -156,7 +156,7 @@ const AddSubdomain = ({
                   <p className="text-xs font-medium mr-2 shrink-0">
                     Add Subdomain
                   </p>
-                  <Image className="h-4 w-4" src={Plus} alt="FNS" />
+                  <Image className="h-4 w-4" src={Plus} alt="Plus" />
                 </button>
               )}
             </div>

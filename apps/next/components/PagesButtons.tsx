@@ -16,6 +16,7 @@ const buttonData = [
     image_style: 'h-3 w-3 mr-2 lg:h-5 lg:w-5',
     text_style: '',
     src: Account_Plus,
+    alt: 'Account',
   },
   {
     page: '/details',
@@ -24,6 +25,7 @@ const buttonData = [
     image_style: 'h-3 w-4 mr-2',
     text_style: '',
     src: Details,
+    alt: 'Details',
   },
   {
     page: '/subdomains',
@@ -32,6 +34,7 @@ const buttonData = [
     image_style: 'h-4 w-4 mr-2',
     text_style: '',
     src: Subdomain,
+    alt: 'Subdomain',
   },
 ]
 
@@ -43,6 +46,7 @@ const Button = ({
   image_style,
   text_style,
   src,
+  alt,
 }: {
   text: string
   result: any
@@ -51,6 +55,7 @@ const Button = ({
   image_style: string
   text_style: string
   src: any
+  alt: string
 }) => {
   return (
     <Link
@@ -62,7 +67,7 @@ const Button = ({
       <button
         className={`flex items-center rounded-md ${button_style} hover:bg-gray-600 [&>p]:hover:text-white hover:scale-110 transform transition duration-300 ease-out`}
       >
-        <Image className={image_style} src={src} alt="FNS" />
+        <Image className={image_style} src={src} alt={alt} />
         <p
           className={`w-full bg-transparent font-semibold text-sm ${text_style} focus:outline-none lg:text-normal`}
         >
@@ -73,7 +78,7 @@ const Button = ({
   )
 }
 
-function Pages_buttons({ result, path }: any) {
+function PagesButtons({ result, path }: any) {
   const router = useRouter()
   const [route, setRoute] = useState('')
   const handleSubmit = (e: any) => {
@@ -116,6 +121,7 @@ function Pages_buttons({ result, path }: any) {
               image_style={item.image_style}
               text_style={path === item.page ? ' text-white' : ' text-gray-500'}
               src={item.src}
+              alt={item.alt}
             />
           ))}
         </div>
@@ -125,7 +131,7 @@ function Pages_buttons({ result, path }: any) {
           onSubmit={handleSubmit}
           className={`flex items-center w-4/5 py-2 px-4 h-12 rounded-md bg-gray-700 border-2 border-gray-500 mt-5 lg:flex lg:w-2/5 lg:mt-0 ${styles.autofill}`}
         >
-          <Image className="z-10 h-6 w-6 mr-2" src={Search} alt="FNS" />
+          <Image className="z-10 h-6 w-6 mr-2" src={Search} alt="Search" />
           <input
             type="text"
             name="input-field"
@@ -148,4 +154,4 @@ function Pages_buttons({ result, path }: any) {
   )
 }
 
-export default Pages_buttons
+export default PagesButtons

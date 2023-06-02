@@ -55,7 +55,7 @@ const InfoLine = ({
                   onClick={handleCopy}
                   className="h-4 w-4 cursor-pointer"
                   src={Clipboard_copy}
-                  alt="FNS"
+                  alt="Clipboard"
                 />
               )
             )}
@@ -85,7 +85,7 @@ const Alert = ({ available }: { available: boolean | undefined }) => {
             <Image
               className="h-4 w-4 mr-2"
               src={available ? Like : Dislike}
-              alt="FNS"
+              alt={available ? "Like" : "Dislike"}
             />
             <p className="text-gray-200 font-semibold text-sm">
               {available

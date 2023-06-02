@@ -2,11 +2,6 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import Logo from '../public/Logo.png'
 import Search from '../public/Search.png'
-import Github from '../public/github.png'
-import Discord from '../public/discord.png'
-import Twitter from '../public/twitter.png'
-import Website from '../public/website.png'
-import Docs from '../public/docs.png'
 import Ellipse_2 from '../public/Ellipse_2.png'
 import Ellipse from '../public/Ellipse.png'
 import Image from 'next/image'
@@ -46,13 +41,13 @@ function Main() {
       <Image
         className="absolute top-0 left-0 h-2/5 w-full md:h-1/3 md:w-2/3 pointer-events-none"
         src={Ellipse}
-        alt="FNS"
+        alt="Gradient Top"
       />
 
       <Image
         className="absolute bottom-0 right-0 h-5/6 w-8/9 md:h-2/3 md:w-5/6 pointer-events-none"
         src={Ellipse_2}
-        alt="FNS"
+        alt="Gradient Bottom"
       />
 
       {/* NavBar */}
@@ -64,7 +59,7 @@ function Main() {
             height={24}
             className="cursor-pointer z-10 md:h-14 md:w-56"
             src={Logo}
-            alt="FNS"
+            alt="Logo"
           />
         </Link>
 
@@ -101,7 +96,7 @@ function Main() {
           onSubmit={handleSubmit}
           className={`flex items-center w-full mt-10 py-2 px-4 h-12 bg-gray-700 border-2 border-gray-500 ${styles.autofill}`}
         >
-          <Image className="z-10 h-6 w-6 mr-2" src={Search} alt="FNS" />
+          <Image className="z-10 h-6 w-6 mr-2" src={Search} alt="Search" />
           <input
             type="text"
             name="input-field"

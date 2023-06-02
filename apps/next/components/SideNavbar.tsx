@@ -5,7 +5,7 @@ import Hamburger_Icon from '../public/Hamburger_Icon.png'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import Side_Navbar_Choise from './Side_Navbar_Choise'
+import SideNavbarChoise from './SideNavbarChoise'
 import Links from './Links'
 
 const LogoZone = () => {
@@ -13,7 +13,7 @@ const LogoZone = () => {
     <>
       <Link target="_blank" href="https://flrns.domains/">
         <div className="lg:border-b lg:border-white/[.23] lg:px-auto lg:py-8">
-          <Image className="h-8 w-32 lg:h-14 lg:w-56" src={Logo} alt="FNS" />
+          <Image className="h-8 w-32 lg:h-14 lg:w-56" src={Logo} alt="Logo" />
         </div>
       </Link>
     </>
@@ -28,20 +28,14 @@ const BottomFlare = () => {
           <p className="bg-transparent font-semibold text-lg text-white focus:outline-none shrink-0">
             Built on{' '}
           </p>
-          <Image className="h-7 w-20" src={Flare} alt="FNS" />
+          <Image className="h-7 w-20" src={Flare} alt="Logo bottom" />
         </div>
       </div>
     </>
   )
 }
 
-const SocialLinks = ({
-  isOpen,
-  isLarge,
-}: {
-  isOpen: boolean
-  isLarge: boolean
-}) => {
+const SocialLinks = () => {
   return (
     <>
       <div
@@ -53,7 +47,7 @@ const SocialLinks = ({
   )
 }
 
-function Side_Navbar() {
+function SideNavbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [result, setResult] = useState<String>('')
   const [path, setPath] = useState<String>('')
@@ -99,13 +93,13 @@ function Side_Navbar() {
 
           {/* Middle lg:visible */}
           {isLarge && (
-            <Side_Navbar_Choise path={path} isOpen={isOpen} isLarge={isLarge} />
+            <SideNavbarChoise path={path} isOpen={isOpen} isLarge={isLarge} />
           )}
         </div>
 
         <div className="flex flex-col gap-4 lg:mb-10">
           <div className="hidden md:inline">
-            {isLarge && <SocialLinks isOpen={isOpen} isLarge={isLarge} />}
+            {isLarge && <SocialLinks />}
           </div>
 
           {/* Flare Image lg:visible */}
@@ -136,7 +130,7 @@ function Side_Navbar() {
             onClick={() => setIsOpen(true)}
             className="h-6 w-6 cursor-pointer lg:hidden"
             src={Hamburger_Icon}
-            alt="FNS"
+            alt="Menu"
           />
         )}
       </div>
@@ -144,12 +138,12 @@ function Side_Navbar() {
       {/* Menu Choise after the user click the Hamburger Icon */}
       {isOpen && !isLarge && (
         <>
-          <Side_Navbar_Choise path={path} isOpen={isOpen} isLarge={isLarge} />
-          <SocialLinks isOpen={isOpen} isLarge={isLarge} />
+          <SideNavbarChoise path={path} isOpen={isOpen} isLarge={isLarge} />
+          <SocialLinks />
         </>
       )}
     </>
   )
 }
 
-export default Side_Navbar
+export default SideNavbar

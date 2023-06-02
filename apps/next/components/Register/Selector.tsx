@@ -36,7 +36,7 @@ const RegistrationPeriod = ({
               : 'bg-[#F97316] hover:scale-110 active:scale-125 transform transition duration-300 ease-out cursor-pointer'
           }`}
         >
-          <Image className="h-3 w-3" src={Minus} alt="FNS" />
+          <Image className="h-3 w-3" src={Minus} alt="Minus" />
         </div>
         {/* Text */}
         <div className="flex-col shrink-0">
@@ -53,7 +53,7 @@ const RegistrationPeriod = ({
           onClick={incrementYears}
           className="bg-[#F97316] h-6 w-6 rounded-full text-white text-center flex items-center justify-center lg:ml-1 hover:scale-110 active:scale-125 transform transition duration-300 ease-out cursor-pointer"
         >
-          <Image className="h-3 w-3" src={Plus} alt="FNS" />
+          <Image className="h-3 w-3" src={Plus} alt="Plus" />
         </div>
       </div>
     </>
@@ -99,7 +99,7 @@ const Note = () => {
   return (
     <>
       <div className="flex justify-center items-center mt-6 bg-[#334155] text-[#9cacc0] rounded-lg px-5 py-3 lg:py-1 w-3/4 md:w-1/2 lg:w-1/3 lg:mt-0">
-        <Image className="h-5 w-5 mr-2" src={Info} alt="FNS" />
+        <Image className="h-5 w-5 mr-2" src={Info} alt="Info" />
         <p className="text-xs font-medium py-1">
           Increase period to save on gas fees
         </p>

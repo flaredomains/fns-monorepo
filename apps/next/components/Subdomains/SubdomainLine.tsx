@@ -10,7 +10,7 @@ const Left = ({ domain }: { domain: string }) => {
       {/* Image + subdomain */}
       <div className="flex items-center">
         {/* Avatar */}
-        <Image className="h-8 w-8 mr-2" src={Avatar} alt="FNS" />
+        <Image className="h-8 w-8 mr-2" src={Avatar} alt="Avatar" />
 
         {/* Domain */}
         <p
