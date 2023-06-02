@@ -1,6 +1,6 @@
 import React from 'react'
 
-function Domain_Select({ result }: { result: string }) {
+function DomainSelect({ result }: { result: string }) {
   return (
     <>
       {/* Domain Container */}
@@ -16,4 +16,4 @@ function Domain_Select({ result }: { result: string }) {
   )
 }
 
-export default Domain_Select
+export default DomainSelect

@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import Avatar from '../../public/Avatar.svg'
 import WalletConnect from '../WalletConnect'
 import Link from 'next/link'
 import AccountLine from './AccountLine'
-import Reverse_Record from './Reverse_Record'
+import ReverseRecord from './ReverseRecord'
 
-import { useAccount, useContract, useProvider, useContractRead } from 'wagmi'
+import { useAccount, useContractRead } from 'wagmi'
 
 import MintedDomainNames from '../../src/pages/abi/MintedDomainNames.json'
 
@@ -27,7 +27,7 @@ const OwnedDomains = ({
       <div className="flex flex-col sm:flex-row gap-4 w-full sm:items-center justify-between md:px-6 py-5">
         <div className="inline-flex flex-row items-center">
           {/* Avatar */}
-          <Image className="h-8 w-8 mr-2" src={Avatar} alt="FNS" />
+          <Image className="h-8 w-8 mr-2" src={Avatar} alt="Avatar" />
 
           {/* Domain */}
           <Link
@@ -108,7 +108,7 @@ export default function MyAccount() {
         <AccountLine />
 
         {isConnected && (
-          <Reverse_Record
+          <ReverseRecord
             isOpen={isOpen}
             setIsOpen={setIsOpen}
             addressDomain={addressDomain}

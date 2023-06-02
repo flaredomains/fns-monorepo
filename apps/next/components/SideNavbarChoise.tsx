@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Search from '../public/Search.png'
 import Account from '../public/Account.png'
 import FAQ from '../public/FAQ.png'
@@ -12,6 +12,7 @@ const buttonData = [
     button_style: '',
     text_style: '',
     src: Search,
+    alt: 'Search'
   },
   {
     page: '/my_account',
@@ -19,6 +20,7 @@ const buttonData = [
     button_style: '',
     text_style: '',
     src: Account,
+    alt: 'Account'
   },
   {
     page: '/faq',
@@ -26,6 +28,7 @@ const buttonData = [
     button_style: '',
     text_style: '',
     src: FAQ,
+    alt: 'FAQ'
   },
 ]
 
@@ -35,12 +38,14 @@ const ButtonChoise = ({
   button_style,
   text_style,
   src,
+  alt
 }: {
   text: string
   page: string
   button_style: string
   text_style: string
   src: any
+  alt: string
 }) => {
   return (
     <>
@@ -52,7 +57,7 @@ const ButtonChoise = ({
         <div
           className={`flex items-center w-full my-1 h-12 px-3 py-2 rounded-md ${button_style} hover:bg-gray-600 [&>p]:hover:text-white hover:scale-105 transform transition duration-400 ease-out`}
         >
-          <Image className="h-6 w-6 mr-2" src={src} alt="FNS" />
+          <Image className="h-6 w-6 mr-2" src={src} alt={alt} />
           <p
             className={`w-full bg-transparent font-semibold text-normal ${text_style} focus:outline-none`}
           >
@@ -64,7 +69,7 @@ const ButtonChoise = ({
   )
 }
 
-function Side_Navbar_Choise({
+function SideNavbarChoise({
   path,
   isOpen,
   isLarge,
@@ -76,9 +81,9 @@ function Side_Navbar_Choise({
   return (
     <>
       <div
-        className={` pt-8 ${
-          isOpen && !isLarge && 'py-8 px-8 bg-gray-800'
-        } w-full lg:flex lg:flex-col lg:mb-auto`}
+        className={`pt-8 ${
+          isOpen && !isLarge && 'pb-8 px-8 bg-gray-800'
+        } w-full lg:flex lg:flex-col`}
       >
         {buttonData.map((item) => (
           <ButtonChoise
@@ -90,6 +95,7 @@ function Side_Navbar_Choise({
             }`}
             text_style={path === item.page ? ' text-white' : ' text-gray-500'}
             src={item.src}
+            alt={item.alt}
           />
         ))}
       </div>
@@ -97,4 +103,4 @@ function Side_Navbar_Choise({
   )
 }
 
-export default Side_Navbar_Choise
+export default SideNavbarChoise

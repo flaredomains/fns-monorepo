@@ -24,7 +24,7 @@ const Loading = ({
   )
 }
 
-const TotalPrice = ({
+const FlarePrice = ({
   regPeriod,
   priceToPay,
 }: {
@@ -66,7 +66,7 @@ const GasFee = ({ fee }: { fee: number }) => {
   )
 }
 
-const FinalPrice = ({
+const TotalPrice = ({
   regPeriod,
   fee,
   priceToPay,
@@ -134,7 +134,7 @@ const FinalPrice = ({
   )
 }
 
-export default function Final_price({
+export default function FinalPrice({
   regPeriod,
   fee,
   priceToPay,
@@ -147,7 +147,7 @@ export default function Final_price({
   return (
     <div className="flex flex-col items-center mt-9 h-96 w-full bg-[#334155] rounded-lg lg:rounded-l-lg lg:flex-row lg:h-32">
       <div className="flex flex-col h-2/3 items-center justify-evenly w-full lg:w-2/3 lg:flex-row rounded-lg">
-        <TotalPrice regPeriod={regPeriod} priceToPay={flrPrice} />
+        <FlarePrice regPeriod={regPeriod} priceToPay={flrPrice} />
 
         {/* + */}
         <div className="text-white text-xl">+</div>
@@ -156,7 +156,7 @@ export default function Final_price({
       </div>
 
       {/* Final Price */}
-      <FinalPrice regPeriod={regPeriod} fee={fee} priceToPay={flrPrice} />
+      <TotalPrice regPeriod={regPeriod} fee={fee} priceToPay={flrPrice} />
     </div>
   )
 }

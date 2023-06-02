@@ -1,198 +1,198 @@
-import React, { useEffect, useState } from 'react'
-import Domain_Select from '../Domain_Select'
-import WalletConnect from '../WalletConnect'
-import Info from './Info'
-import Content from './Content'
+import React, { useEffect, useState } from "react";
+import DomainSelect from "../DomainSelect";
+import WalletConnect from "../WalletConnect";
+import Info from "./Info";
+import Content from "./Content";
 
-import { useRouter } from 'next/router'
+import { useRouter } from "next/router";
 
-import FLRRegistrarController from '../../src/pages/abi/FLRRegistrarController.json'
-import BaseRegistrar from '../../src/pages/abi/BaseRegistrar.json'
-import NameWrapper from '../../src/pages/abi/NameWrapper.json'
+import FLRRegistrarController from "../../src/pages/abi/FLRRegistrarController.json";
+import BaseRegistrar from "../../src/pages/abi/BaseRegistrar.json";
+import NameWrapper from "../../src/pages/abi/NameWrapper.json";
 
-import web3 from 'web3-utils'
-const namehash = require('eth-ens-namehash')
+import web3 from "web3-utils";
+const namehash = require("eth-ens-namehash");
 
-const ZERO_ADDRESS: string = '0x0000000000000000000000000000000000000000'
+const ZERO_ADDRESS: string = "0x0000000000000000000000000000000000000000";
 
-import { useAccount, useContractRead } from 'wagmi'
-import { BigNumber, utils } from 'ethers'
+import { useAccount, useContractRead } from "wagmi";
+import { BigNumber, utils } from "ethers";
 
 export default function Details({ result }: { result: string }) {
   // State variable that changed inside useEffect that check result and unlock Wagmi READ/WRITE function
-  const [filterResult, setFilterResult] = useState<string>('')
-  const [tokenId, setTokenId] = useState<BigNumber>()
-  const [hashHex, setHashHex] = useState<string>('')
-  const [preparedHash, setPreparedHash] = useState<boolean>(false)
-  const [isSubdomain, setIsSubdomain] = useState<boolean>(false)
-  const [parent, setParent] = useState<string>('')
+  const [filterResult, setFilterResult] = useState<string>("");
+  const [tokenId, setTokenId] = useState<BigNumber>();
+  const [hashHex, setHashHex] = useState<string>("");
+  const [preparedHash, setPreparedHash] = useState<boolean>(false);
+  const [isSubdomain, setIsSubdomain] = useState<boolean>(false);
+  const [parent, setParent] = useState<string>("");
 
   // State variable that changed inside Wagmi hooks
-  const [prepared, setPrepared] = useState<boolean>(false)
-  const [isAvailable, setIsAvailable] = useState<boolean>(true)
-  const [expiredReady, setExpiredReady] = useState<boolean>(false)
+  const [prepared, setPrepared] = useState<boolean>(false);
+  const [isAvailable, setIsAvailable] = useState<boolean>();
+  const [expiredReady, setExpiredReady] = useState<boolean>(false);
 
   // Used for useEffect for avoid re-render
-  const router = useRouter()
+  const router = useRouter();
 
   // Use to check that checkOwnerDomain={address === owner} -- prop of Content component
-  const { address } = useAccount()
+  const { address } = useAccount();
 
   function getParentDomain(str: string) {
     // Define a regular expression pattern that matches subdomains of a domain that ends with .flr.
-    const subdomainPattern = /^([a-z0-9][a-z0-9-]*[a-z0-9]\.)+[a-z]{1,}\.flr$/i
+    const subdomainPattern = /^([a-z0-9][a-z0-9-]*[a-z0-9]\.)+[a-z]{1,}\.flr$/i;
 
     // Use the regular expression pattern to test whether the string matches a subdomain.
-    const isSubdomain = subdomainPattern.test(str)
-    setIsSubdomain(isSubdomain)
+    const isSubdomain = subdomainPattern.test(str);
+    setIsSubdomain(isSubdomain);
 
     if (isSubdomain) {
       // The input string is a subdomain, extract the parent domain.
-      const parts = str.split('.')
-      const numParts = parts.length
-      const parentDomain = parts.slice(numParts - (numParts - 1)).join('.')
-      return parentDomain
+      const parts = str.split(".");
+      const numParts = parts.length;
+      const parentDomain = parts.slice(numParts - (numParts - 1)).join(".");
+      return parentDomain;
     } else {
-      return 'flr'
+      return "flr";
     }
   }
 
   // Check if result end with .flr and we do an hash with the resultFiltered for registrant and date
   useEffect(() => {
-    if (!router.isReady) return
+    if (!router.isReady) return;
 
-    const result = router.query.result as string
+    const result = router.query.result as string;
 
-    const parent = getParentDomain(result)
-    setParent(parent)
+    const parent = getParentDomain(result);
+    setParent(parent);
 
     // Check if ethereum address
     if (/^0x[a-fA-F0-9]{40}$/.test(result)) {
-      console.log('Ethereum address')
-      setFilterResult(result)
+      console.log("Ethereum address");
+      setFilterResult(result);
     } else if (result) {
-      setTokenId(BigNumber.from(utils.namehash(result)))
+      setTokenId(BigNumber.from(utils.namehash(result)));
 
-      const resultFiltered = result.endsWith('.flr')
+      const resultFiltered = result.endsWith(".flr")
         ? result.slice(0, -4)
-        : result
-      const hash = web3.sha3(resultFiltered) as string
-      setFilterResult(resultFiltered)
-      setHashHex(hash)
-      setPreparedHash(true)
+        : result;
+      const hash = web3.sha3(resultFiltered) as string;
+      setFilterResult(resultFiltered);
+      setHashHex(hash);
+      setPreparedHash(true);
     }
-  }, [router.isReady, router.query])
+  }, [router.isReady, router.query]);
 
   // Normal Domains: Is name available
   useContractRead({
     address: FLRRegistrarController.address as `0x${string}`,
     abi: FLRRegistrarController.abi,
-    functionName: 'available',
+    functionName: "available",
     enabled: preparedHash && !isSubdomain,
     args: [filterResult],
     onSuccess(data: any) {
-      console.log('Details::FLRRegistrarController::available()', data)
-      setPrepared(true)
-      setIsAvailable(data)
+      console.log("Details::FLRRegistrarController::available()", data);
+      setPrepared(true);
+      setIsAvailable(data);
     },
     onError(error) {
-      console.log('Error available', error)
+      console.log("Error available", error);
     },
-  })
+  });
 
   const { data: isNotCollision } = useContractRead({
     address: BaseRegistrar.address as `0x${string}`,
     abi: BaseRegistrar.abi,
-    functionName: 'isNotCollision',
+    functionName: "isNotCollision",
     enabled: !isAvailable && prepared,
     args: [filterResult],
     onSuccess(data: any) {
-      console.log('Details::isNotCollision', data)
+      console.log("Details::isNotCollision", data);
     },
     onError(error) {
-      console.log('Error isNotCollision', error)
+      console.log("Error isNotCollision", error);
     },
-  })
+  });
 
   // Subdomains: Is name available
   useContractRead({
     address: NameWrapper.address as `0x${string}`,
     abi: NameWrapper.abi,
-    functionName: 'ownerOf',
+    functionName: "ownerOf",
     enabled: preparedHash && isSubdomain,
     args: [tokenId],
     onSuccess(data: string) {
       if (preparedHash && isSubdomain) {
         console.log(
-          'Details::NameWrapper::ownerOf()',
+          "Details::NameWrapper::ownerOf()",
           data,
           data === ZERO_ADDRESS,
-          'isSubdomain:',
+          "isSubdomain:",
           isSubdomain
-        )
-        setPrepared(true)
-        setIsAvailable(data === ZERO_ADDRESS)
+        );
+        setPrepared(true);
+        setIsAvailable(data === ZERO_ADDRESS);
       }
     },
     onError(error) {
-      console.log('Error ownerOf', error)
+      console.log("Error ownerOf", error);
     },
-  })
+  });
 
   // Get registrant address (owner)
   const { data: owner } = useContractRead({
     address: NameWrapper.address as `0x${string}`,
     abi: NameWrapper.abi,
-    functionName: 'ownerOf',
+    functionName: "ownerOf",
     enabled: !isAvailable && prepared,
     args: [tokenId],
     onSuccess(data) {},
     onError(error) {
-      console.error('Error ownerOf', error)
+      console.error("Error ownerOf", error);
     },
-  }) as any
+  }) as any;
 
   const { data: controller } = useContractRead({
     address: FLRRegistrarController.address as `0x${string}`,
     abi: FLRRegistrarController.abi,
-    functionName: 'owner',
+    functionName: "owner",
     enabled: !isAvailable && prepared,
     onSuccess(data: any) {
-      console.log('Success controller', data)
+      console.log("Success controller", data);
     },
     onError(error) {
-      console.log('Error controller', error)
+      console.log("Error controller", error);
     },
-  })
+  });
 
   const { data: getLabelId } = useContractRead({
     address: BaseRegistrar.address as `0x${string}`,
     abi: BaseRegistrar.abi,
-    functionName: 'getLabelId',
+    functionName: "getLabelId",
     enabled: !isAvailable && prepared,
     args: [filterResult],
     onSuccess(data: any) {
-      console.log('Success getLabelId', data)
-      setExpiredReady(true)
+      console.log("Success getLabelId", data);
+      setExpiredReady(true);
     },
     onError(error) {
-      console.log('Error getLabelId', error)
+      console.log("Error getLabelId", error);
     },
-  })
+  });
 
   const { data: expire } = useContractRead({
     address: BaseRegistrar.address as `0x${string}`,
     abi: BaseRegistrar.abi,
-    functionName: 'expiries',
+    functionName: "expiries",
     enabled: expiredReady,
     args: [getLabelId as BigNumber],
     onSuccess(data: any) {
       // console.log('Success expire', Number(data))
     },
     onError(error) {
-      console.log('Error expire', error)
+      console.log("Error expire", error);
     },
-  })
+  });
 
   return (
     <>
@@ -201,7 +201,7 @@ export default function Details({ result }: { result: string }) {
         {/* Domain Result */}
         <div className="flex-col w-full lg:w-3/4 lg:mr-2">
           {/* Domain Container */}
-          <Domain_Select result={result} />
+          <DomainSelect result={result} />
 
           <Info
             parent={parent}
@@ -210,21 +210,21 @@ export default function Details({ result }: { result: string }) {
             available={isAvailable}
             registrant_address={
               isAvailable
-                ? ''
+                ? ""
                 : isNotCollision
                 ? owner
                   ? owner
-                  : ''
-                : '0x0000000000000000000000000000000000000000'
+                  : ""
+                : "0x0000000000000000000000000000000000000000"
             }
             controller={
               isAvailable
-                ? ''
+                ? ""
                 : isNotCollision
                 ? controller
                   ? controller
-                  : ''
-                : '0x0000000000000000000000000000000000000000'
+                  : ""
+                : "0x0000000000000000000000000000000000000000"
             }
             dateNumber={isAvailable ? 0 : Number(expire) * 1000}
           />
@@ -242,5 +242,5 @@ export default function Details({ result }: { result: string }) {
         <WalletConnect />
       </div>
     </>
-  )
+  );
 }

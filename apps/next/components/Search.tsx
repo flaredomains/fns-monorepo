@@ -2,9 +2,12 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import Logo from '../public/Logo.png'
 import Search from '../public/Search.png'
+import Ellipse_2 from '../public/Ellipse_2.png'
+import Ellipse from '../public/Ellipse.png'
 import Image from 'next/image'
 import styles from '../src/styles/Main.module.css'
 import Link from 'next/link'
+import Links from './Links'
 
 function Main() {
   const router = useRouter()
@@ -14,7 +17,8 @@ function Main() {
     e.preventDefault()
 
     // Regular expression to validate input
-    const pattern = /^[a-zA-Z0-9-\s\p{Emoji}]+(\.[a-zA-Z0-9-\s\p{Emoji}]+)*\.flr$/u
+    const pattern =
+      /^[a-zA-Z0-9-\s\p{Emoji}]+(\.[a-zA-Z0-9-\s\p{Emoji}]+)*\.flr$/u
 
     const exception = /^0x[a-fA-F0-9]{40}$/
 
@@ -32,24 +36,41 @@ function Main() {
   }
 
   return (
-    <div className="bg-[#0F172A] min-h-screen  relative overflow-hidden">
+    <div className="bg-[#0F172A] min-h-screen relative overflow-hidden">
       {/* Gradient */}
-      <div className={`${styles.gradient_top}`} />
-      <div className={`${styles.gradient_bottom}`} />
+      <Image
+        className="absolute top-0 left-0 h-2/5 w-full md:h-1/3 md:w-2/3 pointer-events-none"
+        src={Ellipse}
+        alt="Gradient Top"
+      />
+
+      <Image
+        className="absolute bottom-0 right-0 h-5/6 w-8/9 md:h-2/3 md:w-5/6 pointer-events-none"
+        src={Ellipse_2}
+        alt="Gradient Bottom"
+      />
 
       {/* NavBar */}
-      <div className="flex justify-between items-center py-6 px-10 z-10 md:py-14 md:px-28">
+      <div className="flex justify-between items-center py-6 px-10 z-10 md:py-14 md:px-28 gap-4">
         {/* Logo */}
-        <Image className="z-10 h-8 w-32 md:h-14 md:w-56" src={Logo} alt="FNS" />
+        <Link className="z-10" target="_blank" href="https://flrns.domains/">
+          <Image
+            width={96}
+            height={24}
+            className="cursor-pointer z-10 md:h-14 md:w-56"
+            src={Logo}
+            alt="Logo"
+          />
+        </Link>
 
         {/* My account / FAQ */}
-        <div className="flex justify-center items-center px-4 z-10">
+        <div className="flex justify-around items-center z-10 gap-4 md:gap-6">
           <Link
             href={{
               pathname: `/my_account`,
             }}
           >
-            <p className="text-white font-semibold pr-6 text-sm cursor-pointer md:text-lg md:pr-16">
+            <p className="text-white font-semibold text-xs text-center cursor-pointer md:text-lg">
               My Account
             </p>
           </Link>
@@ -58,14 +79,15 @@ function Main() {
               pathname: `/faq`,
             }}
           >
-            <p className="text-white font-semibold text-sm cursor-pointer md:text-lg">
+            <p className="text-white font-semibold text-xs cursor-pointer md:text-lg">
               FAQ
             </p>
           </Link>
         </div>
       </div>
+
       {/* Search -- Middle page */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 md:w-auto">
         <p className="font-bold text-5xl text-white text-center">
           Find Your Next .flr Domain
         </p>
@@ -74,7 +96,7 @@ function Main() {
           onSubmit={handleSubmit}
           className={`flex items-center w-full mt-10 py-2 px-4 h-12 bg-gray-700 border-2 border-gray-500 ${styles.autofill}`}
         >
-          <Image className="z-10 h-6 w-6 mr-2" src={Search} alt="FNS" />
+          <Image className="z-10 h-6 w-6 mr-2" src={Search} alt="Search" />
           <input
             type="text"
             name="input-field"
@@ -93,8 +115,13 @@ function Main() {
           />
         </form>
       </div>
+
+      {/* Links */}
+      <div className="flex bottom-0 absolute w-full justify-center py-6 px-10 z-10 md:py-14 md:px-28 gap-8 ">
+        <Links />
+      </div>
     </div>
-  );
+  )
 }
 
-export default Main;
+export default Main

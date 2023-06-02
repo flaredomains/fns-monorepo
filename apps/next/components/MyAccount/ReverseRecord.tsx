@@ -61,7 +61,7 @@ const Dropdown = ({
           >
             {selectText ? selectText : 'Select Your FNS Name'}
           </p>
-          <Image className="h-2 w-3" src={ArrowDown} alt="FNS" />
+          <Image className="h-2 w-3" src={ArrowDown} alt="ArrowDown" />
         </div>
         <div
           className={`${
@@ -97,7 +97,6 @@ export default function Reverse_Record({
 }) {
   const [isLarge, setisLarge] = useState(false)
   const [selectText, setSelectText] = useState('')
-  const [prepared, setPrepared] = useState(false)
   const [writeFuncHash, setWriteFuncHash] = useState('')
 
   const { address, isConnected } = useAccount()

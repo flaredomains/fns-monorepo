@@ -244,7 +244,7 @@ const Info = ({
                     onClick={handleCopy}
                     className="h-4 w-4 cursor-pointer items-center"
                     src={Clipboard_copy}
-                    alt="FNS"
+                    alt="Clipboard"
                   />
                 )
               )}
@@ -269,7 +269,7 @@ const Info = ({
               onClick={() => setInput('')}
               className="h-5 w-5 cursor-pointer mr-4"
               src={Delete}
-              alt="FNS"
+              alt="Delete"
             />
             {/* Save -- setText or setAddr (based on addressRecord variable) */}
             {input !== '' && (
@@ -431,7 +431,7 @@ export default function Content({
                 className="justify-center items-center hidden text-center bg-[#F97316] h-8 w-1/2 rounded-lg text-white px-auto mt-5 hover:scale-105 transform transition duration-300 ease-out md:w-1/4 lg:flex lg:mt-0 lg:ml-auto"
               >
                 <p className="text-xs font-medium mr-2">Add/Edit Record</p>
-                <Image className="h-4 w-4" src={Plus} alt="FNS" />
+                <Image className="h-4 w-4" src={Plus} alt="Plus" />
               </button>
             )}
             {recordsEditMode && (
@@ -513,7 +513,7 @@ export default function Content({
                 className="flex justify-center items-center text-center bg-[#F97316] h-8 w-1/2 rounded-lg text-white px-auto mt-5 md:w-1/4 lg:hidden lg:mt-0 lg:ml-auto"
               >
                 <p className="text-xs font-medium mr-2">Add/Edit Record</p>
-                <Image className="h-4 w-4" src={Plus} alt="FNS" />
+                <Image className="h-4 w-4" src={Plus} alt="Plus" />
               </button>
             )}
             {recordsEditMode && (

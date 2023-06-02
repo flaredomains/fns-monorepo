@@ -5,18 +5,15 @@ import Hamburger_Icon from '../public/Hamburger_Icon.png'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import Side_Navbar_Choise from './Side_Navbar_Choise'
+import SideNavbarChoise from './SideNavbarChoise'
+import Links from './Links'
 
 const LogoZone = () => {
   return (
     <>
-      <Link
-        href={{
-          pathname: '/',
-        }}
-      >
+      <Link target="_blank" href="https://flrns.domains/">
         <div className="lg:border-b lg:border-white/[.23] lg:px-auto lg:py-8">
-          <Image className="h-8 w-32 lg:h-14 lg:w-56" src={Logo} alt="FNS" />
+          <Image className="h-8 w-32 lg:h-14 lg:w-56" src={Logo} alt="Logo" />
         </div>
       </Link>
     </>
@@ -26,19 +23,31 @@ const LogoZone = () => {
 const BottomFlare = () => {
   return (
     <>
-      <div className="hidden lg:flex lg:mb-10">
+      <div className="hidden lg:flex">
         <div className="flex flex-row items-center w-full mt-auto h-12 py-2 bg-trasparent gap-4">
           <p className="bg-transparent font-semibold text-lg text-white focus:outline-none shrink-0">
             Built on{' '}
           </p>
-          <Image className="h-7 w-20" src={Flare} alt="FNS" />
+          <Image className="h-7 w-20" src={Flare} alt="Logo bottom" />
         </div>
       </div>
     </>
   )
 }
 
-function Side_Navbar() {
+const SocialLinks = () => {
+  return (
+    <>
+      <div
+        className={`hidden bg-gray-800 w-full lg:flex flex-row items-center justify-between`}
+      >
+        <Links />
+      </div>
+    </>
+  )
+}
+
+function SideNavbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [result, setResult] = useState<String>('')
   const [path, setPath] = useState<String>('')
@@ -65,6 +74,7 @@ function Side_Navbar() {
 
     const handleResize = () => {
       setisLarge(window.innerWidth >= 1024)
+      setIsOpen(false)
     }
 
     // Add event listener to update isLarge state when the window is resized
@@ -77,16 +87,24 @@ function Side_Navbar() {
   return (
     <>
       {/* Left Side / Navbar */}
-      <div className="flex justify-between items-center py-3 px-4 w-full bg-gray-800 lg:flex-col lg:w-1/5 lg:min-h-screen">
-        <LogoZone />
+      <div className="flex justify-between items-center py-3 px-4 w-full bg-gray-800 lg:flex-col lg:max-w-[280px] lg:min-h-screen">
+        <div>
+          <LogoZone />
 
-        {/* Middle lg:visible */}
-        {isLarge && (
-          <Side_Navbar_Choise path={path} isOpen={isOpen} isLarge={isLarge} />
-        )}
+          {/* Middle lg:visible */}
+          {isLarge && (
+            <SideNavbarChoise path={path} isOpen={isOpen} isLarge={isLarge} />
+          )}
+        </div>
 
-        {/* Flare Image lg:visible */}
-        <BottomFlare />
+        <div className="flex flex-col gap-4 lg:mb-10">
+          <div className="hidden md:inline">
+            {isLarge && <SocialLinks />}
+          </div>
+
+          {/* Flare Image lg:visible */}
+          <BottomFlare />
+        </div>
 
         {/* Hamburger Icon lg:hidden */}
         {isOpen ? (
@@ -112,17 +130,20 @@ function Side_Navbar() {
             onClick={() => setIsOpen(true)}
             className="h-6 w-6 cursor-pointer lg:hidden"
             src={Hamburger_Icon}
-            alt="FNS"
+            alt="Menu"
           />
         )}
       </div>
 
       {/* Menu Choise after the user click the Hamburger Icon */}
       {isOpen && !isLarge && (
-        <Side_Navbar_Choise path={path} isOpen={isOpen} isLarge={isLarge} />
+        <>
+          <SideNavbarChoise path={path} isOpen={isOpen} isLarge={isLarge} />
+          <SocialLinks />
+        </>
       )}
     </>
   )
 }
 
-export default Side_Navbar
+export default SideNavbar

@@ -55,7 +55,7 @@ const InfoLine = ({
                 onClick={handleCopy}
                 className="h-4 w-4 cursor-pointer"
                 src={Clipboard_copy}
-                alt="FNS"
+                alt="Clipboard"
               />
             )
           )}
