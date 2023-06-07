@@ -1,3 +1,4 @@
+// Desktop
 describe('Search page Desktop', () => {
   beforeEach(() => {
     cy.viewport(1920, 1080)
@@ -83,6 +84,7 @@ describe('Search page Desktop', () => {
   })
 })
 
+// Mobile
 describe('Search page Mobile', () => {
   beforeEach(() => {
     cy.viewport('iphone-7')
