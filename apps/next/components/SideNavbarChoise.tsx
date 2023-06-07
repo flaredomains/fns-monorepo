@@ -12,7 +12,7 @@ const buttonData = [
     button_style: '',
     text_style: '',
     src: Search,
-    alt: 'Search'
+    alt: 'Search SideNavbar',
   },
   {
     page: '/my_account',
@@ -20,7 +20,7 @@ const buttonData = [
     button_style: '',
     text_style: '',
     src: Account,
-    alt: 'Account'
+    alt: 'Account SideNavbar',
   },
   {
     page: '/faq',
@@ -28,7 +28,7 @@ const buttonData = [
     button_style: '',
     text_style: '',
     src: FAQ,
-    alt: 'FAQ'
+    alt: 'FAQ',
   },
 ]
 
@@ -38,7 +38,7 @@ const ButtonChoise = ({
   button_style,
   text_style,
   src,
-  alt
+  alt,
 }: {
   text: string
   page: string
@@ -57,7 +57,12 @@ const ButtonChoise = ({
         <div
           className={`flex items-center w-full my-1 h-12 px-3 py-2 rounded-md ${button_style} hover:bg-gray-600 [&>p]:hover:text-white hover:scale-105 transform transition duration-400 ease-out`}
         >
-          <Image className="h-6 w-6 mr-2" src={src} alt={alt} />
+          <Image
+            data-test={`${alt}`}
+            className="h-6 w-6 mr-2"
+            src={src}
+            alt={alt}
+          />
           <p
             className={`w-full bg-transparent font-semibold text-normal ${text_style} focus:outline-none`}
           >
