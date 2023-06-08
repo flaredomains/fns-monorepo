@@ -181,3 +181,5 @@ describe('Search page Mobile', () => {
     })
   })
 })
+
+export {}
