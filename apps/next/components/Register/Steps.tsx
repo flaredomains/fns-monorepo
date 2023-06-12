@@ -77,7 +77,7 @@ const Step = ({
 export default function Steps({ count }: { count: number }) {
   return (
     <>
-      <div className="flex flex-col mt-10 w-full lg:flex-row">
+      <div data-test="Steps" className="flex flex-col mt-10 w-full lg:flex-row">
         {progressArr.map((item, index) => (
           <Step
             key={index}

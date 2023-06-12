@@ -29,6 +29,7 @@ const RegistrationPeriod = ({
       <div className="flex items-center justify-between gap-[12px] shrink-0">
         {/* - */}
         <div
+          data-test="Minus"
           onClick={decreaseYears}
           className={`h-6 w-6 rounded-full text-white text-center flex items-center justify-center ${
             regPeriod === 1
@@ -50,6 +51,7 @@ const RegistrationPeriod = ({
         </div>
         {/* + */}
         <div
+          data-test="Plus"
           onClick={incrementYears}
           className="bg-[#F97316] h-6 w-6 rounded-full text-white text-center flex items-center justify-center lg:ml-1 hover:scale-110 active:scale-125 transform transition duration-300 ease-out cursor-pointer"
         >
@@ -120,7 +122,10 @@ export default function Selector({
   decreaseYears: () => void
 }) {
   return (
-    <div className="flex flex-col justify-between items-center mt-9 lg:flex-row lg:gap-4">
+    <div
+      data-test="Selector"
+      className="flex flex-col justify-between items-center mt-9 lg:flex-row lg:gap-4"
+    >
       <RegistrationPeriod
         decreaseYears={decreaseYears}
         regPeriod={regPeriod}

@@ -145,7 +145,10 @@ export default function FinalPrice({
 }) {
   const flrPrice = ethers.utils.formatEther(priceToPay ? priceToPay : 1)
   return (
-    <div className="flex flex-col items-center mt-9 h-96 w-full bg-[#334155] rounded-lg lg:rounded-l-lg lg:flex-row lg:h-32">
+    <div
+      data-test="FinalPrice"
+      className="flex flex-col items-center mt-9 h-96 w-full bg-[#334155] rounded-lg lg:rounded-l-lg lg:flex-row lg:h-32"
+    >
       <div className="flex flex-col h-2/3 items-center justify-evenly w-full lg:w-2/3 lg:flex-row rounded-lg">
         <FlarePrice regPeriod={regPeriod} priceToPay={flrPrice} />
 

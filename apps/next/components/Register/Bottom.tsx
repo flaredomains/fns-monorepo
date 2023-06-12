@@ -84,7 +84,9 @@ const ReqToRegister = ({
   price: string
   setCount: React.Dispatch<React.SetStateAction<number>>
   registerState: RegisterState
-  setRegisterState: React.Dispatch<React.SetStateAction<RegisterState | undefined>>
+  setRegisterState: React.Dispatch<
+    React.SetStateAction<RegisterState | undefined>
+  >
 }) => {
   const { address } = useAccount()
 
@@ -358,14 +360,16 @@ export default function Bottom({
   count: number
   setCount: React.Dispatch<React.SetStateAction<number>>
   registerState: RegisterState
-  setRegisterState: React.Dispatch<React.SetStateAction<RegisterState | undefined>>
+  setRegisterState: React.Dispatch<
+    React.SetStateAction<RegisterState | undefined>
+  >
 }) {
   const { isConnected } = useAccount() as any
 
   return (
     <>
       {/* Connect Wallet -- Hidden Mobile */}
-      <div className="mt-10 flex items-center w-full">
+      <div data-test="Bottom" className="mt-10 flex items-center w-full">
         {isConnected ? (
           <>
             <ReqToRegister
