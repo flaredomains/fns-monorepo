@@ -419,7 +419,10 @@ export default function Content({
     <>
       {/* Records / Addresses */}
       <>
-        <div className="flex-col bg-gray-800 px-8 pb-14 rounded-b-lg">
+        <div
+          data-test="Content"
+          className="flex-col bg-gray-800 px-8 pb-14 rounded-b-lg"
+        >
           {/* Record Line -- Button Add/Edit Records */}
           <div className="flex-col justify-between mb-10 md:flex md:flex-row">
             {/* Records */}
