@@ -26,7 +26,7 @@ const WalletConnectSection = () => {
         <Image
           className="h-4 w-4 mr-2"
           src={isConnected ? Network : X}
-          alt={isConnected ? "Network" : "X"}
+          alt={isConnected ? 'Network' : 'X'}
         />
         <p className="text-xs font-medium shrink-0">
           {isConnected ? `${chain?.name} Network` : 'Wallet Not Connected'}
@@ -55,7 +55,10 @@ function WalletConnect() {
   return (
     <>
       {/* Wallet connect */}
-      <div className="flex flex-col w-full lg:w-1/4 h-52 lg:h-80 justify-center items-center mt-9 lg:mt-0 px-1 xl:px-7 bg-gray-800 rounded-lg shrink-0">
+      <div
+        data-test="WalletConnect"
+        className="flex flex-col w-full lg:w-1/4 h-52 lg:h-80 justify-center items-center mt-9 lg:mt-0 px-1 xl:px-7 bg-gray-800 rounded-lg shrink-0"
+      >
         <WalletConnectSection />
       </div>
     </>

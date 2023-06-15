@@ -50,6 +50,7 @@ const Dropdown = ({
   return (
     <>
       <div
+        data-test="Reverse_Record"
         onClick={() => setIsOpen(!isOpen)}
         className="flex-col cursor-pointer relative w-full md:w-full lg:w-1/2"
       >
@@ -182,7 +183,10 @@ export default function Reverse_Record({
 
   return (
     <>
-      <div className="flex justify-between mt-16 gap-2">
+      <div
+        data-test="Reverse_Record"
+        className="flex justify-between mt-16 gap-2"
+      >
         {/* Text */}
         <p className="text-white font-semibold text-lg">
           {isLarge ? 'Primary FNS Name (Reverse Record)' : 'Primary FNS Name'}

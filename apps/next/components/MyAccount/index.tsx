@@ -122,7 +122,7 @@ export default function MyAccount() {
           </p>
         </div>
 
-        <div className="flex-col bg-gray-800">
+        <div data-test="OwnedDomains" className="flex-col bg-gray-800">
           {isConnected &&
             addressDomain.map((item, index) => (
               <OwnedDomains
