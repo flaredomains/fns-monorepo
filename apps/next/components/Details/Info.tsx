@@ -10,13 +10,13 @@ const InfoLine = ({
   alternativeText,
 }: {
   leftText: string
-  rightText: string | undefined;
-  alternativeText: string;
+  rightText: string | undefined
+  alternativeText: string
 }) => {
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState(false)
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(rightText ? rightText : "");
+    navigator.clipboard.writeText(rightText ? rightText : '')
     setCopied(true)
 
     setTimeout(() => {
@@ -32,7 +32,7 @@ const InfoLine = ({
         </p>
 
         {/* RightText */}
-        {rightText || rightText === "" ? (
+        {rightText || rightText === '' ? (
           <div className="flex items-center mt-2 lg:mt-0">
             <p className="font-semibold text-[#F97316] text-base mr-4">
               {rightText
@@ -65,7 +65,10 @@ const InfoLine = ({
             <div className="grid items-center w-full h-5">
               <div className="animate-pulse flex space-x-4">
                 <div className="flex-1 space-y-6 py-1 grid grid-cols-5">
-                  <div className="h-2 bg-slate-600 rounded col-span-3"></div>
+                  <div
+                    data-test="Loading Alert"
+                    className="h-2 bg-slate-600 rounded col-span-3"
+                  ></div>
                 </div>
               </div>
             </div>
@@ -73,8 +76,8 @@ const InfoLine = ({
         )}
       </div>
     </>
-  );
-};
+  )
+}
 
 const Alert = ({ available }: { available: boolean | undefined }) => {
   return (
@@ -85,28 +88,34 @@ const Alert = ({ available }: { available: boolean | undefined }) => {
             <Image
               className="h-4 w-4 mr-2"
               src={available ? Like : Dislike}
-              alt={available ? "Like" : "Dislike"}
+              alt={available ? 'Like' : 'Dislike'}
             />
             <p className="text-gray-200 font-semibold text-sm">
               {available
-                ? "This name is available!"
-                : "This name is already registered"}
+                ? 'This name is available!'
+                : 'This name is already registered'}
             </p>
           </>
         ) : (
           <div className="grid items-center w-full h-5">
             <div className="animate-pulse flex space-x-4">
-              <div className="rounded-full bg-slate-600 h-4 w-4"></div>
+              <div
+                data-test="Loading Alert"
+                className="rounded-full bg-slate-600 h-4 w-4"
+              ></div>
               <div className="flex-1 space-y-6 py-1 grid grid-cols-5">
-                <div className="h-2 bg-slate-600 rounded col-span-3"></div>
+                <div
+                  data-test="Loading Alert"
+                  className="h-2 bg-slate-600 rounded col-span-3"
+                ></div>
               </div>
             </div>
           </div>
         )}
       </div>
     </>
-  );
-};
+  )
+}
 
 export default function Info({
   available,
@@ -117,13 +126,13 @@ export default function Info({
   controller,
   dateNumber,
 }: {
-  available: boolean | undefined;
-  isSubdomain: boolean;
-  isCollision: boolean;
-  parent: string;
-  registrant_address: string;
-  controller: string;
-  dateNumber: number;
+  available: boolean | undefined
+  isSubdomain: boolean
+  isCollision: boolean
+  parent: string
+  registrant_address: string
+  controller: string
+  dateNumber: number
 }) {
   const date = new Date(dateNumber)
 
@@ -131,7 +140,7 @@ export default function Info({
     <>
       <div
         className={`flex-col bg-gray-800 px-8 py-12 ${
-          available ? "rounded-b-lg" : "rounded-b-none"
+          available ? 'rounded-b-lg' : 'rounded-b-none'
         }`}
       >
         <Alert available={available} />
@@ -139,11 +148,11 @@ export default function Info({
         {/* Details */}
         <div className="flex-col w-full mt-10">
           {/* Parent */}
-            <InfoLine
-              leftText="Parent"
-              rightText={parent ? parent : '.flr'}
-              alternativeText=""
-            />
+          <InfoLine
+            leftText="Parent"
+            rightText={parent ? parent : '.flr'}
+            alternativeText=""
+          />
 
           {/* Registrant */}
           <InfoLine
@@ -171,9 +180,9 @@ export default function Info({
                 <div className="flex-col items-center mt-2 lg:mt-0 lg:flex lg:flex-row">
                   <p className="font-semibold text-white text-base mr-12">
                     {isSubdomain || isCollision
-                    ? 'No Expiry'
-                    : `${date?.toLocaleString('en-US', {
-                        month: 'long',
+                      ? 'No Expiry'
+                      : `${date?.toLocaleString('en-US', {
+                          month: 'long',
                         })} ${date?.getDate()}, ${date?.getFullYear()}`}
                   </p>
                 </div>
@@ -183,10 +192,16 @@ export default function Info({
             <div className="grid items-center w-full h-5">
               <div className="animate-pulse flex space-x-4">
                 <div className="flex-1 space-x-4 py-1 grid grid-cols-7">
-                  <div className="h-2 bg-slate-700 rounded col-span-1"></div>
+                  <div
+                    data-test="Loading Alert"
+                    className="h-2 bg-slate-700 rounded col-span-1"
+                  ></div>
                   <div className="h-2 col-span-1"></div>
                   <div className="h-2 bg-slate-700 rounded col-span-1"></div>
-                  <div className="h-2 col-span-4"></div>
+                  <div
+                    data-test="Loading Alert"
+                    className="h-2 col-span-4"
+                  ></div>
                 </div>
               </div>
             </div>
