@@ -129,7 +129,7 @@ contract TimelockController is AccessControl, IERC721Receiver, IERC1155Receiver 
     /**
      * @dev Withdraw ETH present in TimelockController
      */
-    function withdraw(address payable receivingAddr) external onlyRole(PROPOSER_ROLE) {
+    function withdraw(address payable receivingAddr) public onlyRole(PROPOSER_ROLE) {
         (bool sent, ) = receivingAddr.call{value: address(this).balance}("");
         require(sent, "Failed to withdraw");
     }
