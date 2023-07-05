@@ -15,8 +15,8 @@ contract Root is Ownable, Controllable {
     IFNS public fns;
     mapping(bytes32 => bool) public locked;
 
-    constructor(IFNS _ens) {
-        fns = _ens;
+    constructor(IFNS _fns) {
+        fns = _fns;
     }
 
     function setSubnodeOwner(bytes32 label, address owner) external onlyController {
