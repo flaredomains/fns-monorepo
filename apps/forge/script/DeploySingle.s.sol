@@ -20,13 +20,10 @@ contract DeploySingle is Script {
         address[] memory executors = new address[](1);
         executors[0] = 0x69D37F5bbA0e66c48555a0A104f70F66A58cB521;
 
-        address admin = 0xBfbf256B6a4f830c762c7f9bcEca9018fBB70104;
-
         TimelockController tlc = new TimelockController(
             60,
             proposers,
-            executors,
-            admin
+            executors
         );
 
         console.log("Timelock Deployed to: ", address(tlc));
