@@ -10,7 +10,8 @@ contract DeployFNS is Script {
     function run() external {
         vm.startBroadcast(vm.envUint("FLARE_DEPLOYER_PRIVATE_KEY"));
 
-        DynamicMetadataService dynamicMetadataService = new DynamicMetadataService();
+        DynamicMetadataService dynamicMetadataService = new DynamicMetadataService(
+            "https://arweave.net/OyKs3RptCvwmEg2I6bIBMeYIpuvZIzGUwjBOhn2WedQ");
 
         console.log("1. DynamicMetadataService: %s", address(dynamicMetadataService));
 
