@@ -9,19 +9,19 @@ import "fns/registry/ReverseRegistrar.sol";
 import "fns/wrapper/NameWrapper.sol";
 import "fns/flr-registrar/StablePriceOracle.sol";
 import "fns/no-collisions/NoNameCollisions.sol";
-
-import "@openzeppelin/contracts/governance/TimelockController.sol";
+import "fns/governance/TimelockController.sol";
 
 contract DeployTimelock is Script {
-    address immutable DEPLOYER_ADDRESS = vm.envAddress("DEPLOYER_ADDRESS");
-    uint256 immutable DEPLOYER_PRIVATE_KEY = vm.envUint("DEPLOYER_PRIVATE_KEY");
+    address immutable DEPLOYER_ADDRESS = vm.envAddress("FLARE_DEPLOYER_ADDRESS");
+    uint256 immutable DEPLOYER_PRIVATE_KEY = vm.envUint("FLARE_DEPLOYER_PRIVATE_KEY");
     address deployerAddress;
     uint256 deployerPrivKey;
 
     // Executor address is the timelock contract
-    address immutable MULTISIG_WALLET_ADDRESS = 0x56496E73A153D78a57dCD85173471AE8B155B453;
-    address immutable MULTISIG_ADDRESS_1 = 0x1F834C1a259AC590D61fd668fCb5E333E08614CE;
-    address immutable MULTISIG_ADDRESS_2 = 0xaD36cb5D0d414ac86ae08C4981D298DD8Ee0Fd5f;
+    address immutable MULTISIG_WALLET_ADDRESS = 0x0a15BBEBf9ef381198806a1B866c0fA2b4F0a15D;
+    address immutable MULTISIG_ADDRESS_1 = 0xBfbf256B6a4f830c762c7f9bcEca9018fBB70104;
+    address immutable MULTISIG_ADDRESS_2 = 0x61079C9fB5C24F7eb890191d3C4Cc4B3b0Ea329b;
+    address immutable MULTISIG_ADDRESS_3 = 0x84FdED0b3af8b732DEA94976bd8De089b845E672;
 
     BaseRegistrar baseRegistrar = BaseRegistrar(0x570F7b5F751B50b5B2DFF35d553cE05cB27697a7);
     FLRRegistrarController flrRegistrarController = FLRRegistrarController(0x63Adf61F7a3C8BC78E32A5B447f3bc5D260Aa182);
@@ -37,17 +37,18 @@ contract DeployTimelock is Script {
         vm.startBroadcast(deployerPrivKey);
 
         // Proposer addresses are the multisig wallets themselves
-        address[] memory proposers = new address[](3);
+        address[] memory proposers = new address[](4);
         proposers[0] = MULTISIG_WALLET_ADDRESS;
         proposers[1] = MULTISIG_ADDRESS_1;
         proposers[2] = MULTISIG_ADDRESS_2;
+        proposers[3] = MULTISIG_ADDRESS_3;
 
         // Executor address is the timelock contract
         address[] memory executors = new address[](1);
         executors[0] = MULTISIG_WALLET_ADDRESS;
 
         TimelockController timelockController = new TimelockController(
-            10,
+            48 hours,
             proposers,
             executors);
 
