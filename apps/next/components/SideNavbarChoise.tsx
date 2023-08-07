@@ -50,6 +50,7 @@ const buttonData = [
     alt: "FAQ",
   },
 ];
+];
 
 const ButtonChoise = ({
   text,
