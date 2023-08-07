@@ -6,6 +6,7 @@ import Link from "next/link";
 import HeaderBuilder from "./HeaderBuilder";
 
 import { useAccount } from "wagmi";
+import WebBuilderForm from "./WebBuilderForm";
 
 // import MintedDomainNames from '../../src/pages/abi/MintedDomainNames.json'
 
@@ -31,12 +32,7 @@ export default function PageBuilder() {
       <div className="flex-col bg-gray-800 px-8 py-5 w-full rounded-md lg:w-3/4 lg:mr-2">
         <HeaderBuilder />
 
-        {/* <div className="flex-col py-4 mb-4 mt-10">
-          <p className="text-white font-semibold text-lg mb-2">Owned Domains</p>
-          <p className="text-gray-400 font-medium text-sm">
-            Manage Your Account Here
-          </p>
-        </div> */}
+        <WebBuilderForm />
 
         <div className="flex-col bg-gray-800"></div>
       </div>
