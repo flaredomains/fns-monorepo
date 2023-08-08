@@ -1,9 +1,9 @@
-import React from 'react'
+import React from "react";
 
 const progressArr = [
   {
     number: 1,
-    stepText: 'Request to Register',
+    stepText: "Request to Register",
     descriptionText: `Your wallet will open and you will be asked to confirm the first of
   two transactions required for registration. If the second
   transaction is not processed within 7 days of the first, you will
@@ -11,29 +11,29 @@ const progressArr = [
   },
   {
     number: 2,
-    stepText: 'Wait for 1 minute',
+    stepText: "Wait for 1 minute",
     descriptionText: `The waiting period is required to ensure another person hasn't
   tried to register the same name and protect you after your request.`,
   },
   {
     number: 3,
-    stepText: 'Complete Registration',
+    stepText: "Complete Registration",
     descriptionText: `Click 'register' and your wallet will re-open. Only after
   the 2nd transaction is confirmed you'll know if you got the
   name.`,
   },
-]
+];
 
-const Step = ({
+export const Step = ({
   count,
   number,
   stepText,
   descriptionText,
 }: {
-  count: number
-  number: number
-  stepText: string
-  descriptionText: string
+  count: number;
+  number: number;
+  stepText: string;
+  descriptionText: string;
 }) => {
   return (
     <>
@@ -43,17 +43,17 @@ const Step = ({
           {/* First half line */}
           <div
             className={`w-1/2 h-1 transition duration-500 ease-in ${
-              number - 1 <= count ? 'bg-[#F97316]' : 'bg-[#334155]'
+              number - 1 <= count ? "bg-[#F97316]" : "bg-[#334155]"
             }`}
           />
           {/* Number */}
           <div
             className={`flex justify-center items-center transition duration-500 ease-in ${
               number - 1 === count
-                ? 'bg-[#0F172A] border-[#F97316]'
+                ? "bg-[#0F172A] border-[#F97316]"
                 : number - 1 < count
-                ? 'bg-[#F97316] border-[#F97316]'
-                : 'bg-[#0F172A] border-[#E2E8F0]'
+                ? "bg-[#F97316] border-[#F97316]"
+                : "bg-[#0F172A] border-[#E2E8F0]"
             } border-2 h-9 w-9 rounded-full p-3 text-center`}
           >
             <p className="text-white">{number}</p>
@@ -61,7 +61,7 @@ const Step = ({
           {/* Second half line */}
           <div
             className={`w-1/2 h-1 transition duration-500 ease-in ${
-              number <= count ? 'bg-[#F97316]' : 'bg-[#334155]'
+              number <= count ? "bg-[#F97316]" : "bg-[#334155]"
             }`}
           />
         </div>
@@ -71,8 +71,8 @@ const Step = ({
         </p>
       </div>
     </>
-  )
-}
+  );
+};
 
 export default function Steps({ count }: { count: number }) {
   return (
@@ -89,5 +89,5 @@ export default function Steps({ count }: { count: number }) {
         ))}
       </div>
     </>
-  )
+  );
 }
