@@ -175,7 +175,7 @@ const ProfileSelector = () => {
 const ThemeSection = () => {
   return (
     <div className={`flex flex-col w-full ${styles.autofill}`}>
-      <p className="text-white font-medium mb-2">
+      <p className="text-white text-sm font-normal mb-2">
         Choose Your Theme:{" "}
         <span className="text-gray-500">
           (See it live in the preview above)
@@ -231,7 +231,7 @@ const ButtonsSection = () => {
     <div className="flex flex-col gap-8">
       <div className="flex flex-col lg:flex-row gap-6">
         <div className={`flex flex-col w-full lg:w-1/2 ${styles.autofill}`}>
-          <p className="text-white font-medium mb-2">Title Text</p>
+          <p className="text-white text-sm font-normal mb-2">Title Text</p>
           <input
             type="text"
             placeholder="Ex. Pay Me"
@@ -239,7 +239,7 @@ const ButtonsSection = () => {
           />
         </div>
         <div className={`flex flex-col w-full lg:w-1/2 ${styles.autofill}`}>
-          <p className="text-white font-medium mb-2">Button #1 Link</p>
+          <p className="text-white text-sm font-normal mb-2">Button #1 Link</p>
           <input
             type="text"
             placeholder="www.example.com"
@@ -249,7 +249,9 @@ const ButtonsSection = () => {
       </div>
       <div className="flex flex-col lg:flex-row gap-6">
         <div className={`flex flex-col w-full lg:w-1/2 ${styles.autofill}`}>
-          <p className="text-white font-medium mb-2">Contact Button Text</p>
+          <p className="text-white text-sm font-normal mb-2">
+            Contact Button Text
+          </p>
           <input
             type="text"
             placeholder="Ex. Contact Me"
@@ -257,7 +259,7 @@ const ButtonsSection = () => {
           />
         </div>
         <div className={`flex flex-col w-full lg:w-1/2 ${styles.autofill}`}>
-          <p className="text-white font-medium mb-2">
+          <p className="text-white text-sm font-normal mb-2">
             Contact Button Email Address
           </p>
           <input
@@ -276,7 +278,7 @@ const ProfileSection = () => {
     <div className="flex flex-col lg:flex-row gap-6 my-6">
       <div className="flex flex-col w-full lg:w-1/2 gap-6">
         <div className={`flex flex-col  ${styles.autofill}`}>
-          <p className="text-white font-medium mb-2">Your Name</p>
+          <p className="text-white text-sm font-normal mb-2">Your Name</p>
           <input
             type="text"
             placeholder="Ex. Elon Musk"
@@ -284,7 +286,7 @@ const ProfileSection = () => {
           />
         </div>
         <div className={`flex flex-col  ${styles.autofill}`}>
-          <p className="text-white font-medium mb-2">Your Role</p>
+          <p className="text-white text-sm font-normal mb-2">Your Role</p>
           <input
             type="text"
             placeholder="Ex. CEO of Tesla"
@@ -303,22 +305,22 @@ const SubmitSection = () => {
   return (
     <div className="flex flex-col lg:flex-row lg:my-9 justify-between gap-4 lg:gap-0">
       <div className="flex flex-col gap-1">
-        <p className="text-white font-medium">Main Button Color</p>
+        <p className="text-white text-sm font-normal">Main Button Color</p>
         <div className="flex gap-1 items-center">
           <div className="h-5 w-5 bg-[#F97316] rounded-md"></div>
-          <p className="text-gray-300 font-medium">#F97316</p>
+          <p className="text-gray-300 text-sm font-medium leading-tight">
+            #F97316
+          </p>
         </div>
       </div>
       <div className="flex flex-col gap-1 lg:mx-8">
-        <p className="text-white font-medium">
-          <span className="text-gray-400">
-            You will be minting this website on
-          </span>{" "}
-          https://example.flr
-        </p>
+        <span className="text-gray-400 text-sm">
+          You will be minting this website on
+        </span>
+        <p className="text-white text-sm font-normal">https://example.flr</p>
       </div>
       <div className="flex justify-center lg:justify-normal">
-        <button className="flex lg:w-full items-center gap-2 bg-[#F97316] py-3 px-5 rounded-md text-white font-medium hover:brightness-110">
+        <button className="flex lg:w-full items-center gap-2 bg-[#F97316] py-3 px-5 rounded-md text-white font-normal hover:brightness-110">
           <p className="flex">Mint Website Now</p>
           <Image
             width={64}
@@ -342,7 +344,7 @@ function WebBuilderForm() {
             <h1 className="text-white font-semibold text-4xl mb-6">
               Example.flr
             </h1>
-            <p className="text-white font-medium mb-2">Title Text</p>
+            <p className="text-white text-sm font-normal mb-2">Title Text</p>
             <input
               type="text"
               placeholder="Enter your title here"
@@ -352,7 +354,7 @@ function WebBuilderForm() {
           <BackgroundSelector />
         </div>
         <div className={`flex flex-col w-full ${styles.autofill}`}>
-          <p className="text-white font-medium mb-2">Body Text</p>
+          <p className="text-white text-sm font-normal mb-2">Body Text</p>
           <textarea
             placeholder="Type your body text for the website here"
             className="text-white bg-[#344054] rounded-lg py-2 px-3 border border-[#667085] focus:outline-none"
