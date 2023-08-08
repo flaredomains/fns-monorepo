@@ -7,6 +7,7 @@ import HeaderBuilder from "./HeaderBuilder";
 
 import { useAccount } from "wagmi";
 import WebBuilderForm from "./WebBuilderForm";
+import Preview from "./Preview";
 
 // import MintedDomainNames from '../../src/pages/abi/MintedDomainNames.json'
 
@@ -29,9 +30,10 @@ export default function PageBuilder() {
       }}
       className="flex-col w-11/12 mt-6 mx-auto lg:flex lg:flex-row lg:w-full"
     >
-      <div className="flex-col bg-gray-800 px-8 py-5 w-full rounded-md lg:w-3/4 lg:mr-2">
+      <div className="flex-col bg-gray-800 px-4 sm:px-8 py-5 w-full rounded-md lg:w-3/4 lg:mr-2">
         <HeaderBuilder />
 
+        <Preview />
         <WebBuilderForm />
 
         <div className="flex-col bg-gray-800"></div>

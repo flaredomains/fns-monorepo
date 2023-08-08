@@ -6,11 +6,13 @@ import Glass from "../../public/Glassmorphsm.png";
 import Light from "../../public/LightTheme.png";
 import Dark from "../../public/DarkTheme.png";
 import ArrowRight from "../../public/ArrowRight.png";
+import { Gradients } from "./Preview";
 
 const BackgroundSelector = () => {
-  const [selectedBackgroundFile, setSelectedBackgroundFile] = useState(null);
+  const [selectedBackgroundFile, setSelectedBackgroundFile] =
+    useState<any>(null);
 
-  const handleBackgroundFileSelect = (e) => {
+  const handleBackgroundFileSelect = (e: any) => {
     e.preventDefault();
     const backgroundFile = e?.dataTransfer?.files?.[0] || e?.target?.files?.[0];
 
@@ -88,9 +90,9 @@ const BackgroundSelector = () => {
 };
 
 const ProfileSelector = () => {
-  const [selectedProfileFile, setSelectedProfileFile] = useState(null);
+  const [selectedProfileFile, setSelectedProfileFile] = useState<any>(null);
 
-  const handleProfileFileSelect = (e) => {
+  const handleProfileFileSelect = (e: any) => {
     e.preventDefault();
     const profileFile = e?.dataTransfer?.files?.[0] || e?.target?.files?.[0];
 
@@ -179,8 +181,8 @@ const ThemeSection = () => {
           (See it live in the preview above)
         </span>
       </p>
-      <div className="flex flex-col lg:flex-row gap-9 justify-center items-center">
-        <div className="flex flex-col w-full max-w-xs items-center p-7 bg-[#94A3B8] rounded-lg gap-6 cursor-pointer">
+      <div className="flex flex-col xl:flex-row gap-9 justify-center items-center">
+        <div className="relative flex flex-col w-full max-w-xs items-center p-7 bg-[#94A3B8] rounded-lg gap-6 cursor-pointer">
           <Image
             width={64}
             height={64}
@@ -188,11 +190,12 @@ const ThemeSection = () => {
             src={Glass}
             alt="Glassmorphsm"
           />
-          <p className="py-[6px] px-3 bg-white rounded-full font-semibold text-center hover:shadow-xl">
+          <p className="py-[6px] px-3 bg-white text-xs rounded-full font-semibold text-center hover:shadow-xl">
             Glassmorphsm
           </p>
+          <Gradients />
         </div>
-        <div className="flex flex-col w-full max-w-xs items-center p-7 bg-[#94A3B8] rounded-lg gap-6 cursor-pointer">
+        <div className="relative flex flex-col w-full max-w-xs items-center p-7 bg-[#94A3B8] rounded-lg gap-6 cursor-pointer">
           <Image
             width={64}
             height={64}
@@ -200,11 +203,12 @@ const ThemeSection = () => {
             src={Light}
             alt="Light Mode"
           />
-          <p className="py-[6px] px-3 bg-white rounded-full font-semibold text-center hover:shadow-xl">
+          <p className="py-[6px] px-3 bg-white text-xs rounded-full font-semibold text-center hover:shadow-xl">
             Light Mode
           </p>
+          <Gradients />
         </div>
-        <div className="flex flex-col w-full max-w-xs items-center p-7 bg-[#94A3B8] rounded-lg gap-6 cursor-pointer">
+        <div className="relative flex flex-col w-full max-w-xs items-center p-7 bg-[#94A3B8] rounded-lg gap-6 cursor-pointer">
           <Image
             width={64}
             height={64}
@@ -212,9 +216,10 @@ const ThemeSection = () => {
             src={Dark}
             alt="Dark Mode"
           />
-          <p className="py-[6px] px-3 bg-white rounded-full font-semibold text-center hover:shadow-xl">
+          <p className="py-[6px] px-3 bg-white text-xs rounded-full font-semibold text-center hover:shadow-xl">
             Dark Mode
           </p>
+          <Gradients />
         </div>
       </div>
     </div>
