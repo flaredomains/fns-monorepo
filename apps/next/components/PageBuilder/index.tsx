@@ -11,6 +11,8 @@ import Preview from "./Preview";
 
 import { Step } from "../Register/Steps";
 
+import { Dispatch, SetStateAction } from "react";
+
 const progressArr = [
   {
     number: 1,
@@ -45,6 +47,71 @@ export default function PageBuilder() {
 
   const [countBuilder, setCountBuilder] = useState(0);
 
+  interface UpdateFunctions {
+    [key: string]: Dispatch<SetStateAction<any>>;
+  }
+
+  const [formState, setFormState] = useState({
+    title: "",
+    background: "",
+    body: "",
+    theme: "glassmorphsm",
+    button1: "",
+    button1Link: "",
+    contactButton: "",
+    name: "",
+    role: "",
+    profilePicture: undefined,
+    buttonColor: "#F97316",
+  });
+
+  const updateFunctions: UpdateFunctions = {
+    Title: (value) =>
+      setFormState((prevState) => ({ ...prevState, title: value })),
+    Body: (value) =>
+      setFormState((prevState) => ({ ...prevState, body: value })),
+    Background: (value) =>
+      setFormState((prevState) => ({ ...prevState, background: value })),
+    Theme: (value) =>
+      setFormState((prevState) => ({ ...prevState, theme: value })),
+    Button1: (value) =>
+      setFormState((prevState) => ({ ...prevState, button1: value })),
+    Button1Link: (value) =>
+      setFormState((prevState) => ({ ...prevState, button1Link: value })),
+    ContactButton: (value) =>
+      setFormState((prevState) => ({ ...prevState, contactButton: value })),
+    Name: (value) =>
+      setFormState((prevState) => ({ ...prevState, name: value })),
+    Role: (value) =>
+      setFormState((prevState) => ({ ...prevState, role: value })),
+    ProfilePicture: (value) =>
+      setFormState((prevState) => ({ ...prevState, profilePicture: value })),
+    ButtonColor: (value) =>
+      setFormState((prevState) => ({ ...prevState, buttonColor: value })),
+  };
+
+  const handleInputs = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    const updateFunction = updateFunctions[name];
+    if (updateFunction) {
+      updateFunction(value);
+    }
+  };
+
+  const handleBackground = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const updateFunction = updateFunctions["Background"];
+    if (updateFunction) {
+      updateFunction(event);
+    }
+  };
+
+  const handleProfile = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const updateFunction = updateFunctions["ProfilePicture"];
+    if (updateFunction) {
+      updateFunction(event);
+    }
+  };
+
   return (
     <div
       onClick={() => {
@@ -54,9 +121,12 @@ export default function PageBuilder() {
     >
       <div className="flex-col bg-gray-800 px-4 sm:px-8 py-5 w-full rounded-md lg:w-3/4 lg:mr-2">
         <HeaderBuilder />
-
-        <Preview />
-        <WebBuilderForm />
+        <Preview formState={formState} />
+        <WebBuilderForm
+          handleInputs={handleInputs}
+          handleBackground={handleBackground}
+          handleProfile={handleProfile}
+        />
 
         <div className="flex flex-col my-10 w-full lg:flex-row">
           {progressArr.map((item, index) => (
