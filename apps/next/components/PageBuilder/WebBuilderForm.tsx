@@ -41,26 +41,58 @@ const BackgroundSelector = ({
       const imageBackgroundUrl = URL.createObjectURL(selectedBackgroundFile); // Generate temporary URL for the selected file
       return (
         <>
-          <Image
-            width={64}
-            height={64}
-            className="h-16 w-auto"
-            src={imageBackgroundUrl}
-            alt="Upload"
-          />
+          <div>
+            <Image
+              width={64}
+              height={64}
+              className="h-16 w-auto"
+              src={imageBackgroundUrl}
+              alt="Upload"
+            />
+            <input
+              required
+              id="dropzone-profile-file"
+              type="file"
+              style={{
+                position: "absolute",
+                padding: 0,
+                border: 0,
+                height: "1px",
+                width: "1px",
+                overflow: "hidden",
+              }}
+              onChange={(e) => handleBackgroundFileSelect(e)}
+            />
+          </div>
           <p className="text-gray-400 text-xs">{selectedBackgroundFile.name}</p>
         </>
       );
     } else {
       return (
         <>
-          <Image
-            width={24}
-            height={24}
-            className="h-6 w-6"
-            src={Upload}
-            alt="Upload"
-          />
+          <div>
+            <Image
+              width={24}
+              height={24}
+              className="h-6 w-6"
+              src={Upload}
+              alt="Upload"
+            />
+            <input
+              required
+              id="dropzone-profile-file"
+              type="file"
+              style={{
+                position: "absolute",
+                padding: 0,
+                border: 0,
+                height: "1px",
+                width: "1px",
+                overflow: "hidden",
+              }}
+              onChange={(e) => handleBackgroundFileSelect(e)}
+            />
+          </div>
           <p className="text-sm">
             Click to upload or drag and drop your background
           </p>
@@ -85,6 +117,7 @@ const BackgroundSelector = ({
         {renderUploadBackgroundContent()}
       </div>
       <input
+        required
         id="dropzone-background-file"
         type="file"
         className="hidden"
@@ -126,26 +159,58 @@ const ProfileSelector = ({ handleProfile }: { handleProfile: any }) => {
       const imageUrl = URL.createObjectURL(selectedProfileFile); // Generate temporary URL for the selected file
       return (
         <>
-          <Image
-            width={64}
-            height={64}
-            className="h-16 w-auto"
-            src={imageUrl}
-            alt="Upload"
-          />
+          <div>
+            <Image
+              width={64}
+              height={64}
+              className="h-16 w-auto"
+              src={imageUrl}
+              alt="Upload"
+            />
+            <input
+              required
+              id="dropzone-profile-file"
+              type="file"
+              style={{
+                position: "absolute",
+                padding: 0,
+                border: 0,
+                height: "1px",
+                width: "1px",
+                overflow: "hidden",
+              }}
+              onChange={(e) => handleProfileFileSelect(e)}
+            />
+          </div>
           <p className="text-gray-400 text-xs">{selectedProfileFile.name}</p>
         </>
       );
     } else {
       return (
         <>
-          <Image
-            width={24}
-            height={24}
-            className="h-6 w-6"
-            src={Upload}
-            alt="Upload"
-          />
+          <div>
+            <Image
+              width={24}
+              height={24}
+              className="h-6 w-6"
+              src={Upload}
+              alt="Upload"
+            />
+            <input
+              required
+              id="dropzone-profile-file"
+              type="file"
+              style={{
+                position: "absolute",
+                padding: 0,
+                border: 0,
+                height: "1px",
+                width: "1px",
+                overflow: "hidden",
+              }}
+              onChange={(e) => handleProfileFileSelect(e)}
+            />
+          </div>
           <p className="text-sm">
             Click to upload or drag and drop your profile picture
           </p>
@@ -166,12 +231,6 @@ const ProfileSelector = ({ handleProfile }: { handleProfile: any }) => {
       <div className="flex flex-col gap-1 justify-center items-center text-center w-full text-white bg-[#344054] rounded-lg py-2 px-3 border border-[#667085] focus:outline-none">
         {renderUploadProfileContent()}
       </div>
-      <input
-        id="dropzone-profile-file"
-        type="file"
-        className="hidden"
-        onChange={(e) => handleProfileFileSelect(e)}
-      />
     </label>
   );
 };
@@ -286,6 +345,7 @@ const ButtonsSection = ({ handleInputs }: { handleInputs: any }) => {
         <div className={`flex flex-col w-full lg:w-1/2 ${styles.autofill}`}>
           <p className="text-white text-sm font-normal mb-2">Button #1 Text</p>
           <input
+            required
             onChange={handleInputs}
             name="Button1"
             type="text"
@@ -296,6 +356,7 @@ const ButtonsSection = ({ handleInputs }: { handleInputs: any }) => {
         <div className={`flex flex-col w-full lg:w-1/2 ${styles.autofill}`}>
           <p className="text-white text-sm font-normal mb-2">Button #1 Link</p>
           <input
+            required
             onChange={handleInputs}
             name="Button1Link"
             type="text"
@@ -310,6 +371,7 @@ const ButtonsSection = ({ handleInputs }: { handleInputs: any }) => {
             Contact Button Text
           </p>
           <input
+            required
             onChange={handleInputs}
             name="ContactButton"
             type="text"
@@ -322,6 +384,7 @@ const ButtonsSection = ({ handleInputs }: { handleInputs: any }) => {
             Contact Button Email Address
           </p>
           <input
+            required
             onChange={handleInputs}
             name="ContactButtonEmail"
             type="text"
@@ -347,6 +410,7 @@ const ProfileSection = ({
         <div className={`flex flex-col  ${styles.autofill}`}>
           <p className="text-white text-sm font-normal mb-2">Your Name</p>
           <input
+            required
             onChange={handleInputs}
             name="Name"
             type="text"
@@ -357,6 +421,7 @@ const ProfileSection = ({
         <div className={`flex flex-col  ${styles.autofill}`}>
           <p className="text-white text-sm font-normal mb-2">Your Role</p>
           <input
+            required
             onChange={handleInputs}
             name="Role"
             type="text"
@@ -445,6 +510,7 @@ function WebBuilderForm({
             </h1>
             <p className="text-white text-sm font-normal mb-2">Title Text</p>
             <input
+              required
               onChange={handleInputs}
               name="Title"
               type="text"
@@ -457,6 +523,7 @@ function WebBuilderForm({
         <div className={`flex flex-col w-full ${styles.autofill}`}>
           <p className="text-white text-sm font-normal mb-2">Body Text</p>
           <textarea
+            required
             onChange={handleInputs}
             name="Body"
             placeholder="Type your body text for the website here"
