@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Avatar from "../../public/Avatar.svg";
 import WalletConnect from "../WalletConnect";
@@ -44,27 +44,39 @@ export default function PageBuilder() {
   // const [addressDomain, setAddressDomain] = useState<Array<Domain>>([])
 
   const { address, isConnected } = useAccount();
-  const [selectText, setSelectText] = useState();
+  const [selectText, setSelectText] = useState("");
 
   const [countBuilder, setCountBuilder] = useState(0);
+
+  const [formState, setFormState] = useState({
+    title: undefined,
+    background: undefined,
+    body: undefined,
+    theme: "glassmorphsm",
+    button1: undefined,
+    button1Link: undefined,
+    contactButton: undefined,
+    name: undefined,
+    role: undefined,
+    profilePicture: undefined,
+    buttonColor: "#F97316",
+  });
+
+  useEffect(() => {
+    // Check if there are any undefined values in formState
+    const hasUndefinedValues = Object.values(formState).some(
+      (value) => value === undefined
+    );
+
+    // Update countBuilder based on the condition
+    if (!hasUndefinedValues && countBuilder === 1) {
+      setCountBuilder(2);
+    }
+  }, [formState, countBuilder]);
 
   interface UpdateFunctions {
     [key: string]: Dispatch<SetStateAction<any>>;
   }
-
-  const [formState, setFormState] = useState({
-    title: "",
-    background: "",
-    body: "",
-    theme: "glassmorphsm",
-    button1: "",
-    button1Link: "",
-    contactButton: "",
-    name: "",
-    role: "",
-    profilePicture: undefined,
-    buttonColor: "#F97316",
-  });
 
   const updateFunctions: UpdateFunctions = {
     Title: (value) =>
@@ -112,7 +124,7 @@ export default function PageBuilder() {
       updateFunction(event);
     }
   };
-
+  console.log(formState);
   return (
     <div
       onClick={() => {
@@ -121,7 +133,11 @@ export default function PageBuilder() {
       className="flex-col w-11/12 mt-6 mx-auto lg:flex lg:flex-row lg:w-full"
     >
       <div className="flex-col bg-gray-800 px-4 sm:px-8 py-5 w-full rounded-md lg:w-3/4 lg:mr-2">
-        <HeaderBuilder selectText={selectText} setSelectText={setSelectText} />
+        <HeaderBuilder
+          selectText={selectText}
+          setSelectText={setSelectText}
+          setCountBuilder={setCountBuilder}
+        />
         <Preview formState={formState} />
         <WebBuilderForm
           handleInputs={handleInputs}

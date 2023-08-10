@@ -17,14 +17,19 @@ type Domain = {
 const Rev_Record_Line = ({
   text,
   setSelectText,
+  setCountBuilder,
 }: {
   text: string;
   setSelectText: React.Dispatch<React.SetStateAction<string>>;
+  setCountBuilder: any;
 }) => {
   return (
     <>
       <p
-        onClick={() => setSelectText(text)}
+        onClick={() => {
+          setSelectText(text);
+          setCountBuilder(1);
+        }}
         className="py-4 px-3 text-gray-200 font-normal text-sm cursor-pointer hover:bg-gray-500 rounded-lg"
       >
         {text}
@@ -39,12 +44,14 @@ const Dropdown = ({
   addressDomain,
   selectText,
   setSelectText,
+  setCountBuilder,
 }: {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   addressDomain: Array<Domain>;
   selectText: string;
   setSelectText: React.Dispatch<React.SetStateAction<string>>;
+  setCountBuilder: number;
 }) => {
   return (
     <>
@@ -72,6 +79,7 @@ const Dropdown = ({
               key={index}
               text={item.label}
               setSelectText={setSelectText}
+              setCountBuilder={setCountBuilder}
             />
           ))}
         </div>
@@ -83,9 +91,11 @@ const Dropdown = ({
 export default function HeaderBuilder({
   selectText,
   setSelectText,
+  setCountBuilder,
 }: {
-  selectText: any;
+  selectText: string;
   setSelectText: any;
+  setCountBuilder: any;
 }) {
   // const router = useRouter();
   // const [route, setRoute] = useState('')
@@ -170,6 +180,7 @@ export default function HeaderBuilder({
           addressDomain={addressDomain}
           selectText={selectText}
           setSelectText={setSelectText}
+          setCountBuilder={setCountBuilder}
         />
       </div>
     </>

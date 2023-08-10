@@ -51,7 +51,7 @@ const BackgroundSelector = ({
             />
             <input
               required
-              id="dropzone-profile-file"
+              id="dropzone-background-file"
               type="file"
               style={{
                 position: "absolute",
@@ -80,7 +80,7 @@ const BackgroundSelector = ({
             />
             <input
               required
-              id="dropzone-profile-file"
+              id="dropzone-background-file"
               type="file"
               style={{
                 position: "absolute",
