@@ -1,10 +1,10 @@
 import React from "react";
-import SideNavbar from "../../../components/SideNavbar";
-import Page from "../../../components/MyAccount";
-import Links from "../../../components/Links";
-import PageBuilder from "../../../components/PageBuilder";
+import SideNavbar from "../../components/SideNavbar";
+import Page from "../../components/MyAccount";
+import Links from "../../components/Links";
+import PageBuilder from "../../components/PageBuilder";
 
-export default function My_Account() {
+export default function Page_Builder() {
   return (
     <>
       <div className="min-h-screen lg:min-h-full">

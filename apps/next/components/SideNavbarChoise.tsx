@@ -24,12 +24,12 @@ const buttonData = [
     alt: "Account",
   },
   {
-    page: "/page_builder",
-    text: "Website Builder",
+    page: "/websites",
+    text: "Websites",
     button_style: "",
     text_style: "",
     src: WebsiteBuilder,
-    alt: "WebsiteBuilder",
+    alt: "Websites",
   },
   {
     page: "/faq",
