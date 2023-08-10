@@ -1,23 +1,23 @@
-import React, { useEffect } from 'react'
-import X from '../public/X.svg'
-import Network from '../public/Network.svg'
-import Image from 'next/image'
-import { Web3Button } from '@web3modal/react'
-import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
+import React, { useEffect } from "react";
+import X from "../public/X.svg";
+import Network from "../public/Network.svg";
+import Image from "next/image";
+import { Web3Button } from "@web3modal/react";
+import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 
 const WalletConnectSection = () => {
-  const { isConnected } = useAccount() as any
-  const { chain } = useNetwork()
-  const { switchNetwork } = useSwitchNetwork()
+  const { isConnected } = useAccount() as any;
+  const { chain } = useNetwork();
+  const { switchNetwork } = useSwitchNetwork();
 
   useEffect(() => {
-    if (chain?.id !== 14 && chain?.name !== 'Flare') {
-      switchNetwork?.(14)
-    }
-    // if (chain?.id !== 114 && chain?.name !== 'Coston2') {
-    //   switchNetwork?.(114)
+    // if (chain?.id !== 14 && chain?.name !== 'Flare') {
+    //   switchNetwork?.(14)
     // }
-  }, [chain, switchNetwork])
+    if (chain?.id !== 114 && chain?.name !== "Coston2") {
+      switchNetwork?.(114);
+    }
+  }, [chain, switchNetwork]);
 
   return (
     <>
@@ -29,14 +29,14 @@ const WalletConnectSection = () => {
           alt={isConnected ? "Network" : "X"}
         />
         <p className="text-xs font-medium shrink-0">
-          {isConnected ? `${chain?.name} Network` : 'Wallet Not Connected'}
+          {isConnected ? `${chain?.name} Network` : "Wallet Not Connected"}
         </p>
       </div>
       {/* Messages */}
       <p className="text-white font-bold text-xl mt-2 mx-2 text-center">
         {isConnected
-          ? 'Your wallet is connected'
-          : 'Your wallet is not connected'}
+          ? "Your wallet is connected"
+          : "Your wallet is not connected"}
       </p>
       {!isConnected && (
         <p className="text-[#94A3B8] text-[0.625rem] mt-2 mx-2 text-center">
@@ -48,8 +48,8 @@ const WalletConnectSection = () => {
         <Web3Button icon="hide" label="Connect Wallet +" balance="hide" />
       </div>
     </>
-  )
-}
+  );
+};
 
 function WalletConnect() {
   return (
@@ -59,7 +59,7 @@ function WalletConnect() {
         <WalletConnectSection />
       </div>
     </>
-  )
+  );
 }
 
-export default WalletConnect
+export default WalletConnect;
