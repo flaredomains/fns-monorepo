@@ -437,7 +437,13 @@ const ProfileSection = ({
   );
 };
 
-const SubmitSection = ({ handleInputs }: { handleInputs: any }) => {
+const SubmitSection = ({
+  handleInputs,
+  selectText,
+}: {
+  handleInputs: any;
+  selectText: any;
+}) => {
   const [backgroundColor, setBackgroundColor] = useState("#F97316");
 
   const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -473,7 +479,9 @@ const SubmitSection = ({ handleInputs }: { handleInputs: any }) => {
         <span className="text-gray-400 text-sm">
           You will be minting this website on
         </span>
-        <p className="text-white text-sm font-normal">https://example.flr</p>
+        <p className="text-white text-sm font-normal">
+          {selectText ? selectText + ".flr" : "Example.flr"}
+        </p>
       </div>
       <div className="flex justify-center lg:justify-normal">
         <button className="flex lg:w-full items-center gap-2 bg-[#F97316] py-3 px-5 rounded-md text-white font-normal hover:brightness-110">
@@ -495,18 +503,23 @@ function WebBuilderForm({
   handleInputs,
   handleBackground,
   handleProfile,
+  selectText,
 }: {
   handleInputs: any;
   handleBackground: any;
   handleProfile: any;
+  selectText: any;
 }) {
   return (
     <div>
       <form action="" className="flex flex-col gap-6">
         <div className="flex flex-col lg:flex-row w-full gap-6">
           <div className={`flex flex-col w-full lg:w-1/2 ${styles.autofill}`}>
-            <h1 className="text-white font-semibold text-4xl mb-6">
-              Example.flr
+            <h1
+              className="text-white font-semibold text-4xl mb-6"
+              style={{ wordBreak: "break-word" }}
+            >
+              {selectText ? selectText + ".flr" : "Example.flr"}
             </h1>
             <p className="text-white text-sm font-normal mb-2">Title Text</p>
             <input
@@ -536,7 +549,7 @@ function WebBuilderForm({
           handleInputs={handleInputs}
           handleProfile={handleProfile}
         />
-        <SubmitSection handleInputs={handleInputs} />
+        <SubmitSection handleInputs={handleInputs} selectText={selectText} />
       </form>
     </div>
   );

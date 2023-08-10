@@ -4,11 +4,89 @@ import PageBuilderImage from "../../public/PageBuilderImage.png";
 import Search from "../../public/Search.png";
 import styles from "../../src/styles/Main.module.css";
 import { useRouter } from "next/router";
-import { useAccount } from "wagmi";
+import { useAccount, useContractRead } from "wagmi";
+import ArrowDown from "../../public/ArrowDown.svg";
+import MintedDomainNames from "../../src/pages/abi/MintedDomainNames.json";
 
-export default function HeaderBuilder() {
-  const { address, isConnected } = useAccount() as any;
+type Domain = {
+  label: string;
+  expire: number;
+  isSubdomain: boolean;
+};
 
+const Rev_Record_Line = ({
+  text,
+  setSelectText,
+}: {
+  text: string;
+  setSelectText: React.Dispatch<React.SetStateAction<string>>;
+}) => {
+  return (
+    <>
+      <p
+        onClick={() => setSelectText(text)}
+        className="py-4 px-3 text-gray-200 font-normal text-sm cursor-pointer hover:bg-gray-500 rounded-lg"
+      >
+        {text}
+      </p>
+    </>
+  );
+};
+
+const Dropdown = ({
+  isOpen,
+  setIsOpen,
+  addressDomain,
+  selectText,
+  setSelectText,
+}: {
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  addressDomain: Array<Domain>;
+  selectText: string;
+  setSelectText: React.Dispatch<React.SetStateAction<string>>;
+}) => {
+  return (
+    <>
+      <div
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex-col cursor-pointer relative w-full md:w-full lg:w-1/2 z-20"
+      >
+        <div className="flex justify-between items-center p-3 w-full mt-7 bg-gray-700 rounded-lg">
+          <p
+            className={`text-base font-medium ${
+              selectText ? "text-gray-200" : "text-gray-400"
+            }`}
+          >
+            {selectText ? selectText : "Select Your FNS Domain"}
+          </p>
+          <Image className="h-2 w-3" src={ArrowDown} alt="ArrowDown" />
+        </div>
+        <div
+          className={`${
+            isOpen ? "absolute" : "hidden"
+          } bg-gray-700 w-full mt-2 rounded-lg`}
+        >
+          {addressDomain.map((item, index) => (
+            <Rev_Record_Line
+              key={index}
+              text={item.label}
+              setSelectText={setSelectText}
+            />
+          ))}
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default function HeaderBuilder({
+  selectText,
+  setSelectText,
+}: {
+  selectText: any;
+  setSelectText: any;
+}) {
   // const router = useRouter();
   // const [route, setRoute] = useState('')
   // const handleSubmit = (e: any) => {
@@ -32,6 +110,37 @@ export default function HeaderBuilder() {
   //   }
   // }
 
+  const [isOpen, setIsOpen] = useState(false);
+  const [addressDomain, setAddressDomain] = useState<Array<Domain>>([]);
+
+  const { address, isConnected } = useAccount() as any;
+
+  const { data } = useContractRead({
+    address: MintedDomainNames.address as `0x${string}`,
+    abi: MintedDomainNames.abi,
+    functionName: "getAll",
+    enabled: isConnected,
+    args: [address],
+    onSuccess(data: any) {
+      // console.log('Success getAll', data)
+      // console.log('Get array of domains', data)
+
+      // Ensure we only use the length returned for still-owned domains (after a transfer)
+      const arrDomains = data.data.slice(0, data._length.toNumber());
+      const ownedDomain = arrDomains.map((item: any, index: any) => {
+        return {
+          label: item.label,
+          expire: Number(item.expiry),
+          isSubdomain: /[a-zA-Z0-9]+\.{1}[a-zA-Z0-9]+/.test(item.label),
+        };
+      });
+      setAddressDomain(ownedDomain);
+    },
+    onError(error) {
+      console.error("Error getAll", error);
+    },
+  });
+
   return (
     <>
       <div className="flex flex-col lg:flex-row items-center py-5">
@@ -53,28 +162,15 @@ export default function HeaderBuilder() {
             </p>
           </div>
         </div>
-        <form
-          // onSubmit={handleSubmit}
-          className={`flex items-center w-full lg:w-1/2 mt-6 lg:mt-0 py-2 px-4 h-12 rounded-md bg-gray-700 border-2 border-gray-500 ${styles.autofill}`}
-        >
-          <Image className="z-10 h-6 w-6 mr-2" src={Search} alt="Search" />
-          <input
-            type="text"
-            name="input-field"
-            // value={route}
-            // onChange={(e) => {
-            //   setRoute(e.target.value.toLowerCase());
-            // }}
-            onInput={(event) => {
-              const inputElement = event.target as HTMLInputElement;
-              inputElement.setCustomValidity("");
-            }}
-            className="w-full bg-transparent font-normal text-base text-white border-0 focus:outline-none placeholder:text-gray-300 placeholder:font-normal"
-            placeholder="Select Your Domain Here"
-            spellCheck="false"
-            required
-          />
-        </form>
+
+        {/* Dropdown */}
+        <Dropdown
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          addressDomain={addressDomain}
+          selectText={selectText}
+          setSelectText={setSelectText}
+        />
       </div>
     </>
   );

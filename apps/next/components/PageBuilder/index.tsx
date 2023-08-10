@@ -44,6 +44,7 @@ export default function PageBuilder() {
   // const [addressDomain, setAddressDomain] = useState<Array<Domain>>([])
 
   const { address, isConnected } = useAccount();
+  const [selectText, setSelectText] = useState();
 
   const [countBuilder, setCountBuilder] = useState(0);
 
@@ -120,12 +121,13 @@ export default function PageBuilder() {
       className="flex-col w-11/12 mt-6 mx-auto lg:flex lg:flex-row lg:w-full"
     >
       <div className="flex-col bg-gray-800 px-4 sm:px-8 py-5 w-full rounded-md lg:w-3/4 lg:mr-2">
-        <HeaderBuilder />
+        <HeaderBuilder selectText={selectText} setSelectText={setSelectText} />
         <Preview formState={formState} />
         <WebBuilderForm
           handleInputs={handleInputs}
           handleBackground={handleBackground}
           handleProfile={handleProfile}
+          selectText={selectText}
         />
 
         <div className="flex flex-col my-10 w-full lg:flex-row">
