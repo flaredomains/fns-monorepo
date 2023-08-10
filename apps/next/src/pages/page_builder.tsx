@@ -1,9 +1,10 @@
 import React from "react";
-import SideNavbar from "../../../components/SideNavbar";
-import MyAccount from "../../../components/MyAccount";
-import Links from "../../../components/Links";
+import SideNavbar from "../../components/SideNavbar";
+import Page from "../../components/MyAccount";
+import Links from "../../components/Links";
+import PageBuilder from "../../components/PageBuilder";
 
-export default function My_Account() {
+export default function Page_Builder() {
   return (
     <>
       <div className="min-h-screen lg:min-h-full">
@@ -11,9 +12,9 @@ export default function My_Account() {
           {/* Left Side / Navbar */}
           <SideNavbar />
 
-          {/* Register */}
+          {/* PageBuilder */}
           <div className="flex flex-col mt-9 pb-8 lg:mx-8 w-full min-h-screen lg:min-h-full lg:w-3/4 justify-between lg:justify-normal">
-            <MyAccount />
+            <PageBuilder />
 
             {/* Links */}
             <div className="flex flex-row lg:hidden w-full justify-center mt-8 gap-8 ">
