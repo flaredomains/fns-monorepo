@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import styles from "../../src/styles/Main.module.css";
 import Upload from "../../public/Upload_image.png";
@@ -7,6 +7,7 @@ import Light from "../../public/LightTheme.png";
 import Dark from "../../public/DarkTheme.png";
 import ArrowRight from "../../public/ArrowRight.png";
 import { Gradients } from "./Preview";
+import { BlockPicker } from "react-color";
 
 const BackgroundSelector = ({
   handleBackground,
@@ -438,41 +439,64 @@ const ProfileSection = ({
 };
 
 const SubmitSection = ({
-  handleInputs,
+  handleColor,
   selectText,
 }: {
-  handleInputs: any;
+  handleColor: any;
   selectText: any;
 }) => {
-  const [backgroundColor, setBackgroundColor] = useState("#F97316");
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [color, setColor] = useState("#F97316");
+  const colorPickerRef = useRef<HTMLDivElement | null>(null);
 
-  const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newColor = event.target.value;
-    if (newColor === "") {
-      setBackgroundColor("#F97316");
-    } else {
-      setBackgroundColor(newColor);
-    }
+  const handleColorPicker = () => {
+    setShowColorPicker(!showColorPicker); // Toggle color picker visibility
   };
+
+  // Event listener to close color picker when clicking outside
+  useEffect(() => {
+    const handleOutsideClick = (event: { target: any }) => {
+      if (
+        colorPickerRef.current &&
+        !colorPickerRef.current.contains(event.target)
+      ) {
+        setShowColorPicker(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+
   return (
-    <div className="flex flex-col lg:flex-row lg:my-9 justify-between gap-4 lg:gap-0">
+    <div className="flex flex-col lg:flex-row lg:my-9 items-center justify-between gap-4 lg:gap-0">
       <div className="flex flex-col gap-1">
         <p className="text-white text-sm font-normal">Main Button Color</p>
-        <div className="flex gap-1 items-center">
+        <div className="flex flex-col-reverse lg:flex-row gap-1 items-center">
           <div
+            onClick={handleColorPicker}
             className={`h-5 w-5 rounded-md`}
-            style={{ backgroundColor: backgroundColor }}
+            style={{ backgroundColor: color }}
           ></div>
-          <input
-            onChange={(e) => {
-              handleInputs(e);
-              handleColorChange(e);
-            }}
-            name="ButtonColor"
-            className="text-gray-300 text-sm font-medium leading-tight bg-transparent max-w-[70px] focus:outline-none"
-            type="text"
-            placeholder={"#F97316"}
-          />
+          <div className="relative -left-[85px] lg:-left-[99px] top-9 lg:top-5">
+            {showColorPicker && (
+              <div ref={colorPickerRef} className="absolute  shadow-xl">
+                <BlockPicker
+                  color={color}
+                  onChange={(updatedColor) => {
+                    setColor(updatedColor.hex);
+                    handleColor(updatedColor.hex);
+                  }}
+                />
+              </div>
+            )}
+          </div>
+          <p className="text-gray-300 text-sm font-medium leading-tight bg-transparent max-w-[70px] focus:outline-none">
+            {color}
+          </p>
         </div>
       </div>
       <div className="flex flex-col gap-1 lg:mx-8">
@@ -503,11 +527,13 @@ function WebBuilderForm({
   handleInputs,
   handleBackground,
   handleProfile,
+  handleColor,
   selectText,
 }: {
   handleInputs: any;
   handleBackground: any;
   handleProfile: any;
+  handleColor: any;
   selectText: any;
 }) {
   return (
@@ -549,7 +575,7 @@ function WebBuilderForm({
           handleInputs={handleInputs}
           handleProfile={handleProfile}
         />
-        <SubmitSection handleInputs={handleInputs} selectText={selectText} />
+        <SubmitSection handleColor={handleColor} selectText={selectText} />
       </form>
     </div>
   );

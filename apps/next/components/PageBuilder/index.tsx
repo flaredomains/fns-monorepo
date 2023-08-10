@@ -124,7 +124,14 @@ export default function PageBuilder() {
       updateFunction(event);
     }
   };
-  console.log(formState);
+
+  const handleColor = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const updateFunction = updateFunctions["ButtonColor"];
+    if (updateFunction) {
+      updateFunction(event);
+    }
+  };
+
   return (
     <div
       onClick={() => {
@@ -143,6 +150,7 @@ export default function PageBuilder() {
           handleInputs={handleInputs}
           handleBackground={handleBackground}
           handleProfile={handleProfile}
+          handleColor={handleColor}
           selectText={selectText}
         />
 
