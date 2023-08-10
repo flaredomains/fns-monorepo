@@ -40,8 +40,11 @@ const ButtonSection = ({ formState }: { formState: any }) => {
     <>
       <div className="flex items-center mb-4 lg:mb-5">
         <button
-          className={`flex items-center justify-center mr-2 px-[0.3rem] py-[0.2rem] lg:px-[0.4rem] lg:py-[0.3rem] gap-[0.2rem] rounded-sm shadow border bg-[#${formState.buttonColor}] border-[#${formState.buttonColor}]/75`}
-          style={{ backgroundColor: formState.buttonColor }}
+          className={`flex items-center justify-center mr-2 px-[0.3rem] py-[0.2rem] lg:px-[0.4rem] lg:py-[0.3rem] gap-[0.2rem] rounded-sm shadow border`}
+          style={{
+            backgroundColor: formState.buttonColor,
+            borderColor: formState.buttonColor,
+          }}
         >
           <p
             className={`text-[0.22rem] lg:text-[0.375rem] font-semibold ${
@@ -60,8 +63,16 @@ const ButtonSection = ({ formState }: { formState: any }) => {
             alt="ArrowUpRight"
           />
         </button>
-        <button className="flex items-center justify-center bg-trasparent px-[0.3rem] py-[0.2rem] lg:px-[0.4rem] lg:py-[0.3rem] gap-[0.2rem] rounded-sm border border-white border-opacity-50">
-          <p className="text-white text-[0.22rem] lg:text-[0.375rem] font-semibold ">
+        <button
+          className={`flex items-center justify-center bg-trasparent px-[0.3rem] py-[0.2rem] lg:px-[0.4rem] lg:py-[0.3rem] gap-[0.2rem] rounded-sm border ${
+            formState.theme === "light" ? "border-black" : "border-white"
+          } border-opacity-50`}
+        >
+          <p
+            className={`text-[0.22rem] lg:text-[0.375rem] font-semibold ${
+              formState.theme === "light" ? "text-black" : "text-white"
+            }`}
+          >
             {formState.contactButton || "Contact Me"}
           </p>
         </button>
