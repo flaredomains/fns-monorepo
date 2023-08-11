@@ -504,7 +504,9 @@ const SubmitSection = ({
           You will be minting this website on
         </span>
         <p className="text-white text-sm font-normal">
-          {selectText ? selectText + ".flr" : "Example.flr"}
+          {selectText
+            ? "https://app.flrns.domains/" + selectText + ".flr"
+            : "https://app.flrns.domains/example.flr"}
         </p>
       </div>
       <div className="flex justify-center lg:justify-normal">

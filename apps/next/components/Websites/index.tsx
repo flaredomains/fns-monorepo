@@ -45,11 +45,18 @@ const OwnedDomains = ({
           </Link>
         </div>
         {/* Date exp */}
-        <div className="flex items-center justify-center bg-gray-700 rounded-lg px-3 md:shrink-0">
-          <p className="text-gray-300 text-xs font-medium py-1">
-            {isSubdomain ? "No Expiry" : `Expires ${month}/${day}/${year}`}
-          </p>
-        </div>
+        <Link
+          href={{
+            pathname: "page_builder",
+            query: { result: domain + ".flr" },
+          }}
+        >
+          <div className="flex items-center justify-center bg-[#1F2936] border border-slate-200 cursor-pointer rounded-lg px-3 py-2 md:shrink-0 hover:brightness-150">
+            <p className="text-white text-xs font-medium py-1">
+              Create Website
+            </p>
+          </div>
+        </Link>
       </div>
     </>
   );

@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import Avatar from "../../public/Avatar.svg";
+import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
 import WalletConnect from "../WalletConnect";
-import Link from "next/link";
 import HeaderBuilder from "./HeaderBuilder";
-
-import { useAccount } from "wagmi";
 import WebBuilderForm from "./WebBuilderForm";
 import Preview from "./Preview";
 
+import { useAccount } from "wagmi";
+
 import { Step } from "../Register/Steps";
 
-import { Dispatch, SetStateAction } from "react";
+import { useRouter } from "next/router";
 
 const progressArr = [
   {
@@ -41,7 +38,7 @@ type Domain = {
 
 export default function PageBuilder() {
   const [isOpen, setIsOpen] = useState(false);
-  // const [addressDomain, setAddressDomain] = useState<Array<Domain>>([])
+  const router = useRouter();
 
   const { address, isConnected } = useAccount();
   const [selectText, setSelectText] = useState("");
@@ -73,6 +70,17 @@ export default function PageBuilder() {
       setCountBuilder(2);
     }
   }, [formState, countBuilder]);
+
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    const result = router.query.result as string;
+    const resultFiltered = result.endsWith(".flr")
+      ? result.slice(0, -4)
+      : result;
+
+    setSelectText(resultFiltered);
+  }, [router.isReady, router.query]);
 
   interface UpdateFunctions {
     [key: string]: Dispatch<SetStateAction<any>>;
