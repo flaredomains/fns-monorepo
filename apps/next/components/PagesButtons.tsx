@@ -84,13 +84,10 @@ function PagesButtons({ result, path }: any) {
   const handleSubmit = (e: any) => {
     e.preventDefault()
 
-    // Regular expression to validate input /^[a-zA-Z0-9\s\p{Emoji}]+\.flr$/u
-    const pattern =
-      /^[a-zA-Z0-9\s\p{Emoji}]+(\.[a-zA-Z0-9\s\p{Emoji}]+)*\.flr$/u
+    // Regular expression to validate input
+    const pattern = /^[a-zA-Z0-9-_$]+\.flr$/
 
-    const exception = /^0x[a-fA-F0-9]{40}$/
-
-    if (pattern.test(route) || exception.test(route)) {
+    if (pattern.test(route)) {
       console.log('Input is valid!')
       router.push(path + '?result=' + route.toLowerCase())
     } else {
@@ -137,7 +134,7 @@ function PagesButtons({ result, path }: any) {
             name="input-field"
             value={route}
             onChange={(e) => {
-              setRoute(e.target.value.toLowerCase().toLowerCase())
+              setRoute(e.target.value.toLowerCase())
             }}
             onInput={(event) => {
               const inputElement = event.target as HTMLInputElement

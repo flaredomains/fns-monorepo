@@ -17,12 +17,9 @@ function Main() {
     e.preventDefault()
 
     // Regular expression to validate input
-    const pattern =
-      /^[a-zA-Z0-9-\s\p{Emoji}]+(\.[a-zA-Z0-9-\s\p{Emoji}]+)*\.flr$/u
+    const pattern = /^[a-zA-Z0-9-_$]+\.flr$/
 
-    const exception = /^0x[a-fA-F0-9]{40}$/
-
-    if (pattern.test(route) || exception.test(route)) {
+    if (pattern.test(route)) {
       console.log('Input is valid!')
       router.push('register?result=' + route.toLowerCase())
     } else {
