@@ -42,26 +42,33 @@ const ButtonSection = ({ formState }: { formState: any }) => {
         <button
           className={`flex items-center justify-center mr-2 px-[0.3rem] py-[0.2rem] lg:px-[0.4rem] lg:py-[0.3rem] gap-[0.2rem] rounded-sm shadow border`}
           style={{
-            backgroundColor: formState.buttonColor,
-            borderColor: formState.buttonColor,
+            backgroundColor: formState.buttonBackgroundColor,
+            borderColor: formState.buttonBackgroundColor,
+            color: formState.buttonTextColor,
           }}
         >
           <p
-            className={`text-[0.22rem] lg:text-[0.375rem] font-semibold ${
-              formState.theme === "glassmorphsm"
-                ? "text-slate-700"
-                : formState.theme === "light"
-                ? "text-white"
-                : "text-slate-700"
-            }`}
+            className={`text-[0.22rem] lg:text-[0.375rem] font-semibold`}
+            style={{
+              color: formState.buttonTextColor,
+            }}
           >
             {formState.button1 || "Pay Me"}
           </p>
-          <Image
-            className="w-1 h-1 lg:w-2 lg:h-2"
-            src={ArrowUpRight}
-            alt="ArrowUpRight"
-          />
+          <svg
+            width="7"
+            height="7"
+            viewBox="0 0 7 7"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M2.32227 4.54375L4.9843 1.88171M4.9843 1.88171H2.32227M4.9843 1.88171V4.54375"
+              stroke="currentColor"
+              stroke-width="0.532407"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
         </button>
         <button
           className={`flex items-center justify-center bg-trasparent px-[0.3rem] py-[0.2rem] lg:px-[0.4rem] lg:py-[0.3rem] gap-[0.2rem] rounded-sm border ${

@@ -344,7 +344,9 @@ const ButtonsSection = ({ handleInputs }: { handleInputs: any }) => {
     <div className="flex flex-col gap-8">
       <div className="flex flex-col lg:flex-row gap-6">
         <div className={`flex flex-col w-full lg:w-1/2 ${styles.autofill}`}>
-          <p className="text-white text-sm font-normal mb-2">Button #1 Text</p>
+          <p className="text-white text-sm font-normal mb-2">
+            Main Button Text
+          </p>
           <input
             required
             onChange={handleInputs}
@@ -355,7 +357,9 @@ const ButtonsSection = ({ handleInputs }: { handleInputs: any }) => {
           />
         </div>
         <div className={`flex flex-col w-full lg:w-1/2 ${styles.autofill}`}>
-          <p className="text-white text-sm font-normal mb-2">Button #1 Link</p>
+          <p className="text-white text-sm font-normal mb-2">
+            Main Button Link
+          </p>
           <input
             required
             onChange={handleInputs}
@@ -439,28 +443,57 @@ const ProfileSection = ({
 };
 
 const SubmitSection = ({
-  handleColor,
+  handleBackgroundColor,
+  handleTextColor,
   selectText,
 }: {
-  handleColor: any;
+  handleBackgroundColor: any;
+  handleTextColor: any;
   selectText: any;
 }) => {
-  const [showColorPicker, setShowColorPicker] = useState(false);
-  const [color, setColor] = useState("#F97316");
-  const colorPickerRef = useRef<HTMLDivElement | null>(null);
+  const [showBackgroundColorPicker, setShowBackgroundColorPicker] =
+    useState(false);
+  const [backgroundColor, setColor] = useState("#F97316");
+  const backgroundColorPickerRef = useRef<HTMLDivElement | null>(null);
 
-  const handleColorPicker = () => {
-    setShowColorPicker(!showColorPicker); // Toggle color picker visibility
+  const [showTextColorPicker, setShowTextColorPicker] = useState(false);
+  const [textColor, setTextColor] = useState("#FFFFFF");
+  const textColorPickerRef = useRef<HTMLDivElement | null>(null);
+
+  const handleBackgroundColorPicker = () => {
+    setShowBackgroundColorPicker(!showBackgroundColorPicker); // Toggle color picker visibility
   };
 
   // Event listener to close color picker when clicking outside
   useEffect(() => {
     const handleOutsideClick = (event: { target: any }) => {
       if (
-        colorPickerRef.current &&
-        !colorPickerRef.current.contains(event.target)
+        backgroundColorPickerRef.current &&
+        !backgroundColorPickerRef.current.contains(event.target)
       ) {
-        setShowColorPicker(false);
+        setShowBackgroundColorPicker(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+
+  const handleTextColorPicker = () => {
+    setShowTextColorPicker(!showTextColorPicker); // Toggle color picker visibility
+  };
+
+  // Event listener to close color picker when clicking outside
+  useEffect(() => {
+    const handleOutsideClick = (event: { target: any }) => {
+      if (
+        textColorPickerRef.current &&
+        !textColorPickerRef.current.contains(event.target)
+      ) {
+        setShowTextColorPicker(false);
       }
     };
 
@@ -472,31 +505,66 @@ const SubmitSection = ({
   }, []);
 
   return (
-    <div className="flex flex-col lg:flex-row lg:my-9 items-center justify-between gap-4 lg:gap-0">
-      <div className="flex flex-col gap-1">
-        <p className="text-white text-sm font-normal">Main Button Color</p>
-        <div className="flex flex-col-reverse lg:flex-row gap-1 items-center">
-          <div
-            onClick={handleColorPicker}
-            className={`h-5 w-5 rounded-md cursor-pointer`}
-            style={{ backgroundColor: color }}
-          ></div>
-          <div className="relative -left-[100px] lg:-left-[115px] top-9 lg:top-5">
-            {showColorPicker && (
-              <div ref={colorPickerRef} className="absolute  shadow-xl">
-                <HexColorPicker
-                  color={color}
-                  onChange={(updatedColor) => {
-                    setColor(updatedColor);
-                    handleColor(updatedColor);
-                  }}
-                />
-              </div>
-            )}
-          </div>
-          <p className="text-gray-300 text-sm font-medium leading-tight bg-transparent max-w-[70px] focus:outline-none">
-            {color}
+    <div className="flex flex-col lg:flex-row lg:my-9 items-center lg:items-start justify-between gap-4 lg:gap-0">
+      <div className="flex flex-col gap-4 items-center lg:items-start">
+        <div className="flex flex-col gap-1">
+          <p className="text-white text-sm font-normal">
+            Main Button Background Color
           </p>
+          <div className="flex flex-col-reverse lg:flex-row gap-1 items-center">
+            <div
+              onClick={handleBackgroundColorPicker}
+              className={`h-5 w-5 rounded-md`}
+              style={{ backgroundColor: backgroundColor }}
+            ></div>
+            <div className="relative -left-[100px] lg:-left-[115px] top-9 lg:top-5">
+              {showBackgroundColorPicker && (
+                <div
+                  ref={backgroundColorPickerRef}
+                  className="absolute  shadow-xl"
+                >
+                  <HexColorPicker
+                    color={backgroundColor}
+                    onChange={(updatedColor) => {
+                      setColor(updatedColor);
+                      handleBackgroundColor(updatedColor);
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+            <p className="text-gray-300 text-sm font-medium leading-tight bg-transparent max-w-[70px] focus:outline-none">
+              {backgroundColor}
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-col gap-1">
+          <p className="text-white text-sm font-normal">
+            Main Button Text Color
+          </p>
+          <div className="flex flex-col-reverse lg:flex-row gap-1 items-center">
+            <div
+              onClick={handleTextColorPicker}
+              className={`h-5 w-5 rounded-md`}
+              style={{ backgroundColor: textColor }}
+            ></div>
+            <div className="relative -left-[100px] lg:-left-[115px] top-9 lg:top-5">
+              {showTextColorPicker && (
+                <div ref={textColorPickerRef} className="absolute  shadow-xl">
+                  <HexColorPicker
+                    color={textColor}
+                    onChange={(updatedColor) => {
+                      setTextColor(updatedColor);
+                      handleTextColor(updatedColor);
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+            <p className="text-gray-300 text-sm font-medium leading-tight bg-transparent max-w-[70px] focus:outline-none">
+              {textColor}
+            </p>
+          </div>
         </div>
       </div>
       <div className="flex flex-col gap-1 lg:mx-8">
@@ -529,13 +597,15 @@ function WebBuilderForm({
   handleInputs,
   handleBackground,
   handleProfile,
-  handleColor,
+  handleBackgroundColor,
+  handleTextColor,
   selectText,
 }: {
   handleInputs: any;
   handleBackground: any;
   handleProfile: any;
-  handleColor: any;
+  handleBackgroundColor: any;
+  handleTextColor: any;
   selectText: any;
 }) {
   return (
@@ -577,7 +647,11 @@ function WebBuilderForm({
           handleInputs={handleInputs}
           handleProfile={handleProfile}
         />
-        <SubmitSection handleColor={handleColor} selectText={selectText} />
+        <SubmitSection
+          handleBackgroundColor={handleBackgroundColor}
+          handleTextColor={handleTextColor}
+          selectText={selectText}
+        />
       </form>
     </div>
   );
