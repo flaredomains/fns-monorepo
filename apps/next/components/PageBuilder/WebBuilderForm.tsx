@@ -478,7 +478,7 @@ const SubmitSection = ({
         <div className="flex flex-col-reverse lg:flex-row gap-1 items-center">
           <div
             onClick={handleColorPicker}
-            className={`h-5 w-5 rounded-md`}
+            className={`h-5 w-5 rounded-md cursor-pointer`}
             style={{ backgroundColor: color }}
           ></div>
           <div className="relative -left-[100px] lg:-left-[115px] top-9 lg:top-5">
