@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import SideNavbar from "../../components/SideNavbar";
-import Page from "../../components/MyAccount";
 import Links from "../../components/Links";
 import PageBuilder from "../../components/PageBuilder";
 
