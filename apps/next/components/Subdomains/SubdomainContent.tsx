@@ -100,7 +100,7 @@ const AddSubdomain = ({
                 name="input-field"
                 value={input}
                 onChange={(e) => {
-                  setInput(e.target.value);
+                  setInput(e.target.value.toLowerCase());
                 }}
                 className="w-full bg-transparent font-normal text-base text-white border-0 focus:outline-none placeholder:text-gray-300 placeholder:font-normal focus:bg-transparent"
                 placeholder="Type in a label for your subdomain"
