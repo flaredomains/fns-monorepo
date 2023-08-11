@@ -7,7 +7,7 @@ import Light from "../../public/LightTheme.png";
 import Dark from "../../public/DarkTheme.png";
 import ArrowRight from "../../public/ArrowRight.png";
 import { Gradients } from "./Preview";
-import { BlockPicker } from "react-color";
+import { HexColorPicker } from "react-colorful";
 
 const BackgroundSelector = ({
   handleBackground,
@@ -481,14 +481,14 @@ const SubmitSection = ({
             className={`h-5 w-5 rounded-md`}
             style={{ backgroundColor: color }}
           ></div>
-          <div className="relative -left-[85px] lg:-left-[99px] top-9 lg:top-5">
+          <div className="relative -left-[100px] lg:-left-[115px] top-9 lg:top-5">
             {showColorPicker && (
               <div ref={colorPickerRef} className="absolute  shadow-xl">
-                <BlockPicker
+                <HexColorPicker
                   color={color}
                   onChange={(updatedColor) => {
-                    setColor(updatedColor.hex);
-                    handleColor(updatedColor.hex);
+                    setColor(updatedColor);
+                    handleColor(updatedColor);
                   }}
                 />
               </div>
