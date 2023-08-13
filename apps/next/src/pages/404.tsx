@@ -72,12 +72,14 @@ export default function NotFound() {
             Sorry, we couldn’t find the page you’re looking for.
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
-            <a
-              href="/"
+            <Link
+              href={{
+                pathname: `/`,
+              }}
               className="rounded-md bg-[#F97316] px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:brightness-125 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Go back home
-            </a>
+            </Link>
           </div>
         </div>
       </div>
