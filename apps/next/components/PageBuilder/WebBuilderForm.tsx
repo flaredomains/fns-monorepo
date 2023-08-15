@@ -62,6 +62,7 @@ const BackgroundSelector = ({
                 width: "1px",
                 overflow: "hidden",
               }}
+              className="hidden"
               onChange={(e) => handleBackgroundFileSelect(e)}
             />
           </div>
@@ -91,6 +92,7 @@ const BackgroundSelector = ({
                 width: "1px",
                 overflow: "hidden",
               }}
+              className="hidden"
               onChange={(e) => handleBackgroundFileSelect(e)}
             />
           </div>
@@ -180,6 +182,7 @@ const ProfileSelector = ({ handleProfile }: { handleProfile: any }) => {
                 width: "1px",
                 overflow: "hidden",
               }}
+              className="hidden"
               onChange={(e) => handleProfileFileSelect(e)}
             />
           </div>
@@ -209,6 +212,7 @@ const ProfileSelector = ({ handleProfile }: { handleProfile: any }) => {
                 width: "1px",
                 overflow: "hidden",
               }}
+              className="hidden"
               onChange={(e) => handleProfileFileSelect(e)}
             />
           </div>
@@ -253,14 +257,16 @@ const ThemeSection = ({ handleInputs }: { handleInputs: any }) => {
       <div className="flex flex-col xl:flex-row gap-9 justify-center items-center">
         <label
           onClick={() => handleThemeChange("glassmorphsm")}
-          className="relative flex flex-col w-full max-w-xs items-center p-7 bg-[#94A3B8] rounded-lg gap-6 cursor-pointer"
+          className={`relative flex flex-col w-full max-w-xs items-center p-7 bg-[#94A3B8] rounded-lg gap-6 cursor-pointer ${
+            selectedTheme === "glassmorphsm" && "ring-4 ring-[#F97316]"
+          }`}
         >
           <input
-            hidden
             type="radio"
             onChange={handleInputs}
             name="Theme"
             value="glassmorphsm"
+            className="hidden"
           />
           <Image
             width={64}
@@ -282,14 +288,16 @@ const ThemeSection = ({ handleInputs }: { handleInputs: any }) => {
         </label>
         <label
           onClick={() => handleThemeChange("light")}
-          className="relative flex flex-col w-full max-w-xs items-center p-7 bg-[#94A3B8] rounded-lg gap-6 cursor-pointer"
+          className={`relative flex flex-col w-full max-w-xs items-center p-7 bg-[#94A3B8] rounded-lg gap-6 cursor-pointer ${
+            selectedTheme === "light" && "ring-4 ring-[#F97316]"
+          }`}
         >
           <input
-            hidden
             type="radio"
             onChange={handleInputs}
             name="Theme"
             value="light"
+            className="hidden"
           />
           <Image
             width={64}
@@ -309,14 +317,16 @@ const ThemeSection = ({ handleInputs }: { handleInputs: any }) => {
         </label>
         <label
           onClick={() => handleThemeChange("dark")}
-          className="relative flex flex-col w-full max-w-xs items-center p-7 bg-[#94A3B8] rounded-lg gap-6 cursor-pointer"
+          className={`relative flex flex-col w-full max-w-xs items-center p-7 bg-[#94A3B8] rounded-lg gap-6 cursor-pointer ${
+            selectedTheme === "dark" && "ring-4 ring-[#F97316]"
+          }`}
         >
           <input
-            hidden
             type="radio"
             onChange={handleInputs}
             name="Theme"
             value="dark"
+            className="hidden"
           />
           <Image
             width={64}

@@ -163,12 +163,12 @@ export const Gradients = () => {
   return (
     <>
       <Image
-        className="absolute top-0 left-0 h-2/5 w-full md:h-1/3 md:w-2/3 pointer-events-none"
+        className="absolute top-0 left-0 h-2/5 w-full md:h-1/3 md:w-2/3 pointer-events-none rounded-tl-lg"
         src={EllipseBuilderTop}
         alt="Gradient Top"
       />
       <Image
-        className="absolute bottom-0 right-0 rotate-180 h-2/5 w-full md:h-1/3 md:w-2/3 pointer-events-none"
+        className="absolute bottom-0 right-0 rotate-180 h-2/5 w-full md:h-1/3 md:w-2/3 pointer-events-none rounded-tl-lg"
         src={EllipseBuilderTop}
         alt="Gradient Top"
       />

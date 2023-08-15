@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react'
-import Image from 'next/image'
-import ArrowDown from '../../public/ArrowDown.svg'
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import ArrowDown from "../../public/ArrowDown.svg";
+import { Combobox } from "@headlessui/react";
+import Avatar from "../../public/Avatar.svg";
 
-import ReverseRegistrar from '../../src/pages/abi/ReverseRegistrar.json'
-import PublicRegistrar from '../../src/pages/abi/PublicResolver.json'
+import ReverseRegistrar from "../../src/pages/abi/ReverseRegistrar.json";
+import PublicRegistrar from "../../src/pages/abi/PublicResolver.json";
 
-const namehash = require('eth-ens-namehash')
+const namehash = require("eth-ens-namehash");
 
 import {
   useAccount,
@@ -13,180 +15,196 @@ import {
   useContractWrite,
   usePrepareContractWrite,
   useWaitForTransaction,
-} from 'wagmi'
+} from "wagmi";
 
-const Rev_Record_Line = ({
-  text,
-  setSelectText,
-}: {
-  text: string
-  setSelectText: React.Dispatch<React.SetStateAction<string>>
-}) => {
-  return (
-    <>
-      <p
-        onClick={() => setSelectText(text)}
-        className="py-4 px-3 text-gray-200 font-normal text-sm cursor-pointer hover:bg-gray-500"
-      >
-        {text}
-      </p>
-    </>
-  )
+function classNames(...classes: any[]) {
+  return classes.filter(Boolean).join(" ");
 }
 
 const Dropdown = ({
-  isOpen,
-  setIsOpen,
   addressDomain,
   selectText,
   setSelectText,
 }: {
-  isOpen: boolean
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
-  addressDomain: Array<Domain>
-  selectText: string
-  setSelectText: React.Dispatch<React.SetStateAction<string>>
+  addressDomain: Array<Domain>;
+  selectText: string;
+  setSelectText: React.Dispatch<React.SetStateAction<string>>;
 }) => {
+  const [query, setQuery] = useState("");
+
+  const filteredDomain =
+    query === ""
+      ? addressDomain
+      : addressDomain.filter((domain: Domain) => {
+          return domain.label.toLowerCase().includes(query.toLowerCase());
+        });
   return (
     <>
-      <div
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex-col cursor-pointer relative w-full md:w-full lg:w-1/2"
-      >
-        <div className="flex justify-between items-center p-3 w-full mt-7 bg-gray-700 rounded-lg">
-          <p
-            className={`text-base font-medium ${
-              selectText ? 'text-gray-200' : 'text-gray-400'
-            }`}
-          >
-            {selectText ? selectText : 'Select Your FNS Name'}
-          </p>
-          <Image className="h-2 w-3" src={ArrowDown} alt="ArrowDown" />
+      <Combobox as="div" value={selectText} onChange={setSelectText}>
+        <div className="w-full md:w-1/2 relative mt-2">
+          <Combobox.Input
+            className="w-full h-12 rounded-md border-0 bg-gray-700 py-1.5 pl-3 pr-12 text-gray-400 shadow-sm focus:ring-2 focus:ring-inset focus:ring-gray-300 sm:text-sm sm:leading-6"
+            onChange={(event) => setQuery(event.target.value)}
+            displayValue={(domain: Domain | null) =>
+              domain ? domain.label : ""
+            }
+          />
+          <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+            <Image className="h-2 w-3" src={ArrowDown} alt="ArrowDown" />
+          </Combobox.Button>
+
+          {filteredDomain.length > 0 && (
+            <Combobox.Options className="absolute z-10 max-h-56 overflow-auto bg-gray-700 w-full mt-2 rounded-lg py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+              {filteredDomain.map((domain: Domain) => (
+                <Combobox.Option
+                  key={""}
+                  value={domain}
+                  className={({ active }) =>
+                    classNames(
+                      "relative cursor-default select-none py-2 pl-3 pr-9",
+                      active ? "bg-gray-500 text-white" : "text-gray-900"
+                    )
+                  }
+                >
+                  {({ active, selected }) => (
+                    <>
+                      <div className="flex items-center py-4 px-3 text-gray-200 font-normal text-sm cursor-pointer">
+                        <Image
+                          src={Avatar}
+                          alt=""
+                          className="h-6 w-6 flex-shrink-0 rounded-full"
+                        />
+                        <span
+                          className={classNames(
+                            "ml-3 truncate",
+                            selected && "font-semibold"
+                          )}
+                        >
+                          {domain.label}
+                        </span>
+                      </div>
+
+                      {selected && (
+                        <span
+                          className={classNames(
+                            "absolute inset-y-0 right-0 flex items-center pr-4",
+                            active ? "text-white" : ""
+                          )}
+                        ></span>
+                      )}
+                    </>
+                  )}
+                </Combobox.Option>
+              ))}
+            </Combobox.Options>
+          )}
         </div>
-        <div
-          className={`${
-            isOpen ? 'absolute' : 'hidden'
-          } bg-gray-700 w-full mt-2 rounded-lg`}
-        >
-          {addressDomain.map((item, index) => (
-            <Rev_Record_Line
-              key={index}
-              text={item.label}
-              setSelectText={setSelectText}
-            />
-          ))}
-        </div>
-      </div>
+      </Combobox>
     </>
-  )
-}
+  );
+};
 
 type Domain = {
-  label: string
-  expire: number
-}
+  label: string;
+  expire: number;
+};
 
 export default function Reverse_Record({
-  isOpen,
-  setIsOpen,
   addressDomain,
 }: {
-  isOpen: boolean
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
-  addressDomain: Array<Domain>
+  addressDomain: Array<Domain>;
 }) {
-  const [isLarge, setisLarge] = useState(false)
-  const [selectText, setSelectText] = useState('')
-  const [writeFuncHash, setWriteFuncHash] = useState('')
+  const [isLarge, setisLarge] = useState(false);
+  const [selectText, setSelectText] = useState("");
+  const [writeFuncHash, setWriteFuncHash] = useState("");
 
-  const { address, isConnected } = useAccount()
+  const { address, isConnected } = useAccount();
 
   useEffect(() => {
     // First render
     if (window.innerWidth >= 1024) {
-      setisLarge(window.innerWidth >= 1024)
+      setisLarge(window.innerWidth >= 1024);
     }
 
     const handleResize = () => {
-      setisLarge(window.innerWidth >= 1024)
-    }
+      setisLarge(window.innerWidth >= 1024);
+    };
 
     // Add event listener to update isLarge state when the window is resized
-    window.addEventListener('resize', handleResize)
+    window.addEventListener("resize", handleResize);
 
     // Remove event listener on component unmount
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const { data: node, isFetched } = useContractRead({
     address: ReverseRegistrar.address as `0x${string}`,
     abi: ReverseRegistrar.abi,
-    functionName: 'node',
+    functionName: "node",
     args: [address],
     onSuccess(data: any) {
-      console.log('Success node: ', data)
+      console.log("Success node: ", data);
     },
     onError(error) {
-      console.log('Error node', error)
+      console.log("Error node", error);
     },
-  })
+  });
 
   // NameResolver Name
   const { data: mainDomain, refetch: refetchMainDomain } = useContractRead({
     address: PublicRegistrar.address as `0x${string}`,
     abi: PublicRegistrar.abi,
-    functionName: 'name',
+    functionName: "name",
     enabled: isConnected && isFetched,
     args: [node],
     onSuccess(data: any) {
-      console.log('Success name: ', data)
+      console.log("Success name: ", data);
     },
     onError(error) {
-      console.log('Error name', error)
+      console.log("Error name", error);
     },
-  })
+  });
 
   //  SetName Prepare selectText + '.flr'
   const { config: prepareSetName } = usePrepareContractWrite({
     address: ReverseRegistrar.address as `0x${string}`,
     abi: ReverseRegistrar.abi,
-    functionName: 'setName',
+    functionName: "setName",
     args: [selectText],
-    enabled: isConnected && selectText !== '',
+    enabled: isConnected && selectText !== "",
     onSuccess(data: any) {
-      console.log('Success prepareSetName', data)
+      console.log("Success prepareSetName", data);
       // setPrepared(true)
     },
     onError(error) {
-      console.log('Error prepareSetName', error)
+      console.log("Error prepareSetName", error);
     },
-  })
+  });
 
   // SetName Write Func
   const { write: setName, isSuccess } = useContractWrite({
     ...prepareSetName,
     onSuccess(data) {
-      console.log('Success setName', data)
-      setWriteFuncHash(data.hash)
+      console.log("Success setName", data);
+      setWriteFuncHash(data.hash);
     },
-  }) as any
+  }) as any;
 
   const { data } = useWaitForTransaction({
     hash: writeFuncHash as `0x${string}`,
     enabled: isSuccess && writeFuncHash,
     onSuccess(data) {
-      console.log('Success setName block', data)
-      refetchMainDomain()
+      console.log("Success setName block", data);
+      refetchMainDomain();
     },
-  })
-
+  });
   return (
     <>
       <div className="flex justify-between mt-16 gap-2">
         {/* Text */}
         <p className="text-white font-semibold text-lg">
-          {isLarge ? 'Primary FNS Name (Reverse Record)' : 'Primary FNS Name'}
-          {mainDomain ? ` : ${mainDomain}.flr` : ''}
+          {isLarge ? "Primary FNS Name (Reverse Record)" : "Primary FNS Name"}
+          {mainDomain ? ` : ${mainDomain}.flr` : ""}
         </p>
         {/* Button */}
         <div
@@ -206,8 +224,6 @@ export default function Reverse_Record({
 
       {/* Dropdown */}
       <Dropdown
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
         addressDomain={addressDomain}
         selectText={selectText}
         setSelectText={setSelectText}
@@ -218,5 +234,5 @@ export default function Reverse_Record({
         Only FNS Domains you own can be used here
       </p>
     </>
-  )
+  );
 }
