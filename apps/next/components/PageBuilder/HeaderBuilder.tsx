@@ -55,10 +55,7 @@ const Dropdown = ({
           <Combobox.Input
             className="w-full h-12 rounded-md border-0 bg-gray-700 py-1.5 pl-3 pr-12 text-gray-400 shadow-sm focus:ring-2 focus:ring-inset focus:ring-gray-300 sm:text-sm sm:leading-6"
             onChange={(event) => setQuery(event.target.value)}
-            displayValue={(domain: Domain | null) =>
-              domain ? domain.label : "Select"
-            }
-            value={selectText}
+            displayValue={() => selectText}
           />
           <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
             <Image className="h-2 w-3" src={ArrowDown} alt="ArrowDown" />
