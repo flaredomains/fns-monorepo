@@ -13,7 +13,7 @@ importers:
   apps/forge:
     specifiers: {}
 
-  apps/next/client:
+  apps/next:
     specifiers:
       '@types/react': ^18.2.20
       '@types/react-dom': ^18.2.7
