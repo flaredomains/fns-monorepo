@@ -464,9 +464,6 @@ const SubmitSection = ({
   const [backgroundColor, setColor] = useState("#F97316");
   const backgroundColorPickerRef = useRef<HTMLDivElement | null>(null);
 
-  const [showTextColorPicker, setShowTextColorPicker] = useState(false);
-  const textColorPickerRef = useRef<HTMLDivElement | null>(null);
-
   const handleBackgroundColorPicker = () => {
     setShowBackgroundColorPicker(!showBackgroundColorPicker); // Toggle color picker visibility
   };
@@ -479,28 +476,6 @@ const SubmitSection = ({
         !backgroundColorPickerRef.current.contains(event.target)
       ) {
         setShowBackgroundColorPicker(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleOutsideClick);
-
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, []);
-
-  const handleTextColorPicker = () => {
-    setShowTextColorPicker(!showTextColorPicker); // Toggle color picker visibility
-  };
-
-  // Event listener to close color picker when clicking outside
-  useEffect(() => {
-    const handleOutsideClick = (event: { target: any }) => {
-      if (
-        textColorPickerRef.current &&
-        !textColorPickerRef.current.contains(event.target)
-      ) {
-        setShowTextColorPicker(false);
       }
     };
 
@@ -550,13 +525,16 @@ const SubmitSection = ({
         <span className="text-gray-400 text-sm">
           You will be minting this website on
         </span>
-        <p className="text-white text-sm font-normal">
+        <p
+          className="text-white text-sm font-normal"
+          style={{ wordBreak: "break-word" }}
+        >
           {selectText
             ? "https://app.flrns.domains/" + selectText + ".flr"
             : "https://app.flrns.domains/example.flr"}
         </p>
       </div>
-      <div className="flex justify-center lg:justify-normal">
+      <div className="flex justify-center lg:justify-normal shrink-0">
         <button className="flex lg:w-full items-center gap-2 bg-[#F97316] py-3 px-5 rounded-md text-white font-normal hover:brightness-110">
           <p className="flex">Mint Website Now</p>
           <Image
