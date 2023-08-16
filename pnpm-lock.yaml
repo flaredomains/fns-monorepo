@@ -15,7 +15,7 @@ importers:
 
   apps/next/client:
     specifiers:
-      '@types/react': ^18.2.15
+      '@types/react': ^18.2.20
       '@types/react-dom': ^18.2.7
       '@typescript-eslint/eslint-plugin': ^6.0.0
       '@typescript-eslint/parser': ^6.0.0
@@ -29,7 +29,7 @@ importers:
       react-dom: ^18.2.0
       react-router-dom: ^6.15.0
       sort-by: ^1.2.0
-      typescript: ^5.0.2
+      typescript: ^5.1.6
       vite: ^4.4.5
     dependencies:
       localforage: 1.10.0
