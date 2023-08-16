@@ -1,7 +1,6 @@
 import React from "react";
 import EllipseBuilderTop from "../../public/EllipseBuilderTop.png";
 import PreviewImage from "../../public/PreviewImage.png";
-import ArrowUpRight from "../../public/arrow-up-right.svg";
 import AvatarPreview from "../../public/AvatarPreview.png";
 import Image from "next/image";
 
@@ -36,6 +35,16 @@ const TextsSection = ({ formState }: { formState: any }) => {
 };
 
 const ButtonSection = ({ formState }: { formState: any }) => {
+  const getContrastColor = (bgColor: string) => {
+    const r = parseInt(bgColor.substr(1, 2), 16);
+    const g = parseInt(bgColor.substr(3, 2), 16);
+    const b = parseInt(bgColor.substr(5, 2), 16);
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    return brightness >= 128 ? "#000000" : "#ffffff";
+  };
+
+  const buttonBackgroundColor = formState.buttonBackgroundColor;
+  const buttonTextColor = getContrastColor(buttonBackgroundColor);
   return (
     <>
       <div className="flex items-center mb-4 lg:mb-5">
@@ -44,13 +53,12 @@ const ButtonSection = ({ formState }: { formState: any }) => {
           style={{
             backgroundColor: formState.buttonBackgroundColor,
             borderColor: formState.buttonBackgroundColor,
-            color: formState.buttonTextColor,
           }}
         >
           <p
             className={`text-[0.22rem] lg:text-[0.375rem] font-semibold`}
             style={{
-              color: formState.buttonTextColor,
+              color: buttonTextColor,
             }}
           >
             {formState.button1 || "Pay Me"}
@@ -180,7 +188,6 @@ function Preview({ formState }: { formState: any }) {
   return (
     <div className="overflow-hidden flex flex-col w-full h-[26.938rem] relative items-center justify-center my-5 bg-slate-400 rounded-[10px] mb-9">
       <Gradients />
-
       <Content formState={formState} />
     </div>
   );

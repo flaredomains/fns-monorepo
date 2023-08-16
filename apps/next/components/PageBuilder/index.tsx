@@ -57,7 +57,6 @@ export default function PageBuilder() {
     role: undefined,
     profilePicture: undefined,
     buttonBackgroundColor: "#F97316",
-    buttonTextColor: "#FFFFFF",
   });
 
   useEffect(() => {
@@ -113,8 +112,6 @@ export default function PageBuilder() {
         ...prevState,
         buttonBackgroundColor: value,
       })),
-    ButtonTextColor: (value) =>
-      setFormState((prevState) => ({ ...prevState, buttonTextColor: value })),
   };
 
   const handleInputs = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -148,13 +145,6 @@ export default function PageBuilder() {
     }
   };
 
-  const handleTextColor = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const updateFunction = updateFunctions["ButtonTextColor"];
-    if (updateFunction) {
-      updateFunction(event);
-    }
-  };
-
   return (
     <div
       onClick={() => {
@@ -174,7 +164,6 @@ export default function PageBuilder() {
           handleBackground={handleBackground}
           handleProfile={handleProfile}
           handleBackgroundColor={handleBackgroundColor}
-          handleTextColor={handleTextColor}
           selectText={selectText}
         />
 

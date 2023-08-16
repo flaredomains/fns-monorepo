@@ -454,11 +454,9 @@ const ProfileSection = ({
 
 const SubmitSection = ({
   handleBackgroundColor,
-  handleTextColor,
   selectText,
 }: {
   handleBackgroundColor: any;
-  handleTextColor: any;
   selectText: any;
 }) => {
   const [showBackgroundColorPicker, setShowBackgroundColorPicker] =
@@ -467,7 +465,6 @@ const SubmitSection = ({
   const backgroundColorPickerRef = useRef<HTMLDivElement | null>(null);
 
   const [showTextColorPicker, setShowTextColorPicker] = useState(false);
-  const [textColor, setTextColor] = useState("#FFFFFF");
   const textColorPickerRef = useRef<HTMLDivElement | null>(null);
 
   const handleBackgroundColorPicker = () => {
@@ -548,34 +545,6 @@ const SubmitSection = ({
             </p>
           </div>
         </div>
-        <div className="flex flex-col gap-1">
-          <p className="text-white text-sm font-normal">
-            Main Button Text Color
-          </p>
-          <div className="flex flex-col-reverse lg:flex-row gap-1 items-center">
-            <div
-              onClick={handleTextColorPicker}
-              className={`h-5 w-5 rounded-md`}
-              style={{ backgroundColor: textColor }}
-            ></div>
-            <div className="relative -left-[100px] lg:-left-[115px] top-9 lg:top-5">
-              {showTextColorPicker && (
-                <div ref={textColorPickerRef} className="absolute  shadow-xl">
-                  <HexColorPicker
-                    color={textColor}
-                    onChange={(updatedColor) => {
-                      setTextColor(updatedColor);
-                      handleTextColor(updatedColor);
-                    }}
-                  />
-                </div>
-              )}
-            </div>
-            <p className="text-gray-300 text-sm font-medium leading-tight bg-transparent max-w-[70px] focus:outline-none">
-              {textColor}
-            </p>
-          </div>
-        </div>
       </div>
       <div className="flex flex-col gap-1 lg:mx-8">
         <span className="text-gray-400 text-sm">
@@ -608,14 +577,12 @@ function WebBuilderForm({
   handleBackground,
   handleProfile,
   handleBackgroundColor,
-  handleTextColor,
   selectText,
 }: {
   handleInputs: any;
   handleBackground: any;
   handleProfile: any;
   handleBackgroundColor: any;
-  handleTextColor: any;
   selectText: any;
 }) {
   return (
@@ -659,7 +626,6 @@ function WebBuilderForm({
         />
         <SubmitSection
           handleBackgroundColor={handleBackgroundColor}
-          handleTextColor={handleTextColor}
           selectText={selectText}
         />
       </form>
