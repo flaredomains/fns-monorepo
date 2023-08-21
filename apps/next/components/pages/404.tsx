@@ -6,8 +6,9 @@ import Ellipse_2 from "../../public/Ellipse_2.png";
 import Ellipse from "../../public/Ellipse.png";
 import Image from "next/image";
 import styles from "../../src/styles/Main.module.css";
-import Link from "next/link";
-import Links from "../../components/Links";
+// import Link from "next/link";
+import { Link } from "react-router-dom";
+import Links from "../Links";
 
 export default function NotFound() {
   return (
@@ -28,7 +29,7 @@ export default function NotFound() {
       {/* NavBar */}
       <div className="flex justify-between items-center py-6 px-10 z-10 md:py-14 md:px-28 gap-4">
         {/* Logo */}
-        <Link className="z-10" target="_blank" href="https://flrns.domains/">
+        <Link className="z-10" target="_blank" to="https://flrns.domains/">
           <Image
             width={96}
             height={24}
@@ -40,20 +41,12 @@ export default function NotFound() {
 
         {/* My account / FAQ */}
         <div className="flex justify-around items-center z-10 gap-4 md:gap-6">
-          <Link
-            href={{
-              pathname: `/my_account`,
-            }}
-          >
+          <Link to={`/my_account`}>
             <p className="text-white font-semibold text-xs text-center cursor-pointer md:text-lg">
               My Account
             </p>
           </Link>
-          <Link
-            href={{
-              pathname: `/faq`,
-            }}
-          >
+          <Link to={`/faq`}>
             <p className="text-white font-semibold text-xs cursor-pointer md:text-lg">
               FAQ
             </p>
@@ -73,9 +66,7 @@ export default function NotFound() {
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <Link
-              href={{
-                pathname: `/`,
-              }}
+              to={`/`}
               className="rounded-md bg-[#F97316] px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:brightness-125 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Go back home

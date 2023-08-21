@@ -4,6 +4,7 @@ import WalletConnect from "../WalletConnect";
 import SubdomainContent from "./SubdomainContent";
 
 import { useRouter } from "next/router";
+import { useLocation } from "react-router-dom";
 
 import NameWrapper from "../../src/pages/abi/NameWrapper.json";
 import SubdomainTracker from "../../src/pages/abi/SubdomainTracker.json";
@@ -30,12 +31,15 @@ export default function Subdomains({ result }: { result: string }) {
   const { address } = useAccount();
 
   // Used for useEffect for avoid re-render
-  const router = useRouter();
+  // const router = useRouter();
+  const location = useLocation();
 
   useEffect(() => {
-    if (!router.isReady) return;
+    if (!location) return;
 
-    const result = router.query.result as string;
+    const lastIndex = location.pathname.lastIndexOf("/");
+
+    const result = location.pathname.substring(lastIndex + 1) as string;
     // Check if ethereum address
     if (/^0x[a-fA-F0-9]{40}$/.test(result)) {
       console.log("Ethereum address");
@@ -53,7 +57,7 @@ export default function Subdomains({ result }: { result: string }) {
       setHashHex(hash);
       setPreparedHash(true);
     }
-  }, [router.isReady, router.query]);
+  }, [location]);
 
   // Read all subdomains under a given domain name
   const { refetch: refGetAll } = useContractRead({

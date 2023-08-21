@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Avatar from "../../public/Avatar.svg";
 import WalletConnect from "../WalletConnect";
-import Link from "next/link";
+// import Link from "next/link";
+import { Link } from "react-router-dom";
 import AccountWeb from "./AccountWeb";
 
 import { useAccount, useContractRead } from "wagmi";
@@ -29,12 +30,7 @@ const OwnedDomains = ({
           <Image className="h-8 w-8 mr-2" src={Avatar} alt="Avatar" />
 
           {/* Domain */}
-          <Link
-            href={{
-              pathname: domain + ".flr",
-            }}
-            title={`${domain}.flr`}
-          >
+          <Link to={`../${domain}.flr`}>
             <p
               className={
                 "text-white font-semibold text-base break-all cursor-pointer hover:underline hover:underline-offset-2"
@@ -45,12 +41,7 @@ const OwnedDomains = ({
           </Link>
         </div>
         {/* Date exp */}
-        <Link
-          href={{
-            pathname: "page_builder",
-            query: { result: domain + ".flr" },
-          }}
-        >
+        <Link to={`/page_builder/${domain}.flr`}>
           <div className="flex items-center justify-center bg-[#1F2936] border border-slate-200 cursor-pointer rounded-lg px-3 py-2 md:shrink-0 hover:brightness-150">
             <p className="text-white text-xs font-medium py-1">
               Create Website

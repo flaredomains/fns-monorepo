@@ -1,24 +1,26 @@
 import React, { useState, useEffect } from "react";
-import SideNavbar from "../../components/SideNavbar";
-import { useRouter } from "next/router";
-import PagesButtons from "../../components/PagesButtons";
-import Details from "../../components/Details";
-import Links from "../../components/Links";
+import SideNavbar from "../SideNavbar";
+import PagesButtons from "../PagesButtons";
+import Details from "../Details";
+import Links from "../Links";
+import { useLocation } from "react-router-dom";
 
 export default function Result() {
   const [result, setResult] = useState<string>("");
-
-  const router = useRouter();
   const [path, setPath] = useState<string>("");
 
-  useEffect(() => {
-    if (!router.isReady) return;
+  const location = useLocation();
 
-    const result = router.query.result as string;
-    const path = router.pathname as string;
-    setPath(path);
-    setResult(result);
-  }, [router.isReady, router.query]);
+  useEffect(() => {
+    if (location) {
+      const lastIndex = location.pathname.lastIndexOf("/");
+      setResult(location.pathname.substring(lastIndex + 1));
+      setPath(location.pathname.substring(0, lastIndex));
+    }
+  }, [location]);
+
+  console.log("result", result); // "/: dynamic path"
+  console.log("path", path); // "/details"
 
   return (
     <>

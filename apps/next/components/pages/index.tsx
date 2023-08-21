@@ -1,5 +1,5 @@
-import Head from 'next/head'
-import Search from '../../components/Search'
+import Head from "next/head";
+import Search from "../Search";
 
 export default function Home() {
   return (
@@ -8,5 +8,5 @@ export default function Home() {
         <Search />
       </div>
     </>
-  )
+  );
 }

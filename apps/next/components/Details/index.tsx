@@ -4,7 +4,8 @@ import WalletConnect from "../WalletConnect";
 import Info from "./Info";
 import Content from "./Content";
 
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
+import { useLocation } from "react-router-dom";
 
 import FLRRegistrarController from "../../src/pages/abi/FLRRegistrarController.json";
 import BaseRegistrar from "../../src/pages/abi/BaseRegistrar.json";
@@ -33,36 +34,63 @@ export default function Details({ result }: { result: string }) {
   const [expiredReady, setExpiredReady] = useState<boolean>(false);
 
   // Used for useEffect for avoid re-render
-  const router = useRouter();
+  const location = useLocation();
+  // const router = useRouter();
 
   // Use to check that checkOwnerDomain={address === owner} -- prop of Content component
   const { address } = useAccount();
 
+  // function getParentDomain(str: string) {
+  //   // Define a regular expression pattern that matches subdomains of a domain that ends with .flr.
+  //   const subdomainPattern = /^([a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)\.flr$/i;
+
+  //   // Use the regular expression pattern to test whether the string matches a subdomain.
+  //   const isSubdomain = subdomainPattern.test(str);
+  //   console.log("isSubdomain", isSubdomain, "str", str);
+  //   setIsSubdomain(isSubdomain);
+
+  //   if (isSubdomain) {
+  //     // The input string is a subdomain, extract the parent domain.
+  //     const parts = str.split(".");
+  //     const numParts = parts.length;
+  //     const parentDomain = parts.slice(numParts - (numParts - 1)).join(".");
+  //     return parentDomain;
+  //   } else {
+  //     return "flr";
+  //   }
+  // }
+
   function getParentDomain(str: string) {
     // Define a regular expression pattern that matches subdomains of a domain that ends with .flr.
-    const subdomainPattern = /^([a-z0-9][a-z0-9-]*[a-z0-9]\.)+[a-z]{1,}\.flr$/i;
+    const subdomainPattern = /^([a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)\.flr$/i;
 
     // Use the regular expression pattern to test whether the string matches a subdomain.
     const isSubdomain = subdomainPattern.test(str);
-    setIsSubdomain(isSubdomain);
 
-    if (isSubdomain) {
-      // The input string is a subdomain, extract the parent domain.
-      const parts = str.split(".");
-      const numParts = parts.length;
-      const parentDomain = parts.slice(numParts - (numParts - 1)).join(".");
+    // The input string is a subdomain, extract the parent domain.
+    const parts = str.split(".");
+    const numParts = parts.length;
+    const parentDomain = parts.slice(numParts - (numParts - 1)).join(".");
+
+    if (numParts > 2) {
+      // Is a subdomain
+      setIsSubdomain(true);
       return parentDomain;
     } else {
+      setIsSubdomain(false);
       return "flr";
     }
   }
 
   // Check if result end with .flr and we do an hash with the resultFiltered for registrant and date
   useEffect(() => {
-    if (!router.isReady) return;
+    if (!location) return;
 
-    const result = router.query.result as string;
+    const lastIndex = location.pathname.lastIndexOf("/");
 
+    const result = location.pathname.substring(lastIndex + 1) as string;
+
+    console.log(result);
     const parent = getParentDomain(result);
     setParent(parent);
 
@@ -81,7 +109,7 @@ export default function Details({ result }: { result: string }) {
       setHashHex(hash);
       setPreparedHash(true);
     }
-  }, [router.isReady, router.query]);
+  }, [location]);
 
   // Normal Domains: Is name available
   useContractRead({

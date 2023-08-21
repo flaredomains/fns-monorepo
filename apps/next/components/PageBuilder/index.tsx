@@ -8,7 +8,8 @@ import { useAccount } from "wagmi";
 
 import { Step } from "../Register/Steps";
 
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
+import { useLocation } from "react-router-dom";
 
 const progressArr = [
   {
@@ -38,7 +39,8 @@ type Domain = {
 
 export default function PageBuilder() {
   const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
+  // const router = useRouter();
+  const location = useLocation();
 
   const { address, isConnected } = useAccount();
   const [selectText, setSelectText] = useState("");
@@ -72,15 +74,17 @@ export default function PageBuilder() {
   }, [formState, countBuilder]);
 
   useEffect(() => {
-    if (!router.isReady) return;
+    if (!location) return;
 
-    const result = router.query.result as string;
+    const lastIndex = location.pathname.lastIndexOf("/");
+
+    const result = location.pathname.substring(lastIndex + 1) as string;
     const resultFiltered = result.endsWith(".flr")
       ? result.slice(0, -4)
       : result;
 
     setSelectText(resultFiltered);
-  }, [router.isReady, router.query]);
+  }, [location]);
 
   interface UpdateFunctions {
     [key: string]: Dispatch<SetStateAction<any>>;

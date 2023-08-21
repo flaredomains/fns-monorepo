@@ -4,7 +4,8 @@ import Account from "../public/Account.png";
 import WebsiteBuilder from "../public/page_builder.png";
 import FAQ from "../public/FAQ.png";
 import Image from "next/image";
-import Link from "next/link";
+// import Link from "next/link";
+import { Link } from "react-router-dom";
 
 const buttonData = [
   {
@@ -58,11 +59,7 @@ const ButtonChoise = ({
 }) => {
   return (
     <>
-      <Link
-        href={{
-          pathname: `${page}`,
-        }}
-      >
+      <Link to={`${page}`}>
         <div
           className={`flex items-center w-full my-1 h-12 px-3 py-2 rounded-md ${button_style} hover:bg-gray-600 [&>p]:hover:text-white hover:scale-105 transform transition duration-400 ease-out`}
         >

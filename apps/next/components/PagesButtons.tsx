@@ -1,42 +1,42 @@
-import React, { useState } from 'react'
-import Search from '../public/Search.png'
-import Account_Plus from '../public/buttons_main_page/Account_Plus.png'
-import Details from '../public/buttons_main_page/Details.png'
-import Subdomain from '../public/buttons_main_page/Subdomain.png'
-import Image from 'next/image'
-import styles from '../src/styles/Main.module.css'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
+import React, { useState } from "react";
+import Search from "../public/Search.png";
+import Account_Plus from "../public/buttons_main_page/Account_Plus.png";
+import Details from "../public/buttons_main_page/Details.png";
+import Subdomain from "../public/buttons_main_page/Subdomain.png";
+import Image from "next/image";
+import styles from "../src/styles/Main.module.css";
+// import Link from 'next/link'
+import { Link, useNavigate } from "react-router-dom";
 
 const buttonData = [
   {
-    page: '/register',
-    text: 'Register',
-    button_style: 'px-4 py-3 mr-4',
-    image_style: 'h-3 w-3 mr-2 lg:h-5 lg:w-5',
-    text_style: '',
+    page: "/register",
+    text: "Register",
+    button_style: "px-4 py-3 mr-4",
+    image_style: "h-3 w-3 mr-2 lg:h-5 lg:w-5",
+    text_style: "",
     src: Account_Plus,
-    alt: 'Account',
+    alt: "Account",
   },
   {
-    page: '/details',
-    text: 'Details',
-    button_style: 'px-5 py-3 mr-4',
-    image_style: 'h-3 w-4 mr-2',
-    text_style: '',
+    page: "/details",
+    text: "Details",
+    button_style: "px-5 py-3 mr-4",
+    image_style: "h-3 w-4 mr-2",
+    text_style: "",
     src: Details,
-    alt: 'Details',
+    alt: "Details",
   },
   {
-    page: '/subdomains',
-    text: 'Subdomain',
-    button_style: 'px-2 py-3',
-    image_style: 'h-4 w-4 mr-2',
-    text_style: '',
+    page: "/subdomains",
+    text: "Subdomain",
+    button_style: "px-2 py-3",
+    image_style: "h-4 w-4 mr-2",
+    text_style: "",
     src: Subdomain,
-    alt: 'Subdomain',
+    alt: "Subdomain",
   },
-]
+];
 
 const Button = ({
   text,
@@ -48,22 +48,17 @@ const Button = ({
   src,
   alt,
 }: {
-  text: string
-  result: any
-  page: string
-  button_style: string
-  image_style: string
-  text_style: string
-  src: any
-  alt: string
+  text: string;
+  result: any;
+  page: string;
+  button_style: string;
+  image_style: string;
+  text_style: string;
+  src: any;
+  alt: string;
 }) => {
   return (
-    <Link
-      href={{
-        pathname: `${page}`,
-        query: { result: result },
-      }}
-    >
+    <Link to={`${page}/${result}`}>
       <button
         className={`flex items-center rounded-md ${button_style} hover:bg-gray-600 [&>p]:hover:text-white hover:scale-110 transform transition duration-300 ease-out`}
       >
@@ -75,33 +70,34 @@ const Button = ({
         </p>
       </button>
     </Link>
-  )
-}
+  );
+};
 
 function PagesButtons({ result, path }: any) {
-  const router = useRouter()
-  const [route, setRoute] = useState('')
+  const [route, setRoute] = useState("");
+  const navigate = useNavigate();
+
   const handleSubmit = (e: any) => {
-    e.preventDefault()
+    e.preventDefault();
 
     // Regular expression to validate input /^[a-zA-Z0-9\s\p{Emoji}]+\.flr$/u
     const pattern =
-      /^[a-zA-Z0-9\s\p{Emoji}]+(\.[a-zA-Z0-9\s\p{Emoji}]+)*\.flr$/u
+      /^[a-zA-Z0-9\s\p{Emoji}]+(\.[a-zA-Z0-9\s\p{Emoji}]+)*\.flr$/u;
 
-    const exception = /^0x[a-fA-F0-9]{40}$/
+    const exception = /^0x[a-fA-F0-9]{40}$/;
 
     if (pattern.test(route) || exception.test(route)) {
-      console.log('Input is valid!')
-      router.push(path + '?result=' + route.toLowerCase())
+      console.log("Input is valid!");
+      navigate(path + "/" + route.toLowerCase());
     } else {
-      console.log('Input is invalid!')
-      const inputElement = e.target.elements['input-field'] as HTMLInputElement
+      console.log("Input is invalid!");
+      const inputElement = e.target.elements["input-field"] as HTMLInputElement;
       inputElement.setCustomValidity(
-        'Should end with .flr and not contain special characters or two or more consecutive dots.'
-      )
-      inputElement.reportValidity()
+        "Should end with .flr and not contain special characters or two or more consecutive dots."
+      );
+      inputElement.reportValidity();
     }
-  }
+  };
 
   return (
     <>
@@ -116,10 +112,10 @@ function PagesButtons({ result, path }: any) {
               result={result}
               page={item.page}
               button_style={`${item.button_style}${
-                path === item.page ? ' bg-gray-700' : ' bg-transparent'
+                path === item.page ? " bg-gray-700" : " bg-transparent"
               }`}
               image_style={item.image_style}
-              text_style={path === item.page ? ' text-white' : ' text-gray-500'}
+              text_style={path === item.page ? " text-white" : " text-gray-500"}
               src={item.src}
               alt={item.alt}
             />
@@ -137,11 +133,11 @@ function PagesButtons({ result, path }: any) {
             name="input-field"
             value={route}
             onChange={(e) => {
-              setRoute(e.target.value.toLowerCase().toLowerCase())
+              setRoute(e.target.value.toLowerCase().toLowerCase());
             }}
             onInput={(event) => {
-              const inputElement = event.target as HTMLInputElement
-              inputElement.setCustomValidity('')
+              const inputElement = event.target as HTMLInputElement;
+              inputElement.setCustomValidity("");
             }}
             className="w-full bg-transparent font-normal text-base text-white border-0 focus:outline-none placeholder:text-gray-300 placeholder:font-normal focus:bg-transparent"
             placeholder="Search New Names or Addresses"
@@ -151,7 +147,7 @@ function PagesButtons({ result, path }: any) {
         </form>
       </div>
     </>
-  )
+  );
 }
 
-export default PagesButtons
+export default PagesButtons;

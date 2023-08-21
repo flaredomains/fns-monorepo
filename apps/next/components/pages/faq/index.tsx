@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import SideNavbar from "../../../components/SideNavbar";
-import { useRouter } from "next/router";
+import { useLocation } from "react-router-dom";
 import FAQComp from "../../../components/FAQ";
 import Links from "../../../components/Links";
 
@@ -12,16 +12,15 @@ function FAQ() {
 
   const [path, setPath] = useState<String>("");
 
-  const router = useRouter();
+  const location = useLocation();
 
   useEffect(() => {
-    if (!router.isReady) return;
-
-    const result = router.query.result as String;
-    const path = router.pathname as String;
-    setPath(path);
-    setResult(result);
-  }, [router.isReady]);
+    if (location) {
+      const lastIndex = location.pathname.lastIndexOf("/");
+      setResult(location.pathname.substring(lastIndex + 1));
+      setPath(location.pathname.substring(0, lastIndex));
+    }
+  }, [location]);
 
   return (
     <>

@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Avatar from "../../public/Avatar.svg";
 import WalletConnect from "../WalletConnect";
-import Link from "next/link";
+// import Link from "next/link";
+import { Link } from "react-router-dom";
 import AccountLine from "./AccountLine";
 import ReverseRecord from "./ReverseRecord";
 
@@ -30,13 +31,7 @@ const OwnedDomains = ({
           <Image className="h-8 w-8 mr-2" src={Avatar} alt="Avatar" />
 
           {/* Domain */}
-          <Link
-            href={{
-              pathname: `details`,
-              query: { result: domain + ".flr" },
-            }}
-            title={`${domain}.flr`}
-          >
+          <Link to={`../details/${domain}.flr`}>
             <p
               className={
                 "text-white font-semibold text-base break-all cursor-pointer hover:underline hover:underline-offset-2"

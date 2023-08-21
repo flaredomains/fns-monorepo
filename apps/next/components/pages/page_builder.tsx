@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import SideNavbar from "../../components/SideNavbar";
-import Links from "../../components/Links";
-import PageBuilder from "../../components/PageBuilder";
+import SideNavbar from "../SideNavbar";
+import Links from "../Links";
+import PageBuilder from "../PageBuilder";
 
 export default function Page_Builder() {
   return (
