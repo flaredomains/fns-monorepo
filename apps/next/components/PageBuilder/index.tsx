@@ -58,7 +58,7 @@ export default function PageBuilder() {
     name: undefined,
     role: undefined,
     profilePicture: undefined,
-    buttonBackgroundColor: "#F97316",
+    buttonBackgroundColor: '#FFFFFF',
   });
 
   useEffect(() => {

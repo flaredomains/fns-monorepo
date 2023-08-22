@@ -461,7 +461,7 @@ const SubmitSection = ({
 }) => {
   const [showBackgroundColorPicker, setShowBackgroundColorPicker] =
     useState(false);
-  const [backgroundColor, setColor] = useState("#F97316");
+  const [backgroundColor, setColor] = useState('#FFFFFF');
   const backgroundColorPickerRef = useRef<HTMLDivElement | null>(null);
 
   const handleBackgroundColorPicker = () => {
