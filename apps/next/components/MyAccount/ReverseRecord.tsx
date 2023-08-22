@@ -38,16 +38,23 @@ const Dropdown = ({
       : addressDomain.filter((domain: Domain) => {
           return domain.label.toLowerCase().includes(query.toLowerCase());
         });
+
+  const handleSelect = (domain: any) => {
+    setSelectText(domain.label);
+  };
+
   return (
     <>
-      <Combobox as="div" value={selectText} onChange={setSelectText}>
+      <Combobox
+        as="div"
+        value={selectText}
+        onChange={(event) => handleSelect(event)}
+      >
         <div className="w-full md:w-1/2 relative mt-2">
           <Combobox.Input
             className="w-full h-12 rounded-md border-0 bg-gray-700 py-1.5 pl-3 pr-12 text-gray-400 shadow-sm focus:ring-2 focus:ring-inset focus:ring-gray-300 sm:text-sm sm:leading-6"
             onChange={(event) => setQuery(event.target.value)}
-            displayValue={(domain: Domain | null) =>
-              domain ? domain.label : ""
-            }
+            displayValue={() => selectText}
           />
           <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
             <Image className="h-2 w-3" src={ArrowDown} alt="ArrowDown" />
@@ -55,9 +62,9 @@ const Dropdown = ({
 
           {filteredDomain.length > 0 && (
             <Combobox.Options className="absolute z-10 max-h-56 overflow-auto bg-gray-700 w-full mt-2 rounded-lg py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-              {filteredDomain.map((domain: Domain) => (
+              {filteredDomain.map((domain: Domain, index) => (
                 <Combobox.Option
-                  key={""}
+                  key={index}
                   value={domain}
                   className={({ active }) =>
                     classNames(
@@ -115,7 +122,7 @@ export default function Reverse_Record({
   addressDomain: Array<Domain>;
 }) {
   const [isLarge, setisLarge] = useState(false);
-  const [selectText, setSelectText] = useState("");
+  const [selectText, setSelectText] = useState<string>("");
   const [writeFuncHash, setWriteFuncHash] = useState("");
 
   const { address, isConnected } = useAccount();
@@ -180,6 +187,8 @@ export default function Reverse_Record({
       console.log("Error prepareSetName", error);
     },
   });
+
+  console.log("selectText", selectText);
 
   // SetName Write Func
   const { write: setName, isSuccess } = useContractWrite({
