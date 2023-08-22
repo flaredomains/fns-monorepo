@@ -6,7 +6,6 @@ import Ellipse_2 from "../public/Ellipse_2.png";
 import Ellipse from "../public/Ellipse.png";
 import Image from "next/image";
 import styles from "../src/styles/Main.module.css";
-// import Link from 'next/link'
 import { Link, useNavigate } from "react-router-dom";
 import Links from "./Links";
 
@@ -26,7 +25,6 @@ function Main() {
 
     if (pattern.test(route) || exception.test(route)) {
       console.log("Input is valid!");
-      // router.push("register?result=" + route.toLowerCase());
       navigate("register/" + route.toLowerCase());
     } else {
       console.log("Input is invalid!");

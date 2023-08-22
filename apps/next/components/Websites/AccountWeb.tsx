@@ -3,14 +3,15 @@ import Image from "next/image";
 import MyAccount from "../../public/MyAccount.svg";
 import Search from "../../public/Search.png";
 import styles from "../../src/styles/Main.module.css";
-import { useRouter } from "next/router";
 import { useAccount } from "wagmi";
+import { useNavigate } from "react-router-dom";
 
 export default function AccountWeb() {
   const { address, isConnected } = useAccount() as any;
 
-  const router = useRouter();
   const [route, setRoute] = useState("");
+  const navigate = useNavigate();
+
   const handleSubmit = (e: any) => {
     e.preventDefault();
 
@@ -22,7 +23,7 @@ export default function AccountWeb() {
 
     if (pattern.test(route) || exception.test(route)) {
       console.log("Input is valid!");
-      router.push("register?result=" + route.toLowerCase());
+      navigate("../register/" + route.toLowerCase());
     } else {
       console.log("Input is invalid!");
       const inputElement = e.target.elements["input-field"] as HTMLInputElement;
