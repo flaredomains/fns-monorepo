@@ -84,6 +84,7 @@ function SideNavbarChoise({
   isOpen: boolean;
   isLarge: boolean;
 }) {
+  console.log("path sidenavbar", path);
   return (
     <>
       <div

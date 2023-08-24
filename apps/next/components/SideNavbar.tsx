@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react'
-import Logo from '../public/Logo.png'
-import Flare from '../public/FlareBottom.png'
-import Hamburger_Icon from '../public/Hamburger_Icon.png'
-import Image from 'next/image'
-import { useRouter } from 'next/router'
-import Link from 'next/link'
-import SideNavbarChoise from './SideNavbarChoise'
-import Links from './Links'
+import React, { useState, useEffect } from "react";
+import Logo from "../public/Logo.png";
+import Flare from "../public/FlareBottom.png";
+import Hamburger_Icon from "../public/Hamburger_Icon.png";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import SideNavbarChoise from "./SideNavbarChoise";
+import Links from "./Links";
 
 const LogoZone = () => {
   return (
@@ -17,8 +17,8 @@ const LogoZone = () => {
         </div>
       </Link>
     </>
-  )
-}
+  );
+};
 
 const BottomFlare = () => {
   return (
@@ -26,14 +26,14 @@ const BottomFlare = () => {
       <div className="hidden lg:flex">
         <div className="flex flex-row items-center w-full mt-auto h-12 py-2 bg-trasparent gap-4">
           <p className="bg-transparent font-semibold text-lg text-white focus:outline-none shrink-0">
-            Built on{' '}
+            Built on{" "}
           </p>
           <Image className="h-7 w-20" src={Flare} alt="Logo bottom" />
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
 const SocialLinks = () => {
   return (
@@ -44,45 +44,45 @@ const SocialLinks = () => {
         <Links />
       </div>
     </>
-  )
-}
+  );
+};
 
-function SideNavbar() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [result, setResult] = useState<String>('')
-  const [path, setPath] = useState<String>('')
+function SideNavbar({ result, path }: any) {
+  const [isOpen, setIsOpen] = useState(false);
+  // const [result, setResult] = useState<String>('')
+  // const [path, setPath] = useState<String>('')
 
-  const [isLarge, setisLarge] = useState(false)
+  const [isLarge, setisLarge] = useState(false);
 
-  const router = useRouter()
+  const router = useRouter();
 
-  useEffect(() => {
-    if (!router.isReady) return
+  // useEffect(() => {
+  //   if (!router.isReady) return
 
-    const result = router.query.result as String
-    const path = router.pathname as String
-    setPath(path)
-    setResult(result)
-  }, [router.isReady])
+  //   const result = router.query.result as String
+  //   const path = router.pathname as String
+  //   setPath(path)
+  //   setResult(result)
+  // }, [router.isReady])
 
   // UseEffect for resize the address when viewport become to small
   useEffect(() => {
     // First render
     if (window.innerWidth >= 1024) {
-      setisLarge(window.innerWidth >= 1024)
+      setisLarge(window.innerWidth >= 1024);
     }
 
     const handleResize = () => {
-      setisLarge(window.innerWidth >= 1024)
-      setIsOpen(false)
-    }
+      setisLarge(window.innerWidth >= 1024);
+      setIsOpen(false);
+    };
 
     // Add event listener to update isLarge state when the window is resized
-    window.addEventListener('resize', handleResize)
+    window.addEventListener("resize", handleResize);
 
     // Remove event listener on component unmount
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <>
@@ -98,9 +98,7 @@ function SideNavbar() {
         </div>
 
         <div className="flex flex-col gap-4 lg:mb-10">
-          <div className="hidden md:inline">
-            {isLarge && <SocialLinks />}
-          </div>
+          <div className="hidden md:inline">{isLarge && <SocialLinks />}</div>
 
           {/* Flare Image lg:visible */}
           <BottomFlare />
@@ -143,7 +141,7 @@ function SideNavbar() {
         </>
       )}
     </>
-  )
+  );
 }
 
-export default SideNavbar
+export default SideNavbar;
