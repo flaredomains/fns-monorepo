@@ -1,21 +1,23 @@
 import React, { useEffect } from "react";
-import { useRouter } from "next/router";
 import PageWebsite from "../../../components/Websites/PageWebsite";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Website() {
-  const router = useRouter();
-  // const { domain } = router.query;
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!router.isReady) return;
+    if (location) {
+      const lastIndex = location.pathname.lastIndexOf("/");
 
-    const domain = router.query.website as string;
-    // console.log(domain);
-    if (typeof domain === "string" && !domain.endsWith(".flr")) {
-      // Redirect to 404 page if URL doesn't end with ".flr"
-      router.push("/404");
+      const domain = location.pathname.substring(lastIndex + 1);
+
+      if (typeof domain === "string" && !domain.endsWith(".flr")) {
+        // Redirect to 404 page if URL doesn't end with ".flr"
+        navigate("/404");
+      }
     }
-  }, [router.isReady, router.query]);
+  }, [location]);
 
   return (
     <div className="min-h-screen">
