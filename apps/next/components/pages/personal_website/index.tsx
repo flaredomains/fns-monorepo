@@ -121,6 +121,29 @@ export default function Website() {
         navigate("/404");
       }
     }
+
+    async function getObjectFromCloudflareR2(uuid: string) {
+      try {
+        const params = {
+          Bucket: "fns", // The name of the bucket. For example, 'sample-bucket-101'.
+          Key: uuid, // The name of the object. For example, 'sample_upload.txt'.
+        };
+
+        // const  = new GetObject(params);
+        // console.log("aaa");
+        const response = await s3Client.send(new GetObjectCommand(params));
+        console.log("response", response);
+        // const imageBuffer = Buffer.from(response, 'base64');
+
+        // // Handle the retrieved object data in 'response.data'
+        // fs.writeFileSync(`downloaded-${uuid}`, imageBuffer); // Save the retrieved object
+        console.log("Object retrieval successful. Object saved.");
+      } catch (error) {
+        console.error("Error retrieving object:", error);
+      }
+    }
+
+    getObjectFromCloudflareR2("00001");
   }, [location]);
 
   async function getImage(
