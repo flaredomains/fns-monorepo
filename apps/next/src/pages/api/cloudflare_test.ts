@@ -39,28 +39,23 @@ interface CloudflareObject {
 
 // Function to calculate the keccak hash of an image data
 function calculateImageHash(imageData: string): string {
-  const hash = createHash("keccak256");
+  const hash = createHash("sha256");
   hash.update(imageData);
   return hash.digest("hex");
 }
+
+// const cloudflareObject: CloudflareObject = {
+//   uuid,
+//   domain,
+//   image: imageBase64,
+// };
 
 async function uploadObjectToCloudflareR2(domain: string, imagePath: string) {
   try {
     const imageBuffer = fs.readFileSync(imagePath);
     const imageBase64 = imageBuffer.toString("base64");
 
-    // const uuid = calculateImageHash(imageBase64);
-    const uuid = "00002";
-
-    // console.log("uuid", uuid);
-
-    // const cloudflareObject: CloudflareObject = {
-    //   uuid,
-    //   domain,
-    //   image: imageBase64,
-    // };
-
-    // console.log("cloudflareObject", cloudflareObject);
+    const uuid = calculateImageHash(imageBase64);
 
     // Set the parameters
     const params = {
@@ -99,10 +94,10 @@ async function getObjectFromCloudflareR2(uuid: string) {
 
     // The Body object also has 'transformToByteArray' and 'transformToWebStream' methods.
     const str = await response.Body.transformToString();
-    // console.log("str", str);
+
     const imageBuffer = Buffer.from(str, "base64");
 
-    // // Handle the retrieved object data in 'response.data'
+    // Handle the retrieved object data in 'response.data'
     fs.writeFileSync(`DownloadedImage-${uuid}.png`, imageBuffer); // Save the retrieved object
     console.log("Object retrieval successful. Object saved.");
   } catch (error) {
@@ -119,9 +114,10 @@ async function main() {
   // test("Test");
   const imagePath = "./PreviewImage.png"; // Replace with the actual image path in your folder
   const domain = "example.com"; // Replace with the domain
-  await uploadObjectToCloudflareR2(domain, imagePath);
+  // await uploadObjectToCloudflareR2(domain, imagePath);
 
-  const uuid = "00002";
+  const uuid =
+    "91ac64a1a67f12bdae93e2a282f09f4fc548b110645a7fe7f242c3bba9cbf4cb";
   await getObjectFromCloudflareR2(uuid);
 }
 
