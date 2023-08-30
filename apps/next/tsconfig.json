@@ -11,7 +11,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "isolatedModules": true,
+    "isolatedModules": false,
     "jsx": "preserve",
     "incremental": true,
     "paths": {
@@ -19,6 +19,6 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "src/pages/api/cloudflare_test.ts"]
+  "exclude": ["node_modules", "./src/pages/api/cloudflare_test.ts"]
 }
 // "src/pages/api/cloudflare_test.ts"

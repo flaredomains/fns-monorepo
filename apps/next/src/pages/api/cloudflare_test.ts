@@ -15,8 +15,10 @@ console.log("secretAccessKey", secretAccessKey);
 
 const {
   S3Client,
+  CreateBucketCommand,
   PutObjectCommand,
   GetObjectCommand,
+  DeleteObjectCommand,
 } = require("@aws-sdk/client-s3");
 
 const REGION = "us-east-1"; //e.g. "us-east-1"
@@ -31,12 +33,6 @@ const s3Client = new S3Client({
   },
 });
 
-interface CloudflareObject {
-  uuid: string;
-  domain: string;
-  image: string;
-}
-
 // Function to calculate the keccak hash of an image data
 function calculateImageHash(imageData: string): string {
   const hash = createHash("sha256");
@@ -44,48 +40,93 @@ function calculateImageHash(imageData: string): string {
   return hash.digest("hex");
 }
 
-// const cloudflareObject: CloudflareObject = {
-//   uuid,
-//   domain,
-//   image: imageBase64,
-// };
-
-async function uploadObjectToCloudflareR2(domain: string, imagePath: string) {
+async function createBucket(domain: string, imageCategory: string) {
   try {
-    const imageBuffer = fs.readFileSync(imagePath);
-    const imageBase64 = imageBuffer.toString("base64");
-
-    const uuid = calculateImageHash(imageBase64);
-
-    // Set the parameters
-    const params = {
-      Bucket: "fns", // The name of the bucket. For example, 'sample-bucket-101'.
-      Key: uuid, // The name of the object. For example, 'sample_upload.txt'.
-      Body: imageBase64, // The content of the object. For example, 'Hello world!".
-    };
-
-    // console.log("Object upload successful:", response.data);
-    const results = await s3Client.send(new PutObjectCommand(params));
-    console.log(
-      "Successfully created " +
-        params.Key +
-        " and uploaded it to " +
-        params.Bucket +
-        "/" +
-        params.Key
+    const { Location } = await s3Client.send(
+      new CreateBucketCommand({
+        // The name of the bucket. Bucket names are unique and have several other constraints.
+        // See https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html
+        Bucket: `${domain}_${imageCategory}`,
+      })
     );
-    return results; // For unit tests.
+    console.log(`Bucket created with location ${Location}`);
+  } catch (error) {
+    console.error("Error create bucket:", error);
+  }
+}
+
+async function deleteObjBucket(
+  domain: string,
+  imageCategory: string,
+  oldImage: string
+) {
+  try {
+    const response = await s3Client.send(
+      new DeleteObjectCommand({
+        Bucket: `${domain}_${imageCategory}`,
+        Key: `${oldImage}`,
+      })
+    );
+    console.log("Deleted", response);
+  } catch (error) {
+    console.error("Error delete objects bucket:", error);
+  }
+}
+
+async function uploadImage(
+  domain: string,
+  image: string,
+  imageCategory: string
+) {
+  const imageBufferWeb = fs.readFileSync(image);
+  const imageBase64 = imageBufferWeb.toString("base64");
+
+  const uuid = calculateImageHash(imageBase64);
+
+  // Set the parameters
+  const params = {
+    Bucket: `${domain}_${imageCategory}`, // The name of the bucket. For example, 'sample-bucket-101'.
+    Key: uuid, // The name of the object. For example, 'sample_upload.txt'.
+    Body: imageBase64, // The content of the object. For example, 'Hello world!".
+  };
+
+  // console.log("Object upload successful:", response.data);
+  const results = await s3Client.send(new PutObjectCommand(params));
+  console.log(
+    "Successfully created " +
+      params.Key +
+      " and uploaded it to " +
+      params.Bucket +
+      "/" +
+      params.Key
+  );
+  return results; // For unit tests.
+}
+
+async function uploadImageCloudflare(
+  domain: string,
+  imageWebsite: string,
+  imageCategory: string,
+  oldImage?: string
+) {
+  try {
+    if (oldImage) {
+      await deleteObjBucket(domain, imageCategory, oldImage);
+    }
+    await createBucket(domain, imageCategory); // If there is already a bucket, nothing happens
+
+    const results = await uploadImage(domain, imageWebsite, imageCategory);
+    return results;
   } catch (error) {
     console.error("Error uploading object:", error);
   }
 }
 
 // Function to retrieve an object using a GET request
-async function getObjectFromCloudflareR2(uuid: string) {
-  console.log("uuid", uuid);
+async function getImage(uuid: string, domain: string, imageCategory: string) {
   try {
     const params = {
-      Bucket: "fns", // The name of the bucket. For example, 'sample-bucket-101'.
+      Bucket: `${domain}_${imageCategory}`, // The name of the bucket. For example, 'sample-bucket-101'.
       Key: uuid, // The name of the object. For example, 'sample_upload.txt'.
     };
 
@@ -105,21 +146,47 @@ async function getObjectFromCloudflareR2(uuid: string) {
   }
 }
 
-// function test(str: string) {
-//   console.log("Test function:", str);
-// }
-
-// Example usage
 async function main() {
-  // test("Test");
-  const imagePath = "./PreviewImage.png"; // Replace with the actual image path in your folder
-  const domain = "example.com"; // Replace with the domain
-  // await uploadObjectToCloudflareR2(domain, imagePath);
+  const imageWebsite = "./PreviewImage.png";
+  const imageAvatar = "./AvatarPreview.png";
+  const domain = "simone.flr";
+  const imageCategory = ["imageAvatar", "imageWebsite"];
 
-  const uuid =
+  // Upload Avatar image
+  await uploadImageCloudflare(domain, imageAvatar, imageCategory[0]);
+
+  // Upload Website image
+  await uploadImageCloudflare(
+    domain,
+    imageWebsite,
+    imageCategory[1],
+    "09aa89892fcb03243eea2f00a588b30c35104a98f238402d50708b18836f5e5d" // Get this from the smart contract
+  );
+
+  // Get uuid from smart contract
+  const uuidAvatar =
+    "09aa89892fcb03243eea2f00a588b30c35104a98f238402d50708b18836f5e5d";
+
+  const uuidWebsite =
     "91ac64a1a67f12bdae93e2a282f09f4fc548b110645a7fe7f242c3bba9cbf4cb";
-  await getObjectFromCloudflareR2(uuid);
+
+  // Get Avatar Image
+  await getImage(uuidAvatar, domain, imageCategory[0]);
+
+  // Get Website Image
+  await getImage(uuidWebsite, domain, imageCategory[1]);
 }
 
-// Call the main function to test the upload and retrieval
 main();
+
+// interface CloudflareObject {
+//   uuid: string;
+//   domain: string;
+//   image: string;
+// }
+
+// const cloudflareObject: CloudflareObject = {
+//   uuid,
+//   domain,
+//   image: imageBase64,
+// };
