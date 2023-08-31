@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import PageWebsite from "../../../components/Websites/PageWebsite";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -10,6 +10,9 @@ import {
 export default function Website() {
   const location = useLocation();
   const navigate = useNavigate();
+
+  const [imageAvatarBase64, setImageAvatarBase64] = useState("");
+  const [imageWebsiteBase64, setImageWebsiteBase64] = useState("");
 
   const apiUrl = process.env.CLOUDFLARE_R2_ENDPOINT;
   // console.log(test);
@@ -33,40 +36,63 @@ export default function Website() {
       const lastIndex = location.pathname.lastIndexOf("/");
 
       const domain = location.pathname.substring(lastIndex + 1);
+      console.log("domain", domain);
 
       if (typeof domain === "string" && !domain.endsWith(".flr")) {
         // Redirect to 404 page if URL doesn't end with ".flr"
         navigate("/404");
       }
+
+      // Avatar
+      getImage(
+        "20158247f23c2461df48da9deff0fce9cd1352770dac02000bb4e2f070598ad6",
+        domain,
+        "imageAvatar",
+        setImageAvatarBase64
+      );
+
+      // Website
+      getImage(
+        "deafffe548e3159a67a5cc01cdc29317c3d7e0acbbae77b59aa123f247b9d2ec",
+        domain,
+        "imageWebsite",
+        setImageWebsiteBase64
+      );
     }
 
-    async function getObjectFromCloudflareR2(uuid: string) {
+    async function getImage(
+      uuid: string,
+      domain: string,
+      imageCategory: string,
+      setImage: React.Dispatch<React.SetStateAction<string>>
+    ) {
       try {
         const params = {
-          Bucket: "fns", // The name of the bucket. For example, 'sample-bucket-101'.
+          Bucket: `${domain}_${imageCategory}`, // The name of the bucket. For example, 'sample-bucket-101'.
           Key: uuid, // The name of the object. For example, 'sample_upload.txt'.
         };
 
-        // const  = new GetObject(params);
-        // console.log("aaa");
-        const response = await s3Client.send(new GetObjectCommand(params));
-        console.log("response", response);
-        // const imageBuffer = Buffer.from(response, 'base64');
+        const response = (await s3Client.send(
+          new GetObjectCommand(params)
+        )) as any;
+        // console.log("response", response);
 
-        // // Handle the retrieved object data in 'response.data'
-        // fs.writeFileSync(`downloaded-${uuid}`, imageBuffer); // Save the retrieved object
-        console.log("Object retrieval successful. Object saved.");
+        // The Body object also has 'transformToByteArray' and 'transformToWebStream' methods.
+        const imagebase64 = await response.Body.transformToString();
+
+        setImage(imagebase64);
       } catch (error) {
         console.error("Error retrieving object:", error);
       }
     }
-
-    getObjectFromCloudflareR2("00001");
   }, [location]);
 
   return (
     <div className="min-h-screen">
-      <PageWebsite />
+      <PageWebsite
+        imageAvatarBase64={imageAvatarBase64}
+        imageWebsiteBase64={imageWebsiteBase64}
+      />
     </div>
   );
 }

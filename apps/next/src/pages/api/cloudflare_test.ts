@@ -147,20 +147,25 @@ async function getImage(uuid: string, domain: string, imageCategory: string) {
 }
 
 async function main() {
-  const imageWebsite = "./PreviewImage.png";
-  const imageAvatar = "./AvatarPreview.png";
+  const imageWebsite = "./landscape.jpg";
+  const imageAvatar = "./cropped.jpg";
   const domain = "simone.flr";
   const imageCategory = ["imageAvatar", "imageWebsite"];
 
   // Upload Avatar image
-  await uploadImageCloudflare(domain, imageAvatar, imageCategory[0]);
+  await uploadImageCloudflare(
+    domain,
+    imageAvatar,
+    imageCategory[0],
+    "09aa89892fcb03243eea2f00a588b30c35104a98f238402d50708b18836f5e5d" // Get this from the smart contract
+  );
 
   // Upload Website image
   await uploadImageCloudflare(
     domain,
     imageWebsite,
     imageCategory[1],
-    "09aa89892fcb03243eea2f00a588b30c35104a98f238402d50708b18836f5e5d" // Get this from the smart contract
+    "91ac64a1a67f12bdae93e2a282f09f4fc548b110645a7fe7f242c3bba9cbf4cb" // Get this from the smart contract
   );
 
   // Get uuid from smart contract

@@ -9,7 +9,7 @@ const TextsSection = ({ formState }: { formState: any }) => {
   return (
     <>
       <p
-        className={`text-4xl lg:text-6xl font-semibold mb-5 ${
+        className={`text-4xl lg:text-5xl xl:text-6xl font-semibold mb-5 ${
           formState.theme === "glassmorphsm"
             ? "text-white"
             : formState.theme === "light"
@@ -20,7 +20,7 @@ const TextsSection = ({ formState }: { formState: any }) => {
         {formState.title || "The XRP Conference"}
       </p>
       <p
-        className={`text-base lg:text-2xl font-light mb-5 ${
+        className={`text-base lg:text-lg xl:text-2xl font-light mb-5 ${
           formState.theme === "glassmorphsm"
             ? "text-white/50"
             : formState.theme === "light"
@@ -88,20 +88,31 @@ const ButtonSection = ({ formState }: { formState: any }) => {
   );
 };
 
-const InfoUserSection = ({ formState }: { formState: any }) => {
+const InfoUserSection = ({
+  formState,
+  imageAvatarBase64,
+}: {
+  formState: any;
+  imageAvatarBase64: string;
+}) => {
   return (
     <>
       <div className="flex items-center gap-x-5">
-        <Image
-          className="w-12 h-12 lg:w-16 lg:h-16 rounded-full" //border border-white border-opacity-40
-          src={
-            formState.profilePicture ? formState.profilePicture : AvatarPreview
-          }
-          width={64}
-          height={64}
-          alt="AvatarPreview"
-        />
-        <div className="flex flex-col ">
+        {imageAvatarBase64 ? (
+          <Image
+            className="w-12 h-12 lg:w-16 lg:h-16 rounded-full" //border border-white border-opacity-40
+            src={`data:image/png;base64,${imageAvatarBase64}`}
+            width={64}
+            height={64}
+            alt="AvatarPreview"
+          />
+        ) : (
+          <>
+            <div className="w-12 h-12 lg:w-16 lg:h-16 animate-pulse bg-gray-500 rounded-full" />
+          </>
+        )}
+
+        <div className="flex flex-col">
           <p
             className={`text-lg lg:text-2xl font-semibold  ${
               formState.theme === "glassmorphsm"
@@ -130,7 +141,13 @@ const InfoUserSection = ({ formState }: { formState: any }) => {
   );
 };
 
-function PageWebsite() {
+function PageWebsite({
+  imageAvatarBase64,
+  imageWebsiteBase64,
+}: {
+  imageAvatarBase64: string;
+  imageWebsiteBase64: string;
+}) {
   const [formState, setFormState] = useState({
     title: undefined,
     background: undefined,
@@ -148,15 +165,21 @@ function PageWebsite() {
 
   return (
     <div className="bg-black flex flex-col lg:relative w-full h-full min-h-screen overflow-hidden lg:h-screen">
-      <Image
-        className="lg:absolute w-full h-full"
-        src={formState.background ? formState.background : PreviewImage}
-        width={600}
-        height={500}
-        alt="PreviewImage"
-      />
+      {imageWebsiteBase64 ? (
+        <Image
+          className="lg:absolute w-full h-full lg:object-cover lg:z-0 lg:object-center"
+          src={`data:image/png;base64,${imageWebsiteBase64}`}
+          width={600}
+          height={500}
+          alt="PreviewImage"
+        />
+      ) : (
+        <>
+          <div className="lg:absolute w-full sm:h-60 md:h-96 h-[31.25rem] lg:w-full lg:h-full lg:object-cover lg:z-0 lg:object-center animate-pulse bg-gray-300" />
+        </>
+      )}
       <div
-        className={`z-10 flex flex-col justify-center px-10 lg:px-20 lg:w-[45%] w-full h-[31.3rem] lg:h-full shadow backdrop-blur-[28.34px] ${
+        className={`z-10 flex flex-col justify-center py-4 px-10 lg:px-20 lg:w-[45%] w-full h-[31.3rem] lg:h-full shadow backdrop-blur-[28.34px] ${
           formState.theme === "glassmorphsm"
             ? " lg:bg-neutral-400 lg:bg-opacity-20"
             : formState.theme === "light"
@@ -166,7 +189,10 @@ function PageWebsite() {
       >
         <TextsSection formState={formState} />
         <ButtonSection formState={formState} />
-        <InfoUserSection formState={formState} />
+        <InfoUserSection
+          formState={formState}
+          imageAvatarBase64={imageAvatarBase64}
+        />
       </div>
     </div>
   );
