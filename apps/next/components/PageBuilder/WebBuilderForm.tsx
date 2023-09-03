@@ -17,29 +17,69 @@ const BackgroundSelector = ({
   const [selectedBackgroundFile, setSelectedBackgroundFile] =
     useState<any>(null);
 
+  const [selectedBackgroundName, setSelectedBackgroundName] =
+    useState<any>(null);
+
   const handleBackgroundFileSelect = (e: any) => {
     e.preventDefault();
     const backgroundFile = e?.dataTransfer?.files?.[0] || e?.target?.files?.[0];
 
-    // Check the aspect ratio before setting the selected file
+    // console.log("backgroundFile", backgroundFile);
+
     if (backgroundFile) {
+      setSelectedBackgroundName(backgroundFile.name);
+      const reader = new FileReader();
+
       const background = document.createElement("img");
       background.src = URL.createObjectURL(backgroundFile);
+
       background.onload = () => {
         const aspectRatio = background.width / background.height;
         if (aspectRatio >= 1 && aspectRatio <= 1.8) {
-          setSelectedBackgroundFile(backgroundFile);
-          handleBackground(background.src);
+          reader.onload = () => {
+            const base64String = reader.result as string;
+            // console.log("base64String", base64String);
+            console.log(
+              "base64String background",
+              base64String.replace(/^data:image\/[a-zA-Z]+;base64,/, "")
+            );
+            setSelectedBackgroundFile(base64String);
+            handleBackground(
+              base64String.replace(/^data:image\/[a-zA-Z]+;base64,/, "")
+            );
+          };
+          reader.readAsDataURL(backgroundFile);
         } else {
           alert("Image aspect ratio must be between 1:1 and 1:1.8");
         }
       };
+    } else {
+      alert("Image aspect ratio must be between 1:1 and 1:1.8");
     }
+
+    // Check the aspect ratio before setting the selected file
+    // if (backgroundFile) {
+    //   const background = document.createElement("img");
+    //   background.src = URL.createObjectURL(backgroundFile);
+    //   background.onload = () => {
+    //     const aspectRatio = background.width / background.height;
+
+    //     console.log(
+    //       `${aspectRatio}/aspectRatio = ${background.width}/background.width  / ${background.height}/background.height`
+    //     );
+    //     if (aspectRatio >= 1 && aspectRatio <= 1.8) {
+    //       setSelectedBackgroundFile(backgroundFile);
+    //       handleBackground(background.src);
+    //     } else {
+    //       alert("Image aspect ratio must be between 1:1 and 1:1.8");
+    //     }
+    //   };
+    // }
   };
 
   const renderUploadBackgroundContent = () => {
     if (selectedBackgroundFile) {
-      const imageBackgroundUrl = URL.createObjectURL(selectedBackgroundFile); // Generate temporary URL for the selected file
+      // const imageBackgroundUrl = URL.createObjectURL(selectedBackgroundFile); // Generate temporary URL for the selected file
       return (
         <>
           <div>
@@ -47,7 +87,7 @@ const BackgroundSelector = ({
               width={64}
               height={64}
               className="h-16 w-auto"
-              src={imageBackgroundUrl}
+              src={selectedBackgroundFile}
               alt="Upload"
             />
             <input
@@ -66,7 +106,7 @@ const BackgroundSelector = ({
               onChange={(e) => handleBackgroundFileSelect(e)}
             />
           </div>
-          <p className="text-gray-400 text-xs">{selectedBackgroundFile.name}</p>
+          <p className="text-gray-400 text-xs">{selectedBackgroundName}</p>
         </>
       );
     } else {
@@ -132,34 +172,56 @@ const BackgroundSelector = ({
 
 const ProfileSelector = ({ handleProfile }: { handleProfile: any }) => {
   const [selectedProfileFile, setSelectedProfileFile] = useState<any>(null);
+  const [selectedProfileName, setSelectedProfileName] = useState<any>(null);
 
   const handleProfileFileSelect = (e: any) => {
     e.preventDefault();
     const profileFile = e?.dataTransfer?.files?.[0] || e?.target?.files?.[0];
+    // console.log("profileFile", profileFile);
 
     // Check the aspect ratio before setting the selected file
     if (profileFile) {
-      const image = document.createElement("img");
-      image.src = URL.createObjectURL(profileFile);
-      image.onload = () => {
-        if (
-          (profileFile.type === "image/png" ||
-            profileFile.type === "image/jpeg" ||
-            profileFile.type === "image/svg") &&
-          (image.width < 800 || image.height < 400)
-        ) {
-          setSelectedProfileFile(profileFile);
-          handleProfile(image.src);
-        } else {
-          alert("SVG, PNG, JPG or GIF (max. 800x400px)");
-        }
+      setSelectedProfileName(profileFile.name);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64String = reader.result as string;
+        // console.log("base64String", base64String);
+        console.log(
+          "base64String profile",
+          base64String.replace(/^data:image\/[a-zA-Z]+;base64,/, "")
+        );
+        setSelectedProfileFile(base64String);
+        handleProfile(
+          base64String.replace(/^data:image\/[a-zA-Z]+;base64,/, "")
+        );
       };
+      reader.readAsDataURL(profileFile);
+    } else {
+      alert("SVG, PNG, JPG (max. 800x400px)");
     }
+
+    // if (profileFile) {
+    // const image = document.createElement("img");
+    //   image.src = URL.createObjectURL(profileFile);
+    //   image.onload = () => {
+    //     if (
+    //       (profileFile.type === "image/png" ||
+    //         profileFile.type === "image/jpeg" ||
+    //         profileFile.type === "image/svg") &&
+    //       (image.width < 800 || image.height < 400)
+    //     ) {
+    //       setSelectedProfileFile(profileFile);
+    //       handleProfile(image.src);
+    //     } else {
+    //       alert("SVG, PNG, JPG (max. 800x400px)");
+    //     }
+    //   };
   };
 
   const renderUploadProfileContent = () => {
+    // console.log("selectedProfileFile", selectedProfileFile);
     if (selectedProfileFile) {
-      const imageUrl = URL.createObjectURL(selectedProfileFile); // Generate temporary URL for the selected file
+      // const imageUrl = URL.createObjectURL(selectedProfileFile); // Generate temporary URL for the selected file
       return (
         <>
           <div>
@@ -167,7 +229,7 @@ const ProfileSelector = ({ handleProfile }: { handleProfile: any }) => {
               width={64}
               height={64}
               className="h-16 w-auto"
-              src={imageUrl}
+              src={selectedProfileFile}
               alt="Upload"
             />
             <input
@@ -186,7 +248,7 @@ const ProfileSelector = ({ handleProfile }: { handleProfile: any }) => {
               onChange={(e) => handleProfileFileSelect(e)}
             />
           </div>
-          <p className="text-gray-400 text-xs">{selectedProfileFile.name}</p>
+          <p className="text-gray-400 text-xs">{selectedProfileName}</p>
         </>
       );
     } else {
@@ -220,7 +282,7 @@ const ProfileSelector = ({ handleProfile }: { handleProfile: any }) => {
             Click to upload or drag and drop your profile picture
           </p>
           <p className="text-gray-500 text-xs">
-            SVG, PNG, JPG or GIF (max. 800x400px)
+            SVG, PNG, JPG (max. 800x400px)
           </p>
         </>
       );
@@ -455,13 +517,15 @@ const ProfileSection = ({
 const SubmitSection = ({
   handleBackgroundColor,
   selectText,
+  mintWebsite,
 }: {
   handleBackgroundColor: any;
   selectText: any;
+  mintWebsite: () => Promise<void>;
 }) => {
   const [showBackgroundColorPicker, setShowBackgroundColorPicker] =
     useState(false);
-  const [backgroundColor, setColor] = useState('#FFFFFF');
+  const [backgroundColor, setColor] = useState("#FFFFFF");
   const backgroundColorPickerRef = useRef<HTMLDivElement | null>(null);
 
   const handleBackgroundColorPicker = () => {
@@ -535,7 +599,14 @@ const SubmitSection = ({
         </p>
       </div>
       <div className="flex justify-center lg:justify-normal shrink-0">
-        <button className="flex lg:w-full items-center gap-2 bg-[#F97316] py-3 px-5 rounded-md text-white font-normal hover:brightness-110">
+        {/* TODO put security requirement:
+          1) the wallet is connected
+          2) the domain belongs to the owner (to refetch the READ call every time the user change the owned domain)
+          3) All forms fields are required */}
+        <button
+          onClick={() => mintWebsite()}
+          className="flex lg:w-full items-center gap-2 bg-[#F97316] py-3 px-5 rounded-md text-white font-normal hover:brightness-110"
+        >
           <p className="flex">Mint Website Now</p>
           <Image
             width={64}
@@ -556,12 +627,14 @@ function WebBuilderForm({
   handleProfile,
   handleBackgroundColor,
   selectText,
+  mintWebsite,
 }: {
   handleInputs: any;
   handleBackground: any;
   handleProfile: any;
   handleBackgroundColor: any;
   selectText: any;
+  mintWebsite: () => Promise<void>;
 }) {
   return (
     <div>
@@ -605,6 +678,7 @@ function WebBuilderForm({
         <SubmitSection
           handleBackgroundColor={handleBackgroundColor}
           selectText={selectText}
+          mintWebsite={mintWebsite}
         />
       </form>
     </div>

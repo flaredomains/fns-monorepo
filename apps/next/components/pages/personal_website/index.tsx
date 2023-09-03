@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PageWebsite from "../../../components/Websites/PageWebsite";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  S3Client,
-  PutObjectCommand,
-  GetObjectCommand,
-} from "@aws-sdk/client-s3";
+import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 
 export default function Website() {
   const location = useLocation();
@@ -14,11 +10,15 @@ export default function Website() {
   const [imageAvatarBase64, setImageAvatarBase64] = useState("");
   const [imageWebsiteBase64, setImageWebsiteBase64] = useState("");
 
+  console.log("imageAvatarBase64", imageAvatarBase64);
+  console.log("imageWebsiteBase64", imageWebsiteBase64);
+
+  // Cloudflare R2 Config
   const apiUrl = process.env.CLOUDFLARE_R2_ENDPOINT;
-  // console.log(test);
-  const REGION = "us-east-1"; //e.g. "us-east-1"
+  const REGION = "us-east-1";
   const accessKeyId = process.env.CLOUDFLARE_R2_ACCESS_KEY_ID;
   const secretAccessKey = process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY;
+
   // Create an Amazon S3 service client object.
   const s3Client = new S3Client({
     region: REGION,
@@ -43,17 +43,19 @@ export default function Website() {
         navigate("/404");
       }
 
+      // TODO after release smart contract: get the old UUID and use it for get Images
       // Avatar
       getImage(
-        "20158247f23c2461df48da9deff0fce9cd1352770dac02000bb4e2f070598ad6",
+        "64c32dfbcf4b5ae242694f706a9175c7c36ac094d765a461b49d3e3aa3730109",
         domain,
         "imageAvatar",
         setImageAvatarBase64
       );
 
+      // TODO after release smart contract: get the old UUID and use it for get Images
       // Website
       getImage(
-        "deafffe548e3159a67a5cc01cdc29317c3d7e0acbbae77b59aa123f247b9d2ec",
+        "ec5bc8a865465ef04423ed4d3210b0fb617000fe5183201ada2f6fd9ce1d330c",
         domain,
         "imageWebsite",
         setImageWebsiteBase64

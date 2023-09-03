@@ -149,7 +149,7 @@ async function getImage(uuid: string, domain: string, imageCategory: string) {
 async function main() {
   const imageWebsite = "./landscape.jpg";
   const imageAvatar = "./cropped.jpg";
-  const domain = "simone.flr";
+  const domain = "crypto.flr";
   const imageCategory = ["imageAvatar", "imageWebsite"];
 
   // Upload Avatar image

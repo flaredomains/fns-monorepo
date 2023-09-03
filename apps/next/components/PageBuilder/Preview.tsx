@@ -103,7 +103,9 @@ const InfoUserSection = ({ formState }: { formState: any }) => {
         <Image
           className="w-3 h-3 lg:w-5 lg:h-5 rounded-full" //border border-white border-opacity-40
           src={
-            formState.profilePicture ? formState.profilePicture : AvatarPreview
+            formState.profilePicture
+              ? `data:image/png;base64,${formState.profilePicture}`
+              : AvatarPreview
           }
           width={10}
           height={10}
@@ -144,7 +146,11 @@ const Content = ({ formState }: { formState: any }) => {
       <div className="overflow-hidden relative w-[19.178rem] h-[13.638rem] sm:w-[28.75rem] sm:h-[20.444rem] rounded-[10px] shadow">
         <Image
           className="absolute w-full h-full"
-          src={formState.background ? formState.background : PreviewImage}
+          src={
+            formState.background
+              ? `data:image/png;base64,${formState.background}`
+              : PreviewImage
+          }
           width={600}
           height={500}
           alt="PreviewImage"
