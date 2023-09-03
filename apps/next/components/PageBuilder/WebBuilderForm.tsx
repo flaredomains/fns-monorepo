@@ -67,6 +67,25 @@ const BackgroundSelector = ({
     } else {
       alert("Please select a valid PNG, JPEG, or SVG image.");
     }
+
+    // Check the aspect ratio before setting the selected file
+    // if (backgroundFile) {
+    //   const background = document.createElement("img");
+    //   background.src = URL.createObjectURL(backgroundFile);
+    //   background.onload = () => {
+    //     const aspectRatio = background.width / background.height;
+
+    //     console.log(
+    //       `${aspectRatio}/aspectRatio = ${background.width}/background.width  / ${background.height}/background.height`
+    //     );
+    //     if (aspectRatio >= 1 && aspectRatio <= 1.8) {
+    //       setSelectedBackgroundFile(backgroundFile);
+    //       handleBackground(background.src);
+    //     } else {
+    //       alert("Image aspect ratio must be between 1:1 and 1:1.8");
+    //     }
+    //   };
+    // }
   };
 
   const renderUploadBackgroundContent = () => {
@@ -171,6 +190,7 @@ const ProfileSelector = ({
   const handleProfileFileSelect = (e: any) => {
     e.preventDefault();
     const profileFile = e?.dataTransfer?.files?.[0] || e?.target?.files?.[0];
+    // console.log("profileFile", profileFile);
 
     const imageSizeMB = profileFile.size / (1024 * 1024); // Convert size to MB
     // console.log("imageSizeProfileMB", imageSizeMB);
@@ -199,6 +219,23 @@ const ProfileSelector = ({
     } else {
       alert("Please select a valid PNG, JPEG, or SVG image.");
     }
+
+    // if (profileFile) {
+    // const image = document.createElement("img");
+    //   image.src = URL.createObjectURL(profileFile);
+    //   image.onload = () => {
+    //     if (
+    //       (profileFile.type === "image/png" ||
+    //         profileFile.type === "image/jpeg" ||
+    //         profileFile.type === "image/svg") &&
+    //       (image.width < 800 || image.height < 400)
+    //     ) {
+    //       setSelectedProfileFile(profileFile);
+    //       handleProfile(image.src);
+    //     } else {
+    //       alert("SVG, PNG, JPG (max. 800x400px)");
+    //     }
+    //   };
   };
 
   const renderUploadProfileContent = () => {
