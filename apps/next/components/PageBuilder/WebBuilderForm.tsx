@@ -42,10 +42,10 @@ const BackgroundSelector = ({
           reader.onload = () => {
             const base64String = reader.result as string;
             // console.log("base64String", base64String);
-            console.log(
-              "base64String background",
-              base64String.replace(/^data:image\/[a-zA-Z]+;base64,/, "")
-            );
+            // console.log(
+            //   "base64String background",
+            //   base64String.replace(/^data:image\/[a-zA-Z]+;base64,/, "")
+            // );
             setSelectedBackgroundFile(base64String);
             handleBackground(
               base64String.replace(/^data:image\/[a-zA-Z]+;base64,/, "")
@@ -189,10 +189,10 @@ const ProfileSelector = ({ handleProfile }: { handleProfile: any }) => {
       reader.onload = () => {
         const base64String = reader.result as string;
         // console.log("base64String", base64String);
-        console.log(
-          "base64String profile",
-          base64String.replace(/^data:image\/[a-zA-Z]+;base64,/, "")
-        );
+        // console.log(
+        //   "base64String profile",
+        //   base64String.replace(/^data:image\/[a-zA-Z]+;base64,/, "")
+        // );
         setSelectedProfileFile(base64String);
         handleProfile(
           base64String.replace(/^data:image\/[a-zA-Z]+;base64,/, "")

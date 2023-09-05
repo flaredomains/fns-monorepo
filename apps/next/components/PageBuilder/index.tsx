@@ -101,6 +101,8 @@ export default function PageBuilder() {
   const [ownedDomain, setOwnedDomain] = useState<string[]>([]);
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [nameHash, setNameHash] = useState("");
+  const [keccakImageWebsite, setKeccakImageWebsite] = useState("");
+  const [keccakImageAvatar, setKeccakImageAvatar] = useState("");
 
   const [formState, setFormState] = useState({
     title: undefined,
@@ -147,7 +149,13 @@ export default function PageBuilder() {
     if (selectText) {
       setNameHash(utils.namehash(selectText + ".flr"));
     }
-  }, [selectText, ownedDomain]);
+    if (formState.background) {
+      setKeccakImageWebsite(keccak256(formState.background));
+    }
+    if (formState.profilePicture) {
+      setKeccakImageAvatar(keccak256(formState.profilePicture));
+    }
+  }, [selectText, ownedDomain, formState.background]);
 
   // TODO Get uuid from smart contract
   // useEffect(() => {
@@ -334,6 +342,7 @@ export default function PageBuilder() {
       const results = await uploadImage(uuid, domain, image, imageCategory);
 
       // console.log("results", results);
+      writeSetText?.();
 
       return results;
     } catch (error) {
@@ -362,11 +371,7 @@ export default function PageBuilder() {
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
-    args: [
-      nameHash,
-      "website.buttonBackgroundColor",
-      formState.buttonBackgroundColor,
-    ],
+    args: [nameHash, "website.profilePicture", keccakImageAvatar],
     // enabled: argsReady,
     onSuccess(data: any) {
       console.log("Success prepareSetText", data);
@@ -424,29 +429,29 @@ export default function PageBuilder() {
     // console.log("Domain", selectText + ".flr");
     // console.log("namehash 2", utils.namehash(selectText + ".flr"));
 
-    writeSetText?.();
+    // writeSetText?.();
 
-    if (formState.background) {
-      // console.log("test background");
-      // await uploadImageCloudflare(
-      //   keccak256(formState.background),
-      //   selectText + ".flr",
-      //   formState.background,
-      //   "imageWebsite",
-      //   oldUUIDWebsite
-      // );
-    } else {
-      alert("Please add a background");
-    }
+    // if (formState.background) {
+    //   // console.log("test background");
+    // await uploadImageCloudflare(
+    //   keccakImageWebsite,
+    //   selectText + ".flr",
+    //   formState.background,
+    //   "imageWebsite",
+    //   oldUUIDWebsite
+    // );
+    // } else {
+    //   alert("Please add a background");
+    // }
     if (formState.profilePicture) {
       // console.log("test profile");
-      // await uploadImageCloudflare(
-      //   keccak256(formState.profilePicture),
-      //   selectText + ".flr",
-      //   formState.profilePicture,
-      //   "imageAvatar",
-      //   oldUUIDAvatar
-      // );
+      await uploadImageCloudflare(
+        keccakImageWebsite,
+        selectText + ".flr",
+        formState.profilePicture,
+        "imageAvatar",
+        oldUUIDAvatar
+      );
     } else {
       alert("Please add a profile picture");
     }
