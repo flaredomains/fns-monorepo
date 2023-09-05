@@ -91,9 +91,9 @@ const BackgroundSelector = ({
               alt="Upload"
             />
             <input
-              required
               id="dropzone-background-file"
               type="file"
+              name="BackgroundSelector"
               style={{
                 position: "absolute",
                 padding: 0,
@@ -121,9 +121,9 @@ const BackgroundSelector = ({
               alt="Upload"
             />
             <input
-              required
               id="dropzone-background-file"
               type="file"
+              name="BackgroundSelector"
               style={{
                 position: "absolute",
                 padding: 0,
@@ -160,8 +160,8 @@ const BackgroundSelector = ({
         {renderUploadBackgroundContent()}
       </div>
       <input
-        required
         id="dropzone-background-file"
+        name="BackgroundSelector"
         type="file"
         className="hidden"
         onChange={(e) => handleBackgroundFileSelect(e)}
@@ -233,9 +233,9 @@ const ProfileSelector = ({ handleProfile }: { handleProfile: any }) => {
               alt="Upload"
             />
             <input
-              required
               id="dropzone-profile-file"
               type="file"
+              name="ProfileSelector"
               style={{
                 position: "absolute",
                 padding: 0,
@@ -263,9 +263,9 @@ const ProfileSelector = ({ handleProfile }: { handleProfile: any }) => {
               alt="Upload"
             />
             <input
-              required
               id="dropzone-profile-file"
               type="file"
+              name="ProfileSelector"
               style={{
                 position: "absolute",
                 padding: 0,
@@ -521,7 +521,7 @@ const SubmitSection = ({
 }: {
   handleBackgroundColor: any;
   selectText: any;
-  mintWebsite: () => Promise<void>;
+  mintWebsite: (e: any) => Promise<void>;
 }) => {
   const [showBackgroundColorPicker, setShowBackgroundColorPicker] =
     useState(false);
@@ -604,7 +604,8 @@ const SubmitSection = ({
           2) the domain belongs to the owner (to refetch the READ call every time the user change the owned domain)
           3) All forms fields are required */}
         <button
-          onClick={() => mintWebsite()}
+          type="submit"
+          // disabled={isFormComplete}
           className="flex lg:w-full items-center gap-2 bg-[#F97316] py-3 px-5 rounded-md text-white font-normal hover:brightness-110"
         >
           <p className="flex">Mint Website Now</p>
@@ -634,11 +635,11 @@ function WebBuilderForm({
   handleProfile: any;
   handleBackgroundColor: any;
   selectText: any;
-  mintWebsite: () => Promise<void>;
+  mintWebsite: (e: any) => Promise<void>;
 }) {
   return (
     <div>
-      <form action="" className="flex flex-col gap-6">
+      <form onSubmit={mintWebsite} action="" className="flex flex-col gap-6">
         <div className="flex flex-col lg:flex-row w-full gap-6">
           <div className={`flex flex-col w-full lg:w-1/2 ${styles.autofill}`}>
             <h1

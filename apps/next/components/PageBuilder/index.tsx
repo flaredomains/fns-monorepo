@@ -13,9 +13,10 @@ import { useLocation } from "react-router-dom";
 import { utils } from "ethers";
 import { keccak256 } from "js-sha3";
 
+import PublicResolver from "../../src/pages/abi/PublicResolver.json";
+
 import {
   S3Client,
-  GetObjectCommand,
   CreateBucketCommand,
   PutObjectCommand,
   DeleteObjectCommand,
@@ -315,25 +316,32 @@ export default function PageBuilder() {
   // TODO put security requirement:
   // 1) the wallet is connected
   // 2) the domain belongs to the owner (to refetch the READ call every time the user change the owned domain)
-  // 3) All forms fields are required
-  const mintWebsite = async () => {
+  const mintWebsite = async (e: any) => {
+    e.preventDefault();
+
     if (formState.background) {
-      await uploadImageCloudflare(
-        keccak256(formState.background),
-        selectText + ".flr",
-        formState.background,
-        "imageWebsite",
-        oldUUIDWebsite
-      );
+      // console.log("test background");
+      // await uploadImageCloudflare(
+      //   keccak256(formState.background),
+      //   selectText + ".flr",
+      //   formState.background,
+      //   "imageWebsite",
+      //   oldUUIDWebsite
+      // );
+    } else {
+      alert("Please add a background");
     }
     if (formState.profilePicture) {
-      await uploadImageCloudflare(
-        keccak256(formState.profilePicture),
-        selectText + ".flr",
-        formState.profilePicture,
-        "imageAvatar",
-        oldUUIDAvatar
-      );
+      // console.log("test profile");
+      // await uploadImageCloudflare(
+      //   keccak256(formState.profilePicture),
+      //   selectText + ".flr",
+      //   formState.profilePicture,
+      //   "imageAvatar",
+      //   oldUUIDAvatar
+      // );
+    } else {
+      alert("Please add a profile picture");
     }
   };
 
