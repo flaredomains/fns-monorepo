@@ -3,16 +3,20 @@ import WalletConnect from "../WalletConnect";
 import HeaderBuilder from "./HeaderBuilder";
 import WebBuilderForm from "./WebBuilderForm";
 import Preview from "./Preview";
-
-import { useAccount } from "wagmi";
-
 import { Step } from "../Register/Steps";
-
 import { useLocation } from "react-router-dom";
-
 import { utils } from "ethers";
 import { keccak256 } from "js-sha3";
 
+// For READ / WRITE call smart contract
+import {
+  useContractRead,
+  useContractReads,
+  usePrepareContractWrite,
+  useContractWrite,
+} from "wagmi";
+
+// ABIS
 import PublicResolver from "../../src/pages/abi/PublicResolver.json";
 
 import {
@@ -40,8 +44,6 @@ const progressArr = [
   },
 ];
 
-// import MintedDomainNames from '../../src/pages/abi/MintedDomainNames.json'
-
 type Domain = {
   label: string;
   expire: number;
@@ -66,6 +68,7 @@ export default function PageBuilder() {
   });
 
   const [isOpen, setIsOpen] = useState(false);
+
   const location = useLocation();
 
   // TODO after release smart contract: get the old
@@ -78,10 +81,13 @@ export default function PageBuilder() {
     "cfa4d42ba27501759eb69f34b6305bb6b7757de687fa2fbf166eab5b46c073a6"
   );
 
-  const { address, isConnected } = useAccount();
+  // React Hooks
   const [selectText, setSelectText] = useState("");
-
   const [countBuilder, setCountBuilder] = useState(0);
+  const [argsReady, setArgsReady] = useState(false);
+  const [args, setArgs] = useState<any>([]);
+  const [ownedDomain, setOwnedDomain] = useState<string[]>([]);
+  const [isOwner, setIsOwner] = useState<boolean>(false);
 
   const [formState, setFormState] = useState({
     title: undefined,
@@ -120,6 +126,12 @@ export default function PageBuilder() {
 
     setSelectText(resultFiltered);
   }, [location]);
+
+  useEffect(() => {
+    if (ownedDomain) {
+      setIsOwner(ownedDomain.includes(selectText));
+    }
+  }, [selectText, ownedDomain]);
 
   // TODO Get uuid from smart contract
   // useEffect(() => {
@@ -313,11 +325,51 @@ export default function PageBuilder() {
     }
   }
 
+  // WAGMI TEXT RECORD WRITE FUNCTION, active when === false
+  // setText(namehash(domainName), keyString, valueString)
+  // Example Usage:
+  // To set email:
+  // setText(namehash, "email", "simone@gmail.com")
+  const { config: prepareSetText } = usePrepareContractWrite({
+    address: PublicResolver.address as `0x${string}`,
+    abi: PublicResolver.abi,
+    functionName: "setText",
+    args: args,
+    enabled: argsReady,
+    onSuccess(data: any) {
+      console.log("Success prepareSetText", data);
+    },
+    onError(error) {
+      console.log("Error prepareSetText", error);
+    },
+  });
+
+  // Write function for 'setText' call to set a text record on PublicResolver.
+  const { write: writeSetText } = useContractWrite({
+    ...prepareSetText,
+    async onSuccess(data) {
+      console.log("Success writeSetText", data);
+
+      // Waits for 1 txn confirmation (block confirmation)
+      await data.wait(1);
+    },
+  }) as any;
+
   // TODO put security requirement:
   // The domain belongs to the owner (to refetch the READ call every time the user change the owned domain)
   const mintWebsite = async (e: any) => {
     e.preventDefault();
     console.log("test");
+
+    // console.log("Domain", selectText + ".flr");
+    // console.log("namehash 2", utils.namehash(selectText + ".flr"));
+
+    setArgs([
+      utils.namehash(selectText + ".flr"),
+      "website.titleText",
+      formState.title,
+    ]); // Second arg key (ex. website.titleText, website.bgPhotoHash, etc.)
+    setArgsReady(true);
 
     if (formState.background) {
       // console.log("test background");
@@ -357,6 +409,7 @@ export default function PageBuilder() {
           selectText={selectText}
           setSelectText={setSelectText}
           setCountBuilder={setCountBuilder}
+          setOwnedDomain={setOwnedDomain}
         />
         <Preview formState={formState} />
         <WebBuilderForm
@@ -365,6 +418,7 @@ export default function PageBuilder() {
           handleProfile={handleProfile}
           handleBackgroundColor={handleBackgroundColor}
           selectText={selectText}
+          isOwner={isOwner}
           mintWebsite={mintWebsite}
         />
 

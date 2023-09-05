@@ -116,34 +116,13 @@ export default function HeaderBuilder({
   selectText,
   setSelectText,
   setCountBuilder,
+  setOwnedDomain,
 }: {
   selectText: string;
   setSelectText: React.Dispatch<React.SetStateAction<string>>;
   setCountBuilder: any;
+  setOwnedDomain: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
-  // const router = useRouter();
-  // const [route, setRoute] = useState('')
-  // const handleSubmit = (e: any) => {
-  //   e.preventDefault()
-
-  //   // Regular expression to validate input
-  //   const pattern = /^[a-zA-Z0-9\s\p{Emoji}]+(\.[a-zA-Z0-9\s\p{Emoji}]+)*\.flr$/u
-
-  //   const exception = /^0x[a-fA-F0-9]{40}$/
-
-  //   if (pattern.test(route) || exception.test(route)) {
-  //     console.log('Input is valid!')
-  //     router.push('register?result=' + route.toLowerCase())
-  //   } else {
-  //     console.log('Input is invalid!')
-  //     const inputElement = e.target.elements['input-field'] as HTMLInputElement
-  //     inputElement.setCustomValidity(
-  //       'Should be a name with .flr at the end or ethereum address.'
-  //     )
-  //     inputElement.reportValidity()
-  //   }
-  // }
-
   const [isOpen, setIsOpen] = useState(false);
   const [addressDomain, setAddressDomain] = useState<Array<Domain>>([]);
 
@@ -168,6 +147,8 @@ export default function HeaderBuilder({
           isSubdomain: /[a-zA-Z0-9]+\.{1}[a-zA-Z0-9]+/.test(item.label),
         };
       });
+      const ownedLabel = arrDomains.map((obj: any) => obj.label);
+      setOwnedDomain(ownedLabel);
       setAddressDomain(ownedDomain);
     },
     onError(error) {

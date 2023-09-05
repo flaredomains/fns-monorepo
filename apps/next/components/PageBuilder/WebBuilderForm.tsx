@@ -9,6 +9,7 @@ import ArrowRight from "../../public/ArrowRight.png";
 import { Gradients } from "./Preview";
 import { HexColorPicker } from "react-colorful";
 
+// For check if connected
 import { useAccount } from "wagmi";
 
 const BackgroundSelector = ({
@@ -519,11 +520,11 @@ const ProfileSection = ({
 const SubmitSection = ({
   handleBackgroundColor,
   selectText,
-  mintWebsite,
+  isOwner,
 }: {
   handleBackgroundColor: any;
   selectText: any;
-  mintWebsite: (e: any) => Promise<void>;
+  isOwner: boolean;
 }) => {
   const [showBackgroundColorPicker, setShowBackgroundColorPicker] =
     useState(false);
@@ -535,6 +536,10 @@ const SubmitSection = ({
   const handleBackgroundColorPicker = () => {
     setShowBackgroundColorPicker(!showBackgroundColorPicker); // Toggle color picker visibility
   };
+
+  console.log("!isOwner", !isOwner); // Is not the owner
+  console.log("!isConnected ", !isConnected);
+  console.log("!isConnected || !isOwner", !isConnected || !isOwner);
 
   // Event listener to close color picker when clicking outside
   useEffect(() => {
@@ -603,13 +608,9 @@ const SubmitSection = ({
         </p>
       </div>
       <div className="flex justify-center lg:justify-normal shrink-0">
-        {/* TODO put security requirement:
-          1) the wallet is connected
-          2) the domain belongs to the owner (to refetch the READ call every time the user change the owned domain)
-          3) All forms fields are required */}
         <button
           type="submit"
-          disabled={!isConnected}
+          disabled={!isConnected || !isOwner}
           className="flex lg:w-full items-center gap-2 bg-[#F97316] disabled:brightness-75 py-3 px-5 rounded-md text-white font-normal hover:brightness-110"
         >
           <p className="flex">Mint Website Now</p>
@@ -632,6 +633,7 @@ function WebBuilderForm({
   handleProfile,
   handleBackgroundColor,
   selectText,
+  isOwner,
   mintWebsite,
 }: {
   handleInputs: any;
@@ -639,6 +641,7 @@ function WebBuilderForm({
   handleProfile: any;
   handleBackgroundColor: any;
   selectText: any;
+  isOwner: boolean;
   mintWebsite: (e: any) => Promise<void>;
 }) {
   return (
@@ -683,7 +686,7 @@ function WebBuilderForm({
         <SubmitSection
           handleBackgroundColor={handleBackgroundColor}
           selectText={selectText}
-          mintWebsite={mintWebsite}
+          isOwner={isOwner}
         />
       </form>
     </div>
