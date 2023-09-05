@@ -9,6 +9,8 @@ import ArrowRight from "../../public/ArrowRight.png";
 import { Gradients } from "./Preview";
 import { HexColorPicker } from "react-colorful";
 
+import { useAccount } from "wagmi";
+
 const BackgroundSelector = ({
   handleBackground,
 }: {
@@ -528,6 +530,8 @@ const SubmitSection = ({
   const [backgroundColor, setColor] = useState("#FFFFFF");
   const backgroundColorPickerRef = useRef<HTMLDivElement | null>(null);
 
+  const { address, isConnected } = useAccount();
+
   const handleBackgroundColorPicker = () => {
     setShowBackgroundColorPicker(!showBackgroundColorPicker); // Toggle color picker visibility
   };
@@ -605,8 +609,8 @@ const SubmitSection = ({
           3) All forms fields are required */}
         <button
           type="submit"
-          // disabled={isFormComplete}
-          className="flex lg:w-full items-center gap-2 bg-[#F97316] py-3 px-5 rounded-md text-white font-normal hover:brightness-110"
+          disabled={!isConnected}
+          className="flex lg:w-full items-center gap-2 bg-[#F97316] disabled:brightness-75 py-3 px-5 rounded-md text-white font-normal hover:brightness-110"
         >
           <p className="flex">Mint Website Now</p>
           <Image

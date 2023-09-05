@@ -314,10 +314,10 @@ export default function PageBuilder() {
   }
 
   // TODO put security requirement:
-  // 1) the wallet is connected
-  // 2) the domain belongs to the owner (to refetch the READ call every time the user change the owned domain)
+  // The domain belongs to the owner (to refetch the READ call every time the user change the owned domain)
   const mintWebsite = async (e: any) => {
     e.preventDefault();
+    console.log("test");
 
     if (formState.background) {
       // console.log("test background");
