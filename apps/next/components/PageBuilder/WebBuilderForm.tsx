@@ -537,9 +537,9 @@ const SubmitSection = ({
     setShowBackgroundColorPicker(!showBackgroundColorPicker); // Toggle color picker visibility
   };
 
-  console.log("!isOwner", !isOwner); // Is not the owner
-  console.log("!isConnected ", !isConnected);
-  console.log("!isConnected || !isOwner", !isConnected || !isOwner);
+  // console.log("!isOwner", !isOwner); // Is not the owner
+  // console.log("!isConnected ", !isConnected);
+  // console.log("!isConnected || !isOwner", !isConnected || !isOwner);
 
   // Event listener to close color picker when clicking outside
   useEffect(() => {

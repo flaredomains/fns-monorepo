@@ -19,6 +19,20 @@ import {
 // ABIS
 import PublicResolver from "../../src/pages/abi/PublicResolver.json";
 
+const textKeys: Array<string> = [
+  "website.titleText",
+  "website.bgPhotoHash",
+  "website.body",
+  "website.theme",
+  "website.button1",
+  "website.button1Link",
+  "website.contactButton",
+  "website.name",
+  "website.role",
+  "website.profilePicture",
+  "website.buttonBackgroundColor",
+];
+
 import {
   S3Client,
   CreateBucketCommand,
@@ -84,10 +98,9 @@ export default function PageBuilder() {
   // React Hooks
   const [selectText, setSelectText] = useState("");
   const [countBuilder, setCountBuilder] = useState(0);
-  const [argsReady, setArgsReady] = useState(false);
-  const [args, setArgs] = useState<any>([]);
   const [ownedDomain, setOwnedDomain] = useState<string[]>([]);
   const [isOwner, setIsOwner] = useState<boolean>(false);
+  const [nameHash, setNameHash] = useState("");
 
   const [formState, setFormState] = useState({
     title: undefined,
@@ -130,6 +143,9 @@ export default function PageBuilder() {
   useEffect(() => {
     if (ownedDomain) {
       setIsOwner(ownedDomain.includes(selectText));
+    }
+    if (selectText) {
+      setNameHash(utils.namehash(selectText + ".flr"));
     }
   }, [selectText, ownedDomain]);
 
@@ -325,6 +341,18 @@ export default function PageBuilder() {
     }
   }
 
+  // "website.titleText",
+  // "website.bgPhotoHash",
+  // "website.body",
+  // "website.theme",
+  // "website.button1",
+  // "website.button1Link",
+  // "website.contactButton",
+  // "website.name",
+  // "website.role",
+  // "website.profilePicture",
+  // "website.buttonBackgroundColor",
+
   // WAGMI TEXT RECORD WRITE FUNCTION, active when === false
   // setText(namehash(domainName), keyString, valueString)
   // Example Usage:
@@ -334,8 +362,12 @@ export default function PageBuilder() {
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
-    args: args,
-    enabled: argsReady,
+    args: [
+      nameHash,
+      "website.buttonBackgroundColor",
+      formState.buttonBackgroundColor,
+    ],
+    // enabled: argsReady,
     onSuccess(data: any) {
       console.log("Success prepareSetText", data);
     },
@@ -352,11 +384,39 @@ export default function PageBuilder() {
 
       // Waits for 1 txn confirmation (block confirmation)
       await data.wait(1);
+      refetchText();
     },
   }) as any;
 
-  // TODO put security requirement:
-  // The domain belongs to the owner (to refetch the READ call every time the user change the owned domain)
+  // Prepares an array of read objects on the PublicResolver contract
+  // for every available text record type defined in `addressKeys`.
+  const textRecordReads = textKeys.map((item) => ({
+    address: PublicResolver.address as `0x${string}`,
+    abi: PublicResolver.abi,
+    functionName: "text",
+    args: [nameHash, item],
+  }));
+
+  // Performs all of the reads for the text record types and
+  // returns an array of strings corresponding to each type.
+  const { data: textRecords, refetch: refetchText } = useContractReads({
+    contracts: textRecordReads as [
+      {
+        address?: `0x${string}`;
+        abi?: any;
+        functionName?: string;
+        args?: [any, number];
+      },
+    ],
+    enabled: nameHash !== "",
+    onSuccess(data: any) {
+      console.log("Success texts", data);
+    },
+    onError(error) {
+      console.log("Error texts", error);
+    },
+  });
+
   const mintWebsite = async (e: any) => {
     e.preventDefault();
     console.log("test");
@@ -364,12 +424,7 @@ export default function PageBuilder() {
     // console.log("Domain", selectText + ".flr");
     // console.log("namehash 2", utils.namehash(selectText + ".flr"));
 
-    setArgs([
-      utils.namehash(selectText + ".flr"),
-      "website.titleText",
-      formState.title,
-    ]); // Second arg key (ex. website.titleText, website.bgPhotoHash, etc.)
-    setArgsReady(true);
+    writeSetText?.();
 
     if (formState.background) {
       // console.log("test background");
