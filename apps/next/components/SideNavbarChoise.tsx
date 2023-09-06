@@ -2,6 +2,7 @@ import React from "react";
 import Search from "../public/Search.png";
 import Account from "../public/Account.png";
 import WebsiteBuilder from "../public/page_builder.png";
+import Send from "../public/Send.png";
 import FAQ from "../public/FAQ.png";
 import Image from "next/image";
 // import Link from "next/link";
@@ -31,6 +32,14 @@ const buttonData = [
     text_style: "",
     src: WebsiteBuilder,
     alt: "Websites",
+  },
+  {
+    page: "/send_tokens",
+    text: "Send Tokens",
+    button_style: "",
+    text_style: "",
+    src: Send,
+    alt: "SendTokens",
   },
   {
     page: "/faq",
@@ -80,7 +89,7 @@ function SideNavbarChoise({
   isOpen,
   isLarge,
 }: {
-  path: string;
+  path: String;
   isOpen: boolean;
   isLarge: boolean;
 }) {
