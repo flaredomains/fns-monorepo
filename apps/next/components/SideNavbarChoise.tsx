@@ -1,18 +1,19 @@
-import React from 'react'
-import Search from '../public/Search.png'
-import Account from '../public/Account.png'
-import FAQ from '../public/FAQ.png'
-import Image from 'next/image'
-import Link from 'next/link'
+import React from 'react';
+import Search from '../public/Search.png';
+import Account from '../public/Account.png';
+import Send from '../public/Send.png';
+import FAQ from '../public/FAQ.png';
+import Image from 'next/image';
+import Link from 'next/link';
 
 const buttonData = [
   {
-    page: '/register/[result]',
+    page: '/',
     text: 'Search For Domain',
     button_style: '',
     text_style: '',
     src: Search,
-    alt: 'Search'
+    alt: 'Search',
   },
   {
     page: '/my_account',
@@ -20,7 +21,15 @@ const buttonData = [
     button_style: '',
     text_style: '',
     src: Account,
-    alt: 'Account'
+    alt: 'Account',
+  },
+  {
+    page: '/send_tokens',
+    text: 'Send Tokens',
+    button_style: '',
+    text_style: '',
+    src: Send,
+    alt: 'SendTokens',
   },
   {
     page: '/faq',
@@ -28,9 +37,9 @@ const buttonData = [
     button_style: '',
     text_style: '',
     src: FAQ,
-    alt: 'FAQ'
+    alt: 'FAQ',
   },
-]
+];
 
 const ButtonChoise = ({
   text,
@@ -38,14 +47,14 @@ const ButtonChoise = ({
   button_style,
   text_style,
   src,
-  alt
+  alt,
 }: {
-  text: string
-  page: string
-  button_style: string
-  text_style: string
-  src: any
-  alt: string
+  text: string;
+  page: string;
+  button_style: string;
+  text_style: string;
+  src: any;
+  alt: string;
 }) => {
   return (
     <>
@@ -57,7 +66,7 @@ const ButtonChoise = ({
         <div
           className={`flex items-center w-full my-1 h-12 px-3 py-2 rounded-md ${button_style} hover:bg-gray-600 [&>p]:hover:text-white hover:scale-105 transform transition duration-400 ease-out`}
         >
-          <Image className="h-6 w-6 mr-2" src={src} alt={alt} />
+          <Image className='h-6 w-6 mr-2' src={src} alt={alt} />
           <p
             className={`w-full bg-transparent font-semibold text-normal ${text_style} focus:outline-none`}
           >
@@ -66,17 +75,17 @@ const ButtonChoise = ({
         </div>
       </Link>
     </>
-  )
-}
+  );
+};
 
 function SideNavbarChoise({
   path,
   isOpen,
   isLarge,
 }: {
-  path: String
-  isOpen: boolean
-  isLarge: boolean
+  path: String;
+  isOpen: boolean;
+  isLarge: boolean;
 }) {
   return (
     <>
@@ -100,7 +109,7 @@ function SideNavbarChoise({
         ))}
       </div>
     </>
-  )
+  );
 }
 
-export default SideNavbarChoise
+export default SideNavbarChoise;
