@@ -1,7 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 import PageWebsite from "../../../components/Websites/PageWebsite";
 import { useLocation, useNavigate } from "react-router-dom";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+
+import { utils } from "ethers";
+
+// For READ / WRITE call smart contract
+import { useContractReads } from "wagmi";
+
+// ABIS
+import PublicResolver from "../../../src/pages/abi/PublicResolver.json";
+
+const textKeys: Array<string> = [
+  "website.titleText",
+  "website.bgPhotoHash",
+  "website.body",
+  "website.theme",
+  "website.button1",
+  "website.button1Link",
+  "website.contactButton",
+  "website.name",
+  "website.role",
+  "website.profilePicture",
+  "website.buttonBackgroundColor",
+];
 
 export default function Website() {
   const location = useLocation();
@@ -10,8 +32,8 @@ export default function Website() {
   const [imageAvatarBase64, setImageAvatarBase64] = useState("");
   const [imageWebsiteBase64, setImageWebsiteBase64] = useState("");
 
-  console.log("imageAvatarBase64", imageAvatarBase64);
-  console.log("imageWebsiteBase64", imageWebsiteBase64);
+  // console.log("imageAvatarBase64", imageAvatarBase64);
+  // console.log("imageWebsiteBase64", imageWebsiteBase64);
 
   // Cloudflare R2 Config
   const apiUrl = process.env.CLOUDFLARE_R2_ENDPOINT;
@@ -29,71 +51,160 @@ export default function Website() {
     },
   });
 
-  // const client = new S3Client()
+  const [nameHash, setNameHash] = useState("");
+  const [domain, setDomain] = useState("");
+
+  const [websiteData, setWebsiteData] = useState({
+    title: "The XRP Conference",
+    background: undefined,
+    body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    theme: "glassmorphsm",
+    button1: "Pay Me",
+    button1Link: undefined,
+    contactButton: "Contact Me",
+    name: "Elon Musk",
+    role: "CEO of Tesla",
+    profilePicture: undefined,
+    buttonBackgroundColor: "#FFFFFF",
+  });
+
+  interface UpdateFunctions {
+    [key: string]: Dispatch<SetStateAction<any>>;
+  }
+
+  const updateFunctions: UpdateFunctions = {
+    title: (value) =>
+      setWebsiteData((prevState) => ({ ...prevState, title: value })),
+    body: (value) =>
+      setWebsiteData((prevState) => ({ ...prevState, body: value })),
+    background: (value) =>
+      setWebsiteData((prevState) => ({ ...prevState, background: value })),
+    theme: (value) =>
+      setWebsiteData((prevState) => ({ ...prevState, theme: value })),
+    button1: (value) =>
+      setWebsiteData((prevState) => ({ ...prevState, button1: value })),
+    button1Link: (value) =>
+      setWebsiteData((prevState) => ({ ...prevState, button1Link: value })),
+    contactButton: (value) =>
+      setWebsiteData((prevState) => ({ ...prevState, contactButton: value })),
+    name: (value) =>
+      setWebsiteData((prevState) => ({ ...prevState, name: value })),
+    role: (value) =>
+      setWebsiteData((prevState) => ({ ...prevState, role: value })),
+    profilePicture: (value) =>
+      setWebsiteData((prevState) => ({ ...prevState, profilePicture: value })),
+    buttonBackgroundColor: (value) =>
+      setWebsiteData((prevState) => ({
+        ...prevState,
+        buttonBackgroundColor: value,
+      })),
+  };
 
   useEffect(() => {
     if (location) {
       const lastIndex = location.pathname.lastIndexOf("/");
 
       const domain = location.pathname.substring(lastIndex + 1);
-      console.log("domain", domain);
+      // console.log("domain", domain);
+      setNameHash(utils.namehash(domain));
+      setDomain(domain);
 
       if (typeof domain === "string" && !domain.endsWith(".flr")) {
         // Redirect to 404 page if URL doesn't end with ".flr"
         navigate("/404");
       }
+    }
+  }, [location]);
 
-      // TODO after release smart contract: get the old UUID and use it for get Images
+  async function getImage(
+    uuid: string,
+    domain: string,
+    imageCategory: string,
+    setImage: React.Dispatch<React.SetStateAction<string>>
+  ) {
+    try {
+      const params = {
+        Bucket: `${domain}_${imageCategory}`, // The name of the bucket. For example, 'sample-bucket-101'.
+        Key: uuid, // The name of the object. For example, 'sample_upload.txt'.
+      };
+
+      const response = (await s3Client.send(
+        new GetObjectCommand(params)
+      )) as any;
+      // console.log("response", response);
+
+      // The Body object also has 'transformToByteArray' and 'transformToWebStream' methods.
+      const imagebase64 = await response.Body.transformToString();
+
+      setImage(imagebase64);
+    } catch (error) {
+      console.error("Error retrieving object:", error);
+    }
+  }
+
+  // Prepares an array of read objects on the PublicResolver contract
+  // for every available text record type defined in `addressKeys`.
+  const textRecordReads = textKeys.map((item) => ({
+    address: PublicResolver.address as `0x${string}`,
+    abi: PublicResolver.abi,
+    functionName: "text",
+    args: [nameHash, item],
+  }));
+
+  // Performs all of the reads for the text record types and
+  // returns an array of strings corresponding to each type.
+  const { data: textRecords, refetch: refetchText } = useContractReads({
+    contracts: textRecordReads as [
+      {
+        address?: `0x${string}`;
+        abi?: any;
+        functionName?: string;
+        args?: [any, number];
+      },
+    ],
+    enabled: nameHash !== "",
+    onSuccess(data: any) {
+      console.log("Success texts", data);
+      const imageWebsiteBase64 = data[1];
+      const imageAvatarBase64 = data[9];
+
+      if (imageWebsiteBase64 === "" || imageAvatarBase64 === "") {
+        navigate("/404");
+      }
+
+      const updatedFormState = { ...websiteData };
+      data.forEach((value: any, index: any) => {
+        const key = Object.keys(updatedFormState)[index];
+        // console.log("key", key);
+        // console.log("updateFunctions[key]", updateFunctions[key]);
+        const updateFunction = updateFunctions[key];
+        if (updateFunction) {
+          updateFunction(value);
+        }
+      });
+
       // Avatar
-      getImage(
-        "64c32dfbcf4b5ae242694f706a9175c7c36ac094d765a461b49d3e3aa3730109",
-        domain,
-        "imageAvatar",
-        setImageAvatarBase64
-      );
+      getImage(imageAvatarBase64, domain, "imageAvatar", setImageAvatarBase64);
 
-      // TODO after release smart contract: get the old UUID and use it for get Images
       // Website
       getImage(
-        "ec5bc8a865465ef04423ed4d3210b0fb617000fe5183201ada2f6fd9ce1d330c",
+        imageWebsiteBase64,
         domain,
         "imageWebsite",
         setImageWebsiteBase64
       );
-    }
-
-    async function getImage(
-      uuid: string,
-      domain: string,
-      imageCategory: string,
-      setImage: React.Dispatch<React.SetStateAction<string>>
-    ) {
-      try {
-        const params = {
-          Bucket: `${domain}_${imageCategory}`, // The name of the bucket. For example, 'sample-bucket-101'.
-          Key: uuid, // The name of the object. For example, 'sample_upload.txt'.
-        };
-
-        const response = (await s3Client.send(
-          new GetObjectCommand(params)
-        )) as any;
-        // console.log("response", response);
-
-        // The Body object also has 'transformToByteArray' and 'transformToWebStream' methods.
-        const imagebase64 = await response.Body.transformToString();
-
-        setImage(imagebase64);
-      } catch (error) {
-        console.error("Error retrieving object:", error);
-      }
-    }
-  }, [location]);
+    },
+    onError(error) {
+      console.log("Error texts", error);
+    },
+  });
 
   return (
     <div className="min-h-screen">
       <PageWebsite
         imageAvatarBase64={imageAvatarBase64}
         imageWebsiteBase64={imageWebsiteBase64}
+        websiteData={websiteData}
       />
     </div>
   );
