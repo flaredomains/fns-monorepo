@@ -27,6 +27,7 @@ const textKeys: Array<string> = [
   "website.button1",
   "website.button1Link",
   "website.contactButton",
+  "website.contactButtonEmail",
   "website.name",
   "website.role",
   "website.profilePicture",
@@ -112,6 +113,7 @@ export default function PageBuilder() {
     button1: undefined,
     button1Link: undefined,
     contactButton: undefined,
+    contactButtonEmail: undefined,
     name: undefined,
     role: undefined,
     profilePicture: undefined,
@@ -219,6 +221,11 @@ export default function PageBuilder() {
       setFormState((prevState) => ({ ...prevState, button1Link: value })),
     ContactButton: (value) =>
       setFormState((prevState) => ({ ...prevState, contactButton: value })),
+    ContactButtonEmail: (value) =>
+      setFormState((prevState) => ({
+        ...prevState,
+        contactButtonEmail: value,
+      })),
     Name: (value) =>
       setFormState((prevState) => ({ ...prevState, name: value })),
     Role: (value) =>
@@ -357,6 +364,7 @@ export default function PageBuilder() {
   // "website.button1",
   // "website.button1Link",
   // "website.contactButton",
+  // "website.contactButtonEmail",
   // "website.name",
   // "website.role",
   // "website.profilePicture",
@@ -371,7 +379,11 @@ export default function PageBuilder() {
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
-    args: [nameHash, "website.profilePicture", keccakImageAvatar],
+    args: [
+      nameHash,
+      "website.contactButtonEmail",
+      formState.contactButtonEmail,
+    ],
     // enabled: argsReady,
     onSuccess(data: any) {
       console.log("Success prepareSetText", data);
@@ -429,7 +441,7 @@ export default function PageBuilder() {
     // console.log("Domain", selectText + ".flr");
     // console.log("namehash 2", utils.namehash(selectText + ".flr"));
 
-    // writeSetText?.();
+    writeSetText?.();
 
     // if (formState.background) {
     //   // console.log("test background");
@@ -443,18 +455,18 @@ export default function PageBuilder() {
     // } else {
     //   alert("Please add a background");
     // }
-    if (formState.profilePicture) {
-      // console.log("test profile");
-      await uploadImageCloudflare(
-        keccakImageWebsite,
-        selectText + ".flr",
-        formState.profilePicture,
-        "imageAvatar",
-        oldUUIDAvatar
-      );
-    } else {
-      alert("Please add a profile picture");
-    }
+    // if (formState.profilePicture) {
+    //   // console.log("test profile");
+    //   await uploadImageCloudflare(
+    //     keccakImageWebsite,
+    //     selectText + ".flr",
+    //     formState.profilePicture,
+    //     "imageAvatar",
+    //     oldUUIDAvatar
+    //   );
+    // } else {
+    //   alert("Please add a profile picture");
+    // }
   };
 
   return (

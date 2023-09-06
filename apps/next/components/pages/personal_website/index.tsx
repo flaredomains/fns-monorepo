@@ -19,6 +19,7 @@ const textKeys: Array<string> = [
   "website.button1",
   "website.button1Link",
   "website.contactButton",
+  "website.contactButtonEmail",
   "website.name",
   "website.role",
   "website.profilePicture",
@@ -62,6 +63,7 @@ export default function Website() {
     button1: "Pay Me",
     button1Link: undefined,
     contactButton: "Contact Me",
+    contactButtonEmail: undefined,
     name: "Elon Musk",
     role: "CEO of Tesla",
     profilePicture: undefined,
@@ -87,6 +89,11 @@ export default function Website() {
       setWebsiteData((prevState) => ({ ...prevState, button1Link: value })),
     contactButton: (value) =>
       setWebsiteData((prevState) => ({ ...prevState, contactButton: value })),
+    contactButtonEmail: (value) =>
+      setWebsiteData((prevState) => ({
+        ...prevState,
+        contactButtonEmail: value,
+      })),
     name: (value) =>
       setWebsiteData((prevState) => ({ ...prevState, name: value })),
     role: (value) =>
@@ -166,7 +173,7 @@ export default function Website() {
     onSuccess(data: any) {
       console.log("Success texts", data);
       const imageWebsiteBase64 = data[1];
-      const imageAvatarBase64 = data[9];
+      const imageAvatarBase64 = data[10];
 
       if (imageWebsiteBase64 === "" || imageAvatarBase64 === "") {
         navigate("/404");

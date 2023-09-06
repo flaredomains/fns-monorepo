@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-
+import Link from "next/link";
 const TextsSection = ({
   websiteData,
 }: {
@@ -12,6 +12,7 @@ const TextsSection = ({
     button1: string;
     button1Link: undefined;
     contactButton: string;
+    contactButtonEmail: undefined;
     name: string;
     role: string;
     profilePicture: undefined;
@@ -58,6 +59,7 @@ const ButtonSection = ({
     button1: string;
     button1Link: undefined;
     contactButton: string;
+    contactButtonEmail: undefined;
     name: string;
     role: string;
     profilePicture: undefined;
@@ -72,12 +74,17 @@ const ButtonSection = ({
     return brightness >= 128 ? "#000000" : "#ffffff";
   };
 
+  console.log(websiteData.contactButtonEmail);
+
   const buttonBackgroundColor = websiteData.buttonBackgroundColor;
   const buttonTextColor = getContrastColor(buttonBackgroundColor);
   return (
     <>
       <div className="flex items-center gap-x-5 mb-9 lg:mb-16">
-        <button
+        <Link
+          href={`https://${websiteData.button1Link}`}
+          target="_blank"
+          // onClick={() => navigate(`${websiteData.contactButtonEmail}`)}
           className={`flex items-center justify-center px-5 py-3 gap-[0.2rem] rounded-lg shadow border`}
           style={{
             backgroundColor: websiteData.buttonBackgroundColor,
@@ -107,8 +114,10 @@ const ButtonSection = ({
               stroke-linejoin="round"
             />
           </svg>
-        </button>
-        <button
+        </Link>
+        <a
+          href={`mailto:${websiteData.contactButtonEmail}`}
+          target="_blank"
           className={`flex items-center justify-center bg-trasparent px-5 py-3 gap-[0.2rem] rounded-lg border ${
             websiteData.theme === "light" ? "border-black" : "border-white"
           } border-opacity-50`}
@@ -120,7 +129,7 @@ const ButtonSection = ({
           >
             {websiteData.contactButton || "Contact Me"}
           </p>
-        </button>
+        </a>
       </div>
     </>
   );
@@ -138,6 +147,7 @@ const InfoUserSection = ({
     button1: string;
     button1Link: undefined;
     contactButton: string;
+    contactButtonEmail: undefined;
     name: string;
     role: string;
     profilePicture: undefined;
@@ -206,27 +216,13 @@ function PageWebsite({
     button1: string;
     button1Link: undefined;
     contactButton: string;
+    contactButtonEmail: undefined;
     name: string;
     role: string;
     profilePicture: undefined;
     buttonBackgroundColor: string;
   };
 }) {
-  // const [websiteData, setwebsiteData] = useState({
-  //   title: undefined,
-  //   background: undefined,
-  //   body: undefined,
-  //   theme: "glassmorphsm",
-  //   button1: undefined,
-  //   button1Link: undefined,
-  //   contactButton: undefined,
-  //   name: undefined,
-  //   role: undefined,
-  //   profilePicture: undefined,
-  //   buttonBackgroundColor: "#F97316",
-  //   buttonTextColor: "#FFFFFF",
-  // });
-
   return (
     <div className="bg-black flex flex-col lg:relative w-full h-full min-h-screen overflow-hidden lg:h-screen">
       {imageWebsiteBase64 ? (
