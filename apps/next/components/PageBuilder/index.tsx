@@ -100,10 +100,11 @@ export default function PageBuilder({
   // React Hooks
   const [countBuilder, setCountBuilder] = useState(0);
   const [ownedDomain, setOwnedDomain] = useState<string[]>([]);
-  const [isOwner, setIsOwner] = useState<boolean>(false);
-  const [nameHash, setNameHash] = useState("");
-  const [keccakImageWebsite, setKeccakImageWebsite] = useState("");
-  const [keccakImageAvatar, setKeccakImageAvatar] = useState("");
+  const [isOwner, setIsOwner] = useState<boolean>(false); // State variable for disable mint button IF is not owner of the domain
+  const [nameHash, setNameHash] = useState(""); // State variable for WRITE call on setText funciton
+  const [keccakImageWebsite, setKeccakImageWebsite] = useState(""); // For uuid Image Website to put on Cloudflare database
+  const [keccakImageAvatar, setKeccakImageAvatar] = useState(""); // For uuid Avatar Website to put on Cloudflare database
+  const [loading, setLoading] = useState<boolean>(false); // For spinner on mint button
 
   const [formState, setFormState] = useState({
     title: undefined,
@@ -158,7 +159,7 @@ export default function PageBuilder({
     if (formState.profilePicture) {
       setKeccakImageAvatar(keccak256(formState.profilePicture));
     }
-  }, [selectText, ownedDomain, formState.background]);
+  }, [selectText, ownedDomain, formState.background, formState.profilePicture]);
 
   // TODO Get uuid from smart contract
   // useEffect(() => {
@@ -378,7 +379,7 @@ export default function PageBuilder({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
-    args: [nameHash, "website.bgPhotoHash", keccakImageWebsite],
+    args: [nameHash, "website.profilePicture", keccakImageAvatar],
     // enabled: argsReady,
     onSuccess(data: any) {
       console.log("Success prepareSetText", data);
@@ -411,6 +412,7 @@ export default function PageBuilder({
       updateFunctions["ProfilePicture"](undefined);
       updateFunctions["ButtonBackgroundColor"]("");
 
+      setLoading(false);
       setOpen(true);
     },
   }) as any;
@@ -445,36 +447,47 @@ export default function PageBuilder({
     },
     onError(error) {
       console.log("Error texts", error);
+      setLoading(false);
     },
   });
 
   const mintWebsite = async (e: any) => {
     e.preventDefault();
 
-    if (formState.background) {
-      // console.log("test background");
-      await uploadImageCloudflare(
-        keccakImageWebsite,
-        selectText + ".flr",
-        formState.background,
-        "imageWebsite",
-        oldUUIDWebsite
-      );
-    } else {
-      alert("Please add a background");
-    }
-    // if (formState.profilePicture) {
-    //   // console.log("test profile");
+    setLoading(true);
+
+    // if (formState.background) {
+    //   // console.log("test background");
     //   await uploadImageCloudflare(
-    //     keccakImageAvatar,
+    //     keccakImageWebsite,
     //     selectText + ".flr",
-    //     formState.profilePicture,
-    //     "imageAvatar",
-    //     oldUUIDAvatar
-    //   );
+    //     formState.background,
+    //     "imageWebsite",
+    //     oldUUIDWebsite
+    //   ).catch( err => {
+    //     setLoading(false)
+    //     console.log('Error on uploading image website', err);
+    //   });
     // } else {
-    //   alert("Please add a profile picture");
+    //   alert("Please add a background");
+    //   setLoading(false)
     // }
+    if (formState.profilePicture) {
+      // console.log("test profile");
+      await uploadImageCloudflare(
+        keccakImageAvatar,
+        selectText + ".flr",
+        formState.profilePicture,
+        "imageAvatar",
+        oldUUIDAvatar
+      ).catch((err) => {
+        setLoading(false);
+        console.log("Error on uploading image website", err);
+      });
+    } else {
+      alert("Please add a profile picture");
+      setLoading(false);
+    }
     writeSetText?.();
   };
 
@@ -501,6 +514,7 @@ export default function PageBuilder({
           handleBackgroundColor={handleBackgroundColor}
           selectText={selectText}
           isOwner={isOwner}
+          loading={loading}
           mintWebsite={mintWebsite}
         />
 

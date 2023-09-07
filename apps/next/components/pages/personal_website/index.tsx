@@ -175,7 +175,7 @@ export default function Website() {
       const imageWebsiteBase64 = data[1];
       const imageAvatarBase64 = data[10];
 
-      if (imageWebsiteBase64 === "" || imageAvatarBase64 === "") {
+      if (data[0] === "") {
         navigate("/404");
       }
 
