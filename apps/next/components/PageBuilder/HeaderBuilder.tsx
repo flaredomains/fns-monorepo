@@ -42,6 +42,7 @@ const Dropdown = ({
 
   const handleSelect = (domain: any) => {
     setSelectText(domain.label);
+    setCountBuilder(1);
   };
   return (
     <>

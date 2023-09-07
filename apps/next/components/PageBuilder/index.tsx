@@ -158,6 +158,7 @@ export default function PageBuilder({
     }
     if (selectText) {
       setNameHash(utils.namehash(selectText + ".flr"));
+      setCountBuilder(1);
     }
     if (formState.background) {
       setKeccakImageWebsite(keccak256(formState.background));
