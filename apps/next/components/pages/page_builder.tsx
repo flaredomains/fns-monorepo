@@ -93,7 +93,7 @@ export default function Page_Builder() {
                           as="h3"
                           className="font-bold leading-6 text-orange-500 text-xl text-center"
                         >
-                          {`simone.flr`}
+                          {`${selectText}.flr`}
                         </Dialog.Title>
                       </div>
                     </div>

@@ -12,14 +12,26 @@ import { HexColorPicker } from "react-colorful";
 // For check if connected
 import { useAccount } from "wagmi";
 
+function isImageValid(file: any) {
+  const acceptedExtensions = [".png", ".jpg", ".jpeg", ".svg"];
+  const fileName = file.name.toLowerCase();
+
+  for (const extension of acceptedExtensions) {
+    if (fileName.endsWith(extension)) {
+      console.log("fileName.endsWith(extension): ", extension);
+      return true;
+    }
+  }
+  return false;
+}
+
 const BackgroundSelector = ({
+  background,
   handleBackground,
 }: {
+  background: any;
   handleBackground: any;
 }) => {
-  const [selectedBackgroundFile, setSelectedBackgroundFile] =
-    useState<any>(null);
-
   const [selectedBackgroundName, setSelectedBackgroundName] =
     useState<any>(null);
 
@@ -27,9 +39,7 @@ const BackgroundSelector = ({
     e.preventDefault();
     const backgroundFile = e?.dataTransfer?.files?.[0] || e?.target?.files?.[0];
 
-    // console.log("backgroundFile", backgroundFile);
-
-    if (backgroundFile) {
+    if (backgroundFile && isImageValid(backgroundFile)) {
       setSelectedBackgroundName(backgroundFile.name);
       const reader = new FileReader();
 
@@ -41,12 +51,6 @@ const BackgroundSelector = ({
         if (aspectRatio >= 1 && aspectRatio <= 1.8) {
           reader.onload = () => {
             const base64String = reader.result as string;
-            // console.log("base64String", base64String);
-            // console.log(
-            //   "base64String background",
-            //   base64String.replace(/^data:image\/[a-zA-Z]+;base64,/, "")
-            // );
-            setSelectedBackgroundFile(base64String);
             handleBackground(
               base64String.replace(/^data:image\/[a-zA-Z]+;base64,/, "")
             );
@@ -57,32 +61,12 @@ const BackgroundSelector = ({
         }
       };
     } else {
-      alert("Image aspect ratio must be between 1:1 and 1:1.8");
+      alert("Please select a valid PNG, JPEG, or SVG image.");
     }
-
-    // Check the aspect ratio before setting the selected file
-    // if (backgroundFile) {
-    //   const background = document.createElement("img");
-    //   background.src = URL.createObjectURL(backgroundFile);
-    //   background.onload = () => {
-    //     const aspectRatio = background.width / background.height;
-
-    //     console.log(
-    //       `${aspectRatio}/aspectRatio = ${background.width}/background.width  / ${background.height}/background.height`
-    //     );
-    //     if (aspectRatio >= 1 && aspectRatio <= 1.8) {
-    //       setSelectedBackgroundFile(backgroundFile);
-    //       handleBackground(background.src);
-    //     } else {
-    //       alert("Image aspect ratio must be between 1:1 and 1:1.8");
-    //     }
-    //   };
-    // }
   };
 
   const renderUploadBackgroundContent = () => {
-    if (selectedBackgroundFile) {
-      // const imageBackgroundUrl = URL.createObjectURL(selectedBackgroundFile); // Generate temporary URL for the selected file
+    if (background) {
       return (
         <>
           <div>
@@ -90,7 +74,7 @@ const BackgroundSelector = ({
               width={64}
               height={64}
               className="h-16 w-auto"
-              src={selectedBackgroundFile}
+              src={`data:image/png;base64,${background}`}
               alt="Upload"
             />
             <input
@@ -142,9 +126,7 @@ const BackgroundSelector = ({
           <p className="text-sm">
             Click to upload or drag and drop your background
           </p>
-          <p className="text-gray-400 text-xs">
-            SVG, PNG, JPG or GIF (max. 5GB)
-          </p>
+          <p className="text-gray-400 text-xs">SVG, PNG, JPG (max. 100MB)</p>
           <p className="text-gray-500 text-xs">
             Must be between 1:1 and 1:1.8 ratio
           </p>
@@ -173,58 +155,46 @@ const BackgroundSelector = ({
   );
 };
 
-const ProfileSelector = ({ handleProfile }: { handleProfile: any }) => {
-  const [selectedProfileFile, setSelectedProfileFile] = useState<any>(null);
+const ProfileSelector = ({
+  profile,
+  handleProfile,
+}: {
+  profile: any;
+  handleProfile: any;
+}) => {
   const [selectedProfileName, setSelectedProfileName] = useState<any>(null);
 
   const handleProfileFileSelect = (e: any) => {
     e.preventDefault();
     const profileFile = e?.dataTransfer?.files?.[0] || e?.target?.files?.[0];
-    // console.log("profileFile", profileFile);
 
-    // Check the aspect ratio before setting the selected file
-    if (profileFile) {
-      setSelectedProfileName(profileFile.name);
-      const reader = new FileReader();
-      reader.onload = () => {
-        const base64String = reader.result as string;
-        // console.log("base64String", base64String);
-        // console.log(
-        //   "base64String profile",
-        //   base64String.replace(/^data:image\/[a-zA-Z]+;base64,/, "")
-        // );
-        setSelectedProfileFile(base64String);
-        handleProfile(
-          base64String.replace(/^data:image\/[a-zA-Z]+;base64,/, "")
-        );
+    if (profileFile && isImageValid(profileFile)) {
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(profileFile);
+
+      img.onload = function () {
+        // console.log(`img.width:${img.width} / img.height: ${img.height}`);
+        if (img.width <= 800 && img.height <= 400) {
+          setSelectedProfileName(profileFile.name);
+          const reader = new FileReader();
+          reader.onload = () => {
+            const base64String = reader.result as string;
+            handleProfile(
+              base64String.replace(/^data:image\/[a-zA-Z]+;base64,/, "")
+            );
+          };
+          reader.readAsDataURL(profileFile);
+        } else {
+          alert("Image dimensions must be less than 800x400 pixels.");
+        }
       };
-      reader.readAsDataURL(profileFile);
     } else {
-      alert("SVG, PNG, JPG (max. 800x400px)");
+      alert("Please select a valid PNG, JPEG, or SVG image.");
     }
-
-    // if (profileFile) {
-    // const image = document.createElement("img");
-    //   image.src = URL.createObjectURL(profileFile);
-    //   image.onload = () => {
-    //     if (
-    //       (profileFile.type === "image/png" ||
-    //         profileFile.type === "image/jpeg" ||
-    //         profileFile.type === "image/svg") &&
-    //       (image.width < 800 || image.height < 400)
-    //     ) {
-    //       setSelectedProfileFile(profileFile);
-    //       handleProfile(image.src);
-    //     } else {
-    //       alert("SVG, PNG, JPG (max. 800x400px)");
-    //     }
-    //   };
   };
 
   const renderUploadProfileContent = () => {
-    // console.log("selectedProfileFile", selectedProfileFile);
-    if (selectedProfileFile) {
-      // const imageUrl = URL.createObjectURL(selectedProfileFile); // Generate temporary URL for the selected file
+    if (profile) {
       return (
         <>
           <div>
@@ -232,7 +202,7 @@ const ProfileSelector = ({ handleProfile }: { handleProfile: any }) => {
               width={64}
               height={64}
               className="h-16 w-auto"
-              src={selectedProfileFile}
+              src={`data:image/png;base64,${profile}`}
               alt="Upload"
             />
             <input
@@ -278,6 +248,7 @@ const ProfileSelector = ({ handleProfile }: { handleProfile: any }) => {
                 overflow: "hidden",
               }}
               className="hidden"
+              accept=".png, .jpg, .jpeg, .svg"
               onChange={(e) => handleProfileFileSelect(e)}
             />
           </div>
@@ -414,7 +385,26 @@ const ThemeSection = ({ handleInputs }: { handleInputs: any }) => {
   );
 };
 
-const ButtonsSection = ({ handleInputs }: { handleInputs: any }) => {
+const ButtonsSection = ({
+  formState,
+  handleInputs,
+}: {
+  formState: {
+    title: undefined;
+    background: undefined;
+    body: undefined;
+    theme: string;
+    button1: undefined;
+    button1Link: undefined;
+    contactButton: undefined;
+    contactButtonEmail: undefined;
+    name: undefined;
+    role: undefined;
+    profilePicture: undefined;
+    buttonBackgroundColor: string;
+  };
+  handleInputs: any;
+}) => {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col lg:flex-row gap-6">
@@ -426,6 +416,7 @@ const ButtonsSection = ({ handleInputs }: { handleInputs: any }) => {
             required
             onChange={handleInputs}
             name="Button1"
+            value={formState.button1}
             type="text"
             placeholder="Ex. Pay Me"
             className="text-white bg-[#344054] rounded-lg py-2 px-3 border border-[#667085] focus:outline-none"
@@ -439,6 +430,7 @@ const ButtonsSection = ({ handleInputs }: { handleInputs: any }) => {
             required
             onChange={handleInputs}
             name="Button1Link"
+            value={formState.button1Link}
             type="text"
             placeholder="www.example.com"
             className="text-white bg-[#344054] rounded-lg py-2 px-3 border border-[#667085] focus:outline-none"
@@ -454,6 +446,7 @@ const ButtonsSection = ({ handleInputs }: { handleInputs: any }) => {
             required
             onChange={handleInputs}
             name="ContactButton"
+            value={formState.contactButton}
             type="text"
             placeholder="Ex. Contact Me"
             className="text-white bg-[#344054] rounded-lg py-2 px-3 border border-[#667085] focus:outline-none"
@@ -467,6 +460,7 @@ const ButtonsSection = ({ handleInputs }: { handleInputs: any }) => {
             required
             onChange={handleInputs}
             name="ContactButtonEmail"
+            value={formState.contactButtonEmail}
             type="text"
             placeholder="Your Email Address Here"
             className="text-white bg-[#344054] rounded-lg py-2 px-3 border border-[#667085] focus:outline-none"
@@ -478,9 +472,24 @@ const ButtonsSection = ({ handleInputs }: { handleInputs: any }) => {
 };
 
 const ProfileSection = ({
+  formState,
   handleInputs,
   handleProfile,
 }: {
+  formState: {
+    title: undefined;
+    background: undefined;
+    body: undefined;
+    theme: string;
+    button1: undefined;
+    button1Link: undefined;
+    contactButton: undefined;
+    contactButtonEmail: undefined;
+    name: undefined;
+    role: undefined;
+    profilePicture: undefined;
+    buttonBackgroundColor: string;
+  };
   handleInputs: any;
   handleProfile: any;
 }) => {
@@ -494,6 +503,7 @@ const ProfileSection = ({
             onChange={handleInputs}
             name="Name"
             type="text"
+            value={formState.name}
             placeholder="Ex. Elon Musk"
             className="text-white bg-[#344054] rounded-lg py-2 px-3 border border-[#667085] focus:outline-none"
           />
@@ -505,13 +515,17 @@ const ProfileSection = ({
             onChange={handleInputs}
             name="Role"
             type="text"
+            value={formState.role}
             placeholder="Ex. CEO of Tesla"
             className="text-white bg-[#344054] rounded-lg py-2 px-3 border border-[#667085] focus:outline-none"
           />
         </div>
       </div>
       <div className="flex w-full lg:w-1/2 gap-6">
-        <ProfileSelector handleProfile={handleProfile} />
+        <ProfileSelector
+          profile={formState.profilePicture}
+          handleProfile={handleProfile}
+        />
       </div>
     </div>
   );
@@ -628,6 +642,7 @@ const SubmitSection = ({
 };
 
 function WebBuilderForm({
+  formState,
   handleInputs,
   handleBackground,
   handleProfile,
@@ -636,6 +651,20 @@ function WebBuilderForm({
   isOwner,
   mintWebsite,
 }: {
+  formState: {
+    title: undefined;
+    background: undefined;
+    body: undefined;
+    theme: string;
+    button1: undefined;
+    button1Link: undefined;
+    contactButton: undefined;
+    contactButtonEmail: undefined;
+    name: undefined;
+    role: undefined;
+    profilePicture: undefined;
+    buttonBackgroundColor: string;
+  };
   handleInputs: any;
   handleBackground: any;
   handleProfile: any;
@@ -661,11 +690,15 @@ function WebBuilderForm({
               onChange={handleInputs}
               name="Title"
               type="text"
+              value={formState.title}
               placeholder="Enter your title here"
               className="text-white bg-[#344054] rounded-lg py-2 px-3 border border-[#667085] focus:outline-none"
             />
           </div>
-          <BackgroundSelector handleBackground={handleBackground} />
+          <BackgroundSelector
+            background={formState.background}
+            handleBackground={handleBackground}
+          />
         </div>
         <div className={`flex flex-col w-full ${styles.autofill}`}>
           <p className="text-white text-sm font-normal mb-2">Body Text</p>
@@ -673,13 +706,15 @@ function WebBuilderForm({
             required
             onChange={handleInputs}
             name="Body"
+            value={formState.body}
             placeholder="Type your body text for the website here"
             className="text-white bg-[#344054] rounded-lg py-2 px-3 border border-[#667085] focus:outline-none"
           />
         </div>
         <ThemeSection handleInputs={handleInputs} />
-        <ButtonsSection handleInputs={handleInputs} />
+        <ButtonsSection formState={formState} handleInputs={handleInputs} />
         <ProfileSection
+          formState={formState}
           handleInputs={handleInputs}
           handleProfile={handleProfile}
         />

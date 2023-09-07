@@ -94,18 +94,10 @@ export default function PageBuilder({
 
   const location = useLocation();
 
-  // TODO after release smart contract: get the old
-  // UUID if the domain as be minted in past
-  // crypto Old uuid for test
-  const [oldUUIDAvatar, setoldUUIDAvatar] = useState(
-    "21cbe5ef5216a137536ad3680e29ce19234ffdcebccce22d5cf2043c98ea272c"
-  );
-  const [oldUUIDWebsite, setoldUUIDWebsite] = useState(
-    "cfa4d42ba27501759eb69f34b6305bb6b7757de687fa2fbf166eab5b46c073a6"
-  );
+  const [oldUUIDAvatar, setoldUUIDAvatar] = useState("");
+  const [oldUUIDWebsite, setoldUUIDWebsite] = useState("");
 
   // React Hooks
-  // const [selectText, setSelectText] = useState("");
   const [countBuilder, setCountBuilder] = useState(0);
   const [ownedDomain, setOwnedDomain] = useState<string[]>([]);
   const [isOwner, setIsOwner] = useState<boolean>(false);
@@ -358,8 +350,6 @@ export default function PageBuilder({
       const results = await uploadImage(uuid, domain, image, imageCategory);
 
       // console.log("results", results);
-      writeSetText?.();
-
       return results;
     } catch (error) {
       console.error("Error retrieving object:", error);
@@ -388,11 +378,7 @@ export default function PageBuilder({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
-    args: [
-      nameHash,
-      "website.contactButtonEmail",
-      formState.contactButtonEmail,
-    ],
+    args: [nameHash, "website.bgPhotoHash", keccakImageWebsite],
     // enabled: argsReady,
     onSuccess(data: any) {
       console.log("Success prepareSetText", data);
@@ -408,9 +394,24 @@ export default function PageBuilder({
     async onSuccess(data) {
       console.log("Success writeSetText", data);
 
-      // Waits for 1 txn confirmation (block confirmation)
-      await data.wait(1);
+      // Waits for 2 txn confirmation (block confirmation)
+      await data.wait(2);
       refetchText();
+
+      // Reset fields
+      updateFunctions["Title"]("");
+      updateFunctions["Body"]("");
+      updateFunctions["Background"](undefined);
+      updateFunctions["Button1"]("");
+      updateFunctions["Button1Link"]("");
+      updateFunctions["ContactButton"]("");
+      updateFunctions["ContactButtonEmail"]("");
+      updateFunctions["Name"]("");
+      updateFunctions["Role"]("");
+      updateFunctions["ProfilePicture"](undefined);
+      updateFunctions["ButtonBackgroundColor"]("");
+
+      setOpen(true);
     },
   }) as any;
 
@@ -437,6 +438,10 @@ export default function PageBuilder({
     enabled: nameHash !== "",
     onSuccess(data: any) {
       console.log("Success texts", data);
+      const imageKeccakWebsite = data[1];
+      const imageKeccakAvatar = data[10];
+      setoldUUIDWebsite(imageKeccakWebsite);
+      setoldUUIDAvatar(imageKeccakAvatar);
     },
     onError(error) {
       console.log("Error texts", error);
@@ -445,31 +450,23 @@ export default function PageBuilder({
 
   const mintWebsite = async (e: any) => {
     e.preventDefault();
-    // console.log("test");
 
-    setOpen(true);
-
-    // console.log("Domain", selectText + ".flr");
-    // console.log("namehash 2", utils.namehash(selectText + ".flr"));
-
-    // writeSetText?.();
-
-    // if (formState.background) {
-    //   // console.log("test background");
-    // await uploadImageCloudflare(
-    //   keccakImageWebsite,
-    //   selectText + ".flr",
-    //   formState.background,
-    //   "imageWebsite",
-    //   oldUUIDWebsite
-    // );
-    // } else {
-    //   alert("Please add a background");
-    // }
+    if (formState.background) {
+      // console.log("test background");
+      await uploadImageCloudflare(
+        keccakImageWebsite,
+        selectText + ".flr",
+        formState.background,
+        "imageWebsite",
+        oldUUIDWebsite
+      );
+    } else {
+      alert("Please add a background");
+    }
     // if (formState.profilePicture) {
     //   // console.log("test profile");
     //   await uploadImageCloudflare(
-    //     keccakImageWebsite,
+    //     keccakImageAvatar,
     //     selectText + ".flr",
     //     formState.profilePicture,
     //     "imageAvatar",
@@ -478,6 +475,7 @@ export default function PageBuilder({
     // } else {
     //   alert("Please add a profile picture");
     // }
+    writeSetText?.();
   };
 
   return (
@@ -496,6 +494,7 @@ export default function PageBuilder({
         />
         <Preview formState={formState} />
         <WebBuilderForm
+          formState={formState}
           handleInputs={handleInputs}
           handleBackground={handleBackground}
           handleProfile={handleProfile}
