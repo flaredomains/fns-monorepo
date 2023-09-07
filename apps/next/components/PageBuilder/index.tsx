@@ -65,7 +65,15 @@ type Domain = {
   isSubdomain: boolean;
 };
 
-export default function PageBuilder() {
+export default function PageBuilder({
+  setOpen,
+  selectText,
+  setSelectText,
+}: {
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  selectText: string;
+  setSelectText: React.Dispatch<React.SetStateAction<string>>;
+}) {
   // Cloudflare R2 Config
   const apiUrl = process.env.CLOUDFLARE_R2_ENDPOINT;
   const REGION = "us-east-1"; //e.g. "us-east-1"
@@ -97,7 +105,7 @@ export default function PageBuilder() {
   );
 
   // React Hooks
-  const [selectText, setSelectText] = useState("");
+  // const [selectText, setSelectText] = useState("");
   const [countBuilder, setCountBuilder] = useState(0);
   const [ownedDomain, setOwnedDomain] = useState<string[]>([]);
   const [isOwner, setIsOwner] = useState<boolean>(false);
@@ -436,12 +444,14 @@ export default function PageBuilder() {
 
   const mintWebsite = async (e: any) => {
     e.preventDefault();
-    console.log("test");
+    // console.log("test");
+
+    setOpen(true);
 
     // console.log("Domain", selectText + ".flr");
     // console.log("namehash 2", utils.namehash(selectText + ".flr"));
 
-    writeSetText?.();
+    // writeSetText?.();
 
     // if (formState.background) {
     //   // console.log("test background");
