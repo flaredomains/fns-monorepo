@@ -10,7 +10,6 @@ import { keccak256 } from "js-sha3";
 
 // For READ / WRITE call smart contract
 import {
-  useContractRead,
   useContractReads,
   usePrepareContractWrite,
   useContractWrite,
