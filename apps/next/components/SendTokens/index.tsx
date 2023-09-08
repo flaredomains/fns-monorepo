@@ -6,43 +6,53 @@ import SendWhite from '../../public/Send_white.png';
 import Image from 'next/image';
 import styles from '../../src/styles/Main.module.css';
 
-import MintedDomainNames from '../../src/pages/abi/MintedDomainNames.json';
 import WalletConnect from '../WalletConnect';
 import FlareLogo from '../../public/FlareLogo.png';
+
+import { BigNumber, utils } from 'ethers';
+import NameWrapper from '../../src/pages/abi/NameWrapper.json';
+
+const ZERO_ADDRESS: string = '0x0000000000000000000000000000000000000000';
 
 function SendTokens() {
   const [isOpen, setIsOpen] = useState(false);
   const [addressDomain, setAddressDomain] = useState<Array<Domain>>([]);
 
   const { address, isConnected } = useAccount();
+  const [hash, setHash] = useState<string>('');
+  const [inputUsable, setInputUsable] = useState<boolean>(false);
 
-  const { data } = useContractRead({
-    address: MintedDomainNames.address as `0x${string}`,
-    abi: MintedDomainNames.abi,
-    functionName: 'getAll',
-    enabled: isConnected,
-    args: [address],
-    onSuccess(data: any) {
-      // console.log('Success getAll', data)
-      // console.log('Get array of domains', data)
+  const [isValid, setIsValid] = useState<boolean>();
+  const pattern = /^[a-zA-Z0-9-_$]+\.flr$/;
 
-      // Ensure we only use the length returned for still-owned domains (after a transfer)
-      const arrDomains = data.data.slice(0, data._length.toNumber());
-      const ownedDomain = arrDomains.map((item: any, index: any) => {
-        return {
-          label: item.label,
-          expire: Number(item.expiry),
-          isSubdomain: /[a-zA-Z0-9]+\.{1}[a-zA-Z0-9]+/.test(item.label),
-        };
-      });
-      setAddressDomain(ownedDomain);
+  useContractRead({
+    address: NameWrapper.address as `0x${string}`,
+    abi: NameWrapper.abi,
+    functionName: 'ownerOf',
+    enabled: inputUsable,
+    args: [hash],
+    onSuccess(data: string) {
+      setIsValid(data !== ZERO_ADDRESS);
     },
     onError(error) {
-      console.error('Error getAll', error);
+      console.log('Error ownerOf', error);
     },
   });
 
-  console.log('addressDomain', addressDomain);
+  const handleInput = (e: {
+    target: { value: React.SetStateAction<string | undefined> };
+  }) => {
+    const inputValue = e.target.value as string;
+
+    // Check if the input value matches the desired pattern: at least one letter followed by ".flr"
+    const isFlrInput = pattern.test(inputValue);
+
+    if (isFlrInput) {
+      setHash(utils.namehash(inputValue));
+    }
+
+    setInputUsable(isFlrInput);
+  };
 
   return (
     <div
@@ -87,12 +97,16 @@ function SendTokens() {
                 <input
                   type='text'
                   name='receiver-name'
-                  onChange={(e) => {
-                    console.log(e.target.value.toLowerCase());
-                  }}
+                  onChange={handleInput}
                   onInput={(event) => {
                     const inputElement = event.target as HTMLInputElement;
-                    inputElement.setCustomValidity('');
+                    inputElement.value === ''
+                      ? inputElement.setCustomValidity('')
+                      : !pattern.test(inputElement.value)
+                      ? inputElement.setCustomValidity(
+                          'Should be a name with .flr at the end or flare wallet address.'
+                        )
+                      : inputElement.setCustomValidity('');
                   }}
                   className='w-full bg-transparent font-normal text-base text-white border-0 focus:outline-none placeholder:text-gray-300 placeholder:font-normal'
                   placeholder="Enter the receiver's domain name"
