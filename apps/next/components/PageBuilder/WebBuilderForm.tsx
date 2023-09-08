@@ -276,12 +276,13 @@ const ProfileSelector = ({
   );
 };
 
-const ThemeSection = ({ handleInputs }: { handleInputs: any }) => {
-  const [selectedTheme, setSelectedTheme] = useState("glassmorphsm");
-
-  const handleThemeChange = (selectedTheme: string) => {
-    setSelectedTheme(selectedTheme);
-  };
+const ThemeSection = ({
+  theme,
+  handleInputs,
+}: {
+  theme: string;
+  handleInputs: any;
+}) => {
   return (
     <div className={`flex flex-col w-full ${styles.autofill}`}>
       <p className="text-white text-sm font-normal mb-2">
@@ -292,9 +293,8 @@ const ThemeSection = ({ handleInputs }: { handleInputs: any }) => {
       </p>
       <div className="flex flex-col xl:flex-row gap-9 justify-center items-center">
         <label
-          onClick={() => handleThemeChange("glassmorphsm")}
           className={`relative flex flex-col w-full max-w-xs items-center p-7 bg-[#94A3B8] rounded-lg gap-6 cursor-pointer ${
-            selectedTheme === "glassmorphsm" && "ring-4 ring-[#F97316]"
+            theme === "glassmorphsm" && "ring-4 ring-[#F97316]"
           }`}
         >
           <input
@@ -313,9 +313,7 @@ const ThemeSection = ({ handleInputs }: { handleInputs: any }) => {
           />
           <p
             className={`py-[6px] px-3 text-xs rounded-full font-semibold text-center hover:shadow-xl ${
-              selectedTheme === "glassmorphsm"
-                ? "bg-[#F97316] text-white"
-                : "bg-white"
+              theme === "glassmorphsm" ? "bg-[#F97316] text-white" : "bg-white"
             }`}
           >
             Glassmorphsm
@@ -323,9 +321,8 @@ const ThemeSection = ({ handleInputs }: { handleInputs: any }) => {
           <Gradients />
         </label>
         <label
-          onClick={() => handleThemeChange("light")}
           className={`relative flex flex-col w-full max-w-xs items-center p-7 bg-[#94A3B8] rounded-lg gap-6 cursor-pointer ${
-            selectedTheme === "light" && "ring-4 ring-[#F97316]"
+            theme === "light" && "ring-4 ring-[#F97316]"
           }`}
         >
           <input
@@ -344,7 +341,7 @@ const ThemeSection = ({ handleInputs }: { handleInputs: any }) => {
           />
           <p
             className={`py-[6px] px-3 text-xs rounded-full font-semibold text-center hover:shadow-xl ${
-              selectedTheme === "light" ? "bg-[#F97316] text-white" : "bg-white"
+              theme === "light" ? "bg-[#F97316] text-white" : "bg-white"
             }`}
           >
             Light Mode
@@ -352,9 +349,8 @@ const ThemeSection = ({ handleInputs }: { handleInputs: any }) => {
           <Gradients />
         </label>
         <label
-          onClick={() => handleThemeChange("dark")}
           className={`relative flex flex-col w-full max-w-xs items-center p-7 bg-[#94A3B8] rounded-lg gap-6 cursor-pointer ${
-            selectedTheme === "dark" && "ring-4 ring-[#F97316]"
+            theme === "dark" && "ring-4 ring-[#F97316]"
           }`}
         >
           <input
@@ -373,7 +369,7 @@ const ThemeSection = ({ handleInputs }: { handleInputs: any }) => {
           />
           <p
             className={`py-[6px] px-3 text-xs rounded-full font-semibold text-center hover:shadow-xl ${
-              selectedTheme === "dark" ? "bg-[#F97316] text-white" : "bg-white"
+              theme === "dark" ? "bg-[#F97316] text-white" : "bg-white"
             }`}
           >
             Dark Mode
@@ -731,7 +727,7 @@ function WebBuilderForm({
             className="text-white bg-[#344054] rounded-lg py-2 px-3 border border-[#667085] focus:outline-none"
           />
         </div>
-        <ThemeSection handleInputs={handleInputs} />
+        <ThemeSection theme={formState.theme} handleInputs={handleInputs} />
         <ButtonsSection formState={formState} handleInputs={handleInputs} />
         <ProfileSection
           formState={formState}

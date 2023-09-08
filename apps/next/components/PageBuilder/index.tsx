@@ -35,6 +35,7 @@ const textKeys: Array<string> = [
 
 import {
   S3Client,
+  GetObjectCommand,
   CreateBucketCommand,
   PutObjectCommand,
   DeleteObjectCommand,
@@ -120,6 +121,20 @@ export default function PageBuilder({
     buttonBackgroundColor: "#FFFFFF",
   });
 
+  const resetValue = () => {
+    updateFunctions["Title"]("");
+    updateFunctions["Body"]("");
+    updateFunctions["Background"](undefined);
+    updateFunctions["Button1"]("");
+    updateFunctions["Button1Link"]("");
+    updateFunctions["ContactButton"]("");
+    updateFunctions["ContactButtonEmail"]("");
+    updateFunctions["Name"]("");
+    updateFunctions["Role"]("");
+    updateFunctions["ProfilePicture"](undefined);
+    updateFunctions["ButtonBackgroundColor"]("");
+  };
+
   useEffect(() => {
     // Check if there are any undefined values in formState
     const hasUndefinedValues = Object.values(formState).some(
@@ -159,49 +174,6 @@ export default function PageBuilder({
       setKeccakImageAvatar(keccak256(formState.profilePicture));
     }
   }, [selectText, ownedDomain, formState.background, formState.profilePicture]);
-
-  // TODO Get uuid from smart contract
-  // useEffect(() => {
-  //   console.log("selectText", selectText);
-  //   // Avatar
-  //   // Change the first arg with the read call from smart contract
-  //   getImage(
-  //     "20158247f23c2461df48da9deff0fce9cd1352770dac02000bb4e2f070598ad6",
-  //     selectText + ".flr",
-  //     "imageAvatar"
-  //   );
-
-  //   // Website
-  //   // Change the first arg with the read call from smart contract
-  //   getImage(
-  //     "deafffe548e3159a67a5cc01cdc29317c3d7e0acbbae77b59aa123f247b9d2ec",
-  //     selectText + ".flr",
-  //     "imageWebsite"
-  //   );
-  // }, [selectText]);
-
-  // async function getImage(uuid: string, domain: string, imageCategory: string) {
-  //   try {
-  //     const params = {
-  //       Bucket: `${domain}_${imageCategory}`, // The name of the bucket. For example, 'sample-bucket-101'.
-  //       Key: uuid, // The name of the object. For example, 'sample_upload.txt'.
-  //     };
-
-  //     console.log("domain getImage:", domain);
-
-  //     const response = (await s3Client.send(
-  //       new GetObjectCommand(params)
-  //     )) as any;
-  //     // console.log("response", response);
-
-  //     // The Body object also has 'transformToByteArray' and 'transformToWebStream' methods.
-  //     // const imagebase64 = await response.Body.transformToString();
-
-  //     // TODO: get the uuid from getImage
-  //   } catch (error) {
-  //     console.error("Error retrieving object:", error);
-  //   }
-  // }
 
   interface UpdateFunctions {
     [key: string]: Dispatch<SetStateAction<any>>;
@@ -272,6 +244,30 @@ export default function PageBuilder({
       updateFunction(event);
     }
   };
+
+  // Get Image from database
+  async function getImage(uuid: string, domain: string, imageCategory: string) {
+    try {
+      const params = {
+        Bucket: `${domain}_${imageCategory}`, // The name of the bucket. For example, 'sample-bucket-101'.
+        Key: uuid, // The name of the object. For example, 'sample_upload.txt'.
+      };
+
+      console.log("domain getImage:", domain);
+
+      const response = (await s3Client.send(
+        new GetObjectCommand(params)
+      )) as any;
+      // console.log("response", response);
+
+      // The Body object also has 'transformToByteArray' and 'transformToWebStream' methods.
+      const imagebase64 = await response.Body.transformToString();
+
+      return imagebase64;
+    } catch (error) {
+      console.error("Error retrieving object:", error);
+    }
+  }
 
   // Cloudflare R2 POST request (create bucket if not exist)
   async function createBucket(domain: string, imageCategory: string) {
@@ -378,7 +374,7 @@ export default function PageBuilder({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
-    args: [nameHash, "website.profilePicture", keccakImageAvatar],
+    args: [nameHash, "website.theme", formState.theme],
     // enabled: argsReady,
     onSuccess(data: any) {
       console.log("Success prepareSetText", data);
@@ -394,22 +390,11 @@ export default function PageBuilder({
     async onSuccess(data) {
       console.log("Success writeSetText", data);
 
-      // Waits for 2 txn confirmation (block confirmation)
-      await data.wait(2);
-      refetchText();
+      // Waits for 1 txn confirmation (block confirmation)
+      await data.wait(1);
 
       // Reset fields
-      updateFunctions["Title"]("");
-      updateFunctions["Body"]("");
-      updateFunctions["Background"](undefined);
-      updateFunctions["Button1"]("");
-      updateFunctions["Button1Link"]("");
-      updateFunctions["ContactButton"]("");
-      updateFunctions["ContactButtonEmail"]("");
-      updateFunctions["Name"]("");
-      updateFunctions["Role"]("");
-      updateFunctions["ProfilePicture"](undefined);
-      updateFunctions["ButtonBackgroundColor"]("");
+      resetValue();
 
       setLoading(false);
       setOpen(true);
@@ -437,12 +422,41 @@ export default function PageBuilder({
       },
     ],
     enabled: nameHash !== "",
-    onSuccess(data: any) {
+    async onSuccess(data: any) {
       console.log("Success texts", data);
-      const imageKeccakWebsite = data[1];
-      const imageKeccakAvatar = data[10];
-      setoldUUIDWebsite(imageKeccakWebsite);
-      setoldUUIDAvatar(imageKeccakAvatar);
+      if (data[0]) {
+        const imageKeccakWebsite = data[1];
+        const imageKeccakAvatar = data[10];
+        setoldUUIDWebsite(imageKeccakWebsite);
+        setoldUUIDAvatar(imageKeccakAvatar);
+
+        updateFunctions["Title"](data[0]);
+        updateFunctions["Body"](data[2]);
+        updateFunctions["Theme"](data[3]);
+        updateFunctions["Button1"](data[4]);
+        updateFunctions["Button1Link"](data[5]);
+        updateFunctions["ContactButton"](data[6]);
+        updateFunctions["ContactButtonEmail"](data[7]);
+        updateFunctions["Name"](data[8]);
+        updateFunctions["Role"](data[9]);
+        updateFunctions["ButtonBackgroundColor"](data[11]);
+
+        const imageAvatar = await getImage(
+          data[10],
+          selectText + ".flr",
+          "imageAvatar"
+        );
+        updateFunctions["ProfilePicture"](imageAvatar);
+
+        const imageWebsite = await getImage(
+          data[1],
+          selectText + ".flr",
+          "imageWebsite"
+        );
+        updateFunctions["Background"](imageWebsite);
+      } else {
+        resetValue();
+      }
     },
     onError(error) {
       console.log("Error texts", error);
@@ -471,22 +485,22 @@ export default function PageBuilder({
     //   alert("Please add a background");
     //   setLoading(false)
     // }
-    if (formState.profilePicture) {
-      // console.log("test profile");
-      await uploadImageCloudflare(
-        keccakImageAvatar,
-        selectText + ".flr",
-        formState.profilePicture,
-        "imageAvatar",
-        oldUUIDAvatar
-      ).catch((err) => {
-        setLoading(false);
-        console.log("Error on uploading image website", err);
-      });
-    } else {
-      alert("Please add a profile picture");
-      setLoading(false);
-    }
+    // if (formState.profilePicture) {
+    //   // console.log("test profile");
+    //   await uploadImageCloudflare(
+    //     keccakImageAvatar,
+    //     selectText + ".flr",
+    //     formState.profilePicture,
+    //     "imageAvatar",
+    //     oldUUIDAvatar
+    //   ).catch((err) => {
+    //     setLoading(false);
+    //     console.log("Error on uploading image website", err);
+    //   });
+    // } else {
+    //   alert("Please add a profile picture");
+    //   setLoading(false);
+    // }
     writeSetText?.();
   };
 
