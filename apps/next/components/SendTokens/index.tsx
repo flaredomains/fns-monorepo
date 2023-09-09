@@ -53,7 +53,6 @@ function SendTokens() {
 
     setInputUsable(isFlrInput);
   };
-
   return (
     <div
       onClick={() => {
@@ -85,9 +84,9 @@ function SendTokens() {
 
         {isConnected ? (
           <div className='flex flex-col items-center py-4 mb-4 mt-10'>
-            <form className='flex flex-col w-full justify-center gap-4'>
+            <form className='flex flex-col w-full justify-center'>
               <div
-                className={`flex items-center mx-auto w-3/4 py-2 px-4 h-12 rounded-md bg-gray-700 border-2 border-gray-500 ${styles.autofill}`}
+                className={`flex items-center mx-auto w-3/4 py-2 px-4 mb-4 h-12 rounded-md bg-gray-700 border-2 border-gray-500 ${styles.autofill}`}
               >
                 <Image
                   className='z-10 h-6 w-6 mr-2'
@@ -103,9 +102,10 @@ function SendTokens() {
                     inputElement.value === ''
                       ? inputElement.setCustomValidity('')
                       : !pattern.test(inputElement.value)
-                      ? inputElement.setCustomValidity(
+                      ? (inputElement.setCustomValidity(
                           'Should be a name with .flr at the end or flare wallet address.'
-                        )
+                        ),
+                        setIsValid(false))
                       : inputElement.setCustomValidity('');
                   }}
                   className='w-full bg-transparent font-normal text-base text-white border-0 focus:outline-none placeholder:text-gray-300 placeholder:font-normal'
@@ -113,9 +113,39 @@ function SendTokens() {
                   spellCheck='false'
                   required
                 />
+                {isValid === true ? (
+                  <div>
+                    <Image
+                      className='h-4 w-4'
+                      src='./Like.svg'
+                      width={20}
+                      height={20}
+                      alt='Like'
+                    />
+                  </div>
+                ) : (
+                  isValid === false && (
+                    <div>
+                      <Image
+                        className='h-4 w-4'
+                        src='./Dislike.svg'
+                        width={20}
+                        height={20}
+                        alt='Like'
+                      />
+                    </div>
+                  )
+                )}
+              </div>
+              <div className='flex w-full justify-center text-slate-400 '>
+                {isValid === false && (
+                  <p className='mb-4'>
+                    The input is not a valid domain name or doesn&apos;t exist
+                  </p>
+                )}
               </div>
               <div
-                className={`flex items-center mx-auto w-1/2 py-2 px-4 h-12 rounded-md bg-gray-700 border-2 border-gray-500 ${styles.autofill}`}
+                className={`flex items-center mx-auto w-1/2 py-2 px-4 h-12 mb-4 rounded-md bg-gray-700 border-2 border-gray-500 ${styles.autofill}`}
               >
                 <input
                   type='text'
@@ -133,8 +163,11 @@ function SendTokens() {
                   required
                 />
               </div>
-              <button className='flex w-48 mx-auto justify-center items-center px-6 py-3 bg-[#F97316] h-12 rounded-lg text-white px-auto hover:scale-105 transform transition duration-300 ease-out'>
-                <p className='text-base font-semibold mr-1'>Send Token</p>
+              <button
+                disabled={!isValid}
+                className='flex w-48 mx-auto justify-center items-center px-6 py-3 bg-[#F97316] h-12 rounded-lg text-white px-auto hover:scale-105 transform transition duration-300 ease-out disabled:border-gray-500 disabled:bg-gray-500 disabled:hover:scale-100 disabled:cursor-not-allowed'
+              >
+                <p className='text-base font-semibold mr-1'>Send Tokens</p>
                 <Image className='h-6 w-6' src={SendWhite} alt='Send' />
               </button>
             </form>
