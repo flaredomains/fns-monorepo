@@ -95,9 +95,6 @@ const OwnedDomains = ({
     },
   });
 
-  console.log(`keccakImageWebsite of ${domain} == `, keccakImageWebsite);
-  // console.log(object);
-
   // Title
   const { config: prepareSetTitle } = usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
@@ -444,6 +441,19 @@ export default function MyAccountWebsites() {
     },
   });
 
+  const [isOpen, setIsOpen] = useState(false);
+  const [addressDomain, setAddressDomain] = useState<Array<Domain>>([]);
+  const [dataDomains, setDataDomains] = useState<
+    {
+      address?: `0x${string}`;
+      abi?: any;
+      functionName?: string;
+      args?: [any, number];
+    }[]
+  >([]);
+  const [isReady, setIsReady] = useState<boolean>(false);
+  const [hasWebsite, setHasWebsite] = useState<string[]>([]);
+
   // Cloudflare R2 DELETE request (old object image)
   const deleteObjBucket = async (
     domain: string,
@@ -462,18 +472,6 @@ export default function MyAccountWebsites() {
       console.error("Error delete objects bucket:", error);
     }
   };
-
-  const [isOpen, setIsOpen] = useState(false);
-  const [addressDomain, setAddressDomain] = useState<Array<Domain>>([]);
-  const [dataDomains, setDataDomains] = useState<
-    {
-      address?: `0x${string}`;
-      abi?: any;
-      functionName?: string;
-      args?: [any, number];
-    }[]
-  >([]);
-  const [isReady, setIsReady] = useState<boolean>(false);
 
   const { address, isConnected } = useAccount();
 
@@ -528,6 +526,7 @@ export default function MyAccountWebsites() {
     enabled: isReady,
     onSuccess(data: any) {
       console.log("Success texts", data);
+      setHasWebsite(data);
     },
     onError(error) {
       console.log("Error texts", error);
@@ -561,7 +560,7 @@ export default function MyAccountWebsites() {
                 date={new Date(item.expire ? item.expire * 1000 : "")}
                 domain={item.label}
                 isSubdomain={item.isSubdomain}
-                hasWebsite={textRecords[index] !== ""}
+                hasWebsite={hasWebsite[index] !== ""}
                 deleteObjBucket={deleteObjBucket}
                 refetchText={refetchText}
               />
