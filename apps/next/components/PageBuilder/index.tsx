@@ -368,29 +368,6 @@ export default function PageBuilder({
   // "website.profilePicture",
   // "website.buttonBackgroundColor",
 
-  // WAGMI TEXT RECORD WRITE FUNCTION, active when === false
-  // setText(namehash(domainName), keyString, valueString)
-  // Example Usage:
-  // To set email:
-  // setText(namehash, "email", "simone@gmail.com")
-  // const { config: prepareSetText } = usePrepareContractWrite({
-  //   address: PublicResolver.address as `0x${string}`,
-  //   abi: PublicResolver.abi,
-  //   functionName: "setText",
-  //   args: [
-  //     nameHash,
-  //     "website.buttonBackgroundColor",
-  //     formState.buttonBackgroundColor,
-  //   ],
-  //   // enabled: argsReady,
-  //   onSuccess(data: any) {
-  //     console.log("Success prepareSetText", data);
-  //   },
-  //   onError(error) {
-  //     console.log("Error prepareSetText", error);
-  //   },
-  // });
-
   // Title
   const { config: prepareSetTitle } = usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
@@ -665,26 +642,6 @@ export default function PageBuilder({
       setLoading(false);
     },
   }) as any;
-
-  // Write function for 'setText' call to set a text record on PublicResolver.
-  // const { write: writeSetText } = useContractWrite({
-  //   ...prepareSetText,
-  //   async onSuccess(data) {
-  //     console.log("Success writeSetText", data);
-
-  //     // Waits for 1 txn confirmation (block confirmation)
-  //     await data.wait(1);
-
-  //     // Reset fields
-  //     resetValue();
-
-  //     setLoading(false);
-  //     setOpen(true);
-  //   },
-  //   onError(data) {
-  //     setLoading(false);
-  //   },
-  // }) as any;
 
   // Prepares an array of read objects on the PublicResolver contract
   // for every available text record type defined in `addressKeys`.
