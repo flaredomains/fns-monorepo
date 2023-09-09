@@ -10,6 +10,7 @@ import { keccak256 } from "js-sha3";
 
 // For READ / WRITE call smart contract
 import {
+  useAccount,
   useContractReads,
   usePrepareContractWrite,
   useContractWrite,
@@ -96,6 +97,8 @@ export default function PageBuilder({
 
   const [oldUUIDAvatar, setoldUUIDAvatar] = useState("");
   const [oldUUIDWebsite, setoldUUIDWebsite] = useState("");
+
+  const { isConnected } = useAccount();
 
   // React Hooks
   const [countBuilder, setCountBuilder] = useState(0);
@@ -370,25 +373,284 @@ export default function PageBuilder({
   // Example Usage:
   // To set email:
   // setText(namehash, "email", "simone@gmail.com")
-  const { config: prepareSetText } = usePrepareContractWrite({
+  // const { config: prepareSetText } = usePrepareContractWrite({
+  //   address: PublicResolver.address as `0x${string}`,
+  //   abi: PublicResolver.abi,
+  //   functionName: "setText",
+  //   args: [
+  //     nameHash,
+  //     "website.buttonBackgroundColor",
+  //     formState.buttonBackgroundColor,
+  //   ],
+  //   // enabled: argsReady,
+  //   onSuccess(data: any) {
+  //     console.log("Success prepareSetText", data);
+  //   },
+  //   onError(error) {
+  //     console.log("Error prepareSetText", error);
+  //   },
+  // });
+
+  // Title
+  const { config: prepareSetTitle } = usePrepareContractWrite({
+    address: PublicResolver.address as `0x${string}`,
+    abi: PublicResolver.abi,
+    functionName: "setText",
+    args: [nameHash, "website.titleText", formState.title],
+    enabled: formState.title !== undefined,
+    onSuccess(data: any) {
+      console.log("Success prepareSetTitle", data.request.data);
+    },
+    onError(error) {
+      console.log("Error prepareSetTitle", error);
+    },
+  });
+
+  // Image Website
+  const { config: prepareSetBgPhotoHash } = usePrepareContractWrite({
+    address: PublicResolver.address as `0x${string}`,
+    abi: PublicResolver.abi,
+    functionName: "setText",
+    args: [nameHash, "website.bgPhotoHash", keccakImageWebsite],
+    enabled: formState.background !== undefined,
+    onSuccess(data: any) {
+      console.log("Success prepareSetBgPhotoHash", data.request.data);
+    },
+    onError(error) {
+      console.log("Error prepareSetBgPhotoHash", error);
+    },
+  });
+
+  // Body
+  const { config: prepareSetBody } = usePrepareContractWrite({
+    address: PublicResolver.address as `0x${string}`,
+    abi: PublicResolver.abi,
+    functionName: "setText",
+    args: [nameHash, "website.body", formState.body],
+    enabled: formState.body !== undefined,
+    onSuccess(data: any) {
+      console.log("Success prepareSetBody", data.request.data);
+    },
+    onError(error) {
+      console.log("Error prepareSetBody", error);
+    },
+  });
+
+  // Theme
+  const { config: prepareTheme } = usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
     args: [nameHash, "website.theme", formState.theme],
-    // enabled: argsReady,
+    // enabled: formState.body !== undefined,
     onSuccess(data: any) {
-      console.log("Success prepareSetText", data);
+      console.log("Success prepareTheme", data.request.data);
     },
     onError(error) {
-      console.log("Error prepareSetText", error);
+      console.log("Error prepareTheme", error);
     },
   });
 
-  // Write function for 'setText' call to set a text record on PublicResolver.
-  const { write: writeSetText } = useContractWrite({
-    ...prepareSetText,
+  // Theme
+  const { config: prepareButton1 } = usePrepareContractWrite({
+    address: PublicResolver.address as `0x${string}`,
+    abi: PublicResolver.abi,
+    functionName: "setText",
+    args: [nameHash, "website.button1", formState.button1],
+    enabled: formState.button1 !== undefined,
+    onSuccess(data: any) {
+      console.log("Success prepareButton1", data.request.data);
+    },
+    onError(error) {
+      console.log("Error prepareButton1", error);
+    },
+  });
+
+  const { config: prepareButton1Link } = usePrepareContractWrite({
+    address: PublicResolver.address as `0x${string}`,
+    abi: PublicResolver.abi,
+    functionName: "setText",
+    args: [nameHash, "website.button1Link", formState.button1Link],
+    enabled: formState.button1Link !== undefined,
+    onSuccess(data: any) {
+      console.log("Success prepareButton1Link", data.request.data);
+    },
+    onError(error) {
+      console.log("Error prepareButton1Link", error);
+    },
+  });
+
+  const { config: prepareContactButton } = usePrepareContractWrite({
+    address: PublicResolver.address as `0x${string}`,
+    abi: PublicResolver.abi,
+    functionName: "setText",
+    args: [nameHash, "website.contactButton", formState.contactButton],
+    enabled: formState.contactButton !== undefined,
+    onSuccess(data: any) {
+      console.log("Success prepareContactButton", data.request.data);
+    },
+    onError(error) {
+      console.log("Error prepareContactButton", error);
+    },
+  });
+
+  const { config: prepareContactButtonEmail } = usePrepareContractWrite({
+    address: PublicResolver.address as `0x${string}`,
+    abi: PublicResolver.abi,
+    functionName: "setText",
+    args: [
+      nameHash,
+      "website.contactButtonEmail",
+      formState.contactButtonEmail,
+    ],
+    enabled: formState.contactButtonEmail !== undefined,
+    onSuccess(data: any) {
+      console.log("Success prepareContactButtonEmail", data.request.data);
+    },
+    onError(error) {
+      console.log("Error prepareContactButtonEmail", error);
+    },
+  });
+
+  const { config: prepareName } = usePrepareContractWrite({
+    address: PublicResolver.address as `0x${string}`,
+    abi: PublicResolver.abi,
+    functionName: "setText",
+    args: [nameHash, "website.name", formState.name],
+    enabled: formState.name !== undefined,
+    onSuccess(data: any) {
+      console.log("Success prepareName", data.request.data);
+    },
+    onError(error) {
+      console.log("Error prepareName", error);
+    },
+  });
+
+  const { config: prepareRole } = usePrepareContractWrite({
+    address: PublicResolver.address as `0x${string}`,
+    abi: PublicResolver.abi,
+    functionName: "setText",
+    args: [nameHash, "website.role", formState.role],
+    enabled: formState.role !== undefined,
+    onSuccess(data: any) {
+      console.log("Success prepareRole", data.request.data);
+    },
+    onError(error) {
+      console.log("Error prepareRole", error);
+    },
+  });
+
+  const { config: prepareProfilePicture } = usePrepareContractWrite({
+    address: PublicResolver.address as `0x${string}`,
+    abi: PublicResolver.abi,
+    functionName: "setText",
+    args: [nameHash, "website.profilePicture", keccakImageAvatar],
+    enabled: formState.profilePicture !== undefined,
+    onSuccess(data: any) {
+      console.log("Success prepareProfilePicture", data.request.data);
+    },
+    onError(error) {
+      console.log("Error prepareProfilePicture", error);
+    },
+  });
+
+  const { config: prepareButtonBackgroundColor } = usePrepareContractWrite({
+    address: PublicResolver.address as `0x${string}`,
+    abi: PublicResolver.abi,
+    functionName: "setText",
+    args: [
+      nameHash,
+      "website.buttonBackgroundColor",
+      formState.buttonBackgroundColor,
+    ],
+    onSuccess(data: any) {
+      console.log("Success prepareButtonBackgroundColor", data.request.data);
+    },
+    onError(error) {
+      console.log("Error prepareButtonBackgroundColor", error);
+    },
+  });
+
+  // "website.titleText",
+  // "website.bgPhotoHash",
+  // "website.body",
+  // "website.theme",
+  // "website.button1",
+  // "website.button1Link",
+  // "website.contactButton",
+  // "website.contactButtonEmail",
+  // "website.name",
+  // "website.role",
+  // "website.profilePicture",
+  // "website.buttonBackgroundColor",
+
+  const { config: testMulticall } = usePrepareContractWrite({
+    address: PublicResolver.address as `0x${string}`,
+    abi: PublicResolver.abi,
+    functionName: "multicall",
+    args: [
+      [
+        prepareSetTitle.request?.data,
+        prepareSetBgPhotoHash.request?.data,
+        prepareSetBody.request?.data,
+        prepareTheme.request?.data,
+        prepareButton1.request?.data,
+        prepareButton1Link.request?.data,
+        prepareContactButton.request?.data,
+        prepareContactButtonEmail.request?.data,
+        prepareName.request?.data,
+        prepareRole.request?.data,
+        prepareProfilePicture.request?.data,
+        prepareButtonBackgroundColor.request?.data,
+      ],
+    ],
+    enabled:
+      prepareSetTitle.request?.data !== undefined &&
+      prepareSetBgPhotoHash.request?.data !== undefined &&
+      prepareSetBody.request?.data !== undefined &&
+      prepareButton1.request?.data !== undefined &&
+      prepareButton1Link.request?.data !== undefined &&
+      prepareContactButton.request?.data !== undefined &&
+      prepareContactButtonEmail.request?.data !== undefined &&
+      prepareName.request?.data !== undefined &&
+      prepareRole.request?.data !== undefined &&
+      prepareProfilePicture.request?.data !== undefined,
+    onSuccess(data: any) {
+      console.log("Success multicall", data);
+    },
+    onError(error) {
+      console.log("Error prepareSetMulticall", error);
+    },
+  });
+
+  const { write: writeMulticall } = useContractWrite({
+    ...testMulticall,
     async onSuccess(data) {
-      console.log("Success writeSetText", data);
+      console.log("Success writeMulticall", data);
+
+      // Website
+      await uploadImageCloudflare(
+        keccakImageWebsite,
+        selectText + ".flr",
+        formState.background,
+        "imageWebsite",
+        oldUUIDWebsite
+      ).catch((err) => {
+        setLoading(false);
+        console.log("Error on uploading image website", err);
+      });
+
+      // Avatar
+      await uploadImageCloudflare(
+        keccakImageAvatar,
+        selectText + ".flr",
+        formState.profilePicture,
+        "imageAvatar",
+        oldUUIDAvatar
+      ).catch((err) => {
+        setLoading(false);
+        console.log("Error on uploading image website", err);
+      });
 
       // Waits for 1 txn confirmation (block confirmation)
       await data.wait(1);
@@ -399,7 +661,30 @@ export default function PageBuilder({
       setLoading(false);
       setOpen(true);
     },
+    onError(data) {
+      setLoading(false);
+    },
   }) as any;
+
+  // Write function for 'setText' call to set a text record on PublicResolver.
+  // const { write: writeSetText } = useContractWrite({
+  //   ...prepareSetText,
+  //   async onSuccess(data) {
+  //     console.log("Success writeSetText", data);
+
+  //     // Waits for 1 txn confirmation (block confirmation)
+  //     await data.wait(1);
+
+  //     // Reset fields
+  //     resetValue();
+
+  //     setLoading(false);
+  //     setOpen(true);
+  //   },
+  //   onError(data) {
+  //     setLoading(false);
+  //   },
+  // }) as any;
 
   // Prepares an array of read objects on the PublicResolver contract
   // for every available text record type defined in `addressKeys`.
@@ -467,41 +752,22 @@ export default function PageBuilder({
   const mintWebsite = async (e: any) => {
     e.preventDefault();
 
+    if (!isConnected || !isOwner) return false;
+
     setLoading(true);
 
-    // if (formState.background) {
-    //   // console.log("test background");
-    //   await uploadImageCloudflare(
-    //     keccakImageWebsite,
-    //     selectText + ".flr",
-    //     formState.background,
-    //     "imageWebsite",
-    //     oldUUIDWebsite
-    //   ).catch( err => {
-    //     setLoading(false)
-    //     console.log('Error on uploading image website', err);
-    //   });
-    // } else {
-    //   alert("Please add a background");
-    //   setLoading(false)
-    // }
-    // if (formState.profilePicture) {
-    //   // console.log("test profile");
-    //   await uploadImageCloudflare(
-    //     keccakImageAvatar,
-    //     selectText + ".flr",
-    //     formState.profilePicture,
-    //     "imageAvatar",
-    //     oldUUIDAvatar
-    //   ).catch((err) => {
-    //     setLoading(false);
-    //     console.log("Error on uploading image website", err);
-    //   });
-    // } else {
-    //   alert("Please add a profile picture");
-    //   setLoading(false);
-    // }
-    writeSetText?.();
+    if (!formState.background) {
+      alert("Please add a background");
+      setLoading(false);
+    }
+
+    if (!formState.profilePicture) {
+      alert("Please add a profile picture");
+      setLoading(false);
+    }
+
+    // writeSetText?.();
+    writeMulticall?.();
   };
 
   return (

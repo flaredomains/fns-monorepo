@@ -543,7 +543,7 @@ const SubmitSection = ({
   const [backgroundColor, setColor] = useState("#FFFFFF");
   const backgroundColorPickerRef = useRef<HTMLDivElement | null>(null);
 
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
 
   const handleBackgroundColorPicker = () => {
     setShowBackgroundColorPicker(!showBackgroundColorPicker); // Toggle color picker visibility
@@ -687,7 +687,7 @@ function WebBuilderForm({
   selectText: any;
   isOwner: boolean;
   loading: boolean;
-  mintWebsite: (e: any) => Promise<void>;
+  mintWebsite: (e: any) => Promise<false | undefined>;
 }) {
   return (
     <div>

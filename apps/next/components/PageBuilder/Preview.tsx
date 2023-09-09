@@ -72,9 +72,9 @@ const ButtonSection = ({ formState }: { formState: any }) => {
             <path
               d="M2.32227 4.54375L4.9843 1.88171M4.9843 1.88171H2.32227M4.9843 1.88171V4.54375"
               stroke="currentColor"
-              stroke-width="0.532407"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="0.532407"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
           </svg>
         </button>
