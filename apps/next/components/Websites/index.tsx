@@ -560,7 +560,7 @@ export default function MyAccountWebsites() {
                 date={new Date(item.expire ? item.expire * 1000 : "")}
                 domain={item.label}
                 isSubdomain={item.isSubdomain}
-                hasWebsite={hasWebsite[index] !== ""}
+                hasWebsite={hasWebsite[index] !== "" && hasWebsite.length !== 0}
                 deleteObjBucket={deleteObjBucket}
                 refetchText={refetchText}
               />
