@@ -39,6 +39,10 @@ const BackgroundSelector = ({
     e.preventDefault();
     const backgroundFile = e?.dataTransfer?.files?.[0] || e?.target?.files?.[0];
 
+    const imageSizeMB = backgroundFile.size / (1024 * 1024); // Convert size to MB
+    // console.log("imageSizeBackgroundMB", imageSizeMB);
+    if (imageSizeMB > 5) return alert(`Image size is too large (max 5MB)`);
+
     if (backgroundFile && isImageValid(backgroundFile)) {
       setSelectedBackgroundName(backgroundFile.name);
       const reader = new FileReader();
@@ -126,7 +130,7 @@ const BackgroundSelector = ({
           <p className="text-sm">
             Click to upload or drag and drop your background
           </p>
-          <p className="text-gray-400 text-xs">SVG, PNG, JPG (max. 100MB)</p>
+          <p className="text-gray-400 text-xs">SVG, PNG, JPG (max. 5MB)</p>
           <p className="text-gray-500 text-xs">
             Must be between 1:1 and 1:1.8 ratio
           </p>
@@ -167,6 +171,10 @@ const ProfileSelector = ({
   const handleProfileFileSelect = (e: any) => {
     e.preventDefault();
     const profileFile = e?.dataTransfer?.files?.[0] || e?.target?.files?.[0];
+
+    const imageSizeMB = profileFile.size / (1024 * 1024); // Convert size to MB
+    // console.log("imageSizeProfileMB", imageSizeMB);
+    if (imageSizeMB > 5) return alert(`Image size is too large (max 5MB)`);
 
     if (profileFile && isImageValid(profileFile)) {
       const img = document.createElement("img");
