@@ -52,6 +52,7 @@ const GetBalance = () => {
 };
 
 function SendTokens() {
+  const [receiver, setReceiver] = React.useState('');
   const [to, setTo] = React.useState('');
   const [finalTo, setFinalTo] = React.useState('0');
   const [debouncedTo] = useDebounce(to, 500);
@@ -102,7 +103,7 @@ function SendTokens() {
     target: { value: React.SetStateAction<string | undefined> };
   }) => {
     const inputValue = e.target.value as string;
-
+    setReceiver(inputValue);
     // Check if the input value matches the desired pattern: at least one letter followed by ".flr"
     const isFlrInput = domainPattern.test(inputValue);
 
@@ -132,6 +133,8 @@ function SendTokens() {
 
   useEffect(() => {
     if (isSuccess) {
+      setReceiver('');
+      setAmount('');
       setIsSuccessModalOpen(true);
     } else if (isError) {
       setIsErrorModalOpen(true);
@@ -208,6 +211,7 @@ function SendTokens() {
                     placeholder="Enter the receiver's domain name"
                     spellCheck='false'
                     required
+                    value={receiver}
                   />
                   {isValid === true ? (
                     <div>
