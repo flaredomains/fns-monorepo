@@ -10,7 +10,7 @@ const TextsSection = ({
     body: string;
     theme: string;
     button1: string;
-    button1Link: undefined;
+    button1Link: string;
     contactButton: string;
     contactButtonEmail: undefined;
     name: string;
@@ -30,7 +30,9 @@ const TextsSection = ({
             : "text-white"
         }`}
       >
-        {websiteData.title || "The XRP Conference"}
+        {websiteData.title || (
+          <div className="h-5 my-3 w-1/2 animate-pulse bg-gray-300 rounded-full" />
+        )}
       </p>
       <p
         className={`text-base lg:text-lg xl:text-2xl font-light mb-5 ${
@@ -41,8 +43,14 @@ const TextsSection = ({
             : "text-neutral-400"
         }`}
       >
-        {websiteData.body ||
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}
+        {websiteData.body || (
+          <>
+            <div className="h-3 my-3 w-full animate-pulse bg-gray-400 rounded-full" />
+            <div className="h-3 my-3 w-full animate-pulse bg-gray-400 rounded-full" />
+            <div className="h-3 my-3 w-full animate-pulse bg-gray-400 rounded-full" />
+            <div className="h-3 my-3 w-full animate-pulse bg-gray-400 rounded-full" />
+          </>
+        )}
       </p>
     </>
   );
@@ -57,7 +65,7 @@ const ButtonSection = ({
     body: string;
     theme: string;
     button1: string;
-    button1Link: undefined;
+    button1Link: string;
     contactButton: string;
     contactButtonEmail: undefined;
     name: string;
@@ -74,62 +82,69 @@ const ButtonSection = ({
     return brightness >= 128 ? "#000000" : "#ffffff";
   };
 
-  console.log(websiteData.contactButtonEmail);
-
   const buttonBackgroundColor = websiteData.buttonBackgroundColor;
   const buttonTextColor = getContrastColor(buttonBackgroundColor);
   return (
     <>
       <div className="flex items-center gap-x-5 mb-9 lg:mb-16">
-        <Link
-          href={`https://${websiteData.button1Link}`}
-          target="_blank"
-          // onClick={() => navigate(`${websiteData.contactButtonEmail}`)}
-          className={`flex items-center justify-center px-5 py-3 gap-[0.2rem] rounded-lg shadow border`}
-          style={{
-            backgroundColor: websiteData.buttonBackgroundColor,
-            borderColor: websiteData.buttonBackgroundColor,
-            color: buttonTextColor,
-          }}
-        >
-          <p
-            className={`text-base font-semibold`}
+        {websiteData.button1Link ? (
+          <Link
+            href={
+              websiteData.button1Link.includes("https://")
+                ? `${websiteData.button1Link}`
+                : `https://${websiteData.button1Link}`
+            }
+            target="_blank"
+            // onClick={() => navigate(`${websiteData.contactButtonEmail}`)}
+            className={`flex items-center justify-center px-5 py-3 gap-[0.2rem] rounded-lg shadow border`}
             style={{
+              backgroundColor: websiteData.buttonBackgroundColor,
+              borderColor: websiteData.buttonBackgroundColor,
               color: buttonTextColor,
             }}
           >
-            {websiteData.button1 || "Pay Me"}
-          </p>
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 7 7"
-            xmlns="http://www.w3.org/2000/svg"
+            <p
+              className={`text-base font-semibold`}
+              style={{
+                color: buttonTextColor,
+              }}
+            >
+              {websiteData.button1 || "Pay Me"}
+            </p>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 7 7"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M2.32227 4.54375L4.9843 1.88171M4.9843 1.88171H2.32227M4.9843 1.88171V4.54375"
+                stroke="currentColor"
+                stroke-width="0.532407"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </Link>
+        ) : null}
+
+        {websiteData.contactButtonEmail ? (
+          <a
+            href={`mailto:${websiteData.contactButtonEmail}`}
+            target="_blank"
+            className={`flex items-center justify-center bg-trasparent px-5 py-3 gap-[0.2rem] rounded-lg border ${
+              websiteData.theme === "light" ? "border-black" : "border-white"
+            } border-opacity-50`}
           >
-            <path
-              d="M2.32227 4.54375L4.9843 1.88171M4.9843 1.88171H2.32227M4.9843 1.88171V4.54375"
-              stroke="currentColor"
-              stroke-width="0.532407"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </Link>
-        <a
-          href={`mailto:${websiteData.contactButtonEmail}`}
-          target="_blank"
-          className={`flex items-center justify-center bg-trasparent px-5 py-3 gap-[0.2rem] rounded-lg border ${
-            websiteData.theme === "light" ? "border-black" : "border-white"
-          } border-opacity-50`}
-        >
-          <p
-            className={`text-base font-semibold ${
-              websiteData.theme === "light" ? "text-black" : "text-white"
-            }`}
-          >
-            {websiteData.contactButton || "Contact Me"}
-          </p>
-        </a>
+            <p
+              className={`text-base font-semibold ${
+                websiteData.theme === "light" ? "text-black" : "text-white"
+              }`}
+            >
+              {websiteData.contactButton || "Contact Me"}
+            </p>
+          </a>
+        ) : null}
       </div>
     </>
   );
@@ -145,7 +160,7 @@ const InfoUserSection = ({
     body: string;
     theme: string;
     button1: string;
-    button1Link: undefined;
+    button1Link: string;
     contactButton: string;
     contactButtonEmail: undefined;
     name: string;
@@ -173,6 +188,14 @@ const InfoUserSection = ({
         )}
 
         <div className="flex flex-col">
+          {websiteData.name === "" && (
+            <div className="h-3 my-3 w-32 animate-pulse bg-gray-400 rounded-full" />
+          )}
+
+          {websiteData.role === "" && (
+            <div className="h-3 my-3 w-32 animate-pulse bg-gray-400 rounded-full" />
+          )}
+
           <p
             className={`text-lg lg:text-2xl font-semibold  ${
               websiteData.theme === "glassmorphsm"
@@ -182,8 +205,9 @@ const InfoUserSection = ({
                 : "text-white"
             }`}
           >
-            {websiteData.name || "Elon Musk"}
+            {websiteData.name}
           </p>
+
           <p
             className={`text-base lg:text-lg font-light  ${
               websiteData.theme === "glassmorphsm"
@@ -193,7 +217,7 @@ const InfoUserSection = ({
                 : "text-white"
             }`}
           >
-            {websiteData.role || "CEO of Tesla"}
+            {websiteData.role}
           </p>
         </div>
       </div>
@@ -214,7 +238,7 @@ function PageWebsite({
     body: string;
     theme: string;
     button1: string;
-    button1Link: undefined;
+    button1Link: string;
     contactButton: string;
     contactButtonEmail: undefined;
     name: string;

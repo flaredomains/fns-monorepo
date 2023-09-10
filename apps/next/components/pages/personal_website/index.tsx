@@ -56,16 +56,16 @@ export default function Website() {
   const [domain, setDomain] = useState("");
 
   const [websiteData, setWebsiteData] = useState({
-    title: "The XRP Conference",
+    title: "",
     background: undefined,
-    body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    body: "",
     theme: "glassmorphsm",
-    button1: "Pay Me",
-    button1Link: undefined,
-    contactButton: "Contact Me",
+    button1: "",
+    button1Link: "",
+    contactButton: "",
     contactButtonEmail: undefined,
-    name: "Elon Musk",
-    role: "CEO of Tesla",
+    name: "",
+    role: "",
     profilePicture: undefined,
     buttonBackgroundColor: "#FFFFFF",
   });
