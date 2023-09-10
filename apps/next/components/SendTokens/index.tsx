@@ -57,8 +57,9 @@ function SendTokens() {
   const [debouncedTo] = useDebounce(to, 500);
 
   const [amount, setAmount] = React.useState('0');
+  const [controlledAmount, setControlledAmount] = React.useState('0');
   const [finalAmount, setFinalAmount] = React.useState('0');
-  const [debouncedAmount] = useDebounce(amount, 500);
+  const [debouncedAmount] = useDebounce(controlledAmount, 500);
 
   const { config } = usePrepareSendTransaction({
     request: {
@@ -77,7 +78,8 @@ function SendTokens() {
   const [inputUsable, setInputUsable] = useState<boolean>(false);
 
   const [isValid, setIsValid] = useState<boolean>();
-  const pattern = /^[a-zA-Z0-9-_$]+\.flr$/;
+  const domainPattern = /^[a-zA-Z0-9-_$]+\.flr$/;
+  const amountPattern = /^[0-9]+(\.[0-9]+)?$/;
 
   useContractRead({
     address: NameWrapper.address as `0x${string}`,
@@ -102,7 +104,7 @@ function SendTokens() {
     const inputValue = e.target.value as string;
 
     // Check if the input value matches the desired pattern: at least one letter followed by ".flr"
-    const isFlrInput = pattern.test(inputValue);
+    const isFlrInput = domainPattern.test(inputValue);
 
     if (isFlrInput) {
       setHash(utils.namehash(inputValue));
@@ -114,7 +116,15 @@ function SendTokens() {
   const handleAmountInput = (e: {
     target: { value: React.SetStateAction<string | undefined> };
   }) => {
-    setAmount(e.target.value as string);
+    const inputValue = e.target.value as string;
+
+    // Check if the input is a valid number
+    if (/^[0-9]*\.?[0-9]*$/.test(inputValue)) {
+      setControlledAmount(inputValue);
+      setAmount(inputValue);
+    } else {
+      setAmount('');
+    }
   };
 
   let [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
@@ -187,7 +197,7 @@ function SendTokens() {
                       const inputElement = event.target as HTMLInputElement;
                       inputElement.value === ''
                         ? inputElement.setCustomValidity('')
-                        : !pattern.test(inputElement.value)
+                        : !domainPattern.test(inputElement.value)
                         ? (inputElement.setCustomValidity(
                             'Should be a name with .flr at the end or flare wallet address.'
                           ),
@@ -239,12 +249,19 @@ function SendTokens() {
                     onChange={handleAmountInput}
                     onInput={(event) => {
                       const inputElement = event.target as HTMLInputElement;
-                      inputElement.setCustomValidity('');
+                      inputElement.value === ''
+                        ? inputElement.setCustomValidity('')
+                        : !amountPattern.test(inputElement.value)
+                        ? inputElement.setCustomValidity(
+                            'Please enter a decimal number using a period as the decimal separator.'
+                          )
+                        : inputElement.setCustomValidity('');
                     }}
                     className='w-full bg-transparent font-normal text-base text-white border-0 focus:outline-none placeholder:text-gray-300 placeholder:font-normal'
-                    placeholder='0.0'
+                    placeholder='0.123'
                     spellCheck='false'
                     required
+                    value={amount}
                   />
                 </div>
                 <GetBalance />
