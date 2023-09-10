@@ -128,7 +128,7 @@ function SendTokens() {
     }
   };
 
-  let [isSuccessModalOpen, setIsSuccessModalOpen] = useState(true);
+  let [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   let [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
   useEffect(() => {
