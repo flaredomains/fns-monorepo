@@ -128,7 +128,7 @@ function SendTokens() {
     }
   };
 
-  let [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  let [isSuccessModalOpen, setIsSuccessModalOpen] = useState(true);
   let [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
   useEffect(() => {
@@ -285,8 +285,11 @@ function SendTokens() {
                 </button>
               </form>
               {isSuccess && (
-                <div className='flex flex-col w-full justify-center items-center mt-8 text-white'>
-                  Successfully sent {finalAmount} Flare to {finalTo}
+                <div className='flex flex-col w-full justify-center items-center px-2 mt-8 text-white'>
+                  <p className='flex flex-col text-center px-2 break-words'>
+                    Successfully sent {finalAmount} Flare to{' '}
+                    <span className='break-all'>{finalTo}</span>
+                  </p>
                   <div>
                     <a
                       href={`https://etherscan.io/tx/${data?.hash}`}
@@ -298,7 +301,7 @@ function SendTokens() {
                 </div>
               )}
             </div>
-            <Transition appear show={isSuccessModalOpen} as={Fragment}>
+            <Transition show={isSuccessModalOpen} as={Fragment}>
               <Dialog
                 as='div'
                 className='relative z-10'
@@ -313,39 +316,51 @@ function SendTokens() {
                   leaveFrom='opacity-100'
                   leaveTo='opacity-0'
                 >
-                  <div className='fixed inset-0 bg-black bg-opacity-25' />
+                  <div className='fixed inset-0 bg-black bg-opacity-50 backdrop-blur-[1px] transition-opacity' />
                 </Transition.Child>
 
-                <div className='fixed inset-0 overflow-y-auto'>
-                  <div className='flex min-h-full items-center justify-center p-4 text-center'>
+                <div className='fixed inset-0 z-10 w-screen overflow-y-auto'>
+                  <div className='flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0'>
                     <Transition.Child
                       as={Fragment}
                       enter='ease-out duration-300'
-                      enterFrom='opacity-0 scale-95'
-                      enterTo='opacity-100 scale-100'
+                      enterFrom='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
+                      enterTo='opacity-100 translate-y-0 sm:scale-100'
                       leave='ease-in duration-200'
-                      leaveFrom='opacity-100 scale-100'
-                      leaveTo='opacity-0 scale-95'
+                      leaveFrom='opacity-100 translate-y-0 sm:scale-100'
+                      leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
                     >
-                      <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-                        <Dialog.Title
-                          as='h3'
-                          className='text-lg font-medium leading-6 text-gray-900'
-                        >
-                          Tokens Sent Successfully 🎉
-                        </Dialog.Title>
-                        <div className='mt-2'>
-                          <p className='text-sm text-gray-500'>
-                            Your {finalAmount} Flare has been successfully sent
-                            to {finalTo}.
-                          </p>
+                      <Dialog.Panel className='relative transform overflow-hidden rounded-lg bg-slate-700 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6'>
+                        <div>
+                          <div className='mx-auto flex h-12 w-12 text-5xl items-center justify-center rounded-full bg-trasparent'>
+                            🎉
+                          </div>
+                          <div className='mt-6 text-center sm:mt-5'>
+                            <Dialog.Title
+                              as='h3'
+                              className=' font-bold leading-6 text-slate-50 text-xl text-center'
+                            >
+                              {`Congratulations!`}
+                            </Dialog.Title>
+                            <Dialog.Title
+                              as='h3'
+                              className=' font-bold leading-6 text-slate-50 text-xl text-center'
+                            >
+                              {`Tokens Sent Successfully`}
+                            </Dialog.Title>
+                            <Dialog.Title
+                              as='h3'
+                              className='font-bold leading-6 text-orange-500 text-xl text-center break-words'
+                            >
+                              Your {finalAmount} Flare has been successfully
+                              sent to {finalTo}.
+                            </Dialog.Title>
+                          </div>
                         </div>
-
-                        <div className='mt-4'>
+                        <div className='mt-5 sm:mt-6 flex justify-center items-center w-full'>
                           <button
-                            type='button'
-                            className='inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2'
                             onClick={closeSuccessModal}
+                            className=' rounded-md bg-orange-500 px-3 py-2 text-sm font-semibold shadow-sm text-justify text-white leading-tight'
                           >
                             Got it, thanks!
                           </button>
@@ -356,7 +371,7 @@ function SendTokens() {
                 </div>
               </Dialog>
             </Transition>
-            <Transition appear show={isErrorModalOpen} as={Fragment}>
+            <Transition show={isErrorModalOpen} as={Fragment}>
               <Dialog
                 as='div'
                 className='relative z-10'
@@ -371,39 +386,45 @@ function SendTokens() {
                   leaveFrom='opacity-100'
                   leaveTo='opacity-0'
                 >
-                  <div className='fixed inset-0 bg-black bg-opacity-25' />
+                  <div className='fixed inset-0 bg-black bg-opacity-50 backdrop-blur-[1px] transition-opacity' />
                 </Transition.Child>
 
-                <div className='fixed inset-0 overflow-y-auto'>
-                  <div className='flex min-h-full items-center justify-center p-4 text-center'>
+                <div className='fixed inset-0 z-10 w-screen overflow-y-auto'>
+                  <div className='flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0'>
                     <Transition.Child
                       as={Fragment}
                       enter='ease-out duration-300'
-                      enterFrom='opacity-0 scale-95'
-                      enterTo='opacity-100 scale-100'
+                      enterFrom='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
+                      enterTo='opacity-100 translate-y-0 sm:scale-100'
                       leave='ease-in duration-200'
-                      leaveFrom='opacity-100 scale-100'
-                      leaveTo='opacity-0 scale-95'
+                      leaveFrom='opacity-100 translate-y-0 sm:scale-100'
+                      leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
                     >
-                      <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-                        <Dialog.Title
-                          as='h3'
-                          className='text-lg font-medium leading-6 text-gray-900'
-                        >
-                          Oops, something went wrong.. 🚨
-                        </Dialog.Title>
-                        <div className='mt-2'>
-                          <p className='text-sm text-gray-500'>
-                            Your attempt to send {finalAmount} Flare to{' '}
-                            {finalTo} failed.
-                          </p>
+                      <Dialog.Panel className='relative transform overflow-hidden rounded-lg bg-slate-700 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6'>
+                        <div>
+                          <div className='mx-auto flex h-12 w-12 text-5xl items-center justify-center rounded-full bg-trasparent'>
+                            🚨
+                          </div>
+                          <div className='mt-6 text-center sm:mt-5'>
+                            <Dialog.Title
+                              as='h3'
+                              className=' font-bold leading-6 text-slate-50 text-xl text-center'
+                            >
+                              {`Oops, something went wrong...`}
+                            </Dialog.Title>
+                            <Dialog.Title
+                              as='h3'
+                              className='font-bold leading-6 text-slate-50 text-xl text-center break-words'
+                            >
+                              Your attempt to send {finalAmount} Flare to{' '}
+                              {finalTo} failed.
+                            </Dialog.Title>
+                          </div>
                         </div>
-
-                        <div className='mt-4'>
+                        <div className='mt-5 sm:mt-6 flex justify-center items-center w-full'>
                           <button
-                            type='button'
-                            className='inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2'
                             onClick={closeErrorModal}
+                            className=' rounded-md bg-orange-500 px-3 py-2 text-sm font-semibold shadow-sm text-justify text-white leading-tight'
                           >
                             Try Again
                           </button>
