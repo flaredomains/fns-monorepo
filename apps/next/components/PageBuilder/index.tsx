@@ -8,6 +8,8 @@ import { useLocation } from "react-router-dom";
 import { utils } from "ethers";
 import { keccak256 } from "js-sha3";
 
+import usePrepareMulticall from "./prepareMulticall";
+
 // For READ / WRITE call smart contract
 import {
   useAccount,
@@ -104,12 +106,31 @@ export default function PageBuilder({
   const [countBuilder, setCountBuilder] = useState(0);
   const [ownedDomain, setOwnedDomain] = useState<string[]>([]);
   const [isOwner, setIsOwner] = useState<boolean>(false); // State variable for disable mint button IF is not owner of the domain
-  const [nameHash, setNameHash] = useState(""); // State variable for WRITE call on setText funciton
-  const [keccakImageWebsite, setKeccakImageWebsite] = useState(""); // For uuid Image Website to put on Cloudflare database
-  const [keccakImageAvatar, setKeccakImageAvatar] = useState(""); // For uuid Avatar Website to put on Cloudflare database
   const [loading, setLoading] = useState<boolean>(false); // For spinner on mint button
 
-  const [formState, setFormState] = useState({
+  const {
+    formState,
+    nameHash,
+    keccakImageWebsite,
+    keccakImageAvatar,
+    prepareSetTitle,
+    prepareSetBgPhotoHash,
+    prepareSetBody,
+    prepareTheme,
+    prepareButton1,
+    prepareButton1Link,
+    prepareContactButton,
+    prepareContactButtonEmail,
+    prepareName,
+    prepareRole,
+    prepareProfilePicture,
+    prepareButtonBackgroundColor,
+    updateFunctions,
+    setNameHash,
+    setKeccakImageWebsite,
+    setKeccakImageAvatar,
+    resetValue,
+  } = usePrepareMulticall({
     title: undefined,
     background: undefined,
     body: undefined,
@@ -123,20 +144,6 @@ export default function PageBuilder({
     profilePicture: undefined,
     buttonBackgroundColor: "#FFFFFF",
   });
-
-  const resetValue = () => {
-    updateFunctions["Title"]("");
-    updateFunctions["Body"]("");
-    updateFunctions["Background"](undefined);
-    updateFunctions["Button1"]("");
-    updateFunctions["Button1Link"]("");
-    updateFunctions["ContactButton"]("");
-    updateFunctions["ContactButtonEmail"]("");
-    updateFunctions["Name"]("");
-    updateFunctions["Role"]("");
-    updateFunctions["ProfilePicture"](undefined);
-    updateFunctions["ButtonBackgroundColor"]("");
-  };
 
   useEffect(() => {
     // Check if there are any undefined values in formState
@@ -177,43 +184,6 @@ export default function PageBuilder({
       setKeccakImageAvatar(keccak256(formState.profilePicture));
     }
   }, [selectText, ownedDomain, formState.background, formState.profilePicture]);
-
-  interface UpdateFunctions {
-    [key: string]: Dispatch<SetStateAction<any>>;
-  }
-
-  const updateFunctions: UpdateFunctions = {
-    Title: (value) =>
-      setFormState((prevState) => ({ ...prevState, title: value })),
-    Body: (value) =>
-      setFormState((prevState) => ({ ...prevState, body: value })),
-    Background: (value) =>
-      setFormState((prevState) => ({ ...prevState, background: value })),
-    Theme: (value) =>
-      setFormState((prevState) => ({ ...prevState, theme: value })),
-    Button1: (value) =>
-      setFormState((prevState) => ({ ...prevState, button1: value })),
-    Button1Link: (value) =>
-      setFormState((prevState) => ({ ...prevState, button1Link: value })),
-    ContactButton: (value) =>
-      setFormState((prevState) => ({ ...prevState, contactButton: value })),
-    ContactButtonEmail: (value) =>
-      setFormState((prevState) => ({
-        ...prevState,
-        contactButtonEmail: value,
-      })),
-    Name: (value) =>
-      setFormState((prevState) => ({ ...prevState, name: value })),
-    Role: (value) =>
-      setFormState((prevState) => ({ ...prevState, role: value })),
-    ProfilePicture: (value) =>
-      setFormState((prevState) => ({ ...prevState, profilePicture: value })),
-    ButtonBackgroundColor: (value) =>
-      setFormState((prevState) => ({
-        ...prevState,
-        buttonBackgroundColor: value,
-      })),
-  };
 
   const handleInputs = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -256,12 +226,9 @@ export default function PageBuilder({
         Key: uuid, // The name of the object. For example, 'sample_upload.txt'.
       };
 
-      console.log("domain getImage:", domain);
-
       const response = (await s3Client.send(
         new GetObjectCommand(params)
       )) as any;
-      // console.log("response", response);
 
       // The Body object also has 'transformToByteArray' and 'transformToWebStream' methods.
       const imagebase64 = await response.Body.transformToString();
@@ -282,7 +249,7 @@ export default function PageBuilder({
           Bucket: `${domain}_${imageCategory}`,
         })
       );
-      console.log(`Bucket created with location ${Location}`);
+      console.log(`Bucket created`);
     } catch (error) {
       console.error("Error create bucket:", error);
     }
@@ -348,205 +315,11 @@ export default function PageBuilder({
 
       const results = await uploadImage(uuid, domain, image, imageCategory);
 
-      // console.log("results", results);
       return results;
     } catch (error) {
       console.error("Error retrieving object:", error);
     }
   }
-
-  // "website.titleText",
-  // "website.bgPhotoHash",
-  // "website.body",
-  // "website.theme",
-  // "website.button1",
-  // "website.button1Link",
-  // "website.contactButton",
-  // "website.contactButtonEmail",
-  // "website.name",
-  // "website.role",
-  // "website.profilePicture",
-  // "website.buttonBackgroundColor",
-
-  // Title
-  const { config: prepareSetTitle } = usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [nameHash, "website.titleText", formState.title],
-    enabled: formState.title !== undefined,
-    onSuccess(data: any) {
-      console.log("Success prepareSetTitle", data.request.data);
-    },
-    onError(error) {
-      console.log("Error prepareSetTitle", error);
-    },
-  });
-
-  // Image Website
-  const { config: prepareSetBgPhotoHash } = usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [nameHash, "website.bgPhotoHash", keccakImageWebsite],
-    enabled: formState.background !== undefined,
-    onSuccess(data: any) {
-      console.log("Success prepareSetBgPhotoHash", data.request.data);
-    },
-    onError(error) {
-      console.log("Error prepareSetBgPhotoHash", error);
-    },
-  });
-
-  // Body
-  const { config: prepareSetBody } = usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [nameHash, "website.body", formState.body],
-    enabled: formState.body !== undefined,
-    onSuccess(data: any) {
-      console.log("Success prepareSetBody", data.request.data);
-    },
-    onError(error) {
-      console.log("Error prepareSetBody", error);
-    },
-  });
-
-  // Theme
-  const { config: prepareTheme } = usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [nameHash, "website.theme", formState.theme],
-    // enabled: formState.body !== undefined,
-    onSuccess(data: any) {
-      console.log("Success prepareTheme", data.request.data);
-    },
-    onError(error) {
-      console.log("Error prepareTheme", error);
-    },
-  });
-
-  // Theme
-  const { config: prepareButton1 } = usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [nameHash, "website.button1", formState.button1],
-    enabled: formState.button1 !== undefined,
-    onSuccess(data: any) {
-      console.log("Success prepareButton1", data.request.data);
-    },
-    onError(error) {
-      console.log("Error prepareButton1", error);
-    },
-  });
-
-  const { config: prepareButton1Link } = usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [nameHash, "website.button1Link", formState.button1Link],
-    enabled: formState.button1Link !== undefined,
-    onSuccess(data: any) {
-      console.log("Success prepareButton1Link", data.request.data);
-    },
-    onError(error) {
-      console.log("Error prepareButton1Link", error);
-    },
-  });
-
-  const { config: prepareContactButton } = usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [nameHash, "website.contactButton", formState.contactButton],
-    enabled: formState.contactButton !== undefined,
-    onSuccess(data: any) {
-      console.log("Success prepareContactButton", data.request.data);
-    },
-    onError(error) {
-      console.log("Error prepareContactButton", error);
-    },
-  });
-
-  const { config: prepareContactButtonEmail } = usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [
-      nameHash,
-      "website.contactButtonEmail",
-      formState.contactButtonEmail,
-    ],
-    enabled: formState.contactButtonEmail !== undefined,
-    onSuccess(data: any) {
-      console.log("Success prepareContactButtonEmail", data.request.data);
-    },
-    onError(error) {
-      console.log("Error prepareContactButtonEmail", error);
-    },
-  });
-
-  const { config: prepareName } = usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [nameHash, "website.name", formState.name],
-    enabled: formState.name !== undefined,
-    onSuccess(data: any) {
-      console.log("Success prepareName", data.request.data);
-    },
-    onError(error) {
-      console.log("Error prepareName", error);
-    },
-  });
-
-  const { config: prepareRole } = usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [nameHash, "website.role", formState.role],
-    enabled: formState.role !== undefined,
-    onSuccess(data: any) {
-      console.log("Success prepareRole", data.request.data);
-    },
-    onError(error) {
-      console.log("Error prepareRole", error);
-    },
-  });
-
-  const { config: prepareProfilePicture } = usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [nameHash, "website.profilePicture", keccakImageAvatar],
-    enabled: formState.profilePicture !== undefined,
-    onSuccess(data: any) {
-      console.log("Success prepareProfilePicture", data.request.data);
-    },
-    onError(error) {
-      console.log("Error prepareProfilePicture", error);
-    },
-  });
-
-  const { config: prepareButtonBackgroundColor } = usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [
-      nameHash,
-      "website.buttonBackgroundColor",
-      formState.buttonBackgroundColor,
-    ],
-    onSuccess(data: any) {
-      console.log("Success prepareButtonBackgroundColor", data.request.data);
-    },
-    onError(error) {
-      console.log("Error prepareButtonBackgroundColor", error);
-    },
-  });
 
   // "website.titleText",
   // "website.bgPhotoHash",
@@ -582,6 +355,14 @@ export default function PageBuilder({
       ],
     ],
     enabled:
+      formState.title !== "" &&
+      formState.body !== "" &&
+      formState.button1 !== "" &&
+      formState.button1Link !== "" &&
+      formState.contactButton !== "" &&
+      formState.contactButtonEmail !== "" &&
+      formState.name !== "" &&
+      formState.role !== "" &&
       prepareSetTitle.request?.data !== undefined &&
       prepareSetBgPhotoHash.request?.data !== undefined &&
       prepareSetBody.request?.data !== undefined &&
