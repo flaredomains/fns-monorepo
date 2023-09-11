@@ -285,19 +285,26 @@ function SendTokens() {
                 </button>
               </form>
               {isSuccess && (
-                <div className='flex flex-col w-full justify-center items-center px-2 mt-8 text-white'>
+                <div className='flex flex-col w-full justify-center items-center px-2 mt-8 gap-3 text-white'>
                   <p className='flex flex-col text-center px-2 break-words'>
                     Successfully sent {finalAmount} Flare to{' '}
-                    <span className='break-all'>{finalTo}</span>
+                    <span className='break-all italic'>{finalTo}</span>
                   </p>
                   <div>
                     <a
-                      href={`https://etherscan.io/tx/${data?.hash}`}
-                      className='flex mt-2 py-1 px-4 rounded-full bg-[#F97316] hover:scale-105 transform transition duration-300 ease-out'
+                      //  href={`https://flare-explorer.flare.network/tx/${data?.hash}`}
+                      href={`https://coston2-explorer.flare.network/tx/${data?.hash}`}
+                      className='flex mt-2 py-1 px-4 rounded-xl bg-[#F97316] hover:scale-105 transform transition duration-300 ease-out'
                     >
-                      Etherscan
+                      Flare Explorer
                     </a>
                   </div>
+                  <p className='flex flex-col text-center px-2 break-words'>
+                    Transaction Hash:
+                    <span className='break-all italic font-semibold'>
+                      {data?.hash}
+                    </span>
+                  </p>
                 </div>
               )}
             </div>
