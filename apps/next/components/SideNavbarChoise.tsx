@@ -80,7 +80,7 @@ function SideNavbarChoise({
   isOpen,
   isLarge,
 }: {
-  path: String;
+  path: string;
   isOpen: boolean;
   isLarge: boolean;
 }) {
