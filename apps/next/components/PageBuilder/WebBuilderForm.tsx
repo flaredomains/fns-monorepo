@@ -540,11 +540,13 @@ const SubmitSection = ({
   selectText,
   isOwner,
   loading,
+  isReady,
 }: {
   handleBackgroundColor: any;
   selectText: any;
   isOwner: boolean;
   loading: boolean;
+  isReady: boolean;
 }) => {
   const [showBackgroundColorPicker, setShowBackgroundColorPicker] =
     useState(false);
@@ -574,6 +576,8 @@ const SubmitSection = ({
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, []);
+
+  // console.log("!!isReady", !!isReady);
 
   return (
     <div className="flex flex-col lg:flex-row lg:my-9 items-center lg:items-start justify-between gap-4 lg:gap-0">
@@ -626,7 +630,7 @@ const SubmitSection = ({
       <div className="flex justify-center lg:justify-normal shrink-0">
         <button
           type="submit"
-          disabled={!isConnected || !isOwner || loading}
+          disabled={!isConnected || !isOwner || loading || !isReady}
           className="flex  items-center justify-center gap-2 bg-[#F97316] disabled:brightness-125 py-3 px-5 w-[13rem] text-center rounded-md text-white font-normal hover:brightness-110"
         >
           <p className="flex">{loading ? `Minting` : `Mint Website Now`}</p>
@@ -672,6 +676,7 @@ function WebBuilderForm({
   selectText,
   isOwner,
   loading,
+  isReady,
   mintWebsite,
 }: {
   formState: {
@@ -695,6 +700,7 @@ function WebBuilderForm({
   selectText: any;
   isOwner: boolean;
   loading: boolean;
+  isReady: boolean;
   mintWebsite: (e: any) => Promise<false | undefined>;
 }) {
   return (
@@ -746,6 +752,7 @@ function WebBuilderForm({
           handleBackgroundColor={handleBackgroundColor}
           selectText={selectText}
           isOwner={isOwner}
+          isReady={isReady}
           loading={loading}
         />
       </form>

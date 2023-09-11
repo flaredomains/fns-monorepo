@@ -40,6 +40,7 @@ export default function PageBuilder({
   setSelectText: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   const location = useLocation();
 
@@ -95,7 +96,7 @@ export default function PageBuilder({
   useEffect(() => {
     // Check if there are any undefined values in formState
     const hasUndefinedValues = Object.values(formState).some(
-      (value) => value === undefined
+      (value) => value === ""
     );
 
     // Update countBuilder based on the condition
@@ -219,11 +220,15 @@ export default function PageBuilder({
       prepareProfilePicture.request?.data !== undefined,
     onSuccess(data: any) {
       console.log("Success multicall", data);
+      setIsReady(true);
     },
     onError(error) {
       console.log("Error prepareSetMulticall", error);
+      setIsReady(false);
     },
   });
+
+  // console.log("isReady", isReady);
 
   const { write: writeMulticall } = useContractWrite({
     ...testMulticall,
@@ -262,9 +267,11 @@ export default function PageBuilder({
 
       setLoading(false);
       setOpen(true);
+      setIsReady(false);
     },
     onError(data) {
       setLoading(false);
+      setIsReady(false);
     },
   }) as any;
 
@@ -292,6 +299,7 @@ export default function PageBuilder({
     async onSuccess(data: any) {
       console.log("Success texts", data);
       resetValue();
+      setIsReady(false);
       if (data[0]) {
         const imageKeccakWebsite = data[1];
         const imageKeccakAvatar = data[10];
@@ -342,11 +350,13 @@ export default function PageBuilder({
     if (!formState.background) {
       alert("Please add a background");
       setLoading(false);
+      return false;
     }
 
     if (!formState.profilePicture) {
       alert("Please add a profile picture");
       setLoading(false);
+      return false;
     }
 
     // writeSetText?.();
@@ -377,6 +387,7 @@ export default function PageBuilder({
           selectText={selectText}
           isOwner={isOwner}
           loading={loading}
+          isReady={isReady}
           mintWebsite={mintWebsite}
         />
 

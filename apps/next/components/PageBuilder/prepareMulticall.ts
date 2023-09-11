@@ -65,6 +65,7 @@ function usePrepareMulticall(initialValue: {
     updateFunctions["Title"]("");
     updateFunctions["Body"]("");
     updateFunctions["Background"]("");
+    updateFunctions["Theme"]("glassmorphsm");
     updateFunctions["Button1"]("");
     updateFunctions["Button1Link"]("");
     updateFunctions["ContactButton"]("");
