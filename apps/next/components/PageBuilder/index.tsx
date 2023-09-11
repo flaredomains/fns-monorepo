@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
+import React, { useEffect, useState } from "react";
 import WalletConnect from "../WalletConnect";
 import HeaderBuilder from "./HeaderBuilder";
 import WebBuilderForm from "./WebBuilderForm";
@@ -8,6 +8,9 @@ import { useLocation } from "react-router-dom";
 import { utils } from "ethers";
 import { keccak256 } from "js-sha3";
 
+import { progressArr } from "../../lib/progressTexts";
+import { textKeys } from "../../lib/testkeys";
+import { getImage, uploadImageCloudflare } from "../../lib/clientS3";
 import usePrepareMulticall from "./prepareMulticall";
 
 // For READ / WRITE call smart contract
@@ -20,47 +23,6 @@ import {
 
 // ABIS
 import PublicResolver from "../../src/pages/abi/PublicResolver.json";
-
-const textKeys: Array<string> = [
-  "website.titleText",
-  "website.bgPhotoHash",
-  "website.body",
-  "website.theme",
-  "website.button1",
-  "website.button1Link",
-  "website.contactButton",
-  "website.contactButtonEmail",
-  "website.name",
-  "website.role",
-  "website.profilePicture",
-  "website.buttonBackgroundColor",
-];
-
-import {
-  S3Client,
-  GetObjectCommand,
-  CreateBucketCommand,
-  PutObjectCommand,
-  DeleteObjectCommand,
-} from "@aws-sdk/client-s3";
-
-const progressArr = [
-  {
-    number: 1,
-    stepText: "Select Domain",
-    descriptionText: `Select your domain for website minting below. Once a website is minted, it will be displayed at the selected domain. Website will be viewable on Brave and Opera browsers. More browsers to be added.`,
-  },
-  {
-    number: 2,
-    stepText: "Upload Assets",
-    descriptionText: `Framework Functionality: Background image must be900x1200 pixels and no bigger than 5MB, title and body text are center aligned, website supports one font at this time, contact button link must include: 'mailto' See FAQ.`,
-  },
-  {
-    number: 3,
-    stepText: "Mint Website",
-    descriptionText: `Once a website is minted to a domain, it can only be removed by returning to this Site Builder and burning the minted website. If a website is to be updated, it must be burned and re-minted. See FAQ.`,
-  },
-];
 
 type Domain = {
   label: string;
@@ -77,22 +39,6 @@ export default function PageBuilder({
   selectText: string;
   setSelectText: React.Dispatch<React.SetStateAction<string>>;
 }) {
-  // Cloudflare R2 Config
-  const apiUrl = process.env.CLOUDFLARE_R2_ENDPOINT;
-  const REGION = "us-east-1"; //e.g. "us-east-1"
-  const accessKeyId = process.env.CLOUDFLARE_R2_ACCESS_KEY_ID;
-  const secretAccessKey = process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY;
-
-  // Create an Amazon S3 service client object.
-  const s3Client = new S3Client({
-    region: REGION,
-    endpoint: apiUrl,
-    credentials: {
-      accessKeyId: accessKeyId as string,
-      secretAccessKey: secretAccessKey as string,
-    },
-  });
-
   const [isOpen, setIsOpen] = useState(false);
 
   const location = useLocation();
@@ -108,6 +54,7 @@ export default function PageBuilder({
   const [isOwner, setIsOwner] = useState<boolean>(false); // State variable for disable mint button IF is not owner of the domain
   const [loading, setLoading] = useState<boolean>(false); // For spinner on mint button
 
+  // Check prepareMulticall.ts for more details
   const {
     formState,
     nameHash,
@@ -217,109 +164,6 @@ export default function PageBuilder({
       updateFunction(event);
     }
   };
-
-  // Get Image from database
-  async function getImage(uuid: string, domain: string, imageCategory: string) {
-    try {
-      const params = {
-        Bucket: `${domain}_${imageCategory}`, // The name of the bucket. For example, 'sample-bucket-101'.
-        Key: uuid, // The name of the object. For example, 'sample_upload.txt'.
-      };
-
-      const response = (await s3Client.send(
-        new GetObjectCommand(params)
-      )) as any;
-
-      // The Body object also has 'transformToByteArray' and 'transformToWebStream' methods.
-      const imagebase64 = await response.Body.transformToString();
-
-      return imagebase64;
-    } catch (error) {
-      console.error("Error retrieving object:", error);
-    }
-  }
-
-  // Cloudflare R2 POST request (create bucket if not exist)
-  async function createBucket(domain: string, imageCategory: string) {
-    try {
-      const { Location } = await s3Client.send(
-        new CreateBucketCommand({
-          // The name of the bucket. Bucket names are unique and have several other constraints.
-          // See https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html
-          Bucket: `${domain}_${imageCategory}`,
-        })
-      );
-      console.log(`Bucket created`);
-    } catch (error) {
-      console.error("Error create bucket:", error);
-    }
-  }
-
-  // Cloudflare R2 DELETE request (old object image)
-  async function deleteObjBucket(
-    domain: string,
-    imageCategory: string,
-    oldUUID: string
-  ) {
-    try {
-      const response = await s3Client.send(
-        new DeleteObjectCommand({
-          Bucket: `${domain}_${imageCategory}`,
-          Key: `${oldUUID}`,
-        })
-      );
-      // console.log("Deleted", response);
-    } catch (error) {
-      console.error("Error delete objects bucket:", error);
-    }
-  }
-
-  // Cloudflare R2 POST request (upload image)
-  async function uploadImage(
-    uuid: string,
-    domain: string,
-    image: string,
-    imageCategory: string
-  ) {
-    // Set the parameters
-    const params = {
-      Bucket: `${domain}_${imageCategory}`, // The name of the bucket. For example, 'sample-bucket-101'.
-      Key: uuid, // The name of the object. For example, 'sample_upload.txt'.
-      Body: image, // The content of the object. For example, 'Hello world!".
-    };
-
-    const results = await s3Client.send(new PutObjectCommand(params));
-    console.log(
-      "Successfully created " +
-        params.Key +
-        " and uploaded it to " +
-        params.Bucket +
-        "/" +
-        params.Key
-    );
-    return results;
-  }
-
-  async function uploadImageCloudflare(
-    uuid: string,
-    domain: string,
-    image: any,
-    imageCategory: string,
-    oldUUID?: string
-  ) {
-    try {
-      if (oldUUID) {
-        await deleteObjBucket(domain, imageCategory, oldUUID);
-      }
-      await createBucket(domain, imageCategory); // If there is already a bucket, nothing happens
-
-      const results = await uploadImage(uuid, domain, image, imageCategory);
-
-      return results;
-    } catch (error) {
-      console.error("Error retrieving object:", error);
-    }
-  }
 
   // "website.titleText",
   // "website.bgPhotoHash",
@@ -447,6 +291,7 @@ export default function PageBuilder({
     enabled: nameHash !== "",
     async onSuccess(data: any) {
       console.log("Success texts", data);
+      resetValue();
       if (data[0]) {
         const imageKeccakWebsite = data[1];
         const imageKeccakAvatar = data[10];
@@ -477,8 +322,8 @@ export default function PageBuilder({
           "imageWebsite"
         );
         updateFunctions["Background"](imageWebsite);
-      } else {
-        resetValue();
+
+        setCountBuilder(2);
       }
     },
     onError(error) {
