@@ -394,17 +394,17 @@ const ButtonsSection = ({
   handleInputs,
 }: {
   formState: {
-    title: undefined;
-    background: undefined;
-    body: undefined;
+    title: string;
+    background: string;
+    body: string;
     theme: string;
-    button1: undefined;
-    button1Link: undefined;
-    contactButton: undefined;
-    contactButtonEmail: undefined;
-    name: undefined;
-    role: undefined;
-    profilePicture: undefined;
+    button1: string;
+    button1Link: string;
+    contactButton: string;
+    contactButtonEmail: string;
+    name: string;
+    role: string;
+    profilePicture: string;
     buttonBackgroundColor: string;
   };
   handleInputs: any;
@@ -481,17 +481,17 @@ const ProfileSection = ({
   handleProfile,
 }: {
   formState: {
-    title: undefined;
-    background: undefined;
-    body: undefined;
+    title: string;
+    background: string;
+    body: string;
     theme: string;
-    button1: undefined;
-    button1Link: undefined;
-    contactButton: undefined;
-    contactButtonEmail: undefined;
-    name: undefined;
-    role: undefined;
-    profilePicture: undefined;
+    button1: string;
+    button1Link: string;
+    contactButton: string;
+    contactButtonEmail: string;
+    name: string;
+    role: string;
+    profilePicture: string;
     buttonBackgroundColor: string;
   };
   handleInputs: any;
@@ -675,17 +675,17 @@ function WebBuilderForm({
   mintWebsite,
 }: {
   formState: {
-    title: undefined;
-    background: undefined;
-    body: undefined;
+    title: string;
+    background: string;
+    body: string;
     theme: string;
-    button1: undefined;
-    button1Link: undefined;
-    contactButton: undefined;
-    contactButtonEmail: undefined;
-    name: undefined;
-    role: undefined;
-    profilePicture: undefined;
+    button1: string;
+    button1Link: string;
+    contactButton: string;
+    contactButtonEmail: string;
+    name: string;
+    role: string;
+    profilePicture: string;
     buttonBackgroundColor: string;
   };
   handleInputs: any;

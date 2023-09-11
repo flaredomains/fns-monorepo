@@ -10,17 +10,17 @@ interface UpdateFunctions {
 }
 
 function usePrepareMulticall(initialValue: {
-  title: undefined;
-  background: undefined;
-  body: undefined;
+  title: string;
+  background: string;
+  body: string;
   theme: string;
-  button1: undefined;
-  button1Link: undefined;
-  contactButton: undefined;
-  contactButtonEmail: undefined;
-  name: undefined;
-  role: undefined;
-  profilePicture: undefined;
+  button1: string;
+  button1Link: string;
+  contactButton: string;
+  contactButtonEmail: string;
+  name: string;
+  role: string;
+  profilePicture: string;
   buttonBackgroundColor: string;
 }) {
   const [nameHash, setNameHash] = useState(""); // State variable for WRITE call on setText funciton
@@ -96,7 +96,7 @@ function usePrepareMulticall(initialValue: {
     args: [nameHash, "website.titleText", formState.title],
     enabled: formState.title !== undefined && formState.title !== "",
     onSuccess(data: any) {
-      console.log("Success prepareSetTitle", data.request.data);
+      // console.log("Success prepareSetTitle", data.request.data);
       // preparationMulticall["prepareSetTitle"](data.request.data);
     },
     onError(error) {
@@ -112,7 +112,7 @@ function usePrepareMulticall(initialValue: {
     args: [nameHash, "website.bgPhotoHash", keccakImageWebsite],
     enabled: formState.background !== undefined && formState.background !== "",
     onSuccess(data: any) {
-      console.log("Success prepareSetBgPhotoHash", data.request.data);
+      // console.log("Success prepareSetBgPhotoHash", data.request.data);
       // preparationMulticall["prepareSetBgPhotoHash"](data.request.data);
     },
     onError(error) {
@@ -128,7 +128,7 @@ function usePrepareMulticall(initialValue: {
     args: [nameHash, "website.body", formState.body],
     enabled: formState.body !== undefined && formState.body !== "",
     onSuccess(data: any) {
-      console.log("Success prepareSetBody", data.request.data);
+      // console.log("Success prepareSetBody", data.request.data);
       // preparationMulticall["prepareSetBody"](data.request.data);
     },
     onError(error) {
@@ -144,7 +144,7 @@ function usePrepareMulticall(initialValue: {
     args: [nameHash, "website.theme", formState.theme],
     // enabled: formState.body !== undefined,
     onSuccess(data: any) {
-      console.log("Success prepareTheme", data.request.data);
+      // console.log("Success prepareTheme", data.request.data);
       // preparationMulticall["prepareTheme"](data.request.data);
     },
     onError(error) {
@@ -160,7 +160,7 @@ function usePrepareMulticall(initialValue: {
     args: [nameHash, "website.button1", formState.button1],
     enabled: formState.button1 !== undefined && formState.button1 !== "",
     onSuccess(data: any) {
-      console.log("Success prepareButton1", data.request.data);
+      // console.log("Success prepareButton1", data.request.data);
       // preparationMulticall["prepareButton1"](data.request.data);
     },
     onError(error) {
@@ -176,7 +176,7 @@ function usePrepareMulticall(initialValue: {
     enabled:
       formState.button1Link !== undefined && formState.button1Link !== "",
     onSuccess(data: any) {
-      console.log("Success prepareButton1Link", data.request.data);
+      // console.log("Success prepareButton1Link", data.request.data);
       // preparationMulticall["prepareButton1Link"](data.request.data);
     },
     onError(error) {
@@ -192,7 +192,7 @@ function usePrepareMulticall(initialValue: {
     enabled:
       formState.contactButton !== undefined && formState.contactButton !== "",
     onSuccess(data: any) {
-      console.log("Success prepareContactButton", data.request.data);
+      // console.log("Success prepareContactButton", data.request.data);
       // preparationMulticall["prepareContactButton"](data.request.data);
     },
     onError(error) {
@@ -213,7 +213,7 @@ function usePrepareMulticall(initialValue: {
       formState.contactButtonEmail !== undefined &&
       formState.contactButtonEmail !== "",
     onSuccess(data: any) {
-      console.log("Success prepareContactButtonEmail", data.request.data);
+      // console.log("Success prepareContactButtonEmail", data.request.data);
       // preparationMulticall["prepareContactButtonEmail"](data.request.data);
     },
     onError(error) {
@@ -228,7 +228,7 @@ function usePrepareMulticall(initialValue: {
     args: [nameHash, "website.name", formState.name],
     enabled: formState.name !== undefined && formState.name !== "",
     onSuccess(data: any) {
-      console.log("Success prepareName", data.request.data);
+      // console.log("Success prepareName", data.request.data);
       // preparationMulticall["prepareName"](data.request.data);
     },
     onError(error) {
@@ -243,7 +243,7 @@ function usePrepareMulticall(initialValue: {
     args: [nameHash, "website.role", formState.role],
     enabled: formState.role !== undefined && formState.role !== "",
     onSuccess(data: any) {
-      console.log("Success prepareRole", data.request.data);
+      // console.log("Success prepareRole", data.request.data);
       // preparationMulticall["prepareRole"](data.request.data);
     },
     onError(error) {
@@ -259,7 +259,7 @@ function usePrepareMulticall(initialValue: {
     enabled:
       formState.profilePicture !== undefined && formState.profilePicture !== "",
     onSuccess(data: any) {
-      console.log("Success prepareProfilePicture", data.request.data);
+      // console.log("Success prepareProfilePicture", data.request.data);
       // preparationMulticall["prepareProfilePicture"](data.request.data);
     },
     onError(error) {
@@ -277,7 +277,7 @@ function usePrepareMulticall(initialValue: {
       formState.buttonBackgroundColor,
     ],
     onSuccess(data: any) {
-      console.log("Success prepareButtonBackgroundColor", data.request.data);
+      // console.log("Success prepareButtonBackgroundColor", data.request.data);
       // preparationMulticall["prepareButtonBackgroundColor"](data.request.data);
     },
     onError(error) {
