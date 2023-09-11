@@ -64,15 +64,15 @@ function usePrepareMulticall(initialValue: {
   const resetValue = () => {
     updateFunctions["Title"]("");
     updateFunctions["Body"]("");
-    updateFunctions["Background"](undefined);
+    updateFunctions["Background"]("");
     updateFunctions["Button1"]("");
     updateFunctions["Button1Link"]("");
     updateFunctions["ContactButton"]("");
     updateFunctions["ContactButtonEmail"]("");
     updateFunctions["Name"]("");
     updateFunctions["Role"]("");
-    updateFunctions["ProfilePicture"](undefined);
-    updateFunctions["ButtonBackgroundColor"]("");
+    updateFunctions["ProfilePicture"]("");
+    updateFunctions["ButtonBackgroundColor"]("#FFFFFF");
   };
 
   // "website.titleText",

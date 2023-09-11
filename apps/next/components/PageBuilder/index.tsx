@@ -300,14 +300,14 @@ export default function PageBuilder({
 
         updateFunctions["Title"](data[0]);
         updateFunctions["Body"](data[2]);
-        updateFunctions["Theme"](data[3]);
+        updateFunctions["Theme"](data[3] || "glassmorphsm");
         updateFunctions["Button1"](data[4]);
         updateFunctions["Button1Link"](data[5]);
         updateFunctions["ContactButton"](data[6]);
         updateFunctions["ContactButtonEmail"](data[7]);
         updateFunctions["Name"](data[8]);
         updateFunctions["Role"](data[9]);
-        updateFunctions["ButtonBackgroundColor"](data[11]);
+        updateFunctions["ButtonBackgroundColor"](data[11] || "#FFFFFF");
 
         const imageAvatar = await getImage(
           data[10],
