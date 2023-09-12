@@ -21,7 +21,7 @@ const TextsSection = ({
 }) => {
   return (
     <>
-      <p
+      <div
         className={`text-4xl lg:text-5xl xl:text-6xl font-semibold mb-5 ${
           websiteData.theme === "glassmorphsm"
             ? "text-white"
@@ -33,8 +33,8 @@ const TextsSection = ({
         {websiteData.title || (
           <div className="h-5 my-3 w-1/2 animate-pulse bg-gray-300 rounded-full" />
         )}
-      </p>
-      <p
+      </div>
+      <div
         className={`text-base lg:text-lg xl:text-2xl font-light mb-5 ${
           websiteData.theme === "glassmorphsm"
             ? "text-white/50"
@@ -51,7 +51,7 @@ const TextsSection = ({
             <div className="h-3 my-3 w-full animate-pulse bg-gray-400 rounded-full" />
           </>
         )}
-      </p>
+      </div>
     </>
   );
 };
@@ -95,7 +95,6 @@ const ButtonSection = ({
                 : `https://${websiteData.button1Link}`
             }
             target="_blank"
-            // onClick={() => navigate(`${websiteData.contactButtonEmail}`)}
             className={`flex items-center justify-center px-5 py-3 gap-[0.2rem] rounded-lg shadow border`}
             style={{
               backgroundColor: websiteData.buttonBackgroundColor,
@@ -120,9 +119,9 @@ const ButtonSection = ({
               <path
                 d="M2.32227 4.54375L4.9843 1.88171M4.9843 1.88171H2.32227M4.9843 1.88171V4.54375"
                 stroke="currentColor"
-                stroke-width="0.532407"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="0.532407"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
             </svg>
           </Link>

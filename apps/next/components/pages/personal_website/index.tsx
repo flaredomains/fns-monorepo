@@ -172,34 +172,43 @@ export default function Website() {
     enabled: nameHash !== "",
     onSuccess(data: any) {
       console.log("Success texts", data);
-      const imageWebsiteBase64 = data[1];
-      const imageAvatarBase64 = data[10];
+      if (data) {
+        const dataTexts = data.map((obj: any) => obj.result);
 
-      if (data[0] === "") {
-        navigate("/404");
-      }
+        const imageWebsiteBase64 = dataTexts[1];
+        const imageAvatarBase64 = dataTexts[10];
 
-      const updatedFormState = { ...websiteData };
-      data.forEach((value: any, index: any) => {
-        const key = Object.keys(updatedFormState)[index];
-        // console.log("key", key);
-        // console.log("updateFunctions[key]", updateFunctions[key]);
-        const updateFunction = updateFunctions[key];
-        if (updateFunction) {
-          updateFunction(value);
+        if (dataTexts[0] === "") {
+          navigate("/404");
         }
-      });
 
-      // Avatar
-      getImage(imageAvatarBase64, domain, "imageAvatar", setImageAvatarBase64);
+        const updatedFormState = { ...websiteData };
+        dataTexts.forEach((value: any, index: any) => {
+          const key = Object.keys(updatedFormState)[index];
+          // console.log("key", key);
+          // console.log("updateFunctions[key]", updateFunctions[key]);
+          const updateFunction = updateFunctions[key];
+          if (updateFunction) {
+            updateFunction(value);
+          }
+        });
 
-      // Website
-      getImage(
-        imageWebsiteBase64,
-        domain,
-        "imageWebsite",
-        setImageWebsiteBase64
-      );
+        // Avatar
+        getImage(
+          imageAvatarBase64,
+          domain,
+          "imageAvatar",
+          setImageAvatarBase64
+        );
+
+        // Website
+        getImage(
+          imageWebsiteBase64,
+          domain,
+          "imageWebsite",
+          setImageWebsiteBase64
+        );
+      }
     },
     onError(error) {
       console.log("Error texts", error);
