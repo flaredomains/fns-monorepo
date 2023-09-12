@@ -26,7 +26,7 @@ importers:
       '@types/react-dom': 18.0.11
       '@wagmi/core': ^1.4.1
       '@web3modal/ethereum': ^2.7.1
-      '@web3modal/react': 2.6.0
+      '@web3modal/react': ^2.7.1
       autoprefixer: ^10.4.13
       axios: ^1.4.0
       dotenv: ^16.3.1
@@ -58,7 +58,7 @@ importers:
       '@types/react-dom': 18.0.11
       '@wagmi/core': 1.4.1_3uh4e6qvggv6sflhs5hwfw2tae
       '@web3modal/ethereum': 2.7.1_s3qozku2hzzjtdzhongdd65lri
-      '@web3modal/react': 2.6.0_biqbaboplfbrettd7655fr4n2y
+      '@web3modal/react': 2.7.1_biqbaboplfbrettd7655fr4n2y
       axios: 1.4.0
       dotenv: 16.3.1
       eslint: 8.35.0
@@ -2645,11 +2645,10 @@ packages:
       tslib: 1.14.1
     dev: false
 
-  /@web3modal/core/2.6.0_react@18.2.0:
-    resolution: {integrity: sha512-rxTN/3hp7IqKPBS4berZPizLBMFgEHGi/5hCcJRY1P+7vwDmeigwIS4YvQTj28UmXlhnqwu2hfLf8RUw5Gc/AA==}
+  /@web3modal/core/2.7.1_react@18.2.0:
+    resolution: {integrity: sha512-eFWR1tK1qN4FguhaZq2VW0AVr8DC/Fox2eJnK1eTfk32hxSgUtl8wr5fVM8EoLeoapQ7Zcc0SNg/QLuLQ9t2tA==}
     dependencies:
-      buffer: 6.0.3
-      valtio: 1.10.6_react@18.2.0
+      valtio: 1.11.0_react@18.2.0
     transitivePeerDependencies:
       - react
     dev: false
@@ -2664,23 +2663,23 @@ packages:
       viem: 1.10.9_typescript@5.2.2
     dev: false
 
-  /@web3modal/react/2.6.0_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-+ru9zEe/LnkZv1EdzFMIajQCmUAfaROClBRC10zsl8w9VzjXKkJenrPmOnLTJ6s0MBfvXSKWuSOVHnhorAXrCA==}
+  /@web3modal/react/2.7.1_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-+zvP5Q7Q3ozW2hyA1NvS8giVDeZWA6PWgVhKA6656dCnOutonPUpWYuFPJahsFBYCrhLO8ApPmomgb6Dx/mh5A==}
     peerDependencies:
       react: '>=17'
       react-dom: '>=17'
     dependencies:
-      '@web3modal/core': 2.6.0_react@18.2.0
-      '@web3modal/ui': 2.6.0_react@18.2.0
+      '@web3modal/core': 2.7.1_react@18.2.0
+      '@web3modal/ui': 2.7.1_react@18.2.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
     dev: false
 
-  /@web3modal/ui/2.6.0_react@18.2.0:
-    resolution: {integrity: sha512-137+bnu51CyhWTPJSwVfGSpuyhVrfHSieiaZynsR0Abp3DY5W/3sxTpTSDP7uNFlG+kCI7rFt9jQL2wLDWGZ1w==}
+  /@web3modal/ui/2.7.1_react@18.2.0:
+    resolution: {integrity: sha512-JpGJbLAl/Wmuyyn+JwuwtlPD8mUW2HV/gsSxKWZoElgjbfDY4vjHo9PH2G++2HhugISfzjawp43r8lP/hWgWOQ==}
     dependencies:
-      '@web3modal/core': 2.6.0_react@18.2.0
-      lit: 2.7.5
+      '@web3modal/core': 2.7.1_react@18.2.0
+      lit: 2.7.6
       motion: 10.16.2
       qrcode: 1.5.3
     transitivePeerDependencies:
@@ -4796,14 +4795,6 @@ packages:
       '@types/trusted-types': 2.0.3
     dev: false
 
-  /lit/2.7.5:
-    resolution: {integrity: sha512-i/cH7Ye6nBDUASMnfwcictBnsTN91+aBjXoTHF2xARghXScKxpD4F4WYI+VLXg9lqbMinDfvoI7VnZXjyHgdfQ==}
-    dependencies:
-      '@lit/reactive-element': 1.6.1
-      lit-element: 3.3.2
-      lit-html: 2.7.3
-    dev: false
-
   /lit/2.7.6:
     resolution: {integrity: sha512-1amFHA7t4VaaDe+vdQejSVBklwtH9svGoG6/dZi9JhxtJBBlqY5D1RV7iLUYY0trCqQc4NfhYYZilZiVHt7Hxg==}
     dependencies:
@@ -6256,20 +6247,6 @@ packages:
   /uuid/8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     hasBin: true
-    dev: false
-
-  /valtio/1.10.6_react@18.2.0:
-    resolution: {integrity: sha512-SxN1bHUmdhW6V8qsQTpCgJEwp7uHbntuH0S9cdLQtiohuevwBksbpXjwj5uDMA7bLwg1WKyq9sEpZrx3TIMrkA==}
-    engines: {node: '>=12.20.0'}
-    peerDependencies:
-      react: '>=16.8'
-    peerDependenciesMeta:
-      react:
-        optional: true
-    dependencies:
-      proxy-compare: 2.5.1
-      react: 18.2.0
-      use-sync-external-store: 1.2.0_react@18.2.0
     dev: false
 
   /valtio/1.11.0_react@18.2.0:

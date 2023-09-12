@@ -20,7 +20,7 @@
     "@types/react-dom": "18.0.11",
     "@wagmi/core": "^1.4.1",
     "@web3modal/ethereum": "^2.7.1",
-    "@web3modal/react": "2.6.0",
+    "@web3modal/react": "^2.7.1",
     "axios": "^1.4.0",
     "dotenv": "^16.3.1",
     "eslint": "8.35.0",
