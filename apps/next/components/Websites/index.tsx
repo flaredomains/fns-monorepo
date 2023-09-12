@@ -1,4 +1,4 @@
-import React, { useState, Dispatch, SetStateAction } from "react";
+import React, { useState, Dispatch, SetStateAction, useEffect } from "react";
 import Image from "next/image";
 import Avatar from "../../public/Avatar.svg";
 import Check from "../../public/check-circle.png";
@@ -57,6 +57,8 @@ const OwnedDomains = ({
   const [prepareDelete, setPrepareDelete] = useState(false);
   const [keccakImageWebsite, setKeccakImageWebsite] = useState(""); // For uuid Image Website to put on Cloudflare database
   const [keccakImageAvatar, setKeccakImageAvatar] = useState(""); // For uuid Avatar Website to put on Cloudflare database
+
+  const [isReady, setIsReady] = useState(false);
 
   const day = date.getDate();
   const month = date.getMonth() + 1;
@@ -499,12 +501,18 @@ const OwnedDomains = ({
       prepareMulticallArgs.prepareProfilePicture !== "",
     onSuccess(data: any) {
       console.log("Success multicall", data);
-      writeMulticall?.();
+      setIsReady(true);
     },
     onError(error) {
       console.log("Error prepareSetMulticall", error);
     },
   });
+
+  useEffect(() => {
+    if (isReady) {
+      writeMulticall?.();
+    }
+  }, [isReady]);
 
   const { data: multicallData, write: writeMulticall } = useContractWrite({
     ...testMulticall,
