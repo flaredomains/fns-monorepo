@@ -147,7 +147,7 @@ const ReqToRegister = ({
     args: [commitmentHash],
     enabled: isMakeCommitmentReady,
     async onSuccess(data: any) {
-      // console.log('Pending Commits Checked!', data)
+      console.log("Pending Commits Checked!", data);
       // console.log('Pending Commits Boolean Eval', data.isZero());
 
       // If this read returns 0, that means there is no equivalent pending commit
@@ -220,6 +220,7 @@ const ReqToRegister = ({
     },
   });
 
+  // TODO useWaitTransaction
   async function commitFunc() {
     await commit?.()
       .then(async (tx) => {
@@ -286,6 +287,7 @@ const ReqToRegister = ({
     },
   });
 
+  // TODO useWaitTransaction
   async function registerFunc() {
     await register?.()
       .then(async (tx) => {

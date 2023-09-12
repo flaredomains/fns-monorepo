@@ -114,14 +114,14 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Router>
             <Routes>
               <Route path="/" element={<Main />} />
-              <Route path="/:website" element={<Personal_Website />} />
+              {/* <Route path="/:website" element={<Personal_Website />} /> */}
               <Route path="/my_account" element={<MyAccount />} />
-              <Route path="/websites" element={<Websites />} />
+              {/* <Route path="/websites" element={<Websites />} /> */}
               <Route path="/faq" element={<FAQ />} />
 
-              <Route path="/register/:param" element={<Register />} />
+              {/* <Route path="/register/:param" element={<Register />} /> */}
               <Route path="/details/:param" element={<Details />} />
-              <Route path="/subdomains/:param" element={<Subdomains />} />
+              {/* <Route path="/subdomains/:param" element={<Subdomains />} /> */}
               <Route path="/page_builder/:param" element={<Page_Builder />} />
               <Route path="/404" element={<NotFound />} />
               <Route path="*" element={<NotFound />} />
