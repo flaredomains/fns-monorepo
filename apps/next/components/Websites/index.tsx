@@ -272,84 +272,84 @@ const OwnedDomains = ({
     },
   });
 
-  const { config: testMulticall } = usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "multicall",
-    args: [
-      [
-        prepareSetTitle.request?.data,
-        prepareSetBgPhotoHash.request?.data,
-        prepareSetBody.request?.data,
-        prepareTheme.request?.data,
-        prepareButton1.request?.data,
-        prepareButton1Link.request?.data,
-        prepareContactButton.request?.data,
-        prepareContactButtonEmail.request?.data,
-        prepareName.request?.data,
-        prepareRole.request?.data,
-        prepareProfilePicture.request?.data,
-        prepareButtonBackgroundColor.request?.data,
-      ],
-    ],
-    enabled:
-      prepareDelete &&
-      keccakImageAvatar !== "" &&
-      keccakImageWebsite !== "" &&
-      prepareSetTitle.request?.data !== undefined &&
-      prepareSetBgPhotoHash.request?.data !== undefined &&
-      prepareSetBody.request?.data !== undefined &&
-      prepareButton1.request?.data !== undefined &&
-      prepareButton1Link.request?.data !== undefined &&
-      prepareContactButton.request?.data !== undefined &&
-      prepareContactButtonEmail.request?.data !== undefined &&
-      prepareName.request?.data !== undefined &&
-      prepareRole.request?.data !== undefined &&
-      prepareProfilePicture.request?.data !== undefined,
-    onSuccess(data: any) {
-      console.log("Success multicall", data);
-      writeMulticall?.();
-    },
-    onError(error) {
-      console.log("Error prepareSetMulticall", error);
-    },
-  });
+  // const { config: testMulticall } = usePrepareContractWrite({
+  //   address: PublicResolver.address as `0x${string}`,
+  //   abi: PublicResolver.abi,
+  //   functionName: "multicall",
+  //   args: [
+  //     [
+  //       prepareSetTitle.request?.data,
+  //       prepareSetBgPhotoHash.request?.data,
+  //       prepareSetBody.request?.data,
+  //       prepareTheme.request?.data,
+  //       prepareButton1.request?.data,
+  //       prepareButton1Link.request?.data,
+  //       prepareContactButton.request?.data,
+  //       prepareContactButtonEmail.request?.data,
+  //       prepareName.request?.data,
+  //       prepareRole.request?.data,
+  //       prepareProfilePicture.request?.data,
+  //       prepareButtonBackgroundColor.request?.data,
+  //     ],
+  //   ],
+  //   enabled:
+  //     prepareDelete &&
+  //     keccakImageAvatar !== "" &&
+  //     keccakImageWebsite !== "" &&
+  //     prepareSetTitle.request?.data !== undefined &&
+  //     prepareSetBgPhotoHash.request?.data !== undefined &&
+  //     prepareSetBody.request?.data !== undefined &&
+  //     prepareButton1.request?.data !== undefined &&
+  //     prepareButton1Link.request?.data !== undefined &&
+  //     prepareContactButton.request?.data !== undefined &&
+  //     prepareContactButtonEmail.request?.data !== undefined &&
+  //     prepareName.request?.data !== undefined &&
+  //     prepareRole.request?.data !== undefined &&
+  //     prepareProfilePicture.request?.data !== undefined,
+  //   onSuccess(data: any) {
+  //     console.log("Success multicall", data);
+  //     writeMulticall?.();
+  //   },
+  //   onError(error) {
+  //     console.log("Error prepareSetMulticall", error);
+  //   },
+  // });
 
-  const { write: writeMulticall } = useContractWrite({
-    ...testMulticall,
-    async onSuccess(data) {
-      console.log("Success writeMulticall", data);
+  // const { write: writeMulticall } = useContractWrite({
+  //   ...testMulticall,
+  //   async onSuccess(data) {
+  //     console.log("Success writeMulticall", data);
 
-      // Website
-      await deleteObjBucket(
-        domain + ".flr",
-        "imageWebsite",
-        keccakImageWebsite
-      ).catch((err: any) => {
-        setPrepareDelete(false);
-        console.log("Error on uploading image website", err);
-      });
+  //     // Website
+  //     await deleteObjBucket(
+  //       domain + ".flr",
+  //       "imageWebsite",
+  //       keccakImageWebsite
+  //     ).catch((err: any) => {
+  //       setPrepareDelete(false);
+  //       console.log("Error on uploading image website", err);
+  //     });
 
-      // Avatar
-      await await deleteObjBucket(
-        domain + ".flr",
-        "imageAvatar",
-        keccakImageAvatar
-      ).catch((err) => {
-        setPrepareDelete(false);
-        console.log("Error on uploading image website", err);
-      });
+  //     // Avatar
+  //     await await deleteObjBucket(
+  //       domain + ".flr",
+  //       "imageAvatar",
+  //       keccakImageAvatar
+  //     ).catch((err) => {
+  //       setPrepareDelete(false);
+  //       console.log("Error on uploading image website", err);
+  //     });
 
-      // Waits for 1 txn confirmation (block confirmation)
-      await data.wait(1);
+  //     // Waits for 1 txn confirmation (block confirmation)
+  //     await data.wait(1);
 
-      refetchText?.();
-      setPrepareDelete(false);
-    },
-    onError(data) {
-      setPrepareDelete(false);
-    },
-  }) as any;
+  //     refetchText?.();
+  //     setPrepareDelete(false);
+  //   },
+  //   onError(data) {
+  //     setPrepareDelete(false);
+  //   },
+  // }) as any;
 
   return (
     <>

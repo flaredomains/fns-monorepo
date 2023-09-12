@@ -221,22 +221,22 @@ const ReqToRegister = ({
   });
 
   // TODO useWaitTransaction
-  async function commitFunc() {
-    await commit?.()
-      .then(async (tx) => {
-        const receipt = await tx.wait();
-        if (receipt.status == 1) {
-          // console.log('Commit transaction succeeded!', receipt.logs)
-          setRegisterState(RegisterState.Waiting);
-          wait(60); // Wait the full minute duration
-          return;
-        }
-        console.error("Commit transaction reverted!", receipt.logs);
-      })
-      .catch(() => {
-        console.error("User rejected approval!");
-      });
-  }
+  // async function commitFunc() {
+  //   await commit?.()
+  //     .then(async (tx) => {
+  //       const receipt = await tx.wait();
+  //       if (receipt.status == 1) {
+  //         // console.log('Commit transaction succeeded!', receipt.logs)
+  //         setRegisterState(RegisterState.Waiting);
+  //         wait(60); // Wait the full minute duration
+  //         return;
+  //       }
+  //       console.error("Commit transaction reverted!", receipt.logs);
+  //     })
+  //     .catch(() => {
+  //       console.error("User rejected approval!");
+  //     });
+  // }
 
   function wait(seconds: number) {
     setTimeout(() => {
@@ -260,13 +260,13 @@ const ReqToRegister = ({
       false,
       0,
     ],
-    overrides: {
-      from: address as `0x${string}`,
-      value: BigNumber.from(price)
-        .mul(regPeriod)
-        .add(BigNumber.from(price).div(100)),
-      gasLimit: BigNumber.from(1000000),
-    },
+    // overrides: {
+    //   from: address as `0x${string}`,
+    //   value: BigNumber.from(price)
+    //     .mul(regPeriod)
+    //     .add(BigNumber.from(price).div(100)),
+    //   gasLimit: BigNumber.from(1000000),
+    // },
     onSuccess(data) {
       //console.log('Success prepare register', data)
     },
@@ -288,33 +288,35 @@ const ReqToRegister = ({
   });
 
   // TODO useWaitTransaction
-  async function registerFunc() {
-    await register?.()
-      .then(async (tx) => {
-        const receipt = await tx.wait();
-        if (receipt.status == 1) {
-          //console.log('Register transaction succeeded!', receipt.logs)
-          setRegisterState(RegisterState.Registered);
-          return;
-        }
-        console.error("Register transaction reverted!", receipt.logs);
-      })
-      .catch(() => {
-        console.error("User rejected approval!");
-      });
-  }
+  // async function registerFunc() {
+  //   await register?.()
+  //     .then(async (tx) => {
+  //       const receipt = await tx.wait();
+  //       if (receipt.status == 1) {
+  //         //console.log('Register transaction succeeded!', receipt.logs)
+  //         setRegisterState(RegisterState.Registered);
+  //         return;
+  //       }
+  //       console.error("Register transaction reverted!", receipt.logs);
+  //     })
+  //     .catch(() => {
+  //       console.error("User rejected approval!");
+  //     });
+  // }
 
   return (
     <>
       <div className="mt-10 flex justify-center items-center w-full">
         {registerState === RegisterState.Committable ? (
-          <ActionButton onClickFn={commitFunc} label={"Commit"} />
+          // TODO rechange to onClickFn={commitFunc}
+          <ActionButton onClickFn={""} label={"Commit"} />
         ) : registerState === RegisterState.Committing ? (
           <SpinnerButton label={"Committing"} />
         ) : registerState === RegisterState.Waiting ? (
           <SpinnerButton label={"Waiting"} />
         ) : registerState === RegisterState.Unregistered ? (
-          <ActionButton onClickFn={registerFunc} label={"Register"} />
+          // TODO reput onClickFn={registerFunc}
+          <ActionButton onClickFn={""} label={"Register"} />
         ) : registerState === RegisterState.Registering ? (
           <SpinnerButton label={"Registering"} />
         ) : (
