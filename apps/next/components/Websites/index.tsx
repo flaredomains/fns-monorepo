@@ -486,26 +486,28 @@ export default function MyAccountWebsites() {
       // console.log('Get array of domains', data)
 
       // Ensure we only use the length returned for still-owned domains (after a transfer)
-      const arrDomains = data.data.slice(0, data._length.toNumber());
-      const ownedDomain = arrDomains.map((item: any, index: any) => {
-        return {
-          label: item.label,
-          expire: Number(item.expiry),
-          isSubdomain: /[a-zA-Z0-9]+\.{1}[a-zA-Z0-9]+/.test(item.label),
-        };
-      });
-      const dataDomains = arrDomains.map((item: any, index: any) => {
-        return {
-          address: PublicResolver.address as `0x${string}`,
-          abi: PublicResolver.abi,
-          functionName: "text",
-          args: [utils.namehash(item.label + ".flr"), "website.titleText"],
-        };
-      });
-      // console.log("dataDomains", dataDomains);
-      setDataDomains(dataDomains);
-      setAddressDomain(ownedDomain);
-      setIsReady(true);
+      if (data) {
+        const arrDomains = data[0].slice(0, data[0]._length);
+        const ownedDomain = arrDomains.map((item: any, index: any) => {
+          return {
+            label: item.label,
+            expire: Number(item.expiry),
+            isSubdomain: /[a-zA-Z0-9]+\.{1}[a-zA-Z0-9]+/.test(item.label),
+          };
+        });
+        const dataDomains = arrDomains.map((item: any, index: any) => {
+          return {
+            address: PublicResolver.address as `0x${string}`,
+            abi: PublicResolver.abi,
+            functionName: "text",
+            args: [utils.namehash(item.label + ".flr"), "website.titleText"],
+          };
+        });
+        // console.log("dataDomains", dataDomains);
+        setDataDomains(dataDomains);
+        setAddressDomain(ownedDomain);
+        setIsReady(true);
+      }
     },
     onError(error) {
       console.error("Error getAll", error);
@@ -526,7 +528,9 @@ export default function MyAccountWebsites() {
     enabled: isReady,
     onSuccess(data: any) {
       console.log("Success texts", data);
-      setHasWebsite(data);
+      if (data) {
+        setHasWebsite(data.map((obj: any) => obj.result));
+      }
     },
     onError(error) {
       console.log("Error texts", error);

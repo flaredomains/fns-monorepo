@@ -61,18 +61,7 @@ export default function PageBuilder({
     nameHash,
     keccakImageWebsite,
     keccakImageAvatar,
-    prepareSetTitle,
-    prepareSetBgPhotoHash,
-    prepareSetBody,
-    prepareTheme,
-    prepareButton1,
-    prepareButton1Link,
-    prepareContactButton,
-    prepareContactButtonEmail,
-    prepareName,
-    prepareRole,
-    prepareProfilePicture,
-    prepareButtonBackgroundColor,
+    prepareMulticallArgs,
     updateFunctions,
     setNameHash,
     setKeccakImageWebsite,
@@ -185,18 +174,18 @@ export default function PageBuilder({
     functionName: "multicall",
     args: [
       [
-        prepareSetTitle.request?.data,
-        prepareSetBgPhotoHash.request?.data,
-        prepareSetBody.request?.data,
-        prepareTheme.request?.data,
-        prepareButton1.request?.data,
-        prepareButton1Link.request?.data,
-        prepareContactButton.request?.data,
-        prepareContactButtonEmail.request?.data,
-        prepareName.request?.data,
-        prepareRole.request?.data,
-        prepareProfilePicture.request?.data,
-        prepareButtonBackgroundColor.request?.data,
+        prepareMulticallArgs.prepareSetTitle,
+        prepareMulticallArgs.prepareSetBgPhotoHash,
+        prepareMulticallArgs.prepareSetBody,
+        prepareMulticallArgs.prepareTheme,
+        prepareMulticallArgs.prepareButton1,
+        prepareMulticallArgs.prepareButton1Link,
+        prepareMulticallArgs.prepareContactButton,
+        prepareMulticallArgs.prepareContactButtonEmail,
+        prepareMulticallArgs.prepareName,
+        prepareMulticallArgs.prepareRole,
+        prepareMulticallArgs.prepareProfilePicture,
+        prepareMulticallArgs.prepareButtonBackgroundColor,
       ],
     ],
     enabled:
@@ -208,16 +197,16 @@ export default function PageBuilder({
       formState.contactButtonEmail !== "" &&
       formState.name !== "" &&
       formState.role !== "" &&
-      prepareSetTitle.request?.data !== undefined &&
-      prepareSetBgPhotoHash.request?.data !== undefined &&
-      prepareSetBody.request?.data !== undefined &&
-      prepareButton1.request?.data !== undefined &&
-      prepareButton1Link.request?.data !== undefined &&
-      prepareContactButton.request?.data !== undefined &&
-      prepareContactButtonEmail.request?.data !== undefined &&
-      prepareName.request?.data !== undefined &&
-      prepareRole.request?.data !== undefined &&
-      prepareProfilePicture.request?.data !== undefined,
+      prepareMulticallArgs.prepareSetTitle !== "" &&
+      prepareMulticallArgs.prepareSetBgPhotoHash !== "" &&
+      prepareMulticallArgs.prepareSetBody !== "" &&
+      prepareMulticallArgs.prepareButton1 !== "" &&
+      prepareMulticallArgs.prepareButton1Link !== "" &&
+      prepareMulticallArgs.prepareContactButton !== "" &&
+      prepareMulticallArgs.prepareContactButtonEmail !== "" &&
+      prepareMulticallArgs.prepareName !== "" &&
+      prepareMulticallArgs.prepareRole !== "" &&
+      prepareMulticallArgs.prepareProfilePicture !== "",
     onSuccess(data: any) {
       console.log("Success multicall", data);
       setIsReady(true);
@@ -227,8 +216,6 @@ export default function PageBuilder({
       setIsReady(false);
     },
   });
-
-  // console.log("isReady", isReady);
 
   const { write: writeMulticall } = useContractWrite({
     ...testMulticall,
@@ -260,7 +247,7 @@ export default function PageBuilder({
       });
 
       // Waits for 1 txn confirmation (block confirmation)
-      await data.wait(1);
+      // await data.wait(1);
 
       // Reset fields
       resetValue();
@@ -301,31 +288,32 @@ export default function PageBuilder({
       resetValue();
       setIsReady(false);
       if (data[0]) {
-        const imageKeccakWebsite = data[1];
-        const imageKeccakAvatar = data[10];
+        const dataTexts = data.map((obj: any) => obj.result);
+        const imageKeccakWebsite = dataTexts[1];
+        const imageKeccakAvatar = dataTexts[10];
         setoldUUIDWebsite(imageKeccakWebsite);
         setoldUUIDAvatar(imageKeccakAvatar);
 
-        updateFunctions["Title"](data[0]);
-        updateFunctions["Body"](data[2]);
-        updateFunctions["Theme"](data[3] || "glassmorphsm");
-        updateFunctions["Button1"](data[4]);
-        updateFunctions["Button1Link"](data[5]);
-        updateFunctions["ContactButton"](data[6]);
-        updateFunctions["ContactButtonEmail"](data[7]);
-        updateFunctions["Name"](data[8]);
-        updateFunctions["Role"](data[9]);
-        updateFunctions["ButtonBackgroundColor"](data[11] || "#FFFFFF");
+        updateFunctions["Title"](dataTexts[0]);
+        updateFunctions["Body"](dataTexts[2]);
+        updateFunctions["Theme"](dataTexts[3] || "glassmorphsm");
+        updateFunctions["Button1"](dataTexts[4]);
+        updateFunctions["Button1Link"](dataTexts[5]);
+        updateFunctions["ContactButton"](dataTexts[6]);
+        updateFunctions["ContactButtonEmail"](dataTexts[7]);
+        updateFunctions["Name"](dataTexts[8]);
+        updateFunctions["Role"](dataTexts[9]);
+        updateFunctions["ButtonBackgroundColor"](dataTexts[11] || "#FFFFFF");
 
         const imageAvatar = await getImage(
-          data[10],
+          dataTexts[10],
           selectText + ".flr",
           "imageAvatar"
         );
         updateFunctions["ProfilePicture"](imageAvatar);
 
         const imageWebsite = await getImage(
-          data[1],
+          dataTexts[1],
           selectText + ".flr",
           "imageWebsite"
         );

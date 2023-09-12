@@ -136,21 +136,23 @@ export default function HeaderBuilder({
     enabled: isConnected,
     args: [address],
     onSuccess(data: any) {
-      // console.log('Success getAll', data)
+      // console.log("Success getAll", data);
       // console.log('Get array of domains', data)
 
-      // Ensure we only use the length returned for still-owned domains (after a transfer)
-      const arrDomains = data.data.slice(0, data._length.toNumber());
-      const ownedDomain = arrDomains.map((item: any, index: any) => {
-        return {
-          label: item.label,
-          expire: Number(item.expiry),
-          isSubdomain: /[a-zA-Z0-9]+\.{1}[a-zA-Z0-9]+/.test(item.label),
-        };
-      });
-      const ownedLabel = arrDomains.map((obj: any) => obj.label);
-      setOwnedDomain(ownedLabel);
-      setAddressDomain(ownedDomain);
+      if (data[0]) {
+        const ownedDomain = data[0].map((item: any, index: any) => {
+          return {
+            label: item.label,
+            expire: Number(item.expiry),
+            isSubdomain: /[a-zA-Z0-9]+\.{1}[a-zA-Z0-9]+/.test(item.label),
+          };
+        });
+        const ownedLabel = data[0].map((obj: any) => obj.label);
+        // console.log("ownedDomain", ownedDomain);
+        // console.log("ownedLabel", ownedLabel);
+        setOwnedDomain(ownedLabel);
+        setAddressDomain(ownedDomain);
+      }
     },
     onError(error) {
       console.error("Error getAll", error);
