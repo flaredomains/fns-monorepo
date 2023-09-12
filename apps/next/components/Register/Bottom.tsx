@@ -8,6 +8,7 @@ import {
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
+  useWaitForTransaction,
 } from "wagmi";
 import { BigNumber, providers } from "ethers";
 
@@ -124,7 +125,7 @@ const ReqToRegister = ({
       args: [
         result as string,
         address as `0x${string}`,
-        BigNumber.from(regPeriod).mul(31556952),
+        BigInt(regPeriod * 31556952),
         web3.sha3(address as `0x${string}`),
         PublicResolver.address as `0x${string}`,
         [],
@@ -132,7 +133,7 @@ const ReqToRegister = ({
         0,
       ],
       onSuccess(data: any) {
-        //console.log('Success makeCommitment', data)
+        console.log("Success makeCommitment", data);
       },
       onError(error) {
         console.error("Error makeCommitment", error);
@@ -147,13 +148,20 @@ const ReqToRegister = ({
     args: [commitmentHash],
     enabled: isMakeCommitmentReady,
     async onSuccess(data: any) {
-      console.log("Pending Commits Checked!", data);
+      console.log("Pending Commits Checked!", BigNumber.from(data));
       // console.log('Pending Commits Boolean Eval', data.isZero());
+      // console.log(`data === '0n': ${Number(data) === 0}`);
+      // console.log("type data", typeof data);
 
       // If this read returns 0, that means there is no equivalent pending commit
       // If this read returns 1, we need to wait any remaining time for the 1 minute timeout,
       // then set the state to register
-      if (!data.isZero()) {
+
+      // If the data is zero, that means no matching commitment was found, which means we can
+      // move to committable state, which prepares the write hook for commit
+      if (Number(data) === 0) {
+        setRegisterState(RegisterState.Committable);
+      } else {
         try {
           const currentBlock = await ETHERS_PROVIDER.getBlockNumber();
           const blockTimestamp = (await ETHERS_PROVIDER.getBlock(currentBlock))
@@ -182,11 +190,6 @@ const ReqToRegister = ({
           console.error("Error fetching block timestamp");
         }
       }
-      // If the data is zero, that means no matching commitment was found, which means we can
-      // move to committable state, which prepares the write hook for commit
-      else {
-        setRegisterState(RegisterState.Committable);
-      }
     },
     onError(error) {
       console.error("Error read commitments", error);
@@ -209,7 +212,7 @@ const ReqToRegister = ({
   });
 
   // Approve
-  const { writeAsync: commit } = useContractWrite({
+  const { data: commitData, writeAsync: commit } = useContractWrite({
     ...configCommit,
     onSuccess(data) {
       // console.log('Success commit', data)
@@ -220,23 +223,14 @@ const ReqToRegister = ({
     },
   });
 
-  // TODO useWaitTransaction
-  // async function commitFunc() {
-  //   await commit?.()
-  //     .then(async (tx) => {
-  //       const receipt = await tx.wait();
-  //       if (receipt.status == 1) {
-  //         // console.log('Commit transaction succeeded!', receipt.logs)
-  //         setRegisterState(RegisterState.Waiting);
-  //         wait(60); // Wait the full minute duration
-  //         return;
-  //       }
-  //       console.error("Commit transaction reverted!", receipt.logs);
-  //     })
-  //     .catch(() => {
-  //       console.error("User rejected approval!");
-  //     });
-  // }
+  useWaitForTransaction({
+    hash: commitData?.hash,
+    onSuccess(data) {
+      console.log("Success commitData", data);
+      setRegisterState(RegisterState.Waiting);
+      wait(60); // Wait the full minute duration
+    },
+  });
 
   function wait(seconds: number) {
     setTimeout(() => {
@@ -253,22 +247,17 @@ const ReqToRegister = ({
     args: [
       result as string,
       address as `0x${string}`,
-      BigNumber.from(regPeriod).mul(31556952),
+      BigInt(regPeriod * 31556952),
       web3.sha3(address as `0x${string}`),
       PublicResolver.address as `0x${string}`,
       [],
       false,
       0,
     ],
-    // overrides: {
-    //   from: address as `0x${string}`,
-    //   value: BigNumber.from(price)
-    //     .mul(regPeriod)
-    //     .add(BigNumber.from(price).div(100)),
-    //   gasLimit: BigNumber.from(1000000),
-    // },
+    value: BigInt(Number(price) * regPeriod + Number(price) / 100),
+    gas: BigInt(1000000),
     onSuccess(data) {
-      //console.log('Success prepare register', data)
+      console.log("Success prepare register", data);
     },
     onError(error) {
       console.error("Error prepare register", error);
@@ -276,10 +265,10 @@ const ReqToRegister = ({
   });
 
   // Register
-  const { writeAsync: register } = useContractWrite({
+  const { data: registerData, writeAsync: register } = useContractWrite({
     ...configRegister,
     onSuccess(data) {
-      //console.log('Success register', data)
+      console.log("Success register", data);
       setRegisterState(RegisterState.Registering);
     },
     onError(error) {
@@ -287,36 +276,25 @@ const ReqToRegister = ({
     },
   });
 
-  // TODO useWaitTransaction
-  // async function registerFunc() {
-  //   await register?.()
-  //     .then(async (tx) => {
-  //       const receipt = await tx.wait();
-  //       if (receipt.status == 1) {
-  //         //console.log('Register transaction succeeded!', receipt.logs)
-  //         setRegisterState(RegisterState.Registered);
-  //         return;
-  //       }
-  //       console.error("Register transaction reverted!", receipt.logs);
-  //     })
-  //     .catch(() => {
-  //       console.error("User rejected approval!");
-  //     });
-  // }
+  useWaitForTransaction({
+    hash: registerData?.hash,
+    onSuccess(data) {
+      console.log("Success Register", data);
+      setRegisterState(RegisterState.Registered);
+    },
+  });
 
   return (
     <>
       <div className="mt-10 flex justify-center items-center w-full">
         {registerState === RegisterState.Committable ? (
-          // TODO rechange to onClickFn={commitFunc}
-          <ActionButton onClickFn={""} label={"Commit"} />
+          <ActionButton onClickFn={commit} label={"Commit"} />
         ) : registerState === RegisterState.Committing ? (
           <SpinnerButton label={"Committing"} />
         ) : registerState === RegisterState.Waiting ? (
           <SpinnerButton label={"Waiting"} />
         ) : registerState === RegisterState.Unregistered ? (
-          // TODO reput onClickFn={registerFunc}
-          <ActionButton onClickFn={""} label={"Register"} />
+          <ActionButton onClickFn={register} label={"Register"} />
         ) : registerState === RegisterState.Registering ? (
           <SpinnerButton label={"Registering"} />
         ) : (
