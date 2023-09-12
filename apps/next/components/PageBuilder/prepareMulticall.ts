@@ -1,8 +1,7 @@
 import { useState, Dispatch, SetStateAction } from "react";
 
-import { usePrepareContractWrite, useContractWrite } from "wagmi";
-import { prepareWriteContract, writeContract } from "@wagmi/core";
-import { encodeFunctionData, encodeFunctionResult } from "viem";
+import { usePrepareContractWrite } from "wagmi";
+import { encodeFunctionData } from "viem";
 
 // ABIS
 import PublicResolver from "../../src/pages/abi/PublicResolver.json";

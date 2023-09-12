@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, Dispatch, SetStateAction } from "react";
 import Image from "next/image";
 import Avatar from "../../public/Avatar.svg";
 import Check from "../../public/check-circle.png";
@@ -8,13 +8,18 @@ import WalletConnect from "../WalletConnect";
 import { Link } from "react-router-dom";
 import AccountWeb from "./AccountWeb";
 
+import { s3Client } from "../../lib/clientS3";
+
 import {
   useAccount,
   useContractRead,
   useContractReads,
   usePrepareContractWrite,
   useContractWrite,
+  useWaitForTransaction,
 } from "wagmi";
+
+import { encodeFunctionData } from "viem";
 
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 
@@ -24,20 +29,11 @@ import { utils } from "ethers";
 import PublicResolver from "../../src/pages/abi/PublicResolver.json";
 import MintedDomainNames from "../../src/pages/abi/MintedDomainNames.json";
 
-const textKeys: Array<string> = [
-  "website.titleText",
-  "website.bgPhotoHash",
-  "website.body",
-  "website.theme",
-  "website.button1",
-  "website.button1Link",
-  "website.contactButton",
-  "website.contactButtonEmail",
-  "website.name",
-  "website.role",
-  "website.profilePicture",
-  "website.buttonBackgroundColor",
-];
+import { textKeys } from "../../lib/testkeys";
+
+interface UpdateFunctions {
+  [key: string]: Dispatch<SetStateAction<any>>;
+}
 
 const OwnedDomains = ({
   date,
@@ -66,6 +62,84 @@ const OwnedDomains = ({
   const month = date.getMonth() + 1;
   const year = date.getFullYear();
   // console.log(`This domain ${domain} has a website --> ${hasWebsite}`);
+
+  const [prepareMulticallArgs, setPrepareMulticallArgs] = useState({
+    prepareSetTitle: "",
+    prepareSetBgPhotoHash: "",
+    prepareSetBody: "",
+    prepareTheme: "",
+    prepareButton1: "",
+    prepareButton1Link: "",
+    prepareContactButton: "",
+    prepareContactButtonEmail: "",
+    prepareName: "",
+    prepareRole: "",
+    prepareProfilePicture: "",
+    prepareButtonBackgroundColor: "",
+  });
+
+  const preparationMulticall: UpdateFunctions = {
+    prepareSetTitle: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareSetTitle: value,
+      })),
+    prepareSetBgPhotoHash: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareSetBgPhotoHash: value,
+      })),
+    prepareSetBody: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareSetBody: value,
+      })),
+    prepareTheme: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareTheme: value,
+      })),
+    prepareButton1: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareButton1: value,
+      })),
+    prepareButton1Link: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareButton1Link: value,
+      })),
+    prepareContactButton: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareContactButton: value,
+      })),
+    prepareContactButtonEmail: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareContactButtonEmail: value,
+      })),
+    prepareName: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareName: value,
+      })),
+    prepareRole: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareRole: value,
+      })),
+    prepareProfilePicture: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareProfilePicture: value,
+      })),
+    prepareButtonBackgroundColor: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareButtonBackgroundColor: value,
+      })),
+  };
 
   // Website get keccak uuid to delete the image inside
   useContractRead({
@@ -96,7 +170,7 @@ const OwnedDomains = ({
   });
 
   // Title
-  const { config: prepareSetTitle } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -104,6 +178,16 @@ const OwnedDomains = ({
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareSetTitle", data.request.data);
+
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [utils.namehash(domain + ".flr"), "website.titleText", ""],
+        });
+        preparationMulticall["prepareSetTitle"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareSetTitle", error);
@@ -111,7 +195,7 @@ const OwnedDomains = ({
   });
 
   // Image Website
-  const { config: prepareSetBgPhotoHash } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -119,6 +203,15 @@ const OwnedDomains = ({
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareSetBgPhotoHash", data.request.data);
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [utils.namehash(domain + ".flr"), "website.bgPhotoHash", ""],
+        });
+        preparationMulticall["prepareSetBgPhotoHash"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareSetBgPhotoHash", error);
@@ -126,7 +219,7 @@ const OwnedDomains = ({
   });
 
   // Body
-  const { config: prepareSetBody } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -134,6 +227,15 @@ const OwnedDomains = ({
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareSetBody", data.request.data);
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [utils.namehash(domain + ".flr"), "website.body", ""],
+        });
+        preparationMulticall["prepareSetBody"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareSetBody", error);
@@ -141,7 +243,7 @@ const OwnedDomains = ({
   });
 
   // Theme
-  const { config: prepareTheme } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -149,6 +251,15 @@ const OwnedDomains = ({
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareTheme", data.request.data);
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [utils.namehash(domain + ".flr"), "website.theme", ""],
+        });
+        preparationMulticall["prepareTheme"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareTheme", error);
@@ -156,7 +267,7 @@ const OwnedDomains = ({
   });
 
   // Theme
-  const { config: prepareButton1 } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -164,13 +275,22 @@ const OwnedDomains = ({
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareButton1", data.request.data);
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [utils.namehash(domain + ".flr"), "website.button1", ""],
+        });
+        preparationMulticall["prepareButton1"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareButton1", error);
     },
   });
 
-  const { config: prepareButton1Link } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -178,13 +298,22 @@ const OwnedDomains = ({
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareButton1Link", data.request.data);
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [utils.namehash(domain + ".flr"), "website.button1Link", ""],
+        });
+        preparationMulticall["prepareButton1Link"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareButton1Link", error);
     },
   });
 
-  const { config: prepareContactButton } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -192,13 +321,22 @@ const OwnedDomains = ({
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareContactButton", data.request.data);
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [utils.namehash(domain + ".flr"), "website.contactButton", ""],
+        });
+        preparationMulticall["prepareContactButton"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareContactButton", error);
     },
   });
 
-  const { config: prepareContactButtonEmail } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -206,13 +344,26 @@ const OwnedDomains = ({
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareContactButtonEmail", data.request.data);
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [
+            utils.namehash(domain + ".flr"),
+            "website.contactButtonEmail",
+            "",
+          ],
+        });
+        preparationMulticall["prepareContactButtonEmail"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareContactButtonEmail", error);
     },
   });
 
-  const { config: prepareName } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -220,13 +371,22 @@ const OwnedDomains = ({
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareName", data.request.data);
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [utils.namehash(domain + ".flr"), "website.name", ""],
+        });
+        preparationMulticall["prepareName"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareName", error);
     },
   });
 
-  const { config: prepareRole } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -234,13 +394,22 @@ const OwnedDomains = ({
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareRole", data.request.data);
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [utils.namehash(domain + ".flr"), "website.role", ""],
+        });
+        preparationMulticall["prepareRole"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareRole", error);
     },
   });
 
-  const { config: prepareProfilePicture } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -248,13 +417,22 @@ const OwnedDomains = ({
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareProfilePicture", data.request.data);
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [utils.namehash(domain + ".flr"), "website.profilePicture", ""],
+        });
+        preparationMulticall["prepareProfilePicture"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareProfilePicture", error);
     },
   });
 
-  const { config: prepareButtonBackgroundColor } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -266,90 +444,106 @@ const OwnedDomains = ({
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareButtonBackgroundColor", data.request.data);
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [
+            utils.namehash(domain + ".flr"),
+            "website.buttonBackgroundColor",
+            "",
+          ],
+        });
+        preparationMulticall["prepareButtonBackgroundColor"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareButtonBackgroundColor", error);
     },
   });
 
-  // const { config: testMulticall } = usePrepareContractWrite({
-  //   address: PublicResolver.address as `0x${string}`,
-  //   abi: PublicResolver.abi,
-  //   functionName: "multicall",
-  //   args: [
-  //     [
-  //       prepareSetTitle.request?.data,
-  //       prepareSetBgPhotoHash.request?.data,
-  //       prepareSetBody.request?.data,
-  //       prepareTheme.request?.data,
-  //       prepareButton1.request?.data,
-  //       prepareButton1Link.request?.data,
-  //       prepareContactButton.request?.data,
-  //       prepareContactButtonEmail.request?.data,
-  //       prepareName.request?.data,
-  //       prepareRole.request?.data,
-  //       prepareProfilePicture.request?.data,
-  //       prepareButtonBackgroundColor.request?.data,
-  //     ],
-  //   ],
-  //   enabled:
-  //     prepareDelete &&
-  //     keccakImageAvatar !== "" &&
-  //     keccakImageWebsite !== "" &&
-  //     prepareSetTitle.request?.data !== undefined &&
-  //     prepareSetBgPhotoHash.request?.data !== undefined &&
-  //     prepareSetBody.request?.data !== undefined &&
-  //     prepareButton1.request?.data !== undefined &&
-  //     prepareButton1Link.request?.data !== undefined &&
-  //     prepareContactButton.request?.data !== undefined &&
-  //     prepareContactButtonEmail.request?.data !== undefined &&
-  //     prepareName.request?.data !== undefined &&
-  //     prepareRole.request?.data !== undefined &&
-  //     prepareProfilePicture.request?.data !== undefined,
-  //   onSuccess(data: any) {
-  //     console.log("Success multicall", data);
-  //     writeMulticall?.();
-  //   },
-  //   onError(error) {
-  //     console.log("Error prepareSetMulticall", error);
-  //   },
-  // });
+  const { config: testMulticall } = usePrepareContractWrite({
+    address: PublicResolver.address as `0x${string}`,
+    abi: PublicResolver.abi,
+    functionName: "multicall",
+    args: [
+      [
+        prepareMulticallArgs.prepareSetTitle,
+        prepareMulticallArgs.prepareSetBgPhotoHash,
+        prepareMulticallArgs.prepareSetBody,
+        prepareMulticallArgs.prepareTheme,
+        prepareMulticallArgs.prepareButton1,
+        prepareMulticallArgs.prepareButton1Link,
+        prepareMulticallArgs.prepareContactButton,
+        prepareMulticallArgs.prepareContactButtonEmail,
+        prepareMulticallArgs.prepareName,
+        prepareMulticallArgs.prepareRole,
+        prepareMulticallArgs.prepareProfilePicture,
+        prepareMulticallArgs.prepareButtonBackgroundColor,
+      ],
+    ],
+    enabled:
+      prepareDelete &&
+      keccakImageAvatar !== "" &&
+      keccakImageWebsite !== "" &&
+      prepareMulticallArgs.prepareSetTitle !== "" &&
+      prepareMulticallArgs.prepareSetBgPhotoHash !== "" &&
+      prepareMulticallArgs.prepareSetBody !== "" &&
+      prepareMulticallArgs.prepareButton1 !== "" &&
+      prepareMulticallArgs.prepareButton1Link !== "" &&
+      prepareMulticallArgs.prepareContactButton !== "" &&
+      prepareMulticallArgs.prepareContactButtonEmail !== "" &&
+      prepareMulticallArgs.prepareName !== "" &&
+      prepareMulticallArgs.prepareRole !== "" &&
+      prepareMulticallArgs.prepareProfilePicture !== "",
+    onSuccess(data: any) {
+      console.log("Success multicall", data);
+      writeMulticall?.();
+    },
+    onError(error) {
+      console.log("Error prepareSetMulticall", error);
+    },
+  });
 
-  // const { write: writeMulticall } = useContractWrite({
-  //   ...testMulticall,
-  //   async onSuccess(data) {
-  //     console.log("Success writeMulticall", data);
+  const { data: multicallData, write: writeMulticall } = useContractWrite({
+    ...testMulticall,
+    async onSuccess(data) {
+      console.log("Success writeMulticall", data);
 
-  //     // Website
-  //     await deleteObjBucket(
-  //       domain + ".flr",
-  //       "imageWebsite",
-  //       keccakImageWebsite
-  //     ).catch((err: any) => {
-  //       setPrepareDelete(false);
-  //       console.log("Error on uploading image website", err);
-  //     });
+      // Website
+      await deleteObjBucket(
+        domain + ".flr",
+        "imageWebsite",
+        keccakImageWebsite
+      ).catch((err: any) => {
+        setPrepareDelete(false);
+        console.log("Error on uploading image website", err);
+      });
 
-  //     // Avatar
-  //     await await deleteObjBucket(
-  //       domain + ".flr",
-  //       "imageAvatar",
-  //       keccakImageAvatar
-  //     ).catch((err) => {
-  //       setPrepareDelete(false);
-  //       console.log("Error on uploading image website", err);
-  //     });
+      // Avatar
+      await await deleteObjBucket(
+        domain + ".flr",
+        "imageAvatar",
+        keccakImageAvatar
+      ).catch((err) => {
+        setPrepareDelete(false);
+        console.log("Error on uploading image website", err);
+      });
+    },
+    onError(data) {
+      setPrepareDelete(false);
+    },
+  }) as any;
 
-  //     // Waits for 1 txn confirmation (block confirmation)
-  //     await data.wait(1);
-
-  //     refetchText?.();
-  //     setPrepareDelete(false);
-  //   },
-  //   onError(data) {
-  //     setPrepareDelete(false);
-  //   },
-  // }) as any;
+  useWaitForTransaction({
+    hash: multicallData?.hash,
+    onSuccess(data) {
+      console.log("Success multicallData", data);
+      refetchText?.();
+      setPrepareDelete(false);
+    },
+  });
 
   return (
     <>
@@ -425,22 +619,6 @@ type Domain = {
 };
 
 export default function MyAccountWebsites() {
-  // Cloudflare R2 Config
-  const apiUrl = process.env.CLOUDFLARE_R2_ENDPOINT;
-  const REGION = "us-east-1"; //e.g. "us-east-1"
-  const accessKeyId = process.env.CLOUDFLARE_R2_ACCESS_KEY_ID;
-  const secretAccessKey = process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY;
-
-  // Create an Amazon S3 service client object.
-  const s3Client = new S3Client({
-    region: REGION,
-    endpoint: apiUrl,
-    credentials: {
-      accessKeyId: accessKeyId as string,
-      secretAccessKey: secretAccessKey as string,
-    },
-  });
-
   const [isOpen, setIsOpen] = useState(false);
   const [addressDomain, setAddressDomain] = useState<Array<Domain>>([]);
   const [dataDomains, setDataDomains] = useState<

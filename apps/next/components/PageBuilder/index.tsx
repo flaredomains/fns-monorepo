@@ -19,6 +19,7 @@ import {
   useContractReads,
   usePrepareContractWrite,
   useContractWrite,
+  useWaitForTransaction,
 } from "wagmi";
 
 // ABIS
@@ -217,7 +218,7 @@ export default function PageBuilder({
     },
   });
 
-  const { write: writeMulticall } = useContractWrite({
+  const { data: multicallData, write: writeMulticall } = useContractWrite({
     ...testMulticall,
     async onSuccess(data) {
       console.log("Success writeMulticall", data);
@@ -245,10 +246,17 @@ export default function PageBuilder({
         setLoading(false);
         console.log("Error on uploading image website", err);
       });
+    },
+    onError(data) {
+      setLoading(false);
+      setIsReady(false);
+    },
+  }) as any;
 
-      // Waits for 1 txn confirmation (block confirmation)
-      // await data.wait(1);
-
+  useWaitForTransaction({
+    hash: multicallData?.hash,
+    onSuccess(data) {
+      console.log("Success multicallData", data);
       // Reset fields
       resetValue();
 
@@ -256,11 +264,7 @@ export default function PageBuilder({
       setOpen(true);
       setIsReady(false);
     },
-    onError(data) {
-      setLoading(false);
-      setIsReady(false);
-    },
-  }) as any;
+  });
 
   // Prepares an array of read objects on the PublicResolver contract
   // for every available text record type defined in `addressKeys`.
