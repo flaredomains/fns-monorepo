@@ -21,14 +21,14 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // --- Pages ---
 import Main from "../../components/pages";
-import Register from "../../components/pages/register";
+// import Register from "../../components/pages/register";
 import Details from "../../components/pages/details";
-import Subdomains from "../../components/pages/subdomains";
+// import Subdomains from "../../components/pages/subdomains";
 import MyAccount from "../../components/pages/my_account";
 import FAQ from "../../components/pages/faq";
 import NotFound from "../../components/pages/NotFound";
-import Websites from "../../components/pages/websites";
-import Personal_Website from "../../components/pages/personal_website";
+// import Websites from "../../components/pages/websites";
+// import Personal_Website from "../../components/pages/personal_website";
 import Page_Builder from "../../components/pages/page_builder";
 // --- --- ---
 
