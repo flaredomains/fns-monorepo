@@ -68,18 +68,18 @@ const AddSubdomain = ({
     },
   });
 
-  const { write: setSubnodeRecord } = useContractWrite({
-    ...configSetSubnodeRecord,
-    async onSuccess(data) {
-      await data.wait(1);
-      refetchFn();
-      // console.log('Success setSubnodeRecord', data)
-      setIsOpen(false);
-    },
-    onError(error) {
-      // console.log('Error setSubnodeRecord', error)
-    },
-  });
+  // const { write: setSubnodeRecord } = useContractWrite({
+  //   ...configSetSubnodeRecord,
+  //   async onSuccess(data) {
+  //     await data.wait(1);
+  //     refetchFn();
+  //     // console.log('Success setSubnodeRecord', data)
+  //     setIsOpen(false);
+  //   },
+  //   onError(error) {
+  //     // console.log('Error setSubnodeRecord', error)
+  //   },
+  // });
 
   return (
     <>
@@ -118,7 +118,7 @@ const AddSubdomain = ({
 
               {/* Save */}
               <button
-                onClick={() => setSubnodeRecord?.()}
+                // onClick={() => setSubnodeRecord?.()}
                 disabled={!isInputValid || input === ""}
                 type="submit"
                 value="Submit"
