@@ -21,14 +21,14 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // --- Pages ---
 import Main from "../../components/pages";
-// import Register from "../../components/pages/register";
+import Register from "../../components/pages/register";
 import Details from "../../components/pages/details";
-// import Subdomains from "../../components/pages/subdomains";
+import Subdomains from "../../components/pages/subdomains";
 import MyAccount from "../../components/pages/my_account";
 import FAQ from "../../components/pages/faq";
 import NotFound from "../../components/pages/NotFound";
-// import Websites from "../../components/pages/websites";
-// import Personal_Website from "../../components/pages/personal_website";
+import Websites from "../../components/pages/websites";
+import Personal_Website from "../../components/pages/personal_website";
 import Page_Builder from "../../components/pages/page_builder";
 // --- --- ---
 
@@ -114,14 +114,14 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Router>
             <Routes>
               <Route path="/" element={<Main />} />
-              {/* <Route path="/:website" element={<Personal_Website />} /> */}
+              <Route path="/:website" element={<Personal_Website />} />
               <Route path="/my_account" element={<MyAccount />} />
-              {/* <Route path="/websites" element={<Websites />} /> */}
+              <Route path="/websites" element={<Websites />} />
               <Route path="/faq" element={<FAQ />} />
 
-              {/* <Route path="/register/:param" element={<Register />} /> */}
+              <Route path="/register/:param" element={<Register />} />
               <Route path="/details/:param" element={<Details />} />
-              {/* <Route path="/subdomains/:param" element={<Subdomains />} /> */}
+              <Route path="/subdomains/:param" element={<Subdomains />} />
               <Route path="/page_builder/:param" element={<Page_Builder />} />
               <Route path="/404" element={<NotFound />} />
               <Route path="*" element={<NotFound />} />
