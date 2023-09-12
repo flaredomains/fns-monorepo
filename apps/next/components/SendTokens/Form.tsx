@@ -18,7 +18,7 @@ import NameWrapper from '../../src/pages/abi/NameWrapper.json';
 
 const ZERO_ADDRESS: string = '0x0000000000000000000000000000000000000000';
 
-const GetBalance = () => {
+const GetBalance = ({ finalAmount }: { finalAmount: any }) => {
   const { address, isConnecting, isDisconnected } = useAccount();
   const { data, isError, isLoading } = useBalance({
     address: address,
@@ -156,7 +156,13 @@ function Form({
         className='flex flex-col w-full justify-center'
       >
         <div
-          className={`flex items-center mx-auto w-3/4 py-2 px-4 mb-4 h-12 rounded-md bg-gray-700 border-2 border-gray-500 ${styles.autofill}`}
+          className={`flex items-center mx-auto w-3/4 py-2 px-4 mb-4 h-12 rounded-md bg-gray-700 border-2 border-gray-500 ${
+            styles.autofill
+          } ${
+            isValid === true
+              ? 'border-green-500'
+              : isValid === false && 'border-red-500'
+          }`}
         >
           <Image className='z-10 h-6 w-6 mr-2' src={FlareLogo} alt='Search' />
           <input
@@ -166,7 +172,7 @@ function Form({
             onInput={(event) => {
               const inputElement = event.target as HTMLInputElement;
               inputElement.value === ''
-                ? inputElement.setCustomValidity('')
+                ? (inputElement.setCustomValidity(''), setIsValid(undefined))
                 : !domainPattern.test(inputElement.value)
                 ? (inputElement.setCustomValidity(
                     'Should be a name with .flr at the end or flare wallet address.'
@@ -180,35 +186,16 @@ function Form({
             required
             value={receiver}
           />
-          {isValid === true ? (
-            <div>
-              <Image
-                className='h-4 w-4'
-                src='./Like.svg'
-                width={20}
-                height={20}
-                alt='Like'
-              />
-            </div>
-          ) : (
-            isValid === false && (
-              <div>
-                <Image
-                  className='h-4 w-4'
-                  src='./Dislike.svg'
-                  width={20}
-                  height={20}
-                  alt='Like'
-                />
-              </div>
-            )
-          )}
         </div>
         <div className='flex w-full justify-center text-slate-400 '>
-          {isValid === false && (
-            <p className='mb-4'>
-              The input is not a valid domain name or doesn&apos;t exist
-            </p>
+          {isValid === true ? (
+            <p className='mb-4'>Address: {receiver}</p>
+          ) : (
+            isValid === false && (
+              <p className='mb-4'>
+                The input is not a valid domain name or doesn&apos;t exist
+              </p>
+            )
           )}
         </div>
         <div
@@ -235,7 +222,7 @@ function Form({
             value={amount}
           />
         </div>
-        <GetBalance />
+        <GetBalance finalAmount={finalAmount} />
         <button
           disabled={
             (isValid && parseFloat(amount) === 0) ||
