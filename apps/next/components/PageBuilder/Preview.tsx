@@ -140,7 +140,24 @@ const InfoUserSection = ({ formState }: { formState: any }) => {
   );
 };
 
-const Content = ({ formState }: { formState: any }) => {
+const Content = ({
+  formState,
+}: {
+  formState: {
+    title: string;
+    background: string;
+    body: string;
+    theme: string;
+    button1: string;
+    button1Link: string;
+    contactButton: string;
+    contactButtonEmail: string;
+    name: string;
+    role: string;
+    profilePicture: string;
+    buttonBackgroundColor: string;
+  };
+}) => {
   return (
     <>
       <div className="overflow-hidden relative w-[19.178rem] h-[13.638rem] sm:w-[28.75rem] sm:h-[20.444rem] rounded-[10px] shadow">
@@ -190,7 +207,24 @@ export const Gradients = () => {
   );
 };
 
-function Preview({ formState }: { formState: any }) {
+function Preview({
+  formState,
+}: {
+  formState: {
+    title: string;
+    background: string;
+    body: string;
+    theme: string;
+    button1: string;
+    button1Link: string;
+    contactButton: string;
+    contactButtonEmail: string;
+    name: string;
+    role: string;
+    profilePicture: string;
+    buttonBackgroundColor: string;
+  };
+}) {
   return (
     <div className="overflow-hidden flex flex-col w-full h-[26.938rem] relative items-center justify-center my-5 bg-slate-400 rounded-[10px] mb-9">
       <Gradients />

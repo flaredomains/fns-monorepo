@@ -148,7 +148,7 @@ export default function Details({ result }: { result: string }) {
     abi: NameWrapper.abi,
     functionName: "ownerOf",
     enabled: preparedHash && isSubdomain,
-    args: [tokenId],
+    args: [tokenId?._hex],
     onSuccess(data: string) {
       if (preparedHash && isSubdomain) {
         console.log(
@@ -173,8 +173,10 @@ export default function Details({ result }: { result: string }) {
     abi: NameWrapper.abi,
     functionName: "ownerOf",
     enabled: !isAvailable && prepared,
-    args: [tokenId],
-    onSuccess(data) {},
+    args: [tokenId?._hex],
+    onSuccess(data) {
+      console.log("Success ownerOf 2", data);
+    },
     onError(error) {
       console.error("Error ownerOf", error);
     },

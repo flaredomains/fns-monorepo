@@ -10,8 +10,10 @@ import {
   w3mConnectors,
   w3mProvider,
 } from "@web3modal/ethereum";
-import { configureChains, createClient, WagmiConfig } from "wagmi";
+import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { Chain } from "wagmi";
+
+import { flareTestnet } from "wagmi/chains";
 // -------------------
 
 // --- Import React Router ---
@@ -84,11 +86,11 @@ const projectId = process.env.WALLET_CONNECT_PROJECT_ID;
 
 // 2. Configure wagmi client
 const chains = [Coston2];
-const { provider } = configureChains(chains, [w3mProvider({ projectId })]);
-export const wagmiClient = createClient({
+const { publicClient } = configureChains(chains, [w3mProvider({ projectId })]);
+export const wagmiClient = createConfig({
   autoConnect: true,
-  connectors: w3mConnectors({ projectId, version: 1, chains }),
-  provider,
+  connectors: w3mConnectors({ projectId, chains }),
+  publicClient,
 });
 
 // 3. Configure modal ethereum client
@@ -108,7 +110,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {ready ? (
-        <WagmiConfig client={wagmiClient}>
+        <WagmiConfig config={wagmiClient}>
           <Router>
             <Routes>
               <Route path="/" element={<Main />} />

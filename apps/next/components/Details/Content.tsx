@@ -18,6 +18,7 @@ import {
   useContractReads,
   usePrepareContractWrite,
   useContractWrite,
+  useWaitForTransaction,
 } from "wagmi";
 
 const listAddresses: Array<{ leftText: string; rightText: string }> = [
@@ -146,17 +147,10 @@ const Info = ({
   });
 
   // Write function for 'setText' call to set a text record on PublicResolver.
-  const { write: writeSetText } = useContractWrite({
+  const { data: setTextData, write: writeSetText } = useContractWrite({
     ...prepareSetText,
     async onSuccess(data) {
       console.log("Success writeSetText", data);
-
-      // Waits for 1 txn confirmation (block confirmation)
-      await data.wait(1);
-
-      refetch();
-      setRecordsEditMode(false);
-      setInput("");
     },
   }) as any;
 
@@ -173,7 +167,6 @@ const Info = ({
     enabled: addressRecord && coinType !== undefined && addressInputIsValid,
     onSuccess(data: any) {
       console.log("Success prepareSetAddr", data);
-      console.log(namehash, coinType, addressAsBytes);
     },
     onError(error) {
       console.log("Error prepareSetAddr", error);
@@ -181,12 +174,32 @@ const Info = ({
   });
 
   // Write function for 'setAddr' call to set an address record on PublicResolver.
-  const { write: writeSetAddr } = useContractWrite({
+  const { data: setAddrData, write: writeSetAddr } = useContractWrite({
     ...prepareSetAddr,
     onSuccess(data) {
       console.log("Success writeSetAddr", data);
     },
   }) as any;
+
+  useWaitForTransaction({
+    hash: setTextData?.hash,
+    onSuccess(data) {
+      console.log("Success", data);
+      refetch();
+      setRecordsEditMode(false);
+      setInput("");
+    },
+  });
+
+  useWaitForTransaction({
+    hash: setAddrData?.hash,
+    onSuccess(data) {
+      console.log("Success", data);
+      refetch();
+      setRecordsEditMode(false);
+      setInput("");
+    },
+  });
 
   // Returns the string version of any text or address record type
   // that has been set and returns "Not Set" otherwise.
@@ -462,7 +475,7 @@ export default function Content({
                     key={index}
                     namehash={utils.namehash(result)}
                     leftText={item.leftText}
-                    rightText={addressRecords[index] as string}
+                    rightText={addressRecords[index].result as string}
                     index={index}
                     recordsEditMode={recordsEditMode}
                     addressRecord={true}
@@ -492,7 +505,7 @@ export default function Content({
                       key={index}
                       namehash={utils.namehash(result)}
                       leftText={item.leftText}
-                      rightText={textRecords[index] as string}
+                      rightText={textRecords[index].result as string}
                       index={index}
                       recordsEditMode={recordsEditMode}
                       addressRecord={false}

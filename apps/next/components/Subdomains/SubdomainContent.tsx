@@ -10,7 +10,12 @@ import { ens_normalize_fragment } from "@adraffy/ens-normalize";
 import NameWrapper from "../../src/pages/abi/NameWrapper.json";
 import PublicResolver from "../../src/pages/abi/PublicResolver.json";
 
-import { useAccount, usePrepareContractWrite, useContractWrite } from "wagmi";
+import {
+  useAccount,
+  usePrepareContractWrite,
+  useContractWrite,
+  useWaitForTransaction,
+} from "wagmi";
 
 const namehash = require("eth-ens-namehash");
 
@@ -61,23 +66,29 @@ const AddSubdomain = ({
       0, // uint64:   expiry (0 because its a subdomain)
     ],
     onSuccess(data) {
-      // console.log('Success prepare setSubnodeRecord', data)
+      console.log("Success prepare setSubnodeRecord", data);
     },
     onError(error) {
-      // console.log('Error prepare setSubnodeRecord', error)
+      console.log("Error prepare setSubnodeRecord", error);
     },
   });
 
-  const { write: setSubnodeRecord } = useContractWrite({
-    ...configSetSubnodeRecord,
-    async onSuccess(data) {
-      await data.wait(1);
+  const { data: dataSetSubnodeRecord, write: setSubnodeRecord } =
+    useContractWrite({
+      ...configSetSubnodeRecord,
+      async onSuccess(data) {},
+      onError(error) {
+        // console.log('Error setSubnodeRecord', error)
+      },
+    });
+
+  useWaitForTransaction({
+    hash: dataSetSubnodeRecord?.hash,
+    onSuccess(data) {
+      console.log("Success", data);
       refetchFn();
       // console.log('Success setSubnodeRecord', data)
       setIsOpen(false);
-    },
-    onError(error) {
-      // console.log('Error setSubnodeRecord', error)
     },
   });
 

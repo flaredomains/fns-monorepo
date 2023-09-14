@@ -40,13 +40,14 @@ export default function Subdomains({ result }: { result: string }) {
     const lastIndex = location.pathname.lastIndexOf("/");
 
     const result = location.pathname.substring(lastIndex + 1) as string;
+    console.log("result", result);
     // Check if ethereum address
     if (/^0x[a-fA-F0-9]{40}$/.test(result)) {
       console.log("Ethereum address");
       setFilterResult(result);
     } else if (result) {
       if (result !== "") {
-        setTokenId(BigNumber.from(namehash.hash(result)));
+        setTokenId(namehash.hash(result));
       }
 
       const resultFiltered = result.endsWith(".flr")
@@ -67,11 +68,12 @@ export default function Subdomains({ result }: { result: string }) {
     enabled: tokenId !== undefined,
     args: [tokenId],
     onSuccess(data: any) {
-      const subdomains = data.data.map((x: any) => ({
+      const subdomains = data[0].map((x: any) => ({
         domain: `${x.label}.${result}`,
         owner: x.owner,
         tokenId: x.id,
       }));
+      console.log("subdomains", subdomains);
       setArrSubdomains(subdomains);
     },
     onError(error) {

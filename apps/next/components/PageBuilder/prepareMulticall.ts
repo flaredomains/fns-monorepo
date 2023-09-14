@@ -1,6 +1,7 @@
 import { useState, Dispatch, SetStateAction } from "react";
 
 import { usePrepareContractWrite } from "wagmi";
+import { encodeFunctionData } from "viem";
 
 // ABIS
 import PublicResolver from "../../src/pages/abi/PublicResolver.json";
@@ -89,16 +90,111 @@ function usePrepareMulticall(initialValue: {
   // "website.profilePicture",
   // "website.buttonBackgroundColor",
 
+  // const data = encodeFunctionData({
+  //   abi: PublicResolver.abi,
+  //   functionName: "setText",
+  //   args: [nameHash, "website.titleText", formState.title],
+  // });
+
+  // console.log("data", data);
+
+  const [prepareMulticallArgs, setPrepareMulticallArgs] = useState({
+    prepareSetTitle: "",
+    prepareSetBgPhotoHash: "",
+    prepareSetBody: "",
+    prepareTheme: "",
+    prepareButton1: "",
+    prepareButton1Link: "",
+    prepareContactButton: "",
+    prepareContactButtonEmail: "",
+    prepareName: "",
+    prepareRole: "",
+    prepareProfilePicture: "",
+    prepareButtonBackgroundColor: "",
+  });
+
+  const preparationMulticall: UpdateFunctions = {
+    prepareSetTitle: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareSetTitle: value,
+      })),
+    prepareSetBgPhotoHash: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareSetBgPhotoHash: value,
+      })),
+    prepareSetBody: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareSetBody: value,
+      })),
+    prepareTheme: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareTheme: value,
+      })),
+    prepareButton1: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareButton1: value,
+      })),
+    prepareButton1Link: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareButton1Link: value,
+      })),
+    prepareContactButton: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareContactButton: value,
+      })),
+    prepareContactButtonEmail: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareContactButtonEmail: value,
+      })),
+    prepareName: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareName: value,
+      })),
+    prepareRole: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareRole: value,
+      })),
+    prepareProfilePicture: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareProfilePicture: value,
+      })),
+    prepareButtonBackgroundColor: (value) =>
+      setPrepareMulticallArgs((prevState) => ({
+        ...prevState,
+        prepareButtonBackgroundColor: value,
+      })),
+  };
+
   // Title
-  const { config: prepareSetTitle } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
     args: [nameHash, "website.titleText", formState.title],
     enabled: formState.title !== undefined && formState.title !== "",
-    onSuccess(data: any) {
-      // console.log("Success prepareSetTitle", data.request.data);
-      // preparationMulticall["prepareSetTitle"](data.request.data);
+    async onSuccess(data: any) {
+      // console.log("Success prepareSetTitle", data);
+
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [nameHash, "website.titleText", formState.title],
+        });
+        preparationMulticall["prepareSetTitle"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareSetTitle", error);
@@ -106,7 +202,7 @@ function usePrepareMulticall(initialValue: {
   });
 
   // Image Website
-  const { config: prepareSetBgPhotoHash } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -115,6 +211,16 @@ function usePrepareMulticall(initialValue: {
     onSuccess(data: any) {
       // console.log("Success prepareSetBgPhotoHash", data.request.data);
       // preparationMulticall["prepareSetBgPhotoHash"](data.request.data);
+
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [nameHash, "website.bgPhotoHash", keccakImageWebsite],
+        });
+        preparationMulticall["prepareSetBgPhotoHash"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareSetBgPhotoHash", error);
@@ -122,7 +228,7 @@ function usePrepareMulticall(initialValue: {
   });
 
   // Body
-  const { config: prepareSetBody } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -131,6 +237,16 @@ function usePrepareMulticall(initialValue: {
     onSuccess(data: any) {
       // console.log("Success prepareSetBody", data.request.data);
       // preparationMulticall["prepareSetBody"](data.request.data);
+
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [nameHash, "website.body", formState.body],
+        });
+        preparationMulticall["prepareSetBody"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareSetBody", error);
@@ -138,7 +254,7 @@ function usePrepareMulticall(initialValue: {
   });
 
   // Theme
-  const { config: prepareTheme } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -147,6 +263,16 @@ function usePrepareMulticall(initialValue: {
     onSuccess(data: any) {
       // console.log("Success prepareTheme", data.request.data);
       // preparationMulticall["prepareTheme"](data.request.data);
+
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [nameHash, "website.theme", formState.theme],
+        });
+        preparationMulticall["prepareTheme"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareTheme", error);
@@ -154,7 +280,7 @@ function usePrepareMulticall(initialValue: {
   });
 
   // Theme
-  const { config: prepareButton1 } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -163,13 +289,23 @@ function usePrepareMulticall(initialValue: {
     onSuccess(data: any) {
       // console.log("Success prepareButton1", data.request.data);
       // preparationMulticall["prepareButton1"](data.request.data);
+
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [nameHash, "website.button1", formState.button1],
+        });
+        preparationMulticall["prepareButton1"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareButton1", error);
     },
   });
 
-  const { config: prepareButton1Link } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -179,13 +315,23 @@ function usePrepareMulticall(initialValue: {
     onSuccess(data: any) {
       // console.log("Success prepareButton1Link", data.request.data);
       // preparationMulticall["prepareButton1Link"](data.request.data);
+
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [nameHash, "website.button1Link", formState.button1Link],
+        });
+        preparationMulticall["prepareButton1Link"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareButton1Link", error);
     },
   });
 
-  const { config: prepareContactButton } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -195,13 +341,23 @@ function usePrepareMulticall(initialValue: {
     onSuccess(data: any) {
       // console.log("Success prepareContactButton", data.request.data);
       // preparationMulticall["prepareContactButton"](data.request.data);
+
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [nameHash, "website.contactButton", formState.contactButton],
+        });
+        preparationMulticall["prepareContactButton"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareContactButton", error);
     },
   });
 
-  const { config: prepareContactButtonEmail } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -216,13 +372,27 @@ function usePrepareMulticall(initialValue: {
     onSuccess(data: any) {
       // console.log("Success prepareContactButtonEmail", data.request.data);
       // preparationMulticall["prepareContactButtonEmail"](data.request.data);
+
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [
+            nameHash,
+            "website.contactButtonEmail",
+            formState.contactButtonEmail,
+          ],
+        });
+        preparationMulticall["prepareContactButtonEmail"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareContactButtonEmail", error);
     },
   });
 
-  const { config: prepareName } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -231,13 +401,23 @@ function usePrepareMulticall(initialValue: {
     onSuccess(data: any) {
       // console.log("Success prepareName", data.request.data);
       // preparationMulticall["prepareName"](data.request.data);
+
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [nameHash, "website.name", formState.name],
+        });
+        preparationMulticall["prepareName"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareName", error);
     },
   });
 
-  const { config: prepareRole } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -246,13 +426,23 @@ function usePrepareMulticall(initialValue: {
     onSuccess(data: any) {
       // console.log("Success prepareRole", data.request.data);
       // preparationMulticall["prepareRole"](data.request.data);
+
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [nameHash, "website.role", formState.role],
+        });
+        preparationMulticall["prepareRole"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareRole", error);
     },
   });
 
-  const { config: prepareProfilePicture } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -262,13 +452,23 @@ function usePrepareMulticall(initialValue: {
     onSuccess(data: any) {
       // console.log("Success prepareProfilePicture", data.request.data);
       // preparationMulticall["prepareProfilePicture"](data.request.data);
+
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [nameHash, "website.profilePicture", keccakImageAvatar],
+        });
+        preparationMulticall["prepareProfilePicture"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareProfilePicture", error);
     },
   });
 
-  const { config: prepareButtonBackgroundColor } = usePrepareContractWrite({
+  usePrepareContractWrite({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
@@ -280,6 +480,20 @@ function usePrepareMulticall(initialValue: {
     onSuccess(data: any) {
       // console.log("Success prepareButtonBackgroundColor", data.request.data);
       // preparationMulticall["prepareButtonBackgroundColor"](data.request.data);
+
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [
+            nameHash,
+            "website.buttonBackgroundColor",
+            formState.buttonBackgroundColor,
+          ],
+        });
+        preparationMulticall["prepareButtonBackgroundColor"](encodedData);
+      }
     },
     onError(error) {
       console.log("Error prepareButtonBackgroundColor", error);
@@ -291,18 +505,7 @@ function usePrepareMulticall(initialValue: {
     nameHash,
     keccakImageWebsite,
     keccakImageAvatar,
-    prepareSetTitle,
-    prepareSetBgPhotoHash,
-    prepareSetBody,
-    prepareTheme,
-    prepareButton1,
-    prepareButton1Link,
-    prepareContactButton,
-    prepareContactButtonEmail,
-    prepareName,
-    prepareRole,
-    prepareProfilePicture,
-    prepareButtonBackgroundColor,
+    prepareMulticallArgs,
     updateFunctions,
     setNameHash,
     setKeccakImageWebsite,
@@ -312,94 +515,3 @@ function usePrepareMulticall(initialValue: {
 }
 
 export default usePrepareMulticall;
-
-// const [prepareMulticallArgs, setPrepareMulticallArgs] = useState({
-//   prepareSetTitle,
-//   prepareSetBgPhotoHash,
-//   prepareSetBody,
-//   prepareTheme,
-//   prepareButton1,
-//   prepareButton1Link,
-//   prepareContactButton,
-//   prepareContactButtonEmail,
-//   prepareName,
-//   prepareRole,
-//   prepareProfilePicture,
-//   prepareButtonBackgroundColor,
-// });
-
-// const preparationMulticall: UpdateFunctions = {
-//   prepareSetTitle: (value) =>
-//     setPrepareMulticallArgs((prevState) => ({
-//       ...prevState,
-//       prepareSetTitle: value,
-//     })),
-//   prepareSetBgPhotoHash: (value) =>
-//     setPrepareMulticallArgs((prevState) => ({
-//       ...prevState,
-//       prepareSetBgPhotoHash: value,
-//     })),
-//   prepareSetBody: (value) =>
-//     setPrepareMulticallArgs((prevState) => ({
-//       ...prevState,
-//       prepareSetBody: value,
-//     })),
-//   prepareTheme: (value) =>
-//     setPrepareMulticallArgs((prevState) => ({
-//       ...prevState,
-//       prepareTheme: value,
-//     })),
-//   prepareButton1: (value) =>
-//     setPrepareMulticallArgs((prevState) => ({
-//       ...prevState,
-//       prepareButton1: value,
-//     })),
-//   prepareButton1Link: (value) =>
-//     setPrepareMulticallArgs((prevState) => ({
-//       ...prevState,
-//       prepareButton1Link: value,
-//     })),
-//   prepareContactButton: (value) =>
-//     setPrepareMulticallArgs((prevState) => ({
-//       ...prevState,
-//       prepareContactButton: value,
-//     })),
-//   prepareContactButtonEmail: (value) =>
-//     setPrepareMulticallArgs((prevState) => ({
-//       ...prevState,
-//       prepareContactButtonEmail: value,
-//     })),
-//   prepareName: (value) =>
-//     setPrepareMulticallArgs((prevState) => ({
-//       ...prevState,
-//       prepareName: value,
-//     })),
-//   prepareRole: (value) =>
-//     setPrepareMulticallArgs((prevState) => ({
-//       ...prevState,
-//       prepareRole: value,
-//     })),
-//   prepareProfilePicture: (value) =>
-//     setPrepareMulticallArgs((prevState) => ({
-//       ...prevState,
-//       prepareProfilePicture: value,
-//     })),
-//   prepareButtonBackgroundColor: (value) =>
-//     setPrepareMulticallArgs((prevState) => ({
-//       ...prevState,
-//       prepareButtonBackgroundColor: value,
-//     })),
-// };
-
-// prepareSetTitle,
-//   prepareSetBgPhotoHash,
-//   prepareSetBody,
-//   prepareTheme,
-//   prepareButton1,
-//   prepareButton1Link,
-//   prepareContactButton,
-//   prepareContactButtonEmail,
-//   prepareName,
-//   prepareRole,
-//   prepareProfilePicture,
-//   prepareButtonBackgroundColor,
