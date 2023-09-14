@@ -24,9 +24,9 @@ importers:
       '@types/react': 18.0.28
       '@types/react-color': ^3.0.6
       '@types/react-dom': 18.0.11
-      '@wagmi/core': ^1.4.1
-      '@web3modal/ethereum': ^2.7.1
-      '@web3modal/react': ^2.7.1
+      '@wagmi/core': 1.4.1
+      '@web3modal/ethereum': 2.7.1
+      '@web3modal/react': 2.7.1
       autoprefixer: ^10.4.13
       axios: ^1.4.0
       dotenv: ^16.3.1
@@ -44,8 +44,8 @@ importers:
       react-router-dom: ^6.15.0
       tailwindcss: ^3.2.7
       typescript: 5.2.2
-      viem: ^1.10.9
-      wagmi: ^1.4.1
+      viem: 1.10.9
+      wagmi: 1.4.1
       web3-utils: ^1.9.0
     dependencies:
       '@adraffy/ens-normalize': 1.9.0
