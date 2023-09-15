@@ -24,11 +24,21 @@ const GetBalance = ({ finalAmount }: { finalAmount: any }) => {
   const { data, isError, isLoading } = useBalance({
     address: address,
   });
-  const truncatedFormatted = data?.formatted
-    ? data.formatted.split(".")[0] +
-      "." +
-      data.formatted.split(".")[1].slice(0, 4)
-    : "";
+  const [truncatedFormatted, setTruncatedFormatted] = React.useState("");
+
+  useEffect(() => {
+    if (parseFloat(data?.formatted ? data?.formatted : "0") > 0) {
+      setTruncatedFormatted(
+        data?.formatted
+          ? data.formatted.split(".")[0] +
+              "." +
+              data.formatted.split(".")[1].slice(0, 4)
+          : ""
+      );
+    } else {
+      setTruncatedFormatted("0");
+    }
+  }, []);
 
   if (isLoading)
     return (
@@ -44,7 +54,8 @@ const GetBalance = ({ finalAmount }: { finalAmount: any }) => {
     );
   return (
     <div className="flex w-full justify-center mb-6 text-slate-400">
-      Your Balance: {truncatedFormatted}... {data?.symbol}
+      Your Balance: {truncatedFormatted}
+      {parseFloat(truncatedFormatted) === 0 ? "" : "..."} {data?.symbol}
     </div>
   );
 };
@@ -68,7 +79,7 @@ function Form({
   const [to, setTo] = React.useState("");
   const [debouncedTo] = useDebounce(to, 500);
 
-  const [amount, setAmount] = React.useState("0");
+  const [amount, setAmount] = React.useState("");
   const [controlledAmount, setControlledAmount] = React.useState("0");
   const [debouncedAmount] = useDebounce(controlledAmount, 500);
 
@@ -251,8 +262,8 @@ function Form({
           </p>
           <div>
             <a
-              // href={`https://flare-explorer.flare.network/tx/${data?.hash}`}
-              href={`https://coston2-explorer.flare.network/tx/${data?.hash}`}
+              href={`https://flare-explorer.flare.network/tx/${data?.hash}`}
+              // href={`https://coston2-explorer.flare.network/tx/${data?.hash}`}
               className="flex mt-2 py-1 px-4 rounded-xl bg-[#F97316] hover:scale-105 transform transition duration-300 ease-out"
             >
               Flare Explorer
