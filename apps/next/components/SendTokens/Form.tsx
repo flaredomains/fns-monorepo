@@ -251,8 +251,8 @@ function Form({
           </p>
           <div>
             <a
-              href={`https://flare-explorer.flare.network/tx/${data?.hash}`}
-              // href={`https://coston2-explorer.flare.network/tx/${data?.hash}`}
+              // href={`https://flare-explorer.flare.network/tx/${data?.hash}`}
+              href={`https://coston2-explorer.flare.network/tx/${data?.hash}`}
               className="flex mt-2 py-1 px-4 rounded-xl bg-[#F97316] hover:scale-105 transform transition duration-300 ease-out"
             >
               Flare Explorer

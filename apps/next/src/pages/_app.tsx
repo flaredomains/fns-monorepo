@@ -33,20 +33,20 @@ import Send_Token from "../../components/pages/send_tokens";
 import Page_Builder from "../../components/pages/page_builder";
 // --- --- ---
 
-// export const Coston2 = {
-//   id: 114,
-//   name: "Coston 2",
-//   network: "Coston 2 Test Network",
-//   nativeCurrency: {
-//     decimals: 18,
-//     name: "C2FLR",
-//     symbol: "C2FLR",
-//   },
-//   rpcUrls: {
-//     public: { http: ["https://coston2-api.flare.network/ext/C/rpc"] },
-//     default: { http: ["https://coston2-api.flare.network/ext/C/rpc"] },
-//   },
-// } as const satisfies Chain;
+export const Coston2 = {
+  id: 114,
+  name: "Coston 2",
+  network: "Coston 2 Test Network",
+  nativeCurrency: {
+    decimals: 18,
+    name: "C2FLR",
+    symbol: "C2FLR",
+  },
+  rpcUrls: {
+    public: { http: ["https://coston2-api.flare.network/ext/C/rpc"] },
+    default: { http: ["https://coston2-api.flare.network/ext/C/rpc"] },
+  },
+} as const satisfies Chain;
 
 // export const Songbird = {
 //   id: 19,
@@ -63,20 +63,20 @@ import Page_Builder from "../../components/pages/page_builder";
 //   },
 // } as const satisfies Chain
 
-export const Flare = {
-  id: 14,
-  name: "Flare",
-  network: "Flare Network",
-  nativeCurrency: {
-    decimals: 18,
-    name: "FLR",
-    symbol: "FLR",
-  },
-  rpcUrls: {
-    public: { http: ["https://flare-api.flare.network/ext/C/rpc"] },
-    default: { http: ["https://flare-api.flare.network/ext/C/rpc"] },
-  },
-} as const satisfies Chain;
+// export const Flare = {
+//   id: 14,
+//   name: "Flare",
+//   network: "Flare Network",
+//   nativeCurrency: {
+//     decimals: 18,
+//     name: "FLR",
+//     symbol: "FLR",
+//   },
+//   rpcUrls: {
+//     public: { http: ["https://flare-api.flare.network/ext/C/rpc"] },
+//     default: { http: ["https://flare-api.flare.network/ext/C/rpc"] },
+//   },
+// } as const satisfies Chain;
 
 // 1. Get projectID at https://cloud.walletconnect.com
 if (!process.env.WALLET_CONNECT_PROJECT_ID) {
@@ -86,7 +86,7 @@ if (!process.env.WALLET_CONNECT_PROJECT_ID) {
 const projectId = process.env.WALLET_CONNECT_PROJECT_ID;
 
 // 2. Configure wagmi client
-const chains = [Flare];
+const chains = [Coston2];
 const { publicClient } = configureChains(chains, [w3mProvider({ projectId })]);
 export const wagmiClient = createConfig({
   autoConnect: true,
