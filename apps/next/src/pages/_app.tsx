@@ -29,6 +29,7 @@ import FAQ from "../../components/pages/faq";
 import NotFound from "../../components/pages/NotFound";
 import Websites from "../../components/pages/websites";
 import Personal_Website from "../../components/pages/personal_website";
+import Send_Token from "../../components/pages/send_tokens";
 import Page_Builder from "../../components/pages/page_builder";
 // --- --- ---
 
@@ -118,6 +119,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               <Route path="/my_account" element={<MyAccount />} />
               <Route path="/websites" element={<Websites />} />
               <Route path="/faq" element={<FAQ />} />
+              <Route path="/send_tokens" element={<Send_Token />} />
 
               <Route path="/register/:param" element={<Register />} />
               <Route path="/details/:param" element={<Details />} />
