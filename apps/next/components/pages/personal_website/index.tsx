@@ -3,10 +3,9 @@ import PageWebsite from "../../../components/Websites/PageWebsite";
 import { useLocation, useNavigate } from "react-router-dom";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 
-import { utils } from "ethers";
-
 // For READ / WRITE call smart contract
 import { useContractReads } from "wagmi";
+import { namehash } from "viem";
 
 // ABIS
 import PublicResolver from "../../../src/pages/abi/PublicResolver.json";
@@ -113,7 +112,7 @@ export default function Website() {
 
       const domain = location.pathname.substring(lastIndex + 1);
       // console.log("domain", domain);
-      setNameHash(utils.namehash(domain));
+      setNameHash(namehash(domain));
       setDomain(domain);
 
       if (typeof domain === "string" && !domain.endsWith(".flr")) {

@@ -20,10 +20,8 @@ import {
 } from "wagmi";
 
 import { encodeFunctionData } from "viem";
-
-import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
-
-import { utils } from "ethers";
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+import {namehash} from "viem/ens";
 
 // ABIS
 import PublicResolver from "../../src/pages/abi/PublicResolver.json";
@@ -148,7 +146,7 @@ const OwnedDomains = ({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "text",
-    args: [utils.namehash(domain + ".flr"), textKeys[1]],
+    args: [namehash(domain + ".flr"), textKeys[1]],
     enabled: prepareDelete,
     onSuccess(data: any) {
       console.log("Success text Website uuid", data);
@@ -162,7 +160,7 @@ const OwnedDomains = ({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "text",
-    args: [utils.namehash(domain + ".flr"), textKeys[10]],
+    args: [namehash(domain + ".flr"), textKeys[10]],
     enabled: prepareDelete,
     onSuccess(data: any) {
       console.log("Success text Avatar uuid", data);
@@ -176,7 +174,7 @@ const OwnedDomains = ({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
-    args: [utils.namehash(domain + ".flr"), "website.titleText", ""],
+    args: [namehash(domain + ".flr"), "website.titleText", ""],
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareSetTitle", data.request.data);
@@ -186,7 +184,7 @@ const OwnedDomains = ({
         const encodedData = encodeFunctionData({
           abi: PublicResolver.abi,
           functionName: "setText",
-          args: [utils.namehash(domain + ".flr"), "website.titleText", ""],
+          args: [namehash(domain + ".flr"), "website.titleText", ""],
         });
         preparationMulticall["prepareSetTitle"](encodedData);
       }
@@ -201,7 +199,7 @@ const OwnedDomains = ({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
-    args: [utils.namehash(domain + ".flr"), "website.bgPhotoHash", ""],
+    args: [namehash(domain + ".flr"), "website.bgPhotoHash", ""],
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareSetBgPhotoHash", data.request.data);
@@ -210,7 +208,7 @@ const OwnedDomains = ({
         const encodedData = encodeFunctionData({
           abi: PublicResolver.abi,
           functionName: "setText",
-          args: [utils.namehash(domain + ".flr"), "website.bgPhotoHash", ""],
+          args: [namehash(domain + ".flr"), "website.bgPhotoHash", ""],
         });
         preparationMulticall["prepareSetBgPhotoHash"](encodedData);
       }
@@ -225,7 +223,7 @@ const OwnedDomains = ({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
-    args: [utils.namehash(domain + ".flr"), "website.body", ""],
+    args: [namehash(domain + ".flr"), "website.body", ""],
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareSetBody", data.request.data);
@@ -234,7 +232,7 @@ const OwnedDomains = ({
         const encodedData = encodeFunctionData({
           abi: PublicResolver.abi,
           functionName: "setText",
-          args: [utils.namehash(domain + ".flr"), "website.body", ""],
+          args: [namehash(domain + ".flr"), "website.body", ""],
         });
         preparationMulticall["prepareSetBody"](encodedData);
       }
@@ -249,7 +247,7 @@ const OwnedDomains = ({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
-    args: [utils.namehash(domain + ".flr"), "website.theme", ""],
+    args: [namehash(domain + ".flr"), "website.theme", ""],
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareTheme", data.request.data);
@@ -258,7 +256,7 @@ const OwnedDomains = ({
         const encodedData = encodeFunctionData({
           abi: PublicResolver.abi,
           functionName: "setText",
-          args: [utils.namehash(domain + ".flr"), "website.theme", ""],
+          args: [namehash(domain + ".flr"), "website.theme", ""],
         });
         preparationMulticall["prepareTheme"](encodedData);
       }
@@ -273,7 +271,7 @@ const OwnedDomains = ({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
-    args: [utils.namehash(domain + ".flr"), "website.button1", ""],
+    args: [namehash(domain + ".flr"), "website.button1", ""],
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareButton1", data.request.data);
@@ -282,7 +280,7 @@ const OwnedDomains = ({
         const encodedData = encodeFunctionData({
           abi: PublicResolver.abi,
           functionName: "setText",
-          args: [utils.namehash(domain + ".flr"), "website.button1", ""],
+          args: [namehash(domain + ".flr"), "website.button1", ""],
         });
         preparationMulticall["prepareButton1"](encodedData);
       }
@@ -296,7 +294,7 @@ const OwnedDomains = ({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
-    args: [utils.namehash(domain + ".flr"), "website.button1Link", ""],
+    args: [namehash(domain + ".flr"), "website.button1Link", ""],
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareButton1Link", data.request.data);
@@ -305,7 +303,7 @@ const OwnedDomains = ({
         const encodedData = encodeFunctionData({
           abi: PublicResolver.abi,
           functionName: "setText",
-          args: [utils.namehash(domain + ".flr"), "website.button1Link", ""],
+          args: [namehash(domain + ".flr"), "website.button1Link", ""],
         });
         preparationMulticall["prepareButton1Link"](encodedData);
       }
@@ -319,7 +317,7 @@ const OwnedDomains = ({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
-    args: [utils.namehash(domain + ".flr"), "website.contactButton", ""],
+    args: [namehash(domain + ".flr"), "website.contactButton", ""],
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareContactButton", data.request.data);
@@ -328,7 +326,7 @@ const OwnedDomains = ({
         const encodedData = encodeFunctionData({
           abi: PublicResolver.abi,
           functionName: "setText",
-          args: [utils.namehash(domain + ".flr"), "website.contactButton", ""],
+          args: [namehash(domain + ".flr"), "website.contactButton", ""],
         });
         preparationMulticall["prepareContactButton"](encodedData);
       }
@@ -342,7 +340,7 @@ const OwnedDomains = ({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
-    args: [utils.namehash(domain + ".flr"), "website.contactButtonEmail", ""],
+    args: [namehash(domain + ".flr"), "website.contactButtonEmail", ""],
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareContactButtonEmail", data.request.data);
@@ -352,7 +350,7 @@ const OwnedDomains = ({
           abi: PublicResolver.abi,
           functionName: "setText",
           args: [
-            utils.namehash(domain + ".flr"),
+            namehash(domain + ".flr"),
             "website.contactButtonEmail",
             "",
           ],
@@ -369,7 +367,7 @@ const OwnedDomains = ({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
-    args: [utils.namehash(domain + ".flr"), "website.name", ""],
+    args: [namehash(domain + ".flr"), "website.name", ""],
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareName", data.request.data);
@@ -378,7 +376,7 @@ const OwnedDomains = ({
         const encodedData = encodeFunctionData({
           abi: PublicResolver.abi,
           functionName: "setText",
-          args: [utils.namehash(domain + ".flr"), "website.name", ""],
+          args: [namehash(domain + ".flr"), "website.name", ""],
         });
         preparationMulticall["prepareName"](encodedData);
       }
@@ -392,7 +390,7 @@ const OwnedDomains = ({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
-    args: [utils.namehash(domain + ".flr"), "website.role", ""],
+    args: [namehash(domain + ".flr"), "website.role", ""],
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareRole", data.request.data);
@@ -401,7 +399,7 @@ const OwnedDomains = ({
         const encodedData = encodeFunctionData({
           abi: PublicResolver.abi,
           functionName: "setText",
-          args: [utils.namehash(domain + ".flr"), "website.role", ""],
+          args: [namehash(domain + ".flr"), "website.role", ""],
         });
         preparationMulticall["prepareRole"](encodedData);
       }
@@ -415,7 +413,7 @@ const OwnedDomains = ({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
-    args: [utils.namehash(domain + ".flr"), "website.profilePicture", ""],
+    args: [namehash(domain + ".flr"), "website.profilePicture", ""],
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareProfilePicture", data.request.data);
@@ -424,7 +422,7 @@ const OwnedDomains = ({
         const encodedData = encodeFunctionData({
           abi: PublicResolver.abi,
           functionName: "setText",
-          args: [utils.namehash(domain + ".flr"), "website.profilePicture", ""],
+          args: [namehash(domain + ".flr"), "website.profilePicture", ""],
         });
         preparationMulticall["prepareProfilePicture"](encodedData);
       }
@@ -439,7 +437,7 @@ const OwnedDomains = ({
     abi: PublicResolver.abi,
     functionName: "setText",
     args: [
-      utils.namehash(domain + ".flr"),
+      namehash(domain + ".flr"),
       "website.buttonBackgroundColor",
       "",
     ],
@@ -452,7 +450,7 @@ const OwnedDomains = ({
           abi: PublicResolver.abi,
           functionName: "setText",
           args: [
-            utils.namehash(domain + ".flr"),
+            namehash(domain + ".flr"),
             "website.buttonBackgroundColor",
             "",
           ],
@@ -673,7 +671,7 @@ export default function MyAccountWebsites() {
 
       // Ensure we only use the length returned for still-owned domains (after a transfer)
       if (data) {
-        const arrDomains = data[0].slice(0, data[0]._length);
+        const arrDomains = data[0].slice(0, data[0].length);
         const ownedDomain = arrDomains.map((item: any, index: any) => {
           return {
             label: item.label,
@@ -686,10 +684,9 @@ export default function MyAccountWebsites() {
             address: PublicResolver.address as `0x${string}`,
             abi: PublicResolver.abi,
             functionName: "text",
-            args: [utils.namehash(item.label + ".flr"), "website.titleText"],
+            args: [namehash(item.label + ".flr"), "website.titleText"],
           };
         });
-        // console.log("dataDomains", dataDomains);
         setDataDomains(dataDomains);
         setAddressDomain(ownedDomain);
         setIsReady(true);

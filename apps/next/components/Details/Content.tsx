@@ -8,10 +8,8 @@ import FNSRegistry from "../../src/pages/abi/FNSRegistry.json";
 import PublicResolver from "../../src/pages/abi/PublicResolver.json";
 
 import { formatsByName } from "@ensdomains/address-encoder";
-
-// namehash is available as an ethers utility!
-// utils.namehash(richard.flr) = 0xc8d20c7e2a8b02d98d5b47f6edefe94d581bcf829d44172f9f449aaa00e952b2
-import { utils, Bytes } from "ethers";
+import { Bytes, utils } from "ethers";
+import {namehash as namehashFn} from "viem/ens";
 
 import {
   useContractRead,
@@ -128,7 +126,7 @@ const Info = ({
   }, [input]);
 
   // WAGMI TEXT RECORD WRITE FUNCTION, active when === false
-  // setText(namehash(domainName), keyString, valueString)
+  // setText(namehashFn(domainName), keyString, valueString)
   // Example Usage:
   // To set email:
   // setText(namehash, "email", "simone@gmail.com")
@@ -354,7 +352,7 @@ export default function Content({
     abi: FNSRegistry.abi,
     functionName: "resolver",
     enabled: prepared,
-    args: [utils.namehash(result)],
+    args: [namehashFn(result)],
     onSuccess(data: any) {
       // console.log('Success resolver', data)
       setRecordPrepared(true);
@@ -376,7 +374,7 @@ export default function Content({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "addr",
-    args: [utils.namehash(result), formatsByName[coin].coinType],
+    args: [namehashFn(result), formatsByName[coin].coinType],
   }));
 
   // Performs all of the reads for the address record types and
@@ -405,7 +403,7 @@ export default function Content({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "text",
-    args: [utils.namehash(result), item.toLowerCase()],
+    args: [namehashFn(result), item.toLowerCase()],
   }));
 
   // Performs all of the reads for the text record types and
@@ -473,7 +471,7 @@ export default function Content({
                 copyArrAddr.map((item, index) => (
                   <Info
                     key={index}
-                    namehash={utils.namehash(result)}
+                    namehash={namehashFn(result)}
                     leftText={item.leftText}
                     rightText={addressRecords[index].result as string}
                     index={index}
@@ -503,7 +501,7 @@ export default function Content({
                   copyArrTextRecords.map((item, index) => (
                     <Info
                       key={index}
-                      namehash={utils.namehash(result)}
+                      namehash={namehashFn(result)}
                       leftText={item.leftText}
                       rightText={textRecords[index].result as string}
                       index={index}

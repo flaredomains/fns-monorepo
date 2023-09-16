@@ -12,12 +12,12 @@ import BaseRegistrar from "../../src/pages/abi/BaseRegistrar.json";
 import NameWrapper from "../../src/pages/abi/NameWrapper.json";
 
 import web3 from "web3-utils";
-const namehash = require("eth-ens-namehash");
 
 const ZERO_ADDRESS: string = "0x0000000000000000000000000000000000000000";
 
 import { useAccount, useContractRead } from "wagmi";
-import { BigNumber, utils } from "ethers";
+import { BigNumber } from "ethers";
+import {namehash} from "viem/ens";
 
 export default function Details({ result }: { result: string }) {
   // State variable that changed inside useEffect that check result and unlock Wagmi READ/WRITE function
@@ -99,7 +99,7 @@ export default function Details({ result }: { result: string }) {
       console.log("Ethereum address");
       setFilterResult(result);
     } else if (result) {
-      setTokenId(BigNumber.from(utils.namehash(result)));
+      setTokenId(BigNumber.from(namehash(result)));
 
       const resultFiltered = result.endsWith(".flr")
         ? result.slice(0, -4)

@@ -5,7 +5,7 @@ import WebBuilderForm from "./WebBuilderForm";
 import Preview from "./Preview";
 import { Step } from "../Register/Steps";
 import { useLocation } from "react-router-dom";
-import { utils } from "ethers";
+import {namehash} from "viem/ens";
 import { keccak256 } from "js-sha3";
 
 import { progressArr } from "../../lib/progressTexts";
@@ -112,7 +112,7 @@ export default function PageBuilder({
       setIsOwner(ownedDomain.includes(selectText));
     }
     if (selectText) {
-      setNameHash(utils.namehash(selectText + ".flr"));
+      setNameHash(namehash(selectText + ".flr"));
       setCountBuilder(1);
     }
     if (formState.background) {

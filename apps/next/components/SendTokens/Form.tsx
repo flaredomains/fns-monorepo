@@ -13,8 +13,7 @@ import {
   useBalance,
   useContractRead,
 } from "wagmi";
-import { BigNumber, utils } from "ethers";
-import { parseEther } from "viem";
+import { parseEther, namehash } from "viem";
 import NameWrapper from "../../src/pages/abi/NameWrapper.json";
 
 const ZERO_ADDRESS: string = "0x0000000000000000000000000000000000000000";
@@ -124,7 +123,7 @@ function Form({
     const isFlrInput = domainPattern.test(inputValue);
 
     if (isFlrInput) {
-      setHash(utils.namehash(inputValue));
+      setHash(namehash(inputValue));
     }
 
     setInputUsable(isFlrInput);
