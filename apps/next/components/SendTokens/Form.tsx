@@ -205,7 +205,7 @@ function Form({
         </div>
         <div className="flex w-full justify-center text-slate-400 ">
           {isValid === true ? (
-            <p className="mb-4">Address: {receiver}</p>
+            <p className="mb-4">Address: {to}</p>
           ) : (
             isValid === false && (
               <p className="mb-4">
