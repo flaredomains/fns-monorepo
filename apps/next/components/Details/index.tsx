@@ -17,7 +17,7 @@ const ZERO_ADDRESS: string = "0x0000000000000000000000000000000000000000";
 
 import { useAccount, useContractRead } from "wagmi";
 import { BigNumber } from "ethers";
-import {namehash} from "viem/ens";
+import { namehash } from "viem/ens";
 
 export default function Details({ result }: { result: string }) {
   // State variable that changed inside useEffect that check result and unlock Wagmi READ/WRITE function
@@ -27,6 +27,9 @@ export default function Details({ result }: { result: string }) {
   const [preparedHash, setPreparedHash] = useState<boolean>(false);
   const [isSubdomain, setIsSubdomain] = useState<boolean>(false);
   const [parent, setParent] = useState<string>("");
+  const [flareId, setFlareId] = useState<string>("");
+
+  // console.log("tokenId", tokenId?._hex);
 
   // State variable that changed inside Wagmi hooks
   const [prepared, setPrepared] = useState<boolean>(false);
@@ -203,10 +206,40 @@ export default function Details({ result }: { result: string }) {
     args: [filterResult],
     onSuccess(data: any) {
       console.log("Success getLabelId", data);
+      // console.log("LabelId: ", BigNumber.from(data));
       setExpiredReady(true);
     },
     onError(error) {
       console.log("Error getLabelId", error);
+    },
+  });
+
+  useContractRead({
+    address: NameWrapper.address as `0x${string}`,
+    abi: NameWrapper.abi,
+    functionName: "uri",
+    enabled: !isAvailable && prepared,
+    args: [tokenId?._hex],
+    onSuccess(data: any) {
+      setFlareId("");
+      console.log("Success uri", data);
+      // setExpiredReady(true);
+      fetch(data)
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (myJson) {
+          console.log("myJson.tokenId.decimal", myJson.tokenId.decimal);
+          setFlareId(myJson.tokenId.decimal);
+        })
+        .catch((err) => {
+          console.error(err);
+          setFlareId("");
+        });
+    },
+    onError(error) {
+      console.log("Error uri", error);
+      setFlareId("");
     },
   });
 
@@ -257,6 +290,7 @@ export default function Details({ result }: { result: string }) {
                 : "0x0000000000000000000000000000000000000000"
             }
             dateNumber={isAvailable ? 0 : Number(expire) * 1000}
+            labelId={flareId}
           />
 
           {!isAvailable && isAvailable !== undefined && (
