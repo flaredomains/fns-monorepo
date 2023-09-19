@@ -9,7 +9,7 @@ import PublicResolver from "../../src/pages/abi/PublicResolver.json";
 
 import { formatsByName } from "@ensdomains/address-encoder";
 import { Bytes, utils } from "ethers";
-import {namehash as namehashFn} from "viem/ens";
+import { namehash as namehashFn } from "viem/ens";
 
 import {
   useContractRead,
