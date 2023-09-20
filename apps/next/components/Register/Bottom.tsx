@@ -37,7 +37,7 @@ const ActionButton = ({
   return (
     <button
       onClick={() => onClickFn()}
-      className="flex justify-center items-center px-6 py-3 bg-[#F97316] h-12 rounded-lg text-white px-auto hover:scale-105 transform transition duration-300 ease-out"
+      className="flex justify-center items-center px-6 py-3 bg-flarelink h-12 rounded-lg text-white px-auto hover:scale-105 transform transition duration-300 ease-out"
     >
       <p className="text-base font-semibold mr-2">{label}</p>
       <Image className="h-4 w-4" src={Plus} alt="Plus" />
@@ -48,7 +48,7 @@ const ActionButton = ({
 const SpinnerButton = ({ label }: { label: string }) => {
   return (
     <>
-      <div className="flex justify-center items-center px-6 py-3 bg-[#F97316] h-12 rounded-lg">
+      <div className="flex justify-center items-center px-6 py-3 bg-flarelink h-12 rounded-lg">
         <svg
           aria-hidden="true"
           className={`mr-2 w-4 h-4 text-[#ffffff] dark:text-gray-500 animate-spin fill-[#ffffff]`}

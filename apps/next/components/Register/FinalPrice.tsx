@@ -98,9 +98,9 @@ const TotalPrice = ({
 
   return (
     <>
-      <div className="flex flex-col text-center justify-center w-full bg-[#F97316] h-32 rounded-b-lg lg:rounded-l-none lg:rounded-r-lg px-4 lg:w-1/3">
+      <div className="flex flex-col text-center justify-center w-full bg-flarelink h-32 rounded-b-lg lg:rounded-l-none lg:rounded-r-lg px-4 lg:w-1/3">
         <div className="flex flex-col items-center text-center">
-          <p className="text-[#FED7AA] text-xs">At most</p>
+          <p className="text-gray-100 text-xs">At most</p>
           <div className="flex items-center text-white font-semibold text-2xl lg:text-lg xl:text-2xl">
             {priceToPay ? (
               (
@@ -112,8 +112,8 @@ const TotalPrice = ({
             )}{" "}
             FLR
           </div>
-          <div className="flex flex-wrap items-center text-[#FED7AA] text-xs gap-1 justify-center">
-            <p className="text-[#FED7AA] text-xs">Calculated to</p>
+          <div className="flex flex-wrap items-center text-xs gap-1 justify-center">
+            <p className="text-gray-100 text-xs">Calculated to</p>
             <span className="font-semibold text-white flex items-center">
               $
               {priceToPay ? (

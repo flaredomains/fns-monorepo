@@ -91,7 +91,7 @@ export default function Page_Builder() {
                         </Dialog.Title>
                         <Dialog.Title
                           as="h3"
-                          className="font-bold leading-6 text-orange-500 text-xl text-center"
+                          className="font-bold leading-6 text-flarelink text-xl text-center"
                         >
                           {`${selectText}.flr`}
                         </Dialog.Title>
@@ -101,7 +101,7 @@ export default function Page_Builder() {
                       <Link
                         href={`${selectText}.flr`}
                         target="_blank"
-                        className=" rounded-md bg-orange-500 px-3 py-2 text-sm font-semibold shadow-sm text-justify text-white leading-tight"
+                        className=" rounded-md bg-flarelink px-3 py-2 text-sm font-semibold shadow-sm text-justify text-white leading-tight"
                       >
                         Go to Website
                       </Link>

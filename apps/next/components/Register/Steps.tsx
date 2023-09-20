@@ -43,16 +43,16 @@ export const Step = ({
           {/* First half line */}
           <div
             className={`w-1/2 h-1 transition duration-500 ease-in ${
-              number - 1 <= count ? "bg-[#F97316]" : "bg-[#334155]"
+              number - 1 <= count ? "bg-flarelink" : "bg-[#334155]"
             }`}
           />
           {/* Number */}
           <div
             className={`flex justify-center items-center transition duration-500 ease-in ${
               number - 1 === count
-                ? "bg-[#0F172A] border-[#F97316]"
+                ? "bg-[#0F172A] border-flarelink"
                 : number - 1 < count
-                ? "bg-[#F97316] border-[#F97316]"
+                ? "bg-flarelink border-flarelink"
                 : "bg-[#0F172A] border-[#E2E8F0]"
             } border-2 h-9 w-9 rounded-full p-3 text-center`}
           >
@@ -61,7 +61,7 @@ export const Step = ({
           {/* Second half line */}
           <div
             className={`w-1/2 h-1 transition duration-500 ease-in ${
-              number <= count ? "bg-[#F97316]" : "bg-[#334155]"
+              number <= count ? "bg-flarelink" : "bg-[#334155]"
             }`}
           />
         </div>

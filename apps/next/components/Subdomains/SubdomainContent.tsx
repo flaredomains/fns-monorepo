@@ -133,7 +133,7 @@ const AddSubdomain = ({
                 disabled={!isInputValid || input === ""}
                 type="submit"
                 value="Submit"
-                className="flex justify-center items-center text-center bg-[#F97316] px-3 py-2 rounded-lg text-white border border-[#F97316] hover:scale-105 transform transition duration-300 ease-out lg:ml-auto disabled:border-gray-500 disabled:bg-gray-500 disabled:hover:scale-100"
+                className="flex justify-center items-center text-center bg-flarelink px-3 py-2 rounded-lg text-white border border-flarelink hover:scale-105 transform transition duration-300 ease-out lg:ml-auto disabled:border-gray-500 disabled:bg-gray-500 disabled:hover:scale-100"
               >
                 <p className="text-xs font-medium">Save</p>
               </button>
@@ -166,7 +166,7 @@ const AddSubdomain = ({
               {checkOwnerDomain && isConnected && (
                 <button
                   onClick={() => setIsOpen(true)}
-                  className="flex justify-center items-center shrink-0 px-4 text-center bg-[#F97316] h-11 w-[138px] rounded-lg text-white hover:scale-105 transform transition duration-100 ease-out "
+                  className="flex justify-center items-center shrink-0 px-4 text-center bg-flarelink h-11 w-[138px] rounded-lg text-white hover:scale-105 transform transition duration-100 ease-out "
                 >
                   <p className="text-xs font-medium mr-2 shrink-0">
                     Add Subdomain

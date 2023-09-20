@@ -15,6 +15,9 @@ module.exports = {
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],
       },
+      colors: {
+        "flarelink": '#ff6B57'
+      }
     },
   },
 };

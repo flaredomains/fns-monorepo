@@ -36,7 +36,7 @@ const InfoLine = ({
           {leftText}
         </p>
         <div className="flex items-center mt-2 lg:mt-0">
-          <p className="font-semibold text-[#F97316] text-base mr-4">
+          <p className="font-semibold text-flarelink text-base mr-4">
             {rightText
               ? `${
                   /^0x/.test(rightText)
@@ -47,7 +47,7 @@ const InfoLine = ({
           </p>
           {copied ? (
             <>
-              <p className="text-[#F97316] font-medium text-sm">Copied</p>
+              <p className="text-flarelink font-medium text-sm">Copied</p>
             </>
           ) : (
             rightText && (

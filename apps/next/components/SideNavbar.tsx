@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Logo from "../public/Logo.png";
+import Logo from "../public/Logo.svg";
 import Flare from "../public/FlareBottom.png";
 import Hamburger_Icon from "../public/Hamburger_Icon.png";
 import Image from "next/image";

@@ -70,7 +70,7 @@ function Modals({
                       </Dialog.Title>
                       <Dialog.Title
                         as='h3'
-                        className='font-bold leading-6 text-orange-500 text-xl text-center break-words'
+                        className='font-bold leading-6 text-flarelink text-xl text-center break-words'
                       >
                         Your {finalAmount} Flare has been successfully sent to{' '}
                         {finalTo}.
@@ -80,7 +80,7 @@ function Modals({
                   <div className='mt-5 sm:mt-6 flex justify-center items-center w-full'>
                     <button
                       onClick={closeSuccessModal}
-                      className=' rounded-md bg-orange-500 px-3 py-2 text-sm font-semibold shadow-sm text-justify text-white leading-tight'
+                      className=' rounded-md bg-flarelink px-3 py-2 text-sm font-semibold shadow-sm text-justify text-white leading-tight'
                     >
                       Got it, thanks!
                     </button>
@@ -140,7 +140,7 @@ function Modals({
                   <div className='mt-5 sm:mt-6 flex justify-center items-center w-full'>
                     <button
                       onClick={closeErrorModal}
-                      className=' rounded-md bg-orange-500 px-3 py-2 text-sm font-semibold shadow-sm text-justify text-white leading-tight'
+                      className=' rounded-md bg-flarelink px-3 py-2 text-sm font-semibold shadow-sm text-justify text-white leading-tight'
                     >
                       Try Again
                     </button>

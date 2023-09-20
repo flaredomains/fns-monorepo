@@ -236,7 +236,7 @@ const Info = ({
                 className={`${
                   // if a text or address record are not set, set text color to gray!
                   recordIsSet.test(rightText)
-                    ? "text-[#F97316]"
+                    ? "text-flarelink"
                     : "text-gray-400"
                 } font-medium text-xs mr-3 mt-2 lg:mt-0`}
               >
@@ -244,7 +244,7 @@ const Info = ({
               </p>
               {copied ? (
                 <>
-                  <p className="text-[#F97316] font-medium text-sm items-center">
+                  <p className="text-flarelink font-medium text-sm items-center">
                     Copied
                   </p>
                 </>
@@ -291,7 +291,7 @@ const Info = ({
                     : () => writeSetText?.() // setText write function
                 }
                 disabled={addressRecord && !addressInputIsValid}
-                className="flex justify-center items-center text-center bg-[#F97316] px-2 py-1 rounded-lg text-white border border-[#F97316] lg:ml-auto disabled:border-gray-500 disabled:bg-gray-500 disabled:hover:scale-100"
+                className="flex justify-center items-center text-center bg-flarelink px-2 py-1 rounded-lg text-white border border-flarelink lg:ml-auto disabled:border-gray-500 disabled:bg-gray-500 disabled:hover:scale-100"
               >
                 <p className="text-xs font-medium">Set</p>
               </button>
@@ -439,7 +439,7 @@ export default function Content({
             {!recordsEditMode && checkOwnerDomain && (
               <button
                 onClick={() => editModeFunc()}
-                className="justify-center items-center hidden text-center bg-[#F97316] h-8 w-1/2 rounded-lg text-white px-auto mt-5 hover:scale-105 transform transition duration-300 ease-out md:w-1/4 lg:flex lg:mt-0 lg:ml-auto"
+                className="justify-center items-center hidden text-center bg-flarelink h-8 w-1/2 rounded-lg text-white px-auto mt-5 hover:scale-105 transform transition duration-300 ease-out md:w-1/4 lg:flex lg:mt-0 lg:ml-auto"
               >
                 <p className="text-xs font-medium mr-2">Add/Edit Record</p>
                 <Image className="h-4 w-4" src={Plus} alt="Plus" />
@@ -521,7 +521,7 @@ export default function Content({
             {!recordsEditMode && checkOwnerDomain && (
               <button
                 onClick={() => editModeFunc()}
-                className="flex justify-center items-center text-center bg-[#F97316] h-8 w-1/2 rounded-lg text-white px-auto mt-5 md:w-1/4 lg:hidden lg:mt-0 lg:ml-auto"
+                className="flex justify-center items-center text-center bg-flarelink h-8 w-1/2 rounded-lg text-white px-auto mt-5 md:w-1/4 lg:hidden lg:mt-0 lg:ml-auto"
               >
                 <p className="text-xs font-medium mr-2">Add/Edit Record</p>
                 <Image className="h-4 w-4" src={Plus} alt="Plus" />
