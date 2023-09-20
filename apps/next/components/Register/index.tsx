@@ -35,7 +35,7 @@ const Alert = ({
 }) => {
   return (
     <>
-      <div className="flex w-full bg-[#F97316] py-3 px-5 rounded-lg">
+      <div className="flex w-full bg-flarelink py-3 px-5 rounded-lg">
         {registerState !== undefined ? (
           <>
             <Image
@@ -49,7 +49,7 @@ const Alert = ({
                   ? "This name is available!"
                   : "This name is already registered."}
               </p>
-              <p className="text-white font-normal text-sm mt-2">
+              <p className="text-gray-100 font-normal text-sm mt-2">
                 {available
                   ? "Please complete the form below to secure this domain for yourself."
                   : "Please check the Details tab to see when this domain will free up."}
@@ -76,7 +76,7 @@ const StepTitle = () => {
   return (
     <>
       <div className="hidden items-center mt-12 lg:flex">
-        <div className="bg-[#F97316] h-8 w-8 rounded-full mr-4" />
+        <div className="bg-flarelink h-8 w-8 rounded-full mr-4" />
         <p className="text-white font-semibold text-lg">
           Registering requires 3 steps
         </p>

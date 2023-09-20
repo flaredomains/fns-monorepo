@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import Logo from "../public/Logo.png";
-import Search from "../public/Search.png";
-import Ellipse_2 from "../public/Ellipse_2.png";
-import Ellipse from "../public/Ellipse.png";
+import Logo from "../public/Logo.svg";
+import Search from "../public/Search.svg";
+import EllipseBottomRight from "../public/EllipseBottomRight.png";
+import EllipseTopLeft from "../public/EllipseTopLeft.png";
 import Image from "next/image";
 import styles from "../src/styles/Main.module.css";
 import { Link, useNavigate } from "react-router-dom";
@@ -40,13 +40,13 @@ function Main() {
       {/* Gradient */}
       <Image
         className="absolute top-0 left-0 h-2/5 w-full md:h-1/3 md:w-2/3 pointer-events-none"
-        src={Ellipse}
+        src={EllipseTopLeft}
         alt="Gradient Top"
       />
 
       <Image
         className="absolute bottom-0 right-0 h-5/6 w-8/9 md:h-2/3 md:w-5/6 pointer-events-none"
-        src={Ellipse_2}
+        src={EllipseBottomRight}
         alt="Gradient Bottom"
       />
 
