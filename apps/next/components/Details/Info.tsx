@@ -176,7 +176,7 @@ export default function Info({
         {/* Details */}
         <div className="flex-col w-full mt-10">
           {/* Sparks */}
-          {labelId && !isCollision ? (
+          {labelId && !isCollision && !available ? (
             <InfoLine
               leftText="NFT Token ID"
               rightText={labelId}

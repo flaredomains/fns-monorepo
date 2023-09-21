@@ -29,8 +29,6 @@ export default function Details({ result }: { result: string }) {
   const [parent, setParent] = useState<string>("");
   const [flareId, setFlareId] = useState<string>("");
 
-  // console.log("tokenId", tokenId?._hex);
-
   // State variable that changed inside Wagmi hooks
   const [prepared, setPrepared] = useState<boolean>(false);
   const [isAvailable, setIsAvailable] = useState<boolean>();
@@ -93,7 +91,7 @@ export default function Details({ result }: { result: string }) {
 
     const result = location.pathname.substring(lastIndex + 1) as string;
 
-    console.log(result);
+    // console.log(result);
     const parent = getParentDomain(result);
     setParent(parent);
 
@@ -103,6 +101,7 @@ export default function Details({ result }: { result: string }) {
       setFilterResult(result);
     } else if (result) {
       setTokenId(BigNumber.from(namehash(result)));
+      setFlareId(BigInt(BigNumber.from(namehash(result))._hex).toString());
 
       const resultFiltered = result.endsWith(".flr")
         ? result.slice(0, -4)
@@ -211,35 +210,6 @@ export default function Details({ result }: { result: string }) {
     },
     onError(error) {
       console.log("Error getLabelId", error);
-    },
-  });
-
-  useContractRead({
-    address: NameWrapper.address as `0x${string}`,
-    abi: NameWrapper.abi,
-    functionName: "uri",
-    enabled: !isAvailable && prepared,
-    args: [tokenId?._hex],
-    onSuccess(data: any) {
-      setFlareId("");
-      console.log("Success uri", data);
-      // setExpiredReady(true);
-      fetch(data)
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (myJson) {
-          console.log("myJson.tokenId.decimal", myJson.tokenId.decimal);
-          setFlareId(myJson.tokenId.decimal);
-        })
-        .catch((err) => {
-          console.error(err);
-          setFlareId("");
-        });
-    },
-    onError(error) {
-      console.log("Error uri", error);
-      setFlareId("");
     },
   });
 
