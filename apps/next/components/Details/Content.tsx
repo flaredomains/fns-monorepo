@@ -3,13 +3,15 @@ import Clipboard_copy from "../../public/Clipboard_copy.svg";
 import Image from "next/image";
 import Plus from "../../public/Plus.svg";
 import Delete from "../../public/Delete.svg";
+import { useDebounce } from "use-debounce";
 
 import FNSRegistry from "../../src/pages/abi/FNSRegistry.json";
 import PublicResolver from "../../src/pages/abi/PublicResolver.json";
 
 import { formatsByName } from "@ensdomains/address-encoder";
 import { Bytes, utils } from "ethers";
-import {namehash as namehashFn} from "viem/ens";
+import { namehash as namehashFn } from "viem/ens";
+import { encodeFunctionData } from "viem";
 
 import {
   useContractRead,
@@ -37,7 +39,6 @@ const listTextRecords: Array<{ leftText: string; rightText: string }> = [
   { leftText: "com.github", rightText: "" },
   { leftText: "com.reddit", rightText: "" },
   { leftText: "com.twitter", rightText: "" },
-  { leftText: "com.twitter", rightText: "" },
   { leftText: "org.telegram", rightText: "" },
 ];
 
@@ -55,6 +56,10 @@ const textKeys: Array<string> = [
   "com.twitter",
   "org.telegram",
 ];
+
+interface FormValues {
+  [key: string]: string;
+}
 
 // Mock address data for various chains here:
 // https://docs.ens.domains/ens-improvement-proposals/ensip-9-multichain-address-resolution
@@ -74,24 +79,44 @@ const Info = ({
   index,
   recordsEditMode,
   addressRecord,
+  changedInputs,
   coinType,
+  isSingleCall,
   refetch,
   deleteButton,
   setRecordsEditMode,
+  handleInputChange,
+  deleteInput,
+  setPrepareMulticallArgs,
 }: {
   namehash: string;
   leftText: string;
   rightText: string;
   index: number;
   coinType?: number;
+  isSingleCall: boolean;
   recordsEditMode: boolean;
   addressRecord: boolean;
+  changedInputs: { [key: string]: string }[];
   refetch: any;
   deleteButton: (addressRecord: boolean, index: number) => void;
   setRecordsEditMode: React.Dispatch<React.SetStateAction<boolean>>;
+  handleInputChange: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    leftText: string
+  ) => void;
+  deleteInput: (leftText: string) => void;
+  setPrepareMulticallArgs: React.Dispatch<
+    React.SetStateAction<
+      {
+        [key: string]: string;
+      }[]
+    >
+  >;
 }) => {
   const [copied, setCopied] = useState(false);
-  const [input, setInput] = useState("");
+  // const [input, setInput] = useState("");
+  const [debouncedRightText] = useDebounce(rightText, 500);
   const [addressInputIsValid, setAddressInputValid] = useState<boolean>(false);
   const [addressAsBytes, setAddressAsBytes] = useState<Bytes>([]);
 
@@ -105,25 +130,41 @@ const Info = ({
     }, 1000);
   };
 
+  useEffect(() => {
+    if (isSingleCall) {
+      if (addressRecord && Object.keys(changedInputs).includes(leftText)) {
+        writeSetAddr?.();
+      } else if (
+        !addressRecord &&
+        Object.keys(changedInputs).includes(leftText)
+      ) {
+        writeSetText?.();
+      }
+    }
+  }, [isSingleCall]);
+
   // Validates address record inputs using @ensdomains/address-encoder
   useEffect(() => {
-    if (addressRecord && input !== "") {
+    if (addressRecord && rightText !== "") {
       try {
         // formatsByName always returns valid for ETH addresses, so use ethersjs instead
         if (leftText === "ETH") {
-          if (!utils.isAddress(input)) {
+          if (!utils.isAddress(rightText)) {
             throw Error("Invalid ETH Address");
           }
-          setAddressAsBytes(utils.arrayify(utils.getAddress(input)));
+          setAddressAsBytes(utils.arrayify(utils.getAddress(rightText)));
+          console.log("ETH addressAsBytes", addressAsBytes);
         } else {
-          setAddressAsBytes(formatsByName[leftText].decoder(input));
+          setAddressAsBytes(formatsByName[leftText].decoder(rightText));
+          console.log("Other addressAsBytes", addressAsBytes);
         }
         setAddressInputValid(true);
       } catch (error) {
+        console.log("Error on address", error);
         setAddressInputValid(false);
       }
     }
-  }, [input]);
+  }, [debouncedRightText]);
 
   // WAGMI TEXT RECORD WRITE FUNCTION, active when === false
   // setText(namehashFn(domainName), keyString, valueString)
@@ -134,10 +175,22 @@ const Info = ({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
-    args: [namehash, leftText.toLowerCase(), input],
-    enabled: !addressRecord && input !== "",
+    args: [namehash, leftText.toLowerCase(), debouncedRightText],
+    enabled: !addressRecord && Object.keys(changedInputs).includes(leftText),
     onSuccess(data: any) {
       console.log("Success prepareSetText", data);
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setText",
+          args: [namehash, leftText.toLowerCase(), debouncedRightText],
+        });
+        setPrepareMulticallArgs((prevState) => ({
+          ...prevState,
+          [leftText]: encodedData,
+        }));
+      }
     },
     onError(error) {
       console.log("Error prepareSetText", error);
@@ -162,9 +215,25 @@ const Info = ({
     abi: PublicResolver.abi,
     functionName: "setAddr",
     args: [namehash, coinType, addressAsBytes],
-    enabled: addressRecord && coinType !== undefined && addressInputIsValid,
+    enabled:
+      addressRecord &&
+      coinType !== undefined &&
+      addressInputIsValid &&
+      Object.keys(changedInputs).includes(leftText),
     onSuccess(data: any) {
       console.log("Success prepareSetAddr", data);
+      if (data) {
+        //@ts-ignore
+        const encodedData = encodeFunctionData({
+          abi: PublicResolver.abi,
+          functionName: "setAddr",
+          args: [namehash, coinType, addressAsBytes],
+        });
+        setPrepareMulticallArgs((prevState) => ({
+          ...prevState,
+          [leftText]: encodedData,
+        }));
+      }
     },
     onError(error) {
       console.log("Error prepareSetAddr", error);
@@ -185,7 +254,7 @@ const Info = ({
       console.log("Success", data);
       refetch();
       setRecordsEditMode(false);
-      setInput("");
+      // setInput("");
     },
   });
 
@@ -195,7 +264,7 @@ const Info = ({
       console.log("Success", data);
       refetch();
       setRecordsEditMode(false);
-      setInput("");
+      // setInput("");
     },
   });
 
@@ -265,37 +334,36 @@ const Info = ({
         {/* Edit section */}
         {recordsEditMode && (
           <div className="flex items-center mt-2 lg:mt-0">
-            <div className="h-7 w-72 px-2 bg-gray-300 border-2 border-gray-700 rounded-md mr-4 lg:w-48 xl:w-72">
+            <div className="h-7 w-72 bg-gray-300 border-2 border-gray-700 rounded-md mr-4 lg:w-48 xl:w-72">
               <input
                 type="text"
                 name="input-field"
-                value={input}
-                onChange={(e) => {
-                  setInput(e.target.value);
+                value={rightText}
+                onChange={(event) => {
+                  handleInputChange(event, leftText);
                 }}
-                className="w-full bg-transparent font-normal text-base text-gray-800 border-0 focus:outline-none placeholder:text-gray-300 placeholder:font-normal focus:bg-transparent"
+                className="w-full h-full px-2 bg-transparent font-normal text-base text-gray-800 border-0 focus:outline-none placeholder:text-gray-300 placeholder:font-normal focus:bg-transparent"
               />
             </div>
             <Image
-              onClick={() => setInput("")}
+              onClick={() => deleteInput(leftText)}
               className="h-5 w-5 cursor-pointer mr-4"
               src={Delete}
               alt="Delete"
             />
             {/* Save -- setText or setAddr (based on addressRecord variable) */}
-            {input !== "" && (
-              <button
-                onClick={
-                  addressRecord
-                    ? () => writeSetAddr?.() // setAddr write function
-                    : () => writeSetText?.() // setText write function
-                }
-                disabled={addressRecord && !addressInputIsValid}
-                className="flex justify-center items-center text-center bg-[#F97316] px-2 py-1 rounded-lg text-white border border-[#F97316] lg:ml-auto disabled:border-gray-500 disabled:bg-gray-500 disabled:hover:scale-100"
-              >
-                <p className="text-xs font-medium">Set</p>
-              </button>
-            )}
+
+            {/* <button
+              onClick={
+                addressRecord
+                  ? () => writeSetAddr?.() // setAddr write function
+                  : () => writeSetText?.() // setText write function
+              }
+              disabled={addressRecord && !addressInputIsValid}
+              className="flex justify-center items-center text-center bg-[#F97316] px-2 py-1 rounded-lg text-white border border-[#F97316] lg:ml-auto disabled:border-gray-500 disabled:bg-gray-500 disabled:hover:scale-100"
+            >
+              <p className="text-xs font-medium">Set</p>
+            </button> */}
           </div>
         )}
       </div>
@@ -324,6 +392,171 @@ export default function Content({
   const [copyArrTextRecords, setCopyArrTextRecords] =
     useState<Array<{ leftText: string; rightText: string }>>(listTextRecords);
 
+  const [isSingleCall, setIsSingleCall] = useState(false);
+  const [isMultiCall, setIsMultiCall] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+
+  const emptyValue = {
+    ETH: "",
+    BTC: "",
+    LTC: "",
+    DOGE: "",
+    Email: "",
+    URL: "",
+    Avatar: "",
+    Description: "",
+    Notice: "",
+    Keywords: "",
+    "com.discord": "",
+    "com.github": "",
+    "com.reddit": "",
+    "com.twitter": "",
+    "com.telegram": "",
+  };
+
+  const [initialValue, setInitialValue] = useState<FormValues>(emptyValue);
+
+  const [inputPreparation, setInputPreparation] =
+    useState<FormValues>(emptyValue);
+
+  // console.log("inputPreparation", inputPreparation);
+
+  const [prepareMulticallArgs, setPrepareMulticallArgs] = useState<
+    { [key: string]: string }[]
+  >([]);
+
+  const [isTwoOrMoreInputsChanged, setIsTwoOrMoreInputsChanged] =
+    useState(false);
+  const [changedInputs, setChangedInputs] = useState<
+    { [key: string]: string }[]
+  >([]);
+
+  const [multicallArgs, setMulticallArgs] = useState<any>([]);
+
+  // console.log("prepareMulticallArgs", prepareMulticallArgs);
+
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    leftText: string
+  ) => {
+    const { value } = event.target;
+    console.log("value", value);
+    setInputPreparation({
+      ...inputPreparation,
+      [leftText]: value,
+    });
+
+    const changes: any = { ...changedInputs };
+    if (
+      value !== initialValue[leftText] ||
+      (value === "" && initialValue[leftText] !== "")
+    ) {
+      changes[leftText] = value;
+    } else {
+      delete changes[leftText];
+    }
+
+    console.log("changes", changes);
+
+    setChangedInputs(changes);
+
+    setIsTwoOrMoreInputsChanged(Object.keys(changes).length >= 2);
+  };
+
+  const deleteInput = (leftText: string) => {
+    const value = "";
+    setInputPreparation({
+      ...inputPreparation,
+      [leftText]: value,
+    });
+
+    const changes: any = { ...changedInputs };
+    if (
+      value !== initialValue[leftText] ||
+      (value === "" && initialValue[leftText] !== "")
+    ) {
+      changes[leftText] = value;
+    } else {
+      delete changes[leftText];
+    }
+
+    console.log("changes", changes);
+
+    setChangedInputs(changes);
+
+    setIsTwoOrMoreInputsChanged(Object.keys(changes).length >= 2);
+  };
+
+  const initiateMulticall = () => {
+    if (isReady) {
+      writeMulticall?.();
+    }
+    if (isTwoOrMoreInputsChanged) {
+      // Prepare for multicall
+      const multicallValues = Object.values(prepareMulticallArgs);
+      // const multicallValues = prepareMulticallArgs.map((obj: any) => obj.value);
+      console.log("multicallValues", multicallValues);
+      setMulticallArgs(multicallValues);
+      setIsMultiCall(true);
+    } else {
+      setIsSingleCall(true);
+    }
+  };
+
+  const { config: testMulticall } = usePrepareContractWrite({
+    address: PublicResolver.address as `0x${string}`,
+    abi: PublicResolver.abi,
+    functionName: "multicall",
+    args: [multicallArgs],
+    enabled: isMultiCall,
+    onSuccess(data: any) {
+      console.log("Success multicall", data);
+      setIsReady(true);
+    },
+    onError(error) {
+      console.log("Error prepareSetMulticall", error);
+      setIsMultiCall(false);
+      setIsReady(false);
+    },
+  });
+
+  useEffect(() => {
+    if (isReady) {
+      writeMulticall?.();
+      setIsReady(false);
+      setIsMultiCall(false);
+    }
+  }, [isReady]);
+
+  const { data: multicallData, write: writeMulticall } = useContractWrite({
+    ...testMulticall,
+    async onSuccess(data) {
+      console.log("Success writeMulticall", data);
+      setIsReady(false);
+      setIsMultiCall(false);
+    },
+    onError(data) {
+      // setLoading(false);
+      setIsReady(false);
+      setIsMultiCall(false);
+    },
+  }) as any;
+
+  useWaitForTransaction({
+    hash: multicallData?.hash,
+    onSuccess(data) {
+      console.log("Success multicallData", data);
+      refetchAddr();
+      refetchText();
+      // Reset fields
+      cancel();
+
+      // setLoading(false);
+      // setOpen(true);
+      setIsReady(false);
+    },
+  });
+
   // Save the REAL array in a copy
   function editModeFunc() {
     setCopyArrAddr(arrAddresses);
@@ -336,6 +569,12 @@ export default function Content({
     setCopyArrAddr(arrAddresses);
     setCopyArrTextRecords(arrTextRecords);
     setRecordsEditMode(false);
+    setPrepareMulticallArgs([]);
+    setInputPreparation(initialValue);
+    setChangedInputs([]);
+    setIsTwoOrMoreInputsChanged(false);
+    setIsSingleCall(false);
+    setMulticallArgs([]);
   }
 
   // Delete the element from list
@@ -379,7 +618,7 @@ export default function Content({
 
   // Performs all of the reads for the address record types and
   // returns an array of "hex" strings corresponding to each type.
-  const { data: addressRecords } = useContractReads({
+  const { data: addressRecords, refetch: refetchAddr } = useContractReads({
     contracts: addressRecordReads as [
       {
         address?: `0x${string}`;
@@ -391,6 +630,20 @@ export default function Content({
     enabled: prepared && recordPrepared,
     onSuccess(data: any) {
       console.log("Success addresses", data);
+      if (data) {
+        const dataAddresses = data.map((obj: any) => obj.result);
+        dataAddresses.forEach((value: any, index: any) => {
+          setInitialValue((prevState) => ({
+            ...prevState,
+            [addressKeys[index]]: value,
+          }));
+
+          setInputPreparation((prevState) => ({
+            ...prevState,
+            [addressKeys[index]]: value,
+          }));
+        });
+      }
     },
     onError(error) {
       console.log("Error addresses", error);
@@ -420,6 +673,21 @@ export default function Content({
     enabled: prepared && recordPrepared,
     onSuccess(data: any) {
       console.log("Success texts", data);
+
+      if (data) {
+        const dataTexts = data.map((obj: any) => obj.result);
+        dataTexts.forEach((value: any, index: any) => {
+          setInitialValue((prevState) => ({
+            ...prevState,
+            [textKeys[index]]: value,
+          }));
+
+          setInputPreparation((prevState) => ({
+            ...prevState,
+            [textKeys[index]]: value,
+          }));
+        });
+      }
     },
     onError(error) {
       console.log("Error texts", error);
@@ -455,6 +723,15 @@ export default function Content({
                   >
                     <p className="text-gray-400 text-medium text-xs">Cancel</p>
                   </button>
+                  {/* Initial Multicall */}
+                  <button
+                    onClick={initiateMulticall}
+                    className="flex items-center justify-center px-3 py-2 bg-orange-500 rounded-lg mr-2 hover:scale-105 transform transition duration-300 ease-out"
+                  >
+                    <p className="text-white text-medium text-xs disabled:border-gray-500 disabled:bg-gray-500 disabled:hover:scale-100">
+                      Save
+                    </p>
+                  </button>
                 </div>
               </>
             )}
@@ -473,14 +750,19 @@ export default function Content({
                     key={index}
                     namehash={namehashFn(result)}
                     leftText={item.leftText}
-                    rightText={addressRecords[index].result as string}
+                    rightText={inputPreparation[addressKeys[index]] as string}
                     index={index}
                     recordsEditMode={recordsEditMode}
                     addressRecord={true}
+                    changedInputs={changedInputs}
                     coinType={formatsByName[item.leftText].coinType}
+                    isSingleCall={isSingleCall}
                     refetch={refetchText}
                     setRecordsEditMode={setRecordsEditMode}
                     deleteButton={deleteButton}
+                    handleInputChange={handleInputChange}
+                    deleteInput={deleteInput}
+                    setPrepareMulticallArgs={setPrepareMulticallArgs}
                   />
                 ))
               ) : (
@@ -503,13 +785,18 @@ export default function Content({
                       key={index}
                       namehash={namehashFn(result)}
                       leftText={item.leftText}
-                      rightText={textRecords[index].result as string}
+                      rightText={inputPreparation[textKeys[index]] as string}
                       index={index}
                       recordsEditMode={recordsEditMode}
                       addressRecord={false}
+                      changedInputs={changedInputs}
+                      isSingleCall={isSingleCall}
                       refetch={refetchText}
                       setRecordsEditMode={setRecordsEditMode}
                       deleteButton={deleteButton}
+                      handleInputChange={handleInputChange}
+                      deleteInput={deleteInput}
+                      setPrepareMulticallArgs={setPrepareMulticallArgs}
                     />
                   ))
                 ) : (
@@ -536,6 +823,14 @@ export default function Content({
                     className="flex items-center justify-center px-3 py-2 border border-gray-400 rounded-lg mr-2"
                   >
                     <p className="text-gray-400 text-medium text-xs">Cancel</p>
+                  </button>
+                  <button
+                    onClick={initiateMulticall}
+                    className="flex items-center justify-center px-3 py-2 bg-orange-500 rounded-lg mr-2 hover:scale-105 transform transition duration-300 ease-out"
+                  >
+                    <p className="text-white text-medium text-xs disabled:border-gray-500 disabled:bg-gray-500 disabled:hover:scale-100">
+                      Save
+                    </p>
                   </button>
                 </div>
               </>

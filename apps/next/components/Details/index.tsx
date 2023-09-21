@@ -17,7 +17,7 @@ const ZERO_ADDRESS: string = "0x0000000000000000000000000000000000000000";
 
 import { useAccount, useContractRead } from "wagmi";
 import { BigNumber } from "ethers";
-import {namehash} from "viem/ens";
+import { namehash } from "viem/ens";
 
 export default function Details({ result }: { result: string }) {
   // State variable that changed inside useEffect that check result and unlock Wagmi READ/WRITE function
@@ -27,6 +27,7 @@ export default function Details({ result }: { result: string }) {
   const [preparedHash, setPreparedHash] = useState<boolean>(false);
   const [isSubdomain, setIsSubdomain] = useState<boolean>(false);
   const [parent, setParent] = useState<string>("");
+  const [flareId, setFlareId] = useState<string>("");
 
   // State variable that changed inside Wagmi hooks
   const [prepared, setPrepared] = useState<boolean>(false);
