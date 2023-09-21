@@ -5,11 +5,13 @@ import { isAddress } from 'web3-validator';
 
 import { useDebounce } from 'use-debounce';
 import {
+  useAccount,
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
 } from 'wagmi';
-import { parseEther, namehash } from 'viem';
+import { namehash } from 'viem';
+import { BigNumber } from 'ethers';
 import NameWrapper from '../../src/pages/abi/NameWrapper.json';
 
 const ZERO_ADDRESS: string = '0x0000000000000000000000000000000000000000';
@@ -26,7 +28,7 @@ function Modals({
   function closeModal() {
     setIsModalOpen(false);
   }
-
+  const { address } = useAccount();
   const [receiver, setReceiver] = React.useState('');
   const [to, setTo] = React.useState('');
   const [debouncedTo] = useDebounce(to, 500);
@@ -36,6 +38,7 @@ function Modals({
   const [debouncedAmount] = useDebounce(controlledAmount, 500);
 
   const [hash, setHash] = useState<string>('');
+  const [tokenId, setTokenId] = useState<BigNumber>();
   const [inputUsable, setInputUsable] = useState<boolean>(false);
   const [isValid, setIsValid] = useState<boolean>();
 
@@ -54,6 +57,7 @@ function Modals({
     const isEthAddress = ethAddressPattern.test(inputValue);
 
     setInputUsable(isFlrInput || isEthAddress);
+    setTokenId(BigNumber.from(namehash(domain)));
 
     if (isFlrInput) {
       setHash(namehash(inputValue));
@@ -68,7 +72,6 @@ function Modals({
       }
     }
   };
-
   useContractRead({
     address: NameWrapper.address as `0x${string}`,
     abi: NameWrapper.abi,
@@ -90,24 +93,30 @@ function Modals({
   const { config: configsetTransferOwnership } = usePrepareContractWrite({
     address: NameWrapper.address as `0x${string}`,
     abi: NameWrapper.abi,
-    functionName: 'transferOwnership',
+    functionName: 'safeTransferFrom',
     enabled: inputUsable,
-    args: [to as `0x${string}`],
+    args: [
+      address as `0x${string}`, // address: from
+      to as `0x${string}`, // address: to
+      [tokenId?._hex] as string[], // uint256: id
+      1, // uint256: amount
+      0x0, // bytes: data
+    ],
     onSuccess(data) {
-      console.log('Success prepare transferOwnership', data);
+      console.log('Success prepare safeTransferFrom', data);
     },
     onError(error) {
-      console.log('Error prepare transferOwnership', error);
+      console.log('Error prepare safeTransferFrom', error);
     },
   });
 
   const { data: transferData, write: setTransferOwnership } = useContractWrite({
     ...configsetTransferOwnership,
     async onSuccess(data) {
-      console.log('Success  setTransferOwnership', data);
+      console.log('Success  safeTransferFrom', data);
     },
     onError(error) {
-      console.log('Error  setTransferOwnership', error);
+      console.log('Error  safeTransferFrom', error);
     },
   });
 
