@@ -11,12 +11,12 @@ const WalletConnectSection = () => {
   const { switchNetwork } = useSwitchNetwork();
 
   useEffect(() => {
-    // if (chain?.id !== 14 && chain?.name !== "Flare") {
-    //   switchNetwork?.(14);
-    // }
-    if (chain?.id !== 114 && chain?.name !== "Coston2") {
-      switchNetwork?.(114);
+    if (chain?.id !== 14 && chain?.name !== "Flare") {
+      switchNetwork?.(14);
     }
+    // if (chain?.id !== 114 && chain?.name !== "Coston2") {
+    //   switchNetwork?.(114);
+    // }
   }, [chain, switchNetwork]);
 
   return (
