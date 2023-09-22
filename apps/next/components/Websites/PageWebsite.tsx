@@ -23,7 +23,7 @@ const TextsSection = ({
     <>
       <div
         className={`text-4xl lg:text-5xl xl:text-6xl font-semibold mb-5 ${
-          websiteData.theme === "glassmorphsm"
+          websiteData.theme === "glassmorphism"
             ? "text-white"
             : websiteData.theme === "light"
             ? "text-neutral-900"
@@ -36,7 +36,7 @@ const TextsSection = ({
       </div>
       <div
         className={`text-base lg:text-lg xl:text-2xl font-light mb-5 ${
-          websiteData.theme === "glassmorphsm"
+          websiteData.theme === "glassmorphism"
             ? "text-white/50"
             : websiteData.theme === "light"
             ? "text-neutral-500"
@@ -201,7 +201,7 @@ const InfoUserSection = ({
 
           <p
             className={`text-lg lg:text-2xl font-semibold  ${
-              websiteData.theme === "glassmorphsm"
+              websiteData.theme === "glassmorphism"
                 ? "text-white"
                 : websiteData.theme === "light"
                 ? "text-neutral-900"
@@ -213,7 +213,7 @@ const InfoUserSection = ({
 
           <p
             className={`text-base lg:text-lg font-light  ${
-              websiteData.theme === "glassmorphsm"
+              websiteData.theme === "glassmorphism"
                 ? "text-white"
                 : websiteData.theme === "light"
                 ? "text-neutral-900"
@@ -267,7 +267,7 @@ function PageWebsite({
       )}
       <div
         className={`z-10 flex flex-col justify-center py-4 px-10 lg:px-20 lg:w-[45%] w-full h-[31.3rem] lg:h-full shadow backdrop-blur-[28.34px] ${
-          websiteData.theme === "glassmorphsm"
+          websiteData.theme === "glassmorphism"
             ? " lg:bg-neutral-400 lg:bg-opacity-20"
             : websiteData.theme === "light"
             ? "bg-white"

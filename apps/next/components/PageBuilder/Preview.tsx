@@ -9,7 +9,7 @@ const TextsSection = ({ formState }: { formState: any }) => {
     <>
       <p
         className={` text-sm lg:text-xl font-semibold mb-1 lg:mb-2 ${
-          formState.theme === "glassmorphsm"
+          formState.theme === "glassmorphism"
             ? "text-white"
             : formState.theme === "light"
             ? "text-neutral-900"
@@ -20,7 +20,7 @@ const TextsSection = ({ formState }: { formState: any }) => {
       </p>
       <p
         className={`text-[0.32rem] lg:text-[0.5rem] font-light mb-1 lg:mb-2 ${
-          formState.theme === "glassmorphsm"
+          formState.theme === "glassmorphism"
             ? "text-white/50"
             : formState.theme === "light"
             ? "text-neutral-500"
@@ -114,7 +114,7 @@ const InfoUserSection = ({ formState }: { formState: any }) => {
         <div className="flex flex-col lg:gap-y-1">
           <p
             className={`text-[0.32rem] lg:text-[0.5rem] font-semibold leading-[0.5rem] ${
-              formState.theme === "glassmorphsm"
+              formState.theme === "glassmorphism"
                 ? "text-white"
                 : formState.theme === "light"
                 ? "text-neutral-900"
@@ -125,7 +125,7 @@ const InfoUserSection = ({ formState }: { formState: any }) => {
           </p>
           <p
             className={`text-[0.24rem] lg:text-[0.375rem] font-light leading-[0.5rem] ${
-              formState.theme === "glassmorphsm"
+              formState.theme === "glassmorphism"
                 ? "text-white"
                 : formState.theme === "light"
                 ? "text-neutral-900"
@@ -174,7 +174,7 @@ const Content = ({
         />
         <div
           className={`z-10 flex flex-col justify-center px-3 lg:px-5 w-[8.683rem] sm:w-[13.018rem] h-full rounded-l-[10px] shadow backdrop-blur-[28.34px] ${
-            formState.theme === "glassmorphsm"
+            formState.theme === "glassmorphism"
               ? "bg-neutral-400 bg-opacity-20"
               : formState.theme === "light"
               ? "bg-white"

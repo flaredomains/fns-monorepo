@@ -72,7 +72,7 @@ export default function PageBuilder({
     title: "",
     background: "",
     body: "",
-    theme: "glassmorphsm",
+    theme: "glassmorphism",
     button1: "",
     button1Link: "",
     contactButton: "",
@@ -300,7 +300,7 @@ export default function PageBuilder({
 
         updateFunctions["Title"](dataTexts[0]);
         updateFunctions["Body"](dataTexts[2]);
-        updateFunctions["Theme"](dataTexts[3] || "glassmorphsm");
+        updateFunctions["Theme"](dataTexts[3] || "glassmorphism");
         updateFunctions["Button1"](dataTexts[4]);
         updateFunctions["Button1Link"](dataTexts[5]);
         updateFunctions["ContactButton"](dataTexts[6]);
