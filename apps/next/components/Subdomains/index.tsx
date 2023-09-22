@@ -4,6 +4,7 @@ import WalletConnect from "../WalletConnect";
 import SubdomainContent from "./SubdomainContent";
 
 import { useRouter } from "next/router";
+import { useLocation } from "react-router-dom";
 
 import NameWrapper from "../../src/pages/abi/NameWrapper.json";
 import SubdomainTracker from "../../src/pages/abi/SubdomainTracker.json";
@@ -30,19 +31,23 @@ export default function Subdomains({ result }: { result: string }) {
   const { address } = useAccount();
 
   // Used for useEffect for avoid re-render
-  const router = useRouter();
+  // const router = useRouter();
+  const location = useLocation();
 
   useEffect(() => {
-    if (!router.isReady) return;
+    if (!location) return;
 
-    const result = router.query.result as string;
+    const lastIndex = location.pathname.lastIndexOf("/");
+
+    const result = location.pathname.substring(lastIndex + 1) as string;
+    console.log("result", result);
     // Check if ethereum address
     if (/^0x[a-fA-F0-9]{40}$/.test(result)) {
       console.log("Ethereum address");
       setFilterResult(result);
     } else if (result) {
       if (result !== "") {
-        setTokenId(BigNumber.from(namehash.hash(result)));
+        setTokenId(namehash.hash(result));
       }
 
       const resultFiltered = result.endsWith(".flr")
@@ -53,7 +58,7 @@ export default function Subdomains({ result }: { result: string }) {
       setHashHex(hash);
       setPreparedHash(true);
     }
-  }, [router.isReady, router.query]);
+  }, [location]);
 
   // Read all subdomains under a given domain name
   const { refetch: refGetAll } = useContractRead({
@@ -63,11 +68,12 @@ export default function Subdomains({ result }: { result: string }) {
     enabled: tokenId !== undefined,
     args: [tokenId],
     onSuccess(data: any) {
-      const subdomains = data.data.map((x: any) => ({
+      const subdomains = data[0].map((x: any) => ({
         domain: `${x.label}.${result}`,
         owner: x.owner,
         tokenId: x.id,
       }));
+      console.log("subdomains", subdomains);
       setArrSubdomains(subdomains);
     },
     onError(error) {

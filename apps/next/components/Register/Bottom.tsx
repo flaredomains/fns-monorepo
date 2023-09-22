@@ -1,52 +1,54 @@
-import React, { useEffect } from 'react'
-import Info from '../../public/Info.svg'
-import Plus from '../../public/Plus.svg'
-import Image from 'next/image'
-import { Web3Button } from '@web3modal/react'
+import React, { useEffect } from "react";
+import Info from "../../public/Info.svg";
+import Plus from "../../public/Plus.svg";
+import Image from "next/image";
+import { Web3Button } from "@web3modal/react";
 import {
   useAccount,
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
-} from 'wagmi'
-import { BigNumber, providers } from 'ethers'
+  useWaitForTransaction,
+} from "wagmi";
+import { BigNumber, providers } from "ethers";
 
-import FLRRegistrarController from '@/pages/abi/FLRRegistrarController.json'
-import PublicResolver from '@/pages/abi/PublicResolver.json'
+import FLRRegistrarController from "@/pages/abi/FLRRegistrarController.json";
+import PublicResolver from "@/pages/abi/PublicResolver.json";
 import {
   MIN_COMMITMENT_AGE_SECS,
   MAX_COMMITMENT_AGE_SECS,
-} from '@/constants/FLRRegistrarController'
-import { RegisterState } from './index'
+} from "@/constants/FLRRegistrarController";
+import { RegisterState } from "./index";
 
-import web3 from 'web3-utils'
+import web3 from "web3-utils";
+import { parseUnits } from "viem";
 
 const ETHERS_PROVIDER = new providers.JsonRpcProvider(
-  'https://flare-api.flare.network/ext/C/rpc'
-)
+  "https://flare-api.flare.network/ext/C/rpc"
+);
 
 const ActionButton = ({
   onClickFn,
   label,
 }: {
-  onClickFn: any
-  label: string
+  onClickFn: any;
+  label: string;
 }) => {
   return (
     <button
       onClick={() => onClickFn()}
-      className="flex justify-center items-center px-6 py-3 bg-[#F97316] h-12 rounded-lg text-white px-auto hover:scale-105 transform transition duration-300 ease-out"
+      className="flex justify-center items-center px-6 py-3 bg-flarelink h-12 rounded-lg text-white px-auto hover:scale-105 transform transition duration-300 ease-out"
     >
       <p className="text-base font-semibold mr-2">{label}</p>
       <Image className="h-4 w-4" src={Plus} alt="Plus" />
     </button>
-  )
-}
+  );
+};
 
 const SpinnerButton = ({ label }: { label: string }) => {
   return (
     <>
-      <div className="flex justify-center items-center px-6 py-3 bg-[#F97316] h-12 rounded-lg">
+      <div className="flex justify-center items-center px-6 py-3 bg-flarelink h-12 rounded-lg">
         <svg
           aria-hidden="true"
           className={`mr-2 w-4 h-4 text-[#ffffff] dark:text-gray-500 animate-spin fill-[#ffffff]`}
@@ -68,8 +70,8 @@ const SpinnerButton = ({ label }: { label: string }) => {
         </p>
       </div>
     </>
-  )
-}
+  );
+};
 
 const ReqToRegister = ({
   result,
@@ -79,50 +81,52 @@ const ReqToRegister = ({
   registerState,
   setRegisterState,
 }: {
-  result: string
-  regPeriod: number
-  price: string
-  setCount: React.Dispatch<React.SetStateAction<number>>
-  registerState: RegisterState
-  setRegisterState: React.Dispatch<React.SetStateAction<RegisterState | undefined>>
+  result: string;
+  regPeriod: number;
+  price: string;
+  setCount: React.Dispatch<React.SetStateAction<number>>;
+  registerState: RegisterState;
+  setRegisterState: React.Dispatch<
+    React.SetStateAction<RegisterState | undefined>
+  >;
 }) => {
-  const { address } = useAccount()
+  const { address } = useAccount();
 
   useEffect(() => {
-    setRegisterState(RegisterState.Uncommitted)
-  }, [result, setRegisterState])
+    setRegisterState(RegisterState.Uncommitted);
+  }, [result, setRegisterState]);
 
   useEffect(() => {
     switch (registerState) {
       case RegisterState.Uncommitted: {
-        setCount(0)
-        break
+        setCount(0);
+        break;
       }
       case RegisterState.Waiting: {
-        setCount(1)
-        break
+        setCount(1);
+        break;
       }
       case RegisterState.Unregistered: {
-        setCount(2)
-        break
+        setCount(2);
+        break;
       }
       case RegisterState.Registered: {
-        setCount(3)
-        break
+        setCount(3);
+        break;
       }
     }
-  }, [registerState, setCount])
+  }, [registerState, setCount]);
 
   const { data: commitmentHash, isFetched: isMakeCommitmentReady } =
     useContractRead({
       address: FLRRegistrarController.address as `0x${string}`,
       abi: FLRRegistrarController.abi,
-      functionName: 'makeCommitment',
+      functionName: "makeCommitment",
       enabled: registerState === RegisterState.Uncommitted,
       args: [
         result as string,
         address as `0x${string}`,
-        BigNumber.from(regPeriod).mul(31556952),
+        BigInt(regPeriod * 31556952),
         web3.sha3(address as `0x${string}`),
         PublicResolver.address as `0x${string}`,
         [],
@@ -130,71 +134,73 @@ const ReqToRegister = ({
         0,
       ],
       onSuccess(data: any) {
-        //console.log('Success makeCommitment', data)
+        console.log("Success makeCommitment", data);
       },
       onError(error) {
-        console.error('Error makeCommitment', error)
+        console.error("Error makeCommitment", error);
       },
-    })
+    });
 
   // Check if there's a pending commitment by the current wallet
   useContractRead({
     address: FLRRegistrarController.address as `0x${string}`,
     abi: FLRRegistrarController.abi,
-    functionName: 'commitments',
+    functionName: "commitments",
     args: [commitmentHash],
     enabled: isMakeCommitmentReady,
     async onSuccess(data: any) {
-      // console.log('Pending Commits Checked!', data)
+      console.log("Pending Commits Checked!", BigNumber.from(data));
       // console.log('Pending Commits Boolean Eval', data.isZero());
+      // console.log(`data === '0n': ${Number(data) === 0}`);
+      // console.log("type data", typeof data);
 
       // If this read returns 0, that means there is no equivalent pending commit
       // If this read returns 1, we need to wait any remaining time for the 1 minute timeout,
       // then set the state to register
-      if (!data.isZero()) {
+
+      // If the data is zero, that means no matching commitment was found, which means we can
+      // move to committable state, which prepares the write hook for commit
+      if (Number(data) === 0) {
+        setRegisterState(RegisterState.Committable);
+      } else {
         try {
-          const currentBlock = await ETHERS_PROVIDER.getBlockNumber()
+          const currentBlock = await ETHERS_PROVIDER.getBlockNumber();
           const blockTimestamp = (await ETHERS_PROVIDER.getBlock(currentBlock))
-            .timestamp
+            .timestamp;
           const secondsSinceCommit = BigNumber.from(blockTimestamp)
             .sub(data)
-            .toNumber()
+            .toNumber();
           // console.log("blockTimestamp", blockTimestamp)
           // console.log("commitmentTimestamp", data.toNumber())
           // console.log("secondsSinceCommit", secondsSinceCommit)
 
           // Ensure a small time buffer to account for UI easing function & updates
           if (secondsSinceCommit < MIN_COMMITMENT_AGE_SECS - 2) {
-            setRegisterState(RegisterState.Waiting)
-            wait(secondsSinceCommit)
+            setRegisterState(RegisterState.Waiting);
+            wait(secondsSinceCommit);
           }
           // Ensure a reasonable time buffer so the user has time to make the txn
           else if (secondsSinceCommit < MAX_COMMITMENT_AGE_SECS - 5) {
-            setRegisterState(RegisterState.Unregistered)
+            setRegisterState(RegisterState.Unregistered);
           }
           // Otherwise, secondsSinceCommit >= MAX_COMMITMENT_AGE_SECS, and can be re-committed
           else {
-            setRegisterState(RegisterState.Committable)
+            setRegisterState(RegisterState.Committable);
           }
         } catch (error) {
-          console.error('Error fetching block timestamp')
+          console.error("Error fetching block timestamp");
         }
-      }
-      // If the data is zero, that means no matching commitment was found, which means we can
-      // move to committable state, which prepares the write hook for commit
-      else {
-        setRegisterState(RegisterState.Committable)
       }
     },
     onError(error) {
-      console.error('Error read commitments', error)
+      console.error("Error read commitments", error);
     },
-  })
+  });
 
   const { config: configCommit } = usePrepareContractWrite({
     address: FLRRegistrarController.address as `0x${string}`,
     abi: FLRRegistrarController.abi,
-    functionName: 'commit',
+    functionName: "commit",
     args: [commitmentHash],
     enabled:
       isMakeCommitmentReady && registerState === RegisterState.Committable,
@@ -202,117 +208,99 @@ const ReqToRegister = ({
       // console.log('Success prepare configCommit', data)
     },
     onError(error) {
-      console.error('Error prepare configCommit', error)
+      console.error("Error prepare configCommit", error);
     },
-  })
+  });
 
   // Approve
-  const { writeAsync: commit } = useContractWrite({
+  const { data: commitData, writeAsync: commit } = useContractWrite({
     ...configCommit,
     onSuccess(data) {
       // console.log('Success commit', data)
-      setRegisterState(RegisterState.Committing)
+      setRegisterState(RegisterState.Committing);
     },
     onError(error) {
-      console.error('Error commit', error)
+      console.error("Error commit", error);
     },
-  })
+  });
 
-  async function commitFunc() {
-    await commit?.()
-      .then(async (tx) => {
-        const receipt = await tx.wait()
-        if (receipt.status == 1) {
-          // console.log('Commit transaction succeeded!', receipt.logs)
-          setRegisterState(RegisterState.Waiting)
-          wait(60) // Wait the full minute duration
-          return
-        }
-        console.error('Commit transaction reverted!', receipt.logs)
-      })
-      .catch(() => {
-        console.error('User rejected approval!')
-      })
-  }
+  useWaitForTransaction({
+    hash: commitData?.hash,
+    onSuccess(data) {
+      console.log("Success commitData", data);
+      setRegisterState(RegisterState.Waiting);
+      wait(60); // Wait the full minute duration
+    },
+  });
 
   function wait(seconds: number) {
     setTimeout(() => {
-      setRegisterState(RegisterState.Unregistered)
-    }, seconds * 1000)
+      setRegisterState(RegisterState.Unregistered);
+    }, seconds * 1000);
   }
 
   // Prepare Register
   const { config: configRegister } = usePrepareContractWrite({
     address: FLRRegistrarController.address as `0x${string}`,
     abi: FLRRegistrarController.abi,
-    functionName: 'register',
+    functionName: "register",
     enabled: registerState === RegisterState.Unregistered, //registerReady,
     args: [
       result as string,
       address as `0x${string}`,
-      BigNumber.from(regPeriod).mul(31556952),
+      BigInt(regPeriod * 31556952),
       web3.sha3(address as `0x${string}`),
       PublicResolver.address as `0x${string}`,
       [],
       false,
       0,
     ],
-    overrides: {
-      from: address as `0x${string}`,
-      value: BigNumber.from(price)
-        .mul(regPeriod)
-        .add(BigNumber.from(price).div(100)),
-      gasLimit: BigNumber.from(1000000),
-    },
+    value: parseUnits(
+      (Number(price) * regPeriod + Number(price) / 100).toString(),
+      0
+    ),
+    gas: BigInt(1000000),
     onSuccess(data) {
-      //console.log('Success prepare register', data)
+      console.log("Success prepare register", data);
     },
     onError(error) {
-      console.error('Error prepare register', error)
+      console.error("Error prepare register", error);
     },
-  })
+  });
 
   // Register
-  const { writeAsync: register } = useContractWrite({
+  const { data: registerData, writeAsync: register } = useContractWrite({
     ...configRegister,
     onSuccess(data) {
-      //console.log('Success register', data)
-      setRegisterState(RegisterState.Registering)
+      console.log("Success register", data);
+      setRegisterState(RegisterState.Registering);
     },
     onError(error) {
-      console.error('Error register', error)
+      console.error("Error register", error);
     },
-  })
+  });
 
-  async function registerFunc() {
-    await register?.()
-      .then(async (tx) => {
-        const receipt = await tx.wait()
-        if (receipt.status == 1) {
-          //console.log('Register transaction succeeded!', receipt.logs)
-          setRegisterState(RegisterState.Registered)
-          return
-        }
-        console.error('Register transaction reverted!', receipt.logs)
-      })
-      .catch(() => {
-        console.error('User rejected approval!')
-      })
-  }
+  useWaitForTransaction({
+    hash: registerData?.hash,
+    onSuccess(data) {
+      console.log("Success Register", data);
+      setRegisterState(RegisterState.Registered);
+    },
+  });
 
   return (
     <>
       <div className="mt-10 flex justify-center items-center w-full">
         {registerState === RegisterState.Committable ? (
-          <ActionButton onClickFn={commitFunc} label={'Commit'} />
+          <ActionButton onClickFn={commit} label={"Commit"} />
         ) : registerState === RegisterState.Committing ? (
-          <SpinnerButton label={'Committing'} />
+          <SpinnerButton label={"Committing"} />
         ) : registerState === RegisterState.Waiting ? (
-          <SpinnerButton label={'Waiting'} />
+          <SpinnerButton label={"Waiting"} />
         ) : registerState === RegisterState.Unregistered ? (
-          <ActionButton onClickFn={registerFunc} label={'Register'} />
+          <ActionButton onClickFn={register} label={"Register"} />
         ) : registerState === RegisterState.Registering ? (
-          <SpinnerButton label={'Registering'} />
+          <SpinnerButton label={"Registering"} />
         ) : (
           /* Registered returns empty fragment because we don't need a button */ <>
 
@@ -320,8 +308,8 @@ const ReqToRegister = ({
         )}
       </div>
     </>
-  )
-}
+  );
+};
 
 const WalletConnectBottom = () => {
   return (
@@ -340,8 +328,8 @@ const WalletConnectBottom = () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
 export default function Bottom({
   result,
@@ -352,15 +340,17 @@ export default function Bottom({
   registerState,
   setRegisterState,
 }: {
-  result: string
-  regPeriod: number
-  price: string
-  count: number
-  setCount: React.Dispatch<React.SetStateAction<number>>
-  registerState: RegisterState
-  setRegisterState: React.Dispatch<React.SetStateAction<RegisterState | undefined>>
+  result: string;
+  regPeriod: number;
+  price: string;
+  count: number;
+  setCount: React.Dispatch<React.SetStateAction<number>>;
+  registerState: RegisterState;
+  setRegisterState: React.Dispatch<
+    React.SetStateAction<RegisterState | undefined>
+  >;
 }) {
-  const { isConnected } = useAccount() as any
+  const { isConnected } = useAccount() as any;
 
   return (
     <>
@@ -384,5 +374,5 @@ export default function Bottom({
         )}
       </div>
     </>
-  )
+  );
 }

@@ -1,7 +1,7 @@
 import React from "react";
-import SideNavbar from "../../../components/SideNavbar";
-import MyAccount from "../../../components/MyAccount";
-import Links from "../../../components/Links";
+import SideNavbar from "../../SideNavbar";
+import Links from "../../Links";
+import SendTokens from "../../SendTokens";
 
 export default function My_Account() {
   return (
@@ -13,7 +13,7 @@ export default function My_Account() {
 
           {/* Register */}
           <div className="flex flex-col mt-9 pb-8 lg:mx-8 w-full min-h-screen lg:min-h-full lg:w-3/4 justify-between lg:justify-normal">
-            <MyAccount />
+            <SendTokens />
 
             {/* Links */}
             <div className="flex flex-row lg:hidden w-full justify-center mt-8 gap-8 ">

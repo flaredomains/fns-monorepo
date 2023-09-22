@@ -4,19 +4,20 @@ import WalletConnect from "../WalletConnect";
 import Info from "./Info";
 import Content from "./Content";
 
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
+import { useLocation } from "react-router-dom";
 
 import FLRRegistrarController from "../../src/pages/abi/FLRRegistrarController.json";
 import BaseRegistrar from "../../src/pages/abi/BaseRegistrar.json";
 import NameWrapper from "../../src/pages/abi/NameWrapper.json";
 
 import web3 from "web3-utils";
-const namehash = require("eth-ens-namehash");
 
 const ZERO_ADDRESS: string = "0x0000000000000000000000000000000000000000";
 
 import { useAccount, useContractRead } from "wagmi";
-import { BigNumber, utils } from "ethers";
+import { BigNumber } from "ethers";
+import { namehash } from "viem/ens";
 
 export default function Details({ result }: { result: string }) {
   // State variable that changed inside useEffect that check result and unlock Wagmi READ/WRITE function
@@ -26,6 +27,7 @@ export default function Details({ result }: { result: string }) {
   const [preparedHash, setPreparedHash] = useState<boolean>(false);
   const [isSubdomain, setIsSubdomain] = useState<boolean>(false);
   const [parent, setParent] = useState<string>("");
+  const [flareId, setFlareId] = useState<string>("");
 
   // State variable that changed inside Wagmi hooks
   const [prepared, setPrepared] = useState<boolean>(false);
@@ -33,36 +35,63 @@ export default function Details({ result }: { result: string }) {
   const [expiredReady, setExpiredReady] = useState<boolean>(false);
 
   // Used for useEffect for avoid re-render
-  const router = useRouter();
+  const location = useLocation();
+  // const router = useRouter();
 
   // Use to check that checkOwnerDomain={address === owner} -- prop of Content component
   const { address } = useAccount();
 
+  // function getParentDomain(str: string) {
+  //   // Define a regular expression pattern that matches subdomains of a domain that ends with .flr.
+  //   const subdomainPattern = /^([a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)\.flr$/i;
+
+  //   // Use the regular expression pattern to test whether the string matches a subdomain.
+  //   const isSubdomain = subdomainPattern.test(str);
+  //   console.log("isSubdomain", isSubdomain, "str", str);
+  //   setIsSubdomain(isSubdomain);
+
+  //   if (isSubdomain) {
+  //     // The input string is a subdomain, extract the parent domain.
+  //     const parts = str.split(".");
+  //     const numParts = parts.length;
+  //     const parentDomain = parts.slice(numParts - (numParts - 1)).join(".");
+  //     return parentDomain;
+  //   } else {
+  //     return "flr";
+  //   }
+  // }
+
   function getParentDomain(str: string) {
     // Define a regular expression pattern that matches subdomains of a domain that ends with .flr.
-    const subdomainPattern = /^([a-z0-9][a-z0-9-]*[a-z0-9]\.)+[a-z]{1,}\.flr$/i;
+    const subdomainPattern = /^([a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)\.flr$/i;
 
     // Use the regular expression pattern to test whether the string matches a subdomain.
     const isSubdomain = subdomainPattern.test(str);
-    setIsSubdomain(isSubdomain);
 
-    if (isSubdomain) {
-      // The input string is a subdomain, extract the parent domain.
-      const parts = str.split(".");
-      const numParts = parts.length;
-      const parentDomain = parts.slice(numParts - (numParts - 1)).join(".");
+    // The input string is a subdomain, extract the parent domain.
+    const parts = str.split(".");
+    const numParts = parts.length;
+    const parentDomain = parts.slice(numParts - (numParts - 1)).join(".");
+
+    if (numParts > 2) {
+      // Is a subdomain
+      setIsSubdomain(true);
       return parentDomain;
     } else {
+      setIsSubdomain(false);
       return "flr";
     }
   }
 
   // Check if result end with .flr and we do an hash with the resultFiltered for registrant and date
   useEffect(() => {
-    if (!router.isReady) return;
+    if (!location) return;
 
-    const result = router.query.result as string;
+    const lastIndex = location.pathname.lastIndexOf("/");
 
+    const result = location.pathname.substring(lastIndex + 1) as string;
+
+    // console.log(result);
     const parent = getParentDomain(result);
     setParent(parent);
 
@@ -71,7 +100,8 @@ export default function Details({ result }: { result: string }) {
       console.log("Ethereum address");
       setFilterResult(result);
     } else if (result) {
-      setTokenId(BigNumber.from(utils.namehash(result)));
+      setTokenId(BigNumber.from(namehash(result)));
+      setFlareId(BigInt(BigNumber.from(namehash(result))._hex).toString());
 
       const resultFiltered = result.endsWith(".flr")
         ? result.slice(0, -4)
@@ -81,7 +111,7 @@ export default function Details({ result }: { result: string }) {
       setHashHex(hash);
       setPreparedHash(true);
     }
-  }, [router.isReady, router.query]);
+  }, [location]);
 
   // Normal Domains: Is name available
   useContractRead({
@@ -120,7 +150,7 @@ export default function Details({ result }: { result: string }) {
     abi: NameWrapper.abi,
     functionName: "ownerOf",
     enabled: preparedHash && isSubdomain,
-    args: [tokenId],
+    args: [tokenId?._hex],
     onSuccess(data: string) {
       if (preparedHash && isSubdomain) {
         console.log(
@@ -145,8 +175,10 @@ export default function Details({ result }: { result: string }) {
     abi: NameWrapper.abi,
     functionName: "ownerOf",
     enabled: !isAvailable && prepared,
-    args: [tokenId],
-    onSuccess(data) {},
+    args: [tokenId?._hex],
+    onSuccess(data) {
+      console.log("Success ownerOf 2", data);
+    },
     onError(error) {
       console.error("Error ownerOf", error);
     },
@@ -173,6 +205,7 @@ export default function Details({ result }: { result: string }) {
     args: [filterResult],
     onSuccess(data: any) {
       console.log("Success getLabelId", data);
+      // console.log("LabelId: ", BigNumber.from(data));
       setExpiredReady(true);
     },
     onError(error) {
@@ -227,6 +260,7 @@ export default function Details({ result }: { result: string }) {
                 : "0x0000000000000000000000000000000000000000"
             }
             dateNumber={isAvailable ? 0 : Number(expire) * 1000}
+            labelId={flareId}
           />
 
           {!isAvailable && isAvailable !== undefined && (

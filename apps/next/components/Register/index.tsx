@@ -10,7 +10,7 @@ import Steps from "./Steps";
 import Bottom from "./Bottom";
 import web3 from "web3-utils";
 
-import { useRouter } from "next/router";
+import { useLocation } from "react-router-dom";
 
 import FLRRegistrarController from "../../src/pages/abi/FLRRegistrarController.json";
 
@@ -35,7 +35,7 @@ const Alert = ({
 }) => {
   return (
     <>
-      <div className="flex w-full bg-[#F97316] py-3 px-5 rounded-lg">
+      <div className="flex w-full bg-flarelink py-3 px-5 rounded-lg">
         {registerState !== undefined ? (
           <>
             <Image
@@ -49,7 +49,7 @@ const Alert = ({
                   ? "This name is available!"
                   : "This name is already registered."}
               </p>
-              <p className="text-white font-normal text-sm mt-2">
+              <p className="text-gray-100 font-normal text-sm mt-2">
                 {available
                   ? "Please complete the form below to secure this domain for yourself."
                   : "Please check the Details tab to see when this domain will free up."}
@@ -76,7 +76,7 @@ const StepTitle = () => {
   return (
     <>
       <div className="hidden items-center mt-12 lg:flex">
-        <div className="bg-[#F97316] h-8 w-8 rounded-full mr-4" />
+        <div className="bg-flarelink h-8 w-8 rounded-full mr-4" />
         <p className="text-white font-semibold text-lg">
           Registering requires 3 steps
         </p>
@@ -104,21 +104,22 @@ export default function Register({ result }: { result: string }) {
   >();
 
   // Used for useEffect for avoid re-render
-  const router = useRouter();
+  const location = useLocation();
 
   function getParentDomain(str: string) {
     // Define a regular expression pattern that matches subdomains of a domain that ends with .flr.
-    const subdomainPattern = /^([a-z0-9][a-z0-9-]*[a-z0-9]\.)+[a-z]{1,}\.flr$/i;
+    const subdomainPattern = /^([a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)\.flr$/i;
 
     // Use the regular expression pattern to test whether the string matches a subdomain.
     const isSubdomain = subdomainPattern.test(str);
-    // console.log('isSubdomain', isSubdomain)
 
-    if (isSubdomain) {
-      // The input string is a subdomain, extract the parent domain.
-      const parts = str.split(".");
-      const numParts = parts.length;
-      const parentDomain = parts.slice(numParts - (numParts - 1)).join(".");
+    // The input string is a subdomain, extract the parent domain.
+    const parts = str.split(".");
+    const numParts = parts.length;
+    const parentDomain = parts.slice(numParts - (numParts - 1)).join(".");
+
+    if (numParts > 2) {
+      // Is a subdomain
       setIsNormalDomain(false);
       return parentDomain;
     } else {
@@ -127,11 +128,15 @@ export default function Register({ result }: { result: string }) {
   }
 
   useEffect(() => {
-    if (!router.isReady) return;
+    if (!location) return;
 
-    const result = router.query.result as string;
+    const lastIndex = location.pathname.lastIndexOf("/");
 
+    const result = location.pathname.substring(lastIndex + 1) as string;
+
+    // console.log("result", result);
     const parent = getParentDomain(result);
+    // console.log("parent", parent);
 
     // Check if ethereum address
     if (/^0x[a-fA-F0-9]{40}$/.test(result)) {
@@ -147,7 +152,7 @@ export default function Register({ result }: { result: string }) {
       setHashHex(hash);
       setPreparedHash(true);
     }
-  }, [router.isReady, router.query]);
+  }, [location]);
 
   // Available READ function
   useContractRead({

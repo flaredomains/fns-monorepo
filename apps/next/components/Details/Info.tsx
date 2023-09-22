@@ -1,28 +1,33 @@
-import React, { useState } from 'react'
-import Like from '../../public/Like.svg'
-import Dislike from '../../public/Dislike.svg'
-import Clipboard_copy from '../../public/Clipboard_copy.svg'
-import Image from 'next/image'
+import React, { useState } from "react";
+import Like from "../../public/Like.svg";
+import Dislike from "../../public/Dislike.svg";
+import Clipboard_copy from "../../public/Clipboard_copy.svg";
+import Image from "next/image";
+import Send from "../../public/Send.png";
+import Explorer from "../../public/flareExplorer.svg";
+import Link from "next/link";
 
 const InfoLine = ({
   leftText,
   rightText,
   alternativeText,
+  labelId,
 }: {
-  leftText: string
+  leftText: string;
   rightText: string | undefined;
   alternativeText: string;
+  labelId?: string;
 }) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(rightText ? rightText : "");
-    setCopied(true)
+    setCopied(true);
 
     setTimeout(() => {
-      setCopied(false)
-    }, 1000)
-  }
+      setCopied(false);
+    }, 1000);
+  };
   return (
     <>
       <div className="flex-col items-center w-full mb-6 lg:flex lg:flex-row">
@@ -34,12 +39,12 @@ const InfoLine = ({
         {/* RightText */}
         {rightText || rightText === "" ? (
           <div className="flex items-center mt-2 lg:mt-0">
-            <p className="font-semibold text-[#F97316] text-base mr-4">
+            <p className="font-semibold text-flarelink text-base mr-4">
               {rightText
                 ? `${
-                    /^0x/.test(rightText) // Check if is an address or normal text
-                      ? `${rightText.slice(0, 6)}...${rightText.slice(-4)}`
-                      : rightText
+                    leftText === "Parent" // Check if is an address or normal text
+                      ? rightText
+                      : `${rightText.slice(0, 6)}...${rightText.slice(-4)}`
                   }`
                 : alternativeText}
             </p>
@@ -47,7 +52,7 @@ const InfoLine = ({
             {/* Clipboard */}
             {copied ? (
               <>
-                <p className="text-[#F97316] font-medium text-sm">Copied</p>
+                <p className="text-flarelink font-medium text-sm">Copied</p>
               </>
             ) : (
               rightText && (
@@ -59,6 +64,36 @@ const InfoLine = ({
                 />
               )
             )}
+
+            {leftText === "NFT Token ID" && labelId ? (
+              <>
+                <Link
+                  href={`https://sparklesnft.com/item/flare/0xa0a9b5b27d8dd064d0109501c1bfd61da17f2052_${labelId}/`}
+                  target="_blank"
+                >
+                  <Image
+                    className="h-5 w-5 ml-2 lg:mb-0"
+                    src={Send}
+                    alt="Send"
+                  />
+                </Link>
+              </>
+            ) : null}
+
+            {leftText === "NFT Token ID" && labelId ? (
+              <>
+                <Link
+                  href={`https://flare-explorer.flare.network/token/0xa0a9b5b27d8dd064d0109501c1bfd61da17f2052/instance/${labelId}/token-transfers`}
+                  target="_blank"
+                >
+                  <Image
+                    className="h-4 w-4 ml-2 lg:mb-0"
+                    src={Explorer}
+                    alt="Explorer"
+                  />
+                </Link>
+              </>
+            ) : null}
           </div>
         ) : (
           <>
@@ -116,6 +151,7 @@ export default function Info({
   registrant_address,
   controller,
   dateNumber,
+  labelId,
 }: {
   available: boolean | undefined;
   isSubdomain: boolean;
@@ -124,8 +160,9 @@ export default function Info({
   registrant_address: string;
   controller: string;
   dateNumber: number;
+  labelId?: string;
 }) {
-  const date = new Date(dateNumber)
+  const date = new Date(dateNumber);
 
   return (
     <>
@@ -138,16 +175,27 @@ export default function Info({
 
         {/* Details */}
         <div className="flex-col w-full mt-10">
-          {/* Parent */}
+          {/* Sparks */}
+          {labelId && !isCollision && !available ? (
             <InfoLine
-              leftText="Parent"
-              rightText={parent ? parent : '.flr'}
+              leftText="NFT Token ID"
+              rightText={labelId}
               alternativeText=""
+              labelId={labelId}
             />
+          ) : null}
+
+          {/* Parent */}
+          <InfoLine
+            leftText="Parent"
+            rightText={parent ? parent : ".flr"}
+            alternativeText=""
+            labelId={labelId}
+          />
 
           {/* Registrant */}
           <InfoLine
-            leftText={isSubdomain ? 'Owner' : 'Registrant'}
+            leftText={isSubdomain ? "Owner" : "Registrant"}
             rightText={registrant_address}
             alternativeText="0x0"
           />
@@ -171,9 +219,9 @@ export default function Info({
                 <div className="flex-col items-center mt-2 lg:mt-0 lg:flex lg:flex-row">
                   <p className="font-semibold text-white text-base mr-12">
                     {isSubdomain || isCollision
-                    ? 'No Expiry'
-                    : `${date?.toLocaleString('en-US', {
-                        month: 'long',
+                      ? "No Expiry"
+                      : `${date?.toLocaleString("en-US", {
+                          month: "long",
                         })} ${date?.getDate()}, ${date?.getFullYear()}`}
                   </p>
                 </div>
@@ -194,5 +242,5 @@ export default function Info({
         </div>
       </div>
     </>
-  )
+  );
 }
