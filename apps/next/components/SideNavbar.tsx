@@ -11,7 +11,7 @@ import Links from "./Links";
 const LogoZone = () => {
   return (
     <>
-      <Link target="_blank" href="https://flrns.domains/">
+      <Link target="_blank" href="https://app.flr.link/">
         <div className="lg:border-b lg:border-white/[.23] lg:px-auto lg:py-8">
           <Image className="h-8 w-32 lg:h-14 lg:w-56" src={Logo} alt="Logo" />
         </div>

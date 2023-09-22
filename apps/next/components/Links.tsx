@@ -63,7 +63,7 @@ function Links() {
       </Link>
       <Link
         target="_blank"
-        href="https://docs.flrns.domains/"
+        href="https://docs.flr.link/"
         className="shrink-0"
       >
         <div
@@ -78,7 +78,7 @@ function Links() {
           />
         </div>
       </Link>
-      <Link target="_blank" href="https://flrns.domains/" className="shrink-0">
+      <Link target="_blank" href="https://flr.link/" className="shrink-0">
         <div
           className={`hover:scale-125 transform transition duration-400 ease-out`}
         >
