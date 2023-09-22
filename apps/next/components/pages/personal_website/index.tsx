@@ -62,7 +62,7 @@ export default function Website() {
     button1: "",
     button1Link: "",
     contactButton: "",
-    contactButtonEmail: undefined,
+    contactButtonEmail: "",
     name: "",
     role: "",
     profilePicture: undefined,
