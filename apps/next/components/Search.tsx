@@ -53,7 +53,7 @@ function Main() {
       {/* NavBar */}
       <div className="flex justify-between items-center py-6 px-10 z-10 md:py-14 md:px-28 gap-4">
         {/* Logo */}
-        <Link className="z-10" target="_blank" to="https://flrns.domains/">
+        <Link className="z-10" target="_blank" to="https://app.flr.link/">
           <Image
             width={96}
             height={24}
