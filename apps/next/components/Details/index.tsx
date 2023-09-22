@@ -17,7 +17,7 @@ const ZERO_ADDRESS: string = "0x0000000000000000000000000000000000000000";
 
 import { useAccount, useContractRead } from "wagmi";
 import { BigNumber } from "ethers";
-import {namehash} from "viem/ens";
+import { namehash } from "viem/ens";
 
 export default function Details({ result }: { result: string }) {
   // State variable that changed inside useEffect that check result and unlock Wagmi READ/WRITE function
@@ -27,6 +27,7 @@ export default function Details({ result }: { result: string }) {
   const [preparedHash, setPreparedHash] = useState<boolean>(false);
   const [isSubdomain, setIsSubdomain] = useState<boolean>(false);
   const [parent, setParent] = useState<string>("");
+  const [flareId, setFlareId] = useState<string>("");
 
   // State variable that changed inside Wagmi hooks
   const [prepared, setPrepared] = useState<boolean>(false);
@@ -90,7 +91,7 @@ export default function Details({ result }: { result: string }) {
 
     const result = location.pathname.substring(lastIndex + 1) as string;
 
-    console.log(result);
+    // console.log(result);
     const parent = getParentDomain(result);
     setParent(parent);
 
@@ -100,6 +101,7 @@ export default function Details({ result }: { result: string }) {
       setFilterResult(result);
     } else if (result) {
       setTokenId(BigNumber.from(namehash(result)));
+      setFlareId(BigInt(BigNumber.from(namehash(result))._hex).toString());
 
       const resultFiltered = result.endsWith(".flr")
         ? result.slice(0, -4)
@@ -203,6 +205,7 @@ export default function Details({ result }: { result: string }) {
     args: [filterResult],
     onSuccess(data: any) {
       console.log("Success getLabelId", data);
+      // console.log("LabelId: ", BigNumber.from(data));
       setExpiredReady(true);
     },
     onError(error) {
@@ -257,6 +260,7 @@ export default function Details({ result }: { result: string }) {
                 : "0x0000000000000000000000000000000000000000"
             }
             dateNumber={isAvailable ? 0 : Number(expire) * 1000}
+            labelId={flareId}
           />
 
           {!isAvailable && isAvailable !== undefined && (

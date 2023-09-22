@@ -21,6 +21,7 @@ import {
 import { RegisterState } from "./index";
 
 import web3 from "web3-utils";
+import { parseUnits } from "viem";
 
 const ETHERS_PROVIDER = new providers.JsonRpcProvider(
   "https://flare-api.flare.network/ext/C/rpc"
@@ -254,7 +255,10 @@ const ReqToRegister = ({
       false,
       0,
     ],
-    value: BigInt(Number(price) * regPeriod + Number(price) / 100),
+    value: parseUnits(
+      (Number(price) * regPeriod + Number(price) / 100).toString(),
+      0
+    ),
     gas: BigInt(1000000),
     onSuccess(data) {
       console.log("Success prepare register", data);
