@@ -12,7 +12,7 @@ const TextsSection = ({
     button1: string;
     button1Link: string;
     contactButton: string;
-    contactButtonEmail: undefined;
+    contactButtonEmail: string;
     name: string;
     role: string;
     profilePicture: undefined;
@@ -67,7 +67,7 @@ const ButtonSection = ({
     button1: string;
     button1Link: string;
     contactButton: string;
-    contactButtonEmail: undefined;
+    contactButtonEmail: string;
     name: string;
     role: string;
     profilePicture: undefined;
@@ -128,8 +128,12 @@ const ButtonSection = ({
         ) : null}
 
         {websiteData.contactButtonEmail ? (
-          <a
-            href={`mailto:${websiteData.contactButtonEmail}`}
+          <Link
+            href={
+              websiteData.contactButtonEmail.includes("https://")
+                ? `${websiteData.contactButtonEmail}`
+                : `https://${websiteData.contactButtonEmail}`
+            }
             target="_blank"
             className={`flex items-center justify-center bg-trasparent px-5 py-3 gap-[0.2rem] rounded-lg border ${
               websiteData.theme === "light" ? "border-black" : "border-white"
@@ -142,8 +146,8 @@ const ButtonSection = ({
             >
               {websiteData.contactButton || "Contact Me"}
             </p>
-          </a>
-        ) : null}
+          </Link>
+        ) : null} 
       </div>
     </>
   );
@@ -161,7 +165,7 @@ const InfoUserSection = ({
     button1: string;
     button1Link: string;
     contactButton: string;
-    contactButtonEmail: undefined;
+    contactButtonEmail: string;
     name: string;
     role: string;
     profilePicture: undefined;
@@ -239,7 +243,7 @@ function PageWebsite({
     button1: string;
     button1Link: string;
     contactButton: string;
-    contactButtonEmail: undefined;
+    contactButtonEmail: string;
     name: string;
     role: string;
     profilePicture: undefined;

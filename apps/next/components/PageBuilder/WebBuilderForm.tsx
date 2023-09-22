@@ -481,7 +481,7 @@ const ButtonsSection = ({
       <div className="flex flex-col lg:flex-row gap-6">
         <div className={`flex flex-col w-full lg:w-1/2 ${styles.autofill}`}>
           <p className="text-white text-sm font-normal mb-2">
-            Contact Button Text
+            Secondary Button Text
           </p>
           <input
             required
@@ -495,7 +495,7 @@ const ButtonsSection = ({
         </div>
         <div className={`flex flex-col w-full lg:w-1/2 ${styles.autofill}`}>
           <p className="text-white text-sm font-normal mb-2">
-            Contact Button Email Address
+            Secondary Button Link
           </p>
           <input
             required
@@ -503,7 +503,7 @@ const ButtonsSection = ({
             name="ContactButtonEmail"
             value={formState.contactButtonEmail}
             type="text"
-            placeholder="Your Email Address Here"
+            placeholder="www.example2.com"
             className="text-white bg-[#344054] rounded-lg py-2 px-3 border border-[#667085] focus:outline-none"
           />
         </div>
