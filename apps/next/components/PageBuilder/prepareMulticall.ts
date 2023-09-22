@@ -1,4 +1,4 @@
-import { useState, Dispatch, SetStateAction } from "react";
+import { useState, Dispatch, SetStateAction, useEffect } from "react";
 
 import { usePrepareContractWrite } from "wagmi";
 import { encodeFunctionData } from "viem";
@@ -66,7 +66,7 @@ function usePrepareMulticall(initialValue: {
     updateFunctions["Title"]("");
     updateFunctions["Body"]("");
     updateFunctions["Background"]("");
-    updateFunctions["Theme"]("glassmorphsm");
+    updateFunctions["Theme"]("glassmorphism");
     updateFunctions["Button1"]("");
     updateFunctions["Button1Link"]("");
     updateFunctions["ContactButton"]("");
@@ -176,329 +176,145 @@ function usePrepareMulticall(initialValue: {
       })),
   };
 
-  // Title
-  usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [nameHash, "website.titleText", formState.title],
-    enabled: formState.title !== undefined && formState.title !== "",
-    async onSuccess(data: any) {
-      // console.log("Success prepareSetTitle", data);
+  useEffect(() => {
+    if (nameHash !== "" && formState.title !== "") {
+      const encodedData = encodeFunctionData({
+        abi: PublicResolver.abi,
+        functionName: "setText",
+        args: [nameHash, "website.titleText", formState.title],
+      });
+      preparationMulticall["prepareSetTitle"](encodedData);
+    }
+  }, [nameHash, formState.title])
 
-      if (data) {
-        //@ts-ignore
-        const encodedData = encodeFunctionData({
-          abi: PublicResolver.abi,
-          functionName: "setText",
-          args: [nameHash, "website.titleText", formState.title],
-        });
-        preparationMulticall["prepareSetTitle"](encodedData);
-      }
-    },
-    onError(error) {
-      console.log("Error prepareSetTitle", error);
-    },
-  });
+  useEffect(() => {
+    if (nameHash !== "" && keccakImageWebsite !== "") {
+      const encodedData = encodeFunctionData({
+        abi: PublicResolver.abi,
+        functionName: "setText",
+        args: [nameHash, "website.bgPhotoHash", keccakImageWebsite],
+      });
+      preparationMulticall["prepareSetBgPhotoHash"](encodedData);
+    }
+  }, [nameHash, keccakImageWebsite])
 
-  // Image Website
-  usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [nameHash, "website.bgPhotoHash", keccakImageWebsite],
-    enabled: formState.background !== undefined && formState.background !== "",
-    onSuccess(data: any) {
-      // console.log("Success prepareSetBgPhotoHash", data.request.data);
-      // preparationMulticall["prepareSetBgPhotoHash"](data.request.data);
+  useEffect(() => {
+    if (nameHash !== "" && formState.body !== "") {
+      const encodedData = encodeFunctionData({
+        abi: PublicResolver.abi,
+        functionName: "setText",
+        args: [nameHash, "website.body", formState.body],
+      });
+      preparationMulticall["prepareSetBody"](encodedData);
+    }
+  }, [nameHash, formState.body])
 
-      if (data) {
-        //@ts-ignore
-        const encodedData = encodeFunctionData({
-          abi: PublicResolver.abi,
-          functionName: "setText",
-          args: [nameHash, "website.bgPhotoHash", keccakImageWebsite],
-        });
-        preparationMulticall["prepareSetBgPhotoHash"](encodedData);
-      }
-    },
-    onError(error) {
-      console.log("Error prepareSetBgPhotoHash", error);
-    },
-  });
+  useEffect(() => {
+    if (nameHash !== "" && formState.theme !== "") {
+      const encodedData = encodeFunctionData({
+        abi: PublicResolver.abi,
+        functionName: "setText",
+        args: [nameHash, "website.theme", formState.theme],
+      });
+      preparationMulticall["prepareTheme"](encodedData);
+    }
+  }, [nameHash, formState.theme])
 
-  // Body
-  usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [nameHash, "website.body", formState.body],
-    enabled: formState.body !== undefined && formState.body !== "",
-    onSuccess(data: any) {
-      // console.log("Success prepareSetBody", data.request.data);
-      // preparationMulticall["prepareSetBody"](data.request.data);
+  useEffect(() => {
+    if (nameHash !== "" && formState.button1 !== "") {
+      const encodedData = encodeFunctionData({
+        abi: PublicResolver.abi,
+        functionName: "setText",
+        args: [nameHash, "website.button1", formState.button1],
+      });
+      preparationMulticall["prepareButton1"](encodedData);
+    }
+  }, [nameHash, formState.button1])
 
-      if (data) {
-        //@ts-ignore
-        const encodedData = encodeFunctionData({
-          abi: PublicResolver.abi,
-          functionName: "setText",
-          args: [nameHash, "website.body", formState.body],
-        });
-        preparationMulticall["prepareSetBody"](encodedData);
-      }
-    },
-    onError(error) {
-      console.log("Error prepareSetBody", error);
-    },
-  });
+  useEffect(() => {
+    if (nameHash !== "" && formState.button1Link !== "") {
+      const encodedData = encodeFunctionData({
+        abi: PublicResolver.abi,
+        functionName: "setText",
+        args: [nameHash, "website.button1Link", formState.button1Link],
+      });
+      preparationMulticall["prepareButton1Link"](encodedData);
+    }
+  }, [nameHash, formState.button1Link])
 
-  // Theme
-  usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [nameHash, "website.theme", formState.theme],
-    // enabled: formState.body !== undefined,
-    onSuccess(data: any) {
-      // console.log("Success prepareTheme", data.request.data);
-      // preparationMulticall["prepareTheme"](data.request.data);
+  useEffect(() => {
+    if (nameHash !== "" && formState.contactButton !== "") {
+      const encodedData = encodeFunctionData({
+        abi: PublicResolver.abi,
+        functionName: "setText",
+        args: [nameHash, "website.contactButton", formState.contactButton],
+      });
+      preparationMulticall["prepareContactButton"](encodedData);
+    }
+  }, [nameHash, formState.contactButton])
 
-      if (data) {
-        //@ts-ignore
-        const encodedData = encodeFunctionData({
-          abi: PublicResolver.abi,
-          functionName: "setText",
-          args: [nameHash, "website.theme", formState.theme],
-        });
-        preparationMulticall["prepareTheme"](encodedData);
-      }
-    },
-    onError(error) {
-      console.log("Error prepareTheme", error);
-    },
-  });
+  useEffect(() => {
+    if (nameHash !== "" && formState.contactButtonEmail !== "") {
+      const encodedData = encodeFunctionData({
+        abi: PublicResolver.abi,
+        functionName: "setText",
+        args: [
+          nameHash,
+          "website.contactButtonEmail",
+          formState.contactButtonEmail,
+        ],
+      });
+      preparationMulticall["prepareContactButtonEmail"](encodedData);
+    }
+  }, [nameHash, formState.contactButtonEmail])
 
-  // Theme
-  usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [nameHash, "website.button1", formState.button1],
-    enabled: formState.button1 !== undefined && formState.button1 !== "",
-    onSuccess(data: any) {
-      // console.log("Success prepareButton1", data.request.data);
-      // preparationMulticall["prepareButton1"](data.request.data);
+  useEffect(() => {
+    if (nameHash !== "" && formState.name !== "") {
+      const encodedData = encodeFunctionData({
+        abi: PublicResolver.abi,
+        functionName: "setText",
+        args: [nameHash, "website.name", formState.name],
+      });
+      preparationMulticall["prepareName"](encodedData);
+    }
+  }, [nameHash, formState.name])
 
-      if (data) {
-        //@ts-ignore
-        const encodedData = encodeFunctionData({
-          abi: PublicResolver.abi,
-          functionName: "setText",
-          args: [nameHash, "website.button1", formState.button1],
-        });
-        preparationMulticall["prepareButton1"](encodedData);
-      }
-    },
-    onError(error) {
-      console.log("Error prepareButton1", error);
-    },
-  });
+  useEffect(() => {
+    if (nameHash !== "" && formState.role !== "") {
+      const encodedData = encodeFunctionData({
+        abi: PublicResolver.abi,
+        functionName: "setText",
+        args: [nameHash, "website.role", formState.role],
+      });
+      preparationMulticall["prepareRole"](encodedData);
+    }
+  }, [nameHash, formState.role])
 
-  usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [nameHash, "website.button1Link", formState.button1Link],
-    enabled:
-      formState.button1Link !== undefined && formState.button1Link !== "",
-    onSuccess(data: any) {
-      // console.log("Success prepareButton1Link", data.request.data);
-      // preparationMulticall["prepareButton1Link"](data.request.data);
+  useEffect(() => {
+    if (nameHash !== "" && formState.profilePicture !== "") {
+    const encodedData = encodeFunctionData({
+      abi: PublicResolver.abi,
+      functionName: "setText",
+      args: [nameHash, "website.profilePicture", keccakImageAvatar],
+    });
+    preparationMulticall["prepareProfilePicture"](encodedData);
+  }
+  }, [nameHash, formState.profilePicture, keccakImageAvatar])
 
-      if (data) {
-        //@ts-ignore
-        const encodedData = encodeFunctionData({
-          abi: PublicResolver.abi,
-          functionName: "setText",
-          args: [nameHash, "website.button1Link", formState.button1Link],
-        });
-        preparationMulticall["prepareButton1Link"](encodedData);
-      }
-    },
-    onError(error) {
-      console.log("Error prepareButton1Link", error);
-    },
-  });
-
-  usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [nameHash, "website.contactButton", formState.contactButton],
-    enabled:
-      formState.contactButton !== undefined && formState.contactButton !== "",
-    onSuccess(data: any) {
-      // console.log("Success prepareContactButton", data.request.data);
-      // preparationMulticall["prepareContactButton"](data.request.data);
-
-      if (data) {
-        //@ts-ignore
-        const encodedData = encodeFunctionData({
-          abi: PublicResolver.abi,
-          functionName: "setText",
-          args: [nameHash, "website.contactButton", formState.contactButton],
-        });
-        preparationMulticall["prepareContactButton"](encodedData);
-      }
-    },
-    onError(error) {
-      console.log("Error prepareContactButton", error);
-    },
-  });
-
-  usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [
-      nameHash,
-      "website.contactButtonEmail",
-      formState.contactButtonEmail,
-    ],
-    enabled:
-      formState.contactButtonEmail !== undefined &&
-      formState.contactButtonEmail !== "",
-    onSuccess(data: any) {
-      // console.log("Success prepareContactButtonEmail", data.request.data);
-      // preparationMulticall["prepareContactButtonEmail"](data.request.data);
-
-      if (data) {
-        //@ts-ignore
-        const encodedData = encodeFunctionData({
-          abi: PublicResolver.abi,
-          functionName: "setText",
-          args: [
-            nameHash,
-            "website.contactButtonEmail",
-            formState.contactButtonEmail,
-          ],
-        });
-        preparationMulticall["prepareContactButtonEmail"](encodedData);
-      }
-    },
-    onError(error) {
-      console.log("Error prepareContactButtonEmail", error);
-    },
-  });
-
-  usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [nameHash, "website.name", formState.name],
-    enabled: formState.name !== undefined && formState.name !== "",
-    onSuccess(data: any) {
-      // console.log("Success prepareName", data.request.data);
-      // preparationMulticall["prepareName"](data.request.data);
-
-      if (data) {
-        //@ts-ignore
-        const encodedData = encodeFunctionData({
-          abi: PublicResolver.abi,
-          functionName: "setText",
-          args: [nameHash, "website.name", formState.name],
-        });
-        preparationMulticall["prepareName"](encodedData);
-      }
-    },
-    onError(error) {
-      console.log("Error prepareName", error);
-    },
-  });
-
-  usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [nameHash, "website.role", formState.role],
-    enabled: formState.role !== undefined && formState.role !== "",
-    onSuccess(data: any) {
-      // console.log("Success prepareRole", data.request.data);
-      // preparationMulticall["prepareRole"](data.request.data);
-
-      if (data) {
-        //@ts-ignore
-        const encodedData = encodeFunctionData({
-          abi: PublicResolver.abi,
-          functionName: "setText",
-          args: [nameHash, "website.role", formState.role],
-        });
-        preparationMulticall["prepareRole"](encodedData);
-      }
-    },
-    onError(error) {
-      console.log("Error prepareRole", error);
-    },
-  });
-
-  usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [nameHash, "website.profilePicture", keccakImageAvatar],
-    enabled:
-      formState.profilePicture !== undefined && formState.profilePicture !== "",
-    onSuccess(data: any) {
-      // console.log("Success prepareProfilePicture", data.request.data);
-      // preparationMulticall["prepareProfilePicture"](data.request.data);
-
-      if (data) {
-        //@ts-ignore
-        const encodedData = encodeFunctionData({
-          abi: PublicResolver.abi,
-          functionName: "setText",
-          args: [nameHash, "website.profilePicture", keccakImageAvatar],
-        });
-        preparationMulticall["prepareProfilePicture"](encodedData);
-      }
-    },
-    onError(error) {
-      console.log("Error prepareProfilePicture", error);
-    },
-  });
-
-  usePrepareContractWrite({
-    address: PublicResolver.address as `0x${string}`,
-    abi: PublicResolver.abi,
-    functionName: "setText",
-    args: [
-      nameHash,
-      "website.buttonBackgroundColor",
-      formState.buttonBackgroundColor,
-    ],
-    onSuccess(data: any) {
-      // console.log("Success prepareButtonBackgroundColor", data.request.data);
-      // preparationMulticall["prepareButtonBackgroundColor"](data.request.data);
-
-      if (data) {
-        //@ts-ignore
-        const encodedData = encodeFunctionData({
-          abi: PublicResolver.abi,
-          functionName: "setText",
-          args: [
-            nameHash,
-            "website.buttonBackgroundColor",
-            formState.buttonBackgroundColor,
-          ],
-        });
-        preparationMulticall["prepareButtonBackgroundColor"](encodedData);
-      }
-    },
-    onError(error) {
-      console.log("Error prepareButtonBackgroundColor", error);
-    },
-  });
+  useEffect(() => {
+    if (nameHash !== "" && formState.buttonBackgroundColor !== "") {
+      const encodedData = encodeFunctionData({
+        abi: PublicResolver.abi,
+        functionName: "setText",
+        args: [
+          nameHash,
+          "website.buttonBackgroundColor",
+          formState.buttonBackgroundColor,
+        ],
+      });
+      preparationMulticall["prepareButtonBackgroundColor"](encodedData);
+    }
+  }, [nameHash, formState.buttonBackgroundColor])
 
   return {
     formState,

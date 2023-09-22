@@ -339,14 +339,14 @@ const ThemeSection = ({
       <div className="flex flex-col xl:flex-row gap-9 justify-center items-center">
         <label
           className={`relative flex flex-col w-full max-w-xs items-center p-7 bg-[#94A3B8] rounded-lg gap-6 cursor-pointer ${
-            theme === "glassmorphsm" && "ring-4 ring-flarelink"
+            theme === "glassmorphism" && "ring-4 ring-flarelink"
           }`}
         >
           <input
             type="radio"
             onChange={handleInputs}
             name="Theme"
-            value="glassmorphsm"
+            value="glassmorphism"
             className="hidden"
           />
           <Image
@@ -358,7 +358,7 @@ const ThemeSection = ({
           />
           <p
             className={`py-[6px] px-3 text-xs rounded-full font-semibold text-center hover:shadow-xl ${
-              theme === "glassmorphsm" ? "bg-flarelink text-white" : "bg-white"
+              theme === "glassmorphism" ? "bg-flarelink text-white" : "bg-white"
             }`}
           >
             Glassmorphsm

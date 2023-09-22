@@ -58,7 +58,7 @@ export default function Website() {
     title: "",
     background: undefined,
     body: "",
-    theme: "glassmorphsm",
+    theme: "glassmorphism",
     button1: "",
     button1Link: "",
     contactButton: "",
