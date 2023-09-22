@@ -41,7 +41,7 @@ export default function Website() {
   const accessKeyId = process.env.CLOUDFLARE_R2_ACCESS_KEY_ID;
   const secretAccessKey = process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY;
 
-  // Create an Amazon S3 service client object.
+  // Create an Amazon S3 service client object
   const s3Client = new S3Client({
     region: REGION,
     endpoint: apiUrl,

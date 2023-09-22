@@ -33,7 +33,7 @@ const RegistrationPeriod = ({
           className={`h-6 w-6 rounded-full text-white text-center flex items-center justify-center ${
             regPeriod === 1
               ? 'bg-[#334155] text-[#91A3B8] cursor-not-allowed '
-              : 'bg-[#F97316] hover:scale-110 active:scale-125 transform transition duration-300 ease-out cursor-pointer'
+              : 'bg-flarelink hover:scale-110 active:scale-125 transform transition duration-300 ease-out cursor-pointer'
           }`}
         >
           <Image className="h-3 w-3" src={Minus} alt="Minus" />
@@ -51,7 +51,7 @@ const RegistrationPeriod = ({
         {/* + */}
         <div
           onClick={incrementYears}
-          className="bg-[#F97316] h-6 w-6 rounded-full text-white text-center flex items-center justify-center lg:ml-1 hover:scale-110 active:scale-125 transform transition duration-300 ease-out cursor-pointer"
+          className="bg-flarelink h-6 w-6 rounded-full text-white text-center flex items-center justify-center lg:ml-1 hover:scale-110 active:scale-125 transform transition duration-300 ease-out cursor-pointer"
         >
           <Image className="h-3 w-3" src={Plus} alt="Plus" />
         </div>

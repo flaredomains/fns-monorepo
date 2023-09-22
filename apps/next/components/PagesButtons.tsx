@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Search from "../public/Search.png";
+import Search from "../public/Search.svg";
 import Account_Plus from "../public/buttons_main_page/Account_Plus.png";
 import Details from "../public/buttons_main_page/Details.png";
 import Subdomain from "../public/buttons_main_page/Subdomain.png";

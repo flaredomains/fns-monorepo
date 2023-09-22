@@ -1,9 +1,9 @@
 import React from "react";
-import Search from "../public/Search.png";
-import Account from "../public/Account.png";
-import WebsiteBuilder from "../public/page_builder.png";
-import Send from "../public/Send.png";
-import FAQ from "../public/FAQ.png";
+import Search from "../public/Search.svg";
+import Account from "../public/Account.svg";
+import WebsiteBuilder from "../public/WebsiteBuilder.svg";
+import Send from "../public/SendTokens.svg";
+import FAQ from "../public/FAQ.svg";
 import Image from "next/image";
 // import Link from "next/link";
 import { Link } from "react-router-dom";

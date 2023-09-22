@@ -245,7 +245,7 @@ function Form({
             isLoading ||
             !sendTransaction
           }
-          className="flex w-48 mx-auto justify-center items-center px-6 py-3 bg-[#F97316] h-12 rounded-lg text-white px-auto hover:scale-105 transform transition duration-300 ease-out disabled:border-gray-500 disabled:bg-gray-500 disabled:hover:scale-100 disabled:cursor-not-allowed"
+          className="flex w-48 mx-auto justify-center items-center px-6 py-3 bg-flarelink h-12 rounded-lg text-white px-auto hover:scale-105 transform transition duration-300 ease-out disabled:border-gray-500 disabled:bg-gray-500 disabled:hover:scale-100 disabled:cursor-not-allowed"
         >
           <p className="text-base font-semibold mr-1">
             {isLoading ? "Sending..." : "Send Tokens"}
@@ -263,7 +263,7 @@ function Form({
             <a
               href={`https://flare-explorer.flare.network/tx/${data?.hash}`}
               // href={`https://coston2-explorer.flare.network/tx/${data?.hash}`}
-              className="flex mt-2 py-1 px-4 rounded-xl bg-[#F97316] hover:scale-105 transform transition duration-300 ease-out"
+              className="flex mt-2 py-1 px-4 rounded-xl bg-flarelink hover:scale-105 transform transition duration-300 ease-out"
             >
               Flare Explorer
             </a>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import MyAccount from "../../public/MyAccount.svg";
-import Search from "../../public/Search.png";
+import Search from "../../public/Search.svg";
 import styles from "../../src/styles/Main.module.css";
 import { useNavigate } from "react-router-dom";
 import { useAccount } from "wagmi";

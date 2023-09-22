@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
-import PageBuilderImage from "../../public/PageBuilderImage.png";
-import Search from "../../public/Search.png";
+import PageBuilderImage from "../../public/PageBuilderImage.svg";
+import Search from "../../public/Search.svg";
 import styles from "../../src/styles/Main.module.css";
 import { useRouter } from "next/router";
 import { useAccount, useContractRead } from "wagmi";

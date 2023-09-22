@@ -339,7 +339,7 @@ const ThemeSection = ({
       <div className="flex flex-col xl:flex-row gap-9 justify-center items-center">
         <label
           className={`relative flex flex-col w-full max-w-xs items-center p-7 bg-[#94A3B8] rounded-lg gap-6 cursor-pointer ${
-            theme === "glassmorphsm" && "ring-4 ring-[#F97316]"
+            theme === "glassmorphsm" && "ring-4 ring-flarelink"
           }`}
         >
           <input
@@ -358,7 +358,7 @@ const ThemeSection = ({
           />
           <p
             className={`py-[6px] px-3 text-xs rounded-full font-semibold text-center hover:shadow-xl ${
-              theme === "glassmorphsm" ? "bg-[#F97316] text-white" : "bg-white"
+              theme === "glassmorphsm" ? "bg-flarelink text-white" : "bg-white"
             }`}
           >
             Glassmorphsm
@@ -367,7 +367,7 @@ const ThemeSection = ({
         </label>
         <label
           className={`relative flex flex-col w-full max-w-xs items-center p-7 bg-[#94A3B8] rounded-lg gap-6 cursor-pointer ${
-            theme === "light" && "ring-4 ring-[#F97316]"
+            theme === "light" && "ring-4 ring-flarelink"
           }`}
         >
           <input
@@ -386,7 +386,7 @@ const ThemeSection = ({
           />
           <p
             className={`py-[6px] px-3 text-xs rounded-full font-semibold text-center hover:shadow-xl ${
-              theme === "light" ? "bg-[#F97316] text-white" : "bg-white"
+              theme === "light" ? "bg-flarelink text-white" : "bg-white"
             }`}
           >
             Light Mode
@@ -395,7 +395,7 @@ const ThemeSection = ({
         </label>
         <label
           className={`relative flex flex-col w-full max-w-xs items-center p-7 bg-[#94A3B8] rounded-lg gap-6 cursor-pointer ${
-            theme === "dark" && "ring-4 ring-[#F97316]"
+            theme === "dark" && "ring-4 ring-flarelink"
           }`}
         >
           <input
@@ -414,7 +414,7 @@ const ThemeSection = ({
           />
           <p
             className={`py-[6px] px-3 text-xs rounded-full font-semibold text-center hover:shadow-xl ${
-              theme === "dark" ? "bg-[#F97316] text-white" : "bg-white"
+              theme === "dark" ? "bg-flarelink text-white" : "bg-white"
             }`}
           >
             Dark Mode
@@ -668,7 +668,7 @@ const SubmitSection = ({
         <button
           type="submit"
           disabled={!isConnected || !isOwner || loading || !isReady}
-          className="flex  items-center justify-center gap-2 bg-[#F97316] disabled:brightness-125 py-3 px-5 w-[13rem] text-center rounded-md text-white font-normal hover:brightness-110"
+          className="flex  items-center justify-center gap-2 bg-flarelink disabled:brightness-125 py-3 px-5 w-[13rem] text-center rounded-md text-white font-normal hover:brightness-110"
         >
           <p className="flex">{loading ? `Minting` : `Mint Website Now`}</p>
 

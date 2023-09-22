@@ -134,8 +134,8 @@ function MyApp({ Component, pageProps }: AppProps) {
 
       <Web3Modal
         themeVariables={{
-          "--w3m-background-color": "#F97316",
-          "--w3m-accent-color": "#F97316",
+          "--w3m-background-color": "#ff6B57",
+          "--w3m-accent-color": "#ff6B57",
         }}
         projectId={projectId}
         ethereumClient={ethereumClient}

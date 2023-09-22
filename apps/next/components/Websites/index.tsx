@@ -573,7 +573,7 @@ const OwnedDomains = ({
         </div>
         <div className="flex items-center">
           {hasWebsite && (
-            <div className="hidden sm:flex mr-2 px-2.5 py-0.5 bg-orange-500 h-7 rounded-3xl justify-center items-center gap-1.5">
+            <div className="hidden sm:flex mr-2 px-2.5 py-0.5 bg-flarelink h-7 rounded-3xl justify-center items-center gap-1.5">
               <p className="text-center text-white text-xs font-medium">
                 Published Website
               </p>
