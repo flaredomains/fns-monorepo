@@ -46,7 +46,7 @@ const GetBalance = ({ finalAmount }: { finalAmount: any }) => {
     );
   return (
     <div className="flex w-full justify-center mb-6 text-slate-400">
-      Your Balance: {balance.toString() + " " + data?.symbol}
+      Your Balance: {balance + " " + data?.symbol}
     </div>
   );
 };
