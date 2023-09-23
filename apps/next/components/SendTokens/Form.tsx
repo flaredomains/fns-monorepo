@@ -19,25 +19,18 @@ import NameWrapper from "../../src/pages/abi/NameWrapper.json";
 const ZERO_ADDRESS: string = "0x0000000000000000000000000000000000000000";
 
 const GetBalance = ({ finalAmount }: { finalAmount: any }) => {
-  const { address, isConnecting, isDisconnected } = useAccount();
-  const { data, isError, isLoading } = useBalance({
+  const { address } = useAccount();
+  const { data, isError, isLoading, isSuccess } = useBalance({
     address: address,
   });
-  const [truncatedFormatted, setTruncatedFormatted] = React.useState("");
+  const [balance, setBalance] = useState<string>("0");
 
   useEffect(() => {
-    if (parseFloat(data?.formatted ? data?.formatted : "0") > 0) {
-      setTruncatedFormatted(
-        data?.formatted
-          ? data.formatted.split(".")[0] +
-              "." +
-              data.formatted.split(".")[1].slice(0, 4)
-          : ""
-      );
-    } else {
-      setTruncatedFormatted("0");
+    // data != null: neither null nor undefined
+    if (isSuccess && data != null) {
+      setBalance(parseFloat(data.formatted).toFixed(2))
     }
-  }, []);
+  }, [data, isSuccess, balance]);
 
   if (isLoading)
     return (
@@ -53,8 +46,7 @@ const GetBalance = ({ finalAmount }: { finalAmount: any }) => {
     );
   return (
     <div className="flex w-full justify-center mb-6 text-slate-400">
-      Your Balance: {truncatedFormatted}
-      {parseFloat(truncatedFormatted) === 0 ? "" : "..."} {data?.symbol}
+      Your Balance: {balance.toString() + " " + data?.symbol}
     </div>
   );
 };
