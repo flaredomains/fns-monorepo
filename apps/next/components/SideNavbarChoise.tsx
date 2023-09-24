@@ -51,7 +51,7 @@ const buttonData = [
   },
 ];
 
-const ButtonChoise = ({
+const ButtonChoice = ({
   text,
   page,
   button_style,
@@ -102,7 +102,7 @@ function SideNavbarChoise({
         } w-full lg:flex lg:flex-col`}
       >
         {buttonData.map((item) => (
-          <ButtonChoise
+          <ButtonChoice
             key={item.text}
             text={item.text}
             page={item.page}

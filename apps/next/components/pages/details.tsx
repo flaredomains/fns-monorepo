@@ -19,22 +19,18 @@ export default function Result() {
     }
   }, [location]);
 
-  console.log("result", result); // "/: dynamic path"
-  console.log("path", path); // "/details"
-
   return (
     <>
       <div className="min-h-screen lg:min-h-full">
         <div className="flex-col bg-[#0F172A] lg:flex lg:flex-row">
           {/* Left Side / Navbar */}
-          <SideNavbar result={result} path={"/"} />
+          <SideNavbar path={"/"} />
 
           {/* Register */}
           <div className="flex flex-col mt-9 pb-8 lg:mx-8 w-full min-h-screen lg:min-h-full lg:w-3/4 justify-between lg:justify-normal">
             {/* Three button Register, Details, Subdomain / Search Input (hidden mobile) */}
             <div>
               <PagesButtons result={result} path={path} />
-
               <Details result={result} />
             </div>
 

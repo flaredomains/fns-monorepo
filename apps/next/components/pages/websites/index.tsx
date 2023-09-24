@@ -6,7 +6,6 @@ import { useLocation } from "react-router-dom";
 
 export default function Websites() {
   const [result, setResult] = useState<string>("");
-  const [path, setPath] = useState<string>("");
 
   const location = useLocation();
 
@@ -14,9 +13,6 @@ export default function Websites() {
     if (location) {
       const lastIndex = location.pathname.lastIndexOf("/");
       setResult(location.pathname.substring(lastIndex + 1));
-      setPath(location.pathname.substring(0, lastIndex));
-      console.log("result", result); // "/: dynamic path"
-      console.log("path", path); // "/details"
     }
   }, [location]);
   return (
@@ -24,7 +20,7 @@ export default function Websites() {
       <div className="min-h-screen lg:min-h-full">
         <div className="flex flex-col bg-[#0F172A] lg:flex lg:flex-row">
           {/* Left Side / Navbar */}
-          <SideNavbar result={result} path={"/websites"} />
+          <SideNavbar path={"/websites"} />
 
           {/* Register */}
           <div className="flex flex-col mt-9 pb-8 lg:mx-8 w-full min-h-screen lg:min-h-full lg:w-3/4 justify-between lg:justify-normal">

@@ -7,18 +7,13 @@ import Links from "../../../components/Links";
 function FAQ() {
   const [setIsConnect] = useState(false);
   const [arrSubdomains, setArrSubdomains] = useState([[1], [2], [3]]);
-
   const [result, setResult] = useState<String>("");
-
-  const [path, setPath] = useState<String>("");
-
   const location = useLocation();
 
   useEffect(() => {
     if (location) {
       const lastIndex = location.pathname.lastIndexOf("/");
       setResult(location.pathname.substring(lastIndex + 1));
-      setPath(location.pathname.substring(0, lastIndex));
     }
   }, [location]);
 
@@ -27,7 +22,7 @@ function FAQ() {
       <div className="min-h-full">
         <div className="flex-col bg-[#0F172A] lg:flex lg:flex-row">
           {/* Left Side / Navbar */}
-          <SideNavbar result={""} path={"/faq"} />
+          <SideNavbar path={"/faq"} />
 
           {/* Register */}
           <div className="flex flex-col mt-9 pb-8 lg:mx-8 w-full min-h-full lg:w-3/4 justify-between lg:justify-normal">
