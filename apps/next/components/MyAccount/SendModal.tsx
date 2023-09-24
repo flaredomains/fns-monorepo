@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import styles from '../../src/styles/Main.module.css';
-import { isAddress } from 'web3-validator';
+import { hexToBigInt, isAddress } from 'viem';
 
 import { useDebounce } from 'use-debounce';
 import {
@@ -28,61 +28,54 @@ function Modals({
   function closeModal() {
     setIsModalOpen(false);
   }
-  const { address } = useAccount();
+  const { address: fromAddress } = useAccount();
   const [receiver, setReceiver] = React.useState('');
-  const [to, setTo] = React.useState('');
-  const [debouncedTo] = useDebounce(to, 500);
+  const [toAddress, setToAddress] = React.useState('');
+  const [debouncedTo] = useDebounce(toAddress, 500);
 
-  const [amount, setAmount] = React.useState('');
+  const fromTokenId = hexToBigInt(namehash(domain + ".flr"));
+  const [toTokenId, setToTokenId] = useState<string>('');
+
   const [controlledAmount, setControlledAmount] = React.useState('0');
   const [debouncedAmount] = useDebounce(controlledAmount, 500);
 
-  const [hash, setHash] = useState<string>('');
-  const [tokenId, setTokenId] = useState<BigNumber>();
-  const [inputUsable, setInputUsable] = useState<boolean>(false);
+  const [isToDomainName, setIsToDomainName] = useState<boolean>(false);
   const [isValid, setIsValid] = useState<boolean>();
 
   const domainPattern = /^[a-zA-Z0-9-_$]+\.flr$/;
-  const ethAddressPattern = /^(0x)?[0-9a-fA-F]{40}$/;
 
   const handleReceiverInput = (e: {
     target: { value: React.SetStateAction<string | undefined> };
   }) => {
     const inputValue = e.target.value as string;
     setReceiver(inputValue);
-    // Check if the input value matches the desired pattern: at least one letter followed by ".flr"
-    const isFlrInput = domainPattern.test(inputValue);
 
-    // Check if the input value matches the ETH address pattern
-    const isEthAddress = ethAddressPattern.test(inputValue);
-
-    setInputUsable(isFlrInput || isEthAddress);
-    setTokenId(BigNumber.from(namehash(domain)));
-
-    if (isFlrInput) {
-      setHash(namehash(inputValue));
-      setInputUsable(isFlrInput);
+    // regular wallet address
+    if (isAddress(inputValue)) { 
+      setIsValid(true);
     }
-
-    if (isEthAddress) {
-      if (isAddress(inputValue)) {
-        setTo(inputValue);
-        setIsValid(true);
-        setInputUsable(isEthAddress);
-      }
+    // Update this to read OwnerOf with debounce
+    else if (domainPattern.test(inputValue)) {
+      setToTokenId(namehash(inputValue));
+      setIsToDomainName(true);
+    }
+    else {
+      setIsToDomainName(false);
+      setIsValid(false);
     }
   };
+
   useContractRead({
     address: NameWrapper.address as `0x${string}`,
     abi: NameWrapper.abi,
     functionName: 'ownerOf',
-    enabled: inputUsable,
-    args: [hash],
+    enabled: isToDomainName,
+    args: [toTokenId],
     onSuccess(data: string) {
       console.log('Success ownerOf', data);
       setIsValid(data !== ZERO_ADDRESS);
       if (data !== ZERO_ADDRESS) {
-        setTo(data);
+        setToAddress(data);
       }
     },
     onError(error) {
@@ -94,13 +87,13 @@ function Modals({
     address: NameWrapper.address as `0x${string}`,
     abi: NameWrapper.abi,
     functionName: 'safeTransferFrom',
-    enabled: inputUsable,
+    enabled: isValid,
     args: [
-      address as `0x${string}`, // address: from
-      to as `0x${string}`, // address: to
-      [tokenId?._hex] as string[], // uint256: id
-      1, // uint256: amount
-      0x0, // bytes: data
+      fromAddress as `0x${string}`,
+      toAddress as `0x${string}`,
+      fromTokenId,
+      1,
+      "0x0", // bytes: data
     ],
     onSuccess(data) {
       console.log('Success prepare safeTransferFrom', data);
@@ -193,7 +186,7 @@ function Modals({
                       <div className='flex w-full justify-center text-slate-400 '>
                         {isValid === true ? (
                           <p className='flex mb-4 w-full break-all'>
-                            Address: {to}
+                            Address: {toAddress}
                           </p>
                         ) : (
                           isValid === false && (
