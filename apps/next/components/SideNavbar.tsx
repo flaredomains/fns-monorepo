@@ -47,23 +47,9 @@ const SocialLinks = () => {
   );
 };
 
-function SideNavbar({ result, path }: any) {
+function SideNavbar({ path }: any) {
   const [isOpen, setIsOpen] = useState(false);
-  // const [result, setResult] = useState<String>('')
-  // const [path, setPath] = useState<String>('')
-
   const [isLarge, setisLarge] = useState(false);
-
-  const router = useRouter();
-
-  // useEffect(() => {
-  //   if (!router.isReady) return
-
-  //   const result = router.query.result as String
-  //   const path = router.pathname as String
-  //   setPath(path)
-  //   setResult(result)
-  // }, [router.isReady])
 
   // UseEffect for resize the address when viewport become to small
   useEffect(() => {
