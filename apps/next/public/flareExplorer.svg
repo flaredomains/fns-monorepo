@@ -7,7 +7,9 @@
 	</defs>
 	<style>
 		tspan { white-space:pre }
-		.shp0 { fill: rgb(249 115 22) } 
+
+		.shp0 { fill: white } 
+
 	</style>
 	<g id="Clip-Path: Clip-Path" clip-path="url(#cp1)">
 		<g id="Clip-Path">

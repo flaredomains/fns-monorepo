@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Avatar from "../../public/Avatar.svg";
+import Send from "../../public/Send_white.png";
 import WalletConnect from "../WalletConnect";
 // import Link from "next/link";
 import { Link } from "react-router-dom";
@@ -10,23 +11,31 @@ import ReverseRecord from "./ReverseRecord";
 import { useAccount, useContractRead } from "wagmi";
 
 import MintedDomainNames from "../../src/pages/abi/MintedDomainNames.json";
+import SendModal from "./SendModal";
+import Modals from "./SendModal";
 
 const OwnedDomains = ({
   date,
   domain,
   isSubdomain,
+  refetch,
 }: {
   date: Date;
   domain: string;
   isSubdomain: boolean;
+  refetch: any;
 }) => {
   const day = date.getDate();
   const month = date.getMonth() + 1;
   const year = date.getFullYear();
+
+  let [isModalOpen, setIsModalOpen] = useState(false);
+  // let [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+
   return (
     <>
-      <div className="flex flex-col sm:flex-row gap-4 w-full sm:items-center justify-between md:px-6 py-5">
-        <div className="inline-flex flex-row items-center">
+      <div className="grid grid-cols-6  gap-4 w-full sm:items-center justify-between md:px-6 py-5">
+        <div className="col-span-3 inline-flex flex-row items-center">
           {/* Avatar */}
           <Image className="h-8 w-8 mr-2" src={Avatar} alt="Avatar" />
 
@@ -41,9 +50,24 @@ const OwnedDomains = ({
             </p>
           </Link>
         </div>
+        {/* Send */}
+        <div className="flex col-span-1 items-center justify-center">
+          <button
+            className="flex h-6 w-6 justify-center items-center hover:brightness-150 hover:bg-gray-100 hover:bg-opacity-20 rounded-full"
+            onClick={() => setIsModalOpen(true)}
+          >
+            <Image className="h-5 w-5" src={Send} alt="Avatar" />
+          </button>
+          <SendModal
+            domain={domain}
+            isModalOpen={isModalOpen}
+            setIsModalOpen={() => setIsModalOpen(false)}
+            refetchAddresses={refetch}
+          />
+        </div>
         {/* Date exp */}
-        <div className="flex items-center justify-center bg-gray-700 rounded-lg px-3 md:shrink-0">
-          <p className="text-gray-300 text-xs font-medium py-1">
+        <div className="flex col-span-2 w-full items-center justify-center bg-gray-700 rounded-lg px-3 md:shrink-0">
+          <p className="flex text-center text-gray-300 text-xs font-medium py-1">
             {isSubdomain ? "No Expiry" : `Expires ${month}/${day}/${year}`}
           </p>
         </div>
@@ -64,7 +88,7 @@ export default function MyAccount() {
 
   const { address, isConnected } = useAccount();
 
-  const { data } = useContractRead({
+  const { data, refetch } = useContractRead({
     address: MintedDomainNames.address as `0x${string}`,
     abi: MintedDomainNames.abi,
     functionName: "getAll",
@@ -84,7 +108,10 @@ export default function MyAccount() {
             isSubdomain: /[a-zA-Z0-9]+\.{1}[a-zA-Z0-9]+/.test(item.label),
           };
         });
-        setAddressDomain(ownedDomain);
+        const ownedDomainFiltered = ownedDomain.filter(
+          (domain: any) => domain.label !== ""
+        );
+        setAddressDomain(ownedDomainFiltered);
       }
     },
     onError(error) {
@@ -92,7 +119,7 @@ export default function MyAccount() {
     },
   });
 
-  console.log("addressDomain", addressDomain);
+  // console.log('addressDomain', addressDomain);
 
   return (
     <div
@@ -121,6 +148,7 @@ export default function MyAccount() {
                 date={new Date(item.expire ? item.expire * 1000 : "")}
                 domain={item.label}
                 isSubdomain={item.isSubdomain}
+                refetch={refetch}
               />
             ))}
         </div>
