@@ -21,7 +21,7 @@ import {
 
 import { encodeFunctionData } from "viem";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
-import {namehash} from "viem/ens";
+import { namehash } from "viem/ens";
 
 // ABIS
 import PublicResolver from "../../src/pages/abi/PublicResolver.json";
@@ -349,11 +349,7 @@ const OwnedDomains = ({
         const encodedData = encodeFunctionData({
           abi: PublicResolver.abi,
           functionName: "setText",
-          args: [
-            namehash(domain + ".flr"),
-            "website.contactButtonEmail",
-            "",
-          ],
+          args: [namehash(domain + ".flr"), "website.contactButtonEmail", ""],
         });
         preparationMulticall["prepareContactButtonEmail"](encodedData);
       }
@@ -436,11 +432,7 @@ const OwnedDomains = ({
     address: PublicResolver.address as `0x${string}`,
     abi: PublicResolver.abi,
     functionName: "setText",
-    args: [
-      namehash(domain + ".flr"),
-      "website.buttonBackgroundColor",
-      "",
-    ],
+    args: [namehash(domain + ".flr"), "website.buttonBackgroundColor", ""],
     enabled: prepareDelete,
     onSuccess(data: any) {
       // console.log("Success prepareButtonBackgroundColor", data.request.data);
@@ -672,14 +664,17 @@ export default function MyAccountWebsites() {
       // Ensure we only use the length returned for still-owned domains (after a transfer)
       if (data) {
         const arrDomains = data[0].slice(0, data[0].length);
-        const ownedDomain = arrDomains.map((item: any, index: any) => {
+        const ownedDomainFiltered = arrDomains.filter(
+          (domain: any) => domain.label !== ""
+        );
+        const ownedDomain = ownedDomainFiltered.map((item: any, index: any) => {
           return {
             label: item.label,
             expire: Number(item.expiry),
             isSubdomain: /[a-zA-Z0-9]+\.{1}[a-zA-Z0-9]+/.test(item.label),
           };
         });
-        const dataDomains = arrDomains.map((item: any, index: any) => {
+        const dataDomains = ownedDomainFiltered.map((item: any, index: any) => {
           return {
             address: PublicResolver.address as `0x${string}`,
             abi: PublicResolver.abi,
