@@ -3,7 +3,9 @@ import Like from "../../public/Like.svg";
 import Dislike from "../../public/Dislike.svg";
 import Clipboard_copy from "../../public/Clipboard_copy.svg";
 import Image from "next/image";
+
 import Send from "../../public/Send.svg";
+
 import Explorer from "../../public/flareExplorer.svg";
 import Link from "next/link";
 
@@ -72,7 +74,9 @@ const InfoLine = ({
                   target="_blank"
                 >
                   <Image
+
                     className="h-6 w-6 ml-1 lg:mb-0"
+
                     src={Send}
                     alt="Send"
                   />
