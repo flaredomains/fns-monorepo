@@ -56,6 +56,7 @@ function Modals({
     // regular wallet address
     if (isAddress(inputValue)) {
       setIsValid(true);
+      setToAddress(inputValue)
     }
     // Update this to read OwnerOf with debounce
     else if (domainPattern.test(inputValue)) {
@@ -151,6 +152,12 @@ function Modals({
                 <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-slate-700 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
                   <div>
                     <div className="mt-6 text-center sm:mt-5">
+                    <Dialog.Title
+                        as="h3"
+                        className="font-bold leading-6 text-slate-50 text-xl text-center pb-6"
+                      >
+                        Sending: <span className="text-flarelink">{domain + ".flr"}</span>
+                      </Dialog.Title>
                       <Dialog.Title
                         as="h3"
                         className="font-bold leading-6 text-slate-50 text-xl text-center"
@@ -214,7 +221,7 @@ function Modals({
                       className="flex w-48 mx-auto justify-center items-center px-6 py-3 bg-[#F97316] h-12 rounded-lg text-white px-auto hover:scale-105 transform transition duration-300 ease-out disabled:border-gray-500 disabled:bg-gray-500 disabled:hover:scale-100 disabled:cursor-not-allowed"
                     >
                       <p className="text-base font-semibold mr-1">
-                        Send Tokens
+                        Send NFT
                       </p>
                     </button>
                   </div>
