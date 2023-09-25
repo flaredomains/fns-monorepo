@@ -13,6 +13,7 @@ import {
 import { namehash } from 'viem';
 import { BigNumber } from 'ethers';
 import NameWrapper from '../../src/pages/abi/NameWrapper.json';
+import SuccessErrorModals from './SuccessErrorModals';
 
 const ZERO_ADDRESS: string = '0x0000000000000000000000000000000000000000';
 
@@ -33,7 +34,7 @@ function Modals({
   const [toAddress, setToAddress] = React.useState('');
   const [debouncedTo] = useDebounce(toAddress, 500);
 
-  const fromTokenId = hexToBigInt(namehash(domain + ".flr"));
+  const fromTokenId = hexToBigInt(namehash(domain + '.flr'));
   const [toTokenId, setToTokenId] = useState<string>('');
 
   const [controlledAmount, setControlledAmount] = React.useState('0');
@@ -51,15 +52,14 @@ function Modals({
     setReceiver(inputValue);
 
     // regular wallet address
-    if (isAddress(inputValue)) { 
+    if (isAddress(inputValue)) {
       setIsValid(true);
     }
     // Update this to read OwnerOf with debounce
     else if (domainPattern.test(inputValue)) {
       setToTokenId(namehash(inputValue));
       setIsToDomainName(true);
-    }
-    else {
+    } else {
       setIsToDomainName(false);
       setIsValid(false);
     }
@@ -93,7 +93,7 @@ function Modals({
       toAddress as `0x${string}`,
       fromTokenId,
       1,
-      "0x0", // bytes: data
+      '0x0', // bytes: data
     ],
     onSuccess(data) {
       console.log('Success prepare safeTransferFrom', data);
@@ -107,11 +107,16 @@ function Modals({
     ...configsetTransferOwnership,
     async onSuccess(data) {
       console.log('Success  safeTransferFrom', data);
+      setIsSuccessModalOpen(true);
     },
     onError(error) {
       console.log('Error  safeTransferFrom', error);
+      setIsErrorModalOpen(true);
     },
   });
+
+  let [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  let [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
   return (
     <>
@@ -216,6 +221,14 @@ function Modals({
           </div>
         </Dialog>
       </Transition>
+
+      <SuccessErrorModals
+        isSuccessModalOpen={isSuccessModalOpen}
+        setIsSuccessModalOpen={() => setIsSuccessModalOpen(false)}
+        isErrorModalOpen={isErrorModalOpen}
+        setIsErrorModalOpen={() => setIsErrorModalOpen(false)}
+        toAddress={toAddress}
+      />
     </>
   );
 }
