@@ -78,10 +78,10 @@ export const Coston2 = {
 //   },
 // } as const satisfies Chain;
 
-// // 1. Get projectID at https://cloud.walletconnect.com
-// if (!process.env.WALLET_CONNECT_PROJECT_ID) {
-//   throw new Error("You need to provide WALLET_CONNECT_PROJECT_ID env variable");
-// }
+// 1. Get projectID at https://cloud.walletconnect.com
+if (!process.env.WALLET_CONNECT_PROJECT_ID) {
+  throw new Error("You need to provide WALLET_CONNECT_PROJECT_ID env variable");
+}
 
 const projectId = process.env.WALLET_CONNECT_PROJECT_ID;
 
