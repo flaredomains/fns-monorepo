@@ -5,7 +5,7 @@ import WebBuilderForm from "./WebBuilderForm";
 import Preview from "./Preview";
 import { Step } from "../Register/Steps";
 import { useLocation } from "react-router-dom";
-import {namehash} from "viem/ens";
+import { namehash } from "viem/ens";
 import { keccak256 } from "js-sha3";
 
 import { progressArr } from "../../lib/progressTexts";
@@ -35,10 +35,12 @@ export default function PageBuilder({
   setOpen,
   selectText,
   setSelectText,
+  setIsError,
 }: {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   selectText: string;
   setSelectText: React.Dispatch<React.SetStateAction<string>>;
+  setIsError: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isReady, setIsReady] = useState(false);
@@ -247,9 +249,15 @@ export default function PageBuilder({
         console.log("Error on uploading image website", err);
       });
     },
-    onError(data) {
+    onError(err) {
+      console.log("Error writeMulticall", err);
+
       setLoading(false);
-      setIsReady(false);
+
+      if (err.message.includes("User rejected the request.")) return;
+
+      setOpen(true);
+      setIsError(true);
     },
   }) as any;
 
@@ -351,7 +359,6 @@ export default function PageBuilder({
       return false;
     }
 
-    // writeSetText?.();
     writeMulticall?.();
   };
 
