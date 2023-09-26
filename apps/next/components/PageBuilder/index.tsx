@@ -142,7 +142,6 @@ export default function PageBuilder({
 
   const handleProfile = (event: React.ChangeEvent<HTMLInputElement>) => {
     const target = event;
-    // console.log("target", target);
     const updateFunction = updateFunctions["ProfilePicture"];
     if (updateFunction) {
       updateFunction(event);

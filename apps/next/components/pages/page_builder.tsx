@@ -11,7 +11,6 @@ export default function Page_Builder() {
   const [open, setOpen] = useState(false);
   const [selectText, setSelectText] = useState("");
   const [isError, setIsError] = useState(false);
-  console.log("isError", isError);
   return (
     <>
       <div className="min-h-screen lg:min-h-full">
