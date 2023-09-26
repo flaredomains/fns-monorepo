@@ -10,6 +10,7 @@ import Link from "next/link";
 export default function Page_Builder() {
   const [open, setOpen] = useState(false);
   const [selectText, setSelectText] = useState("");
+  const [isError, setIsError] = useState(false);
   return (
     <>
       <div className="min-h-screen lg:min-h-full">
@@ -23,6 +24,7 @@ export default function Page_Builder() {
               setOpen={setOpen}
               selectText={selectText}
               setSelectText={setSelectText}
+              setIsError={setIsError}
             />
 
             {/* Links */}
@@ -74,37 +76,50 @@ export default function Page_Builder() {
                         </button>
                       </div>
                       <div className="mx-auto flex h-12 w-12 text-5xl items-center justify-center rounded-full bg-trasparent">
-                        🎉
+                        {isError ? `❗️` : `🎉`}
                       </div>
                       <div className="mt-6 text-center sm:mt-5">
                         <Dialog.Title
                           as="h3"
                           className=" font-bold leading-6 text-slate-50 text-xl text-center"
                         >
-                          {`Congratulations!`}
+                          {isError ? "Oops." : `Congratulations!`}
                         </Dialog.Title>
                         <Dialog.Title
                           as="h3"
                           className=" font-bold leading-6 text-slate-50 text-xl text-center"
                         >
-                          {`You’ve minted a website to`}
+                          {isError
+                            ? "Something went wrong. Please try again."
+                            : `You’ve minted a website to`}
                         </Dialog.Title>
-                        <Dialog.Title
-                          as="h3"
-                          className="font-bold leading-6 text-flarelink text-xl text-center"
-                        >
-                          {`${selectText}.flr`}
-                        </Dialog.Title>
+                        {!isError && (
+                          <Dialog.Title
+                            as="h3"
+                            className="font-bold leading-6 text-flarelink text-xl text-center"
+                          >
+                            {`${selectText}.flr`}
+                          </Dialog.Title>
+                        )}
                       </div>
                     </div>
                     <div className="mt-5 sm:mt-6 flex justify-center items-center w-full">
-                      <Link
-                        href={`${selectText}.flr`}
-                        target="_blank"
-                        className=" rounded-md bg-flarelink px-3 py-2 text-sm font-semibold shadow-sm text-justify text-white leading-tight"
-                      >
-                        Go to Website
-                      </Link>
+                      {isError ? (
+                        <button
+                          onClick={() => window.location.reload()}
+                          className=" rounded-md bg-flarelink px-3 py-2 text-sm font-semibold shadow-sm text-justify text-white leading-tight"
+                        >
+                          Retry
+                        </button>
+                      ) : (
+                        <Link
+                          href={`${selectText}.flr`}
+                          target="_blank"
+                          className=" rounded-md bg-flarelink px-3 py-2 text-sm font-semibold shadow-sm text-justify text-white leading-tight"
+                        >
+                          Go to Website
+                        </Link>
+                      )}
                     </div>
                   </Dialog.Panel>
                 </Transition.Child>
